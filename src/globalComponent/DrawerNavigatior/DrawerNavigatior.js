@@ -7,6 +7,7 @@ import ModuleScreen from "../../component/Module/ModuleScreen";
 import DashboardScreen from "../../component/Dashboard/DashboardScreen";
 import UserScreen from "../../component/User/UserScreen";
 import ExamScreen from "../../component/Exam/ExamScreen";
+import StudentScreen from "../../component/Exam/StudentScreen";
 import { logout } from "../../AuthService/AuthService";
 import DropDownPicker from "react-native-dropdown-picker";
 
@@ -59,14 +60,7 @@ const CustomDrawerContent = ({ ...props }) => {
           dropDownMaxHeight={150}
           dropDownDirection="TOP"
         />
-
-        {/* <DropDownPicker
-      open={open}
-      value={props?.userRoleIndex}
-      items={props?.userRoleList}
-      setOpen={setOpen}
-      setValue={(value) => props?.handleRoleSelect(value)}
-    /> */}
+        
       </View>
       <DrawerItemList {...props} />
       <TouchableOpacity onPress={handleLogout}>
@@ -153,6 +147,8 @@ const DrawerNavigator = () => {
                   return <UserScreen />;
                 case "ExamScreen":
                   return <ExamScreen />;
+                  case "StudentScreen":
+                  return <StudentScreen />;
                 default:
                   return null;
               }
