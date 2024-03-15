@@ -1,0 +1,26 @@
+/* WebToastStyles.css */
+.web-toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  transform: none;
+  padding: 16px;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 16px;
+  opacity: 0.9;
+  z-index: 9999;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.web-toast.success {
+  background-color: #4caf50;
+}
+
+.web-toast.error {
+  background-color: #ff5252;
+}
+
+.toast-text {
+  margin: 0;
+}
