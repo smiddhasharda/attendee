@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator, Alert } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Provider } from 'react-redux';
 import store from './src/redux/store';
 import { ToastProvider } from './src/globalComponent/ToastContainer/ToastContext';
@@ -12,7 +12,7 @@ import ForgetPasswordScreen from './src/component/ForgetPassword/ForgetPasswordS
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DrawerNavigator from './src/globalComponent/DrawerNavigatior/DrawerNavigatior';
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 const App = () => {
   const [initialRoute, setInitialRoute] = useState('Login');

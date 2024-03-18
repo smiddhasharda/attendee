@@ -4,6 +4,7 @@ import { insert, fetch, update } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DropDownPicker from "react-native-dropdown-picker";
+import Bulkupload from '../../globalComponent/Bulkupload/BulkUpload';
 
 const StudentScreen = () => {
   const { showToast } = useToast();
@@ -227,7 +228,9 @@ const StudentScreen = () => {
   };
 
   return (
+    
     <View style={styles.container}>
+      <Bulkupload/>
       {studentContainerVisible ? (
         <View style={styles.formContainer}>
               <DropDownPicker
@@ -370,7 +373,6 @@ const StudentScreen = () => {
               setStudentData({ ...StudentData, studentStatus: text })
             }
           />
-
           {StudentData.studentId ? (
             <View style={styles.buttonContainer}>
               <Button title="Update Student" onPress={handleUpdateStudent} />
