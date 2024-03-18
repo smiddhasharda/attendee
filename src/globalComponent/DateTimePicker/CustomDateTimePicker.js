@@ -6,7 +6,7 @@ let DatePickerComponent;
 if (Platform.OS === 'web') {
   // Example: Using react-datepicker library for web
   DatePickerComponent = require('react-datepicker').default;
-  require("react-datepicker/dist/react-datepicker.css");
+  // require("react-datepicker/dist/react-datepicker.css");
 } else {
   DatePickerComponent = require('react-native-datepicker').default;
 }
