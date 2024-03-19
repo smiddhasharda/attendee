@@ -785,13 +785,3 @@ const styles = StyleSheet.create({
 });
 
 export default UserScreen;
-
-
-{/* <View style={styles.container}>
-<FlatList
-     data={userList}
-     keyExtractor={(item) => item.id.toString()}
-     renderItem={renderItem}
-   />
-       </View> */}
-

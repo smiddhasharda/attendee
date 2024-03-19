@@ -1,3 +1,6 @@
+
+
+
 {
   "expo": {
     "name": "AttendenceApp",
@@ -15,10 +18,11 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "usesIcloudStorage": true,
+      "bundleIdentifier": "com.devsaxena.attendee"
     },
     "android": {
-      "googleServicesFile": "./google-services.json",
+      "googleServicesFile": "",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -32,6 +36,14 @@
       "eas": {
         "projectId": "765afe1b-95bc-43e8-934a-7e8bcc906ef6"
       }
-    }
+    },
+    "plugins": [
+      [
+        "expo-document-picker",
+        {
+          "iCloudContainerEnvironment": "Development"
+        }
+      ]
+    ]
   }
 }

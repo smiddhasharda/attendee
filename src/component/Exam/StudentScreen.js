@@ -1,31 +1,37 @@
 import React, { useState, useEffect, useCallback } from "react";
-import {
-  View,
-  Text,
-  Button,
-  TextInput,
-  FlatList,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, Button, TextInput, FlatList, StyleSheet, } from "react-native";
 import { insert, fetch, update } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import CustomDateTimePicker from '../../globalComponent/DateTimePicker/CustomDateTimePicker';
+import DropDownPicker from "react-native-dropdown-picker";
+import Bulkupload from '../../globalComponent/Bulkupload/BulkUpload';
 
 const StudentScreen = () => {
   const { showToast } = useToast();
   const [StudentData, setStudentData] = useState({
-    studentId: "",
-    studentName: "",
-    studentDescription: "",
-    studentStartDate: "",
-    studentEndDate: "",
-    studentController: "",
+    studentId: '',
+    name: '',
+    systemId :'' ,
+    rollNumber:'', 
+    school:'', 
+    program:'', 
+    plan:'', 
+    progAction:'', 
+    term:'', 
+    semester:'', 
+    classNumber:'', 
+    courseType:'', 
+    courseCode:'', 
+    courseStatus:'', 
+    paperId:'', 
+    examData:[],
+    debardStatus:'',
     studentStatus: 1,
   });
   const [studentList, setStudentList] = useState([]);
   const [studentContainerVisible, setStudentContainerVisible] = useState(false);
+  const [examList, setExamList] = useState([]);
+  const [open, setOpen] = useState(false);
 
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
@@ -38,19 +44,44 @@ const StudentScreen = () => {
     return authToken;
   }, [showToast]);
 
+  const handleGetExamList = async () => {
+    try {
+      const authToken = await checkAuthToken();
+      const response = await fetch(
+        {
+          operation: "fetch",
+          tblName: "tbl_exam_master",
+          data: "",
+          conditionString: "",
+          checkAvailability: "",
+          customQuery: "",
+        },
+        authToken
+      );
+
+      if (response) {
+        let ExamList = response?.data?.map((item, index) => ({
+          label: item?.examName,
+          value: item?.PK_ExamId,
+          examDateFrom: item?.examDateFrom,
+          examDateTo: item?.examDateTo
+        }));
+        setExamList(ExamList);
+      }
+    } catch (error) {
+      handleAuthErrors(error);
+    }
+  };
   const handleAddStudent = async () => {
     try {
       const authToken = await checkAuthToken();
       const response = await insert(
         {
           operation: "insert",
-          tblName: "tbl_exam_master",
+          tblName: "tbl_student_master",
           data: {
-            studentName: StudentData.studentName,
-            description: StudentData.studentDescription,
-            studentStartDate: StudentData.studentStartDate,
-            studentEndDate: StudentData.studentEndDate,
-            studentController: StudentData.studentController,
+            name: StudentData.name,
+            systemId: StudentData.systemId,
             isActive: StudentData.studentStatus,
           },
           conditionString: "",
@@ -61,7 +92,7 @@ const StudentScreen = () => {
       );
 
       if (response) {
-        showToast("Exam Add Successful", "success");
+        showToast("Student Add Successful", "success");
         await handleClose();
         handleGetStudentList();
       }
@@ -76,13 +107,9 @@ const StudentScreen = () => {
       const response = await update(
         {
           operation: "update",
-          tblName: "tbl_exam_master",
+          tblName: "tbl_student_master",
           data: {
-            studentName: StudentData.studentName,
-            description: StudentData.studentDescription,
-            studentStartDate: StudentData.studentStartDate,
-            studentEndDate: StudentData.studentEndDate,
-            studentController: StudentData.studentController,
+            name: StudentData.name,
             isActive: StudentData.studentStatus,
           },
           conditionString: `PK_StudentId = ${StudentData.studentId}`,
@@ -108,7 +135,7 @@ const StudentScreen = () => {
       const response = await fetch(
         {
           operation: "fetch",
-          tblName: "tbl_exam_master",
+          tblName: "tbl_student_master",
           data: "",
           conditionString: "",
           checkAvailability: "",
@@ -125,42 +152,27 @@ const StudentScreen = () => {
     }
   };
 
-  const handleStudentStatus = async (studentId, status) => {
-    try {
-      const authToken = await checkAuthToken();
-      const response = await update(
-        {
-          operation: "update",
-          tblName: "tbl_exam_master",
-          data: { isActive: !status },
-          conditionString: `PK_StudentId = ${studentId}`,
-          checkAvailability: "",
-          customQuery: "",
-        },
-        authToken
-      );
-
-      if (response) {
-        showToast(
-          `Exam ${status === 0 ? "Active" : "Inactive"} Successful`,
-          "success"
-        );
-        handleGetStudentList();
-      }
-    } catch (error) {
-      handleAuthErrors(error);
-    }
-  };
 
   const handleEditStatus = async (selectedExam) => {
     setStudentData({
       studentId: selectedExam.PK_StudentId,
-      studentName: selectedExam.studentName,
-      studentDescription: selectedExam.description,
+      name: selectedExam.name,
+      systemId :'' ,
+      rollNumber:'',
+      school:'', 
+      program:'', 
+      plan:'', 
+      progAction:'', 
+      term:'', 
+      semester:'', 
+      classNumber:'', 
+      courseType:'', 
+      courseCode:'', 
+      courseStatus:'', 
+      paperId:'', 
+      examData:[],
+      debardStatus:'',
       studentStatus: selectedExam.isActive,
-      studentStartDate: selectedExam.studentStartDate,
-      studentEndDate: selectedExam.studentEndDate,
-      studentController: selectedExam.studentController,
     });
     setStudentContainerVisible(true);
   };
@@ -184,75 +196,198 @@ const StudentScreen = () => {
   const handleClose = async () => {
     setStudentContainerVisible(false);
     setStudentData({
-      studentId: "",
-      studentName: "",
-      studentDescription: "",
-      studentStartDate: "",
-      studentEndDate: "",
-      studentController: "",
+      studentId:'',
+      name: '',
+      systemId :'' ,
+      rollNumber:'', 
+      school:'', 
+      program:'', 
+      plan:'', 
+      progAction:'', 
+      term:'', 
+      semester:'', 
+      classNumber:'', 
+      courseType:'', 
+      courseCode:'', 
+      courseStatus:'', 
+      paperId:'', 
+      examData:[],
+      debardStatus:'',
       studentStatus: 1,
     });
   };
 
   useEffect(() => {
     handleGetStudentList();
+    handleGetExamList();
   }, []);
-
-  const handelChangeDateFrom = async (date) => {
-    setStudentData({ ...StudentData, studentStartDate: date })
-  };
-
-  const handelChangeDateTo = async (date) => {
-    setStudentData({ ...StudentData, studentEndDate: date })
+ 
+  const handleExamSelect = (value) => {
+    console.log(value)
+    setStudentData({ ...StudentData, examData: value })
   };
 
   return (
+    
     <View style={styles.container}>
+      <Bulkupload/>
       {studentContainerVisible ? (
         <View style={styles.formContainer}>
+              <DropDownPicker
+          open={open}
+          value={StudentData.examData}
+          items={examList}
+          setOpen={setOpen}
+          setValue={handleExamSelect}
+          // containerStyle={{ marginTop: 20, width: "30%", alignSelf: "center" }}
+          // style={{ backgroundColor: "#fafafa" }}
+          // labelStyle={{ fontSize: 16, textAlign: "left", color: "#000" }}
+          // dropDownStyle={{ backgroundColor: "#fafafa" }}
+          // dropDownMaxHeight={150}
+        />
           <TextInput
             style={styles.input}
-            placeholder="Exam Name"
-            value={StudentData.studentName}
+            placeholder="Student Name"
+            value={StudentData.name}
             onChangeText={(text) =>
-              setStudentData({ ...StudentData, studentName: text })
+              setStudentData({ ...StudentData, name: text })
             }
           />
           <TextInput
             style={styles.input}
-            placeholder="Description"
-            value={StudentData.studentDescription}
+            placeholder="System Id"
+            value={StudentData.systemId}
             onChangeText={(text) =>
-              setStudentData({ ...StudentData, studentDescription: text })
+              setStudentData({ ...StudentData, systemId: text })
             }
           />
-          <Text>Exam Start From </Text>
-          <CustomDateTimePicker date={StudentData.studentStartDate} handelChangeDate={handelChangeDateFrom}/>
-          <Text>Exam End To </Text>
-          <CustomDateTimePicker date={StudentData.studentEndDate} handelChangeDate={handelChangeDateTo}/>
             <TextInput
             style={styles.input}
-            placeholder="Exam Controller"
-            value={StudentData.studentController}
+            placeholder="Roll Number"
+            value={StudentData.rollNumber}
             onChangeText={(text) =>
-              setStudentData({ ...StudentData, studentController: text })
+              setStudentData({ ...StudentData, rollNumber: text })
+            }
+          />
+            <TextInput
+            style={styles.input}
+            placeholder="School"
+            value={StudentData.school}
+            onChangeText={(text) =>
+              setStudentData({ ...StudentData, school: text })
+            }
+          />
+            <TextInput
+            style={styles.input}
+            placeholder="Program"
+            value={StudentData.program}
+            onChangeText={(text) =>
+              setStudentData({ ...StudentData, program: text })
+            }
+          />
+            <TextInput
+            style={styles.input}
+            placeholder="Plan"
+            value={StudentData.plan}
+            onChangeText={(text) =>
+              setStudentData({ ...StudentData, plan: text })
+            }
+          /> 
+           <TextInput
+            style={styles.input}
+            placeholder="Prog Action"
+            value={StudentData.progAction}
+            onChangeText={(text) =>
+              setStudentData({ ...StudentData, progAction: text })
+            }
+          />
+           <TextInput
+            style={styles.input}
+            placeholder="Academic Term"
+            value={StudentData.term}
+            onChangeText={(text) =>
+              setStudentData({ ...StudentData, term: text })
+            }
+          />
+           <TextInput
+            style={styles.input}
+            placeholder="Semester"
+            value={StudentData.semester}
+            onChangeText={(text) =>
+              setStudentData({ ...StudentData, semester: text })
+            }
+          />
+           <TextInput
+            style={styles.input}
+            placeholder="Class Number"
+            value={StudentData.classNumber}
+            onChangeText={(text) =>
+              setStudentData({ ...StudentData, classNumber: text })
+            }
+          />
+           <TextInput
+            style={styles.input}
+            placeholder="Course Type"
+            value={StudentData.courseType}
+            onChangeText={(text) =>
+              setStudentData({ ...StudentData, courseType: text })
+            }
+          />
+           <TextInput
+            style={styles.input}
+            placeholder="Course Code"
+            value={StudentData.courseCode}
+            onChangeText={(text) =>
+              setStudentData({ ...StudentData, courseCode: text })
+            }
+          />
+           <TextInput
+            style={styles.input}
+            placeholder="Course Status"
+            value={StudentData.courseStatus}
+            onChangeText={(text) =>
+              setStudentData({ ...StudentData, courseStatus: text })
+            }
+          />
+            <TextInput
+            style={styles.input}
+            placeholder="Paper Id"
+            value={StudentData.paperId}
+            onChangeText={(text) =>
+              setStudentData({ ...StudentData, paperId: text })
+            }
+          />
+            <TextInput
+            style={styles.input}
+            placeholder="Debard Status"
+            value={StudentData.debardStatus}
+            onChangeText={(text) =>
+              setStudentData({ ...StudentData, debardStatus: text })
+            }
+          />
+           <TextInput
+            style={styles.input}
+            placeholder="Student Status"
+            value={StudentData.studentStatus}
+            onChangeText={(text) =>
+              setStudentData({ ...StudentData, studentStatus: text })
             }
           />
           {StudentData.studentId ? (
             <View style={styles.buttonContainer}>
-              <Button title="Update Exam" onPress={handleUpdateStudent} />
+              <Button title="Update Student" onPress={handleUpdateStudent} />
               <Button title="Cancel" onPress={handleClose} />
             </View>
           ) : (
             <View style={styles.buttonContainer}>
-              <Button title="Add New Exam" onPress={handleAddStudent} />
+              <Button title="Add New Student" onPress={handleAddStudent} />
               <Button title="Cancel" onPress={handleClose} />
             </View>
           )}
         </View>
       ) : (
         <View>
-          <Text style={styles.header}>Exam List:</Text>
+          <Text style={styles.header}>Student List:</Text>
           <Button title="Add" onPress={() => setStudentContainerVisible(true)} />
           <FlatList
             data={studentList}
@@ -260,62 +395,15 @@ const StudentScreen = () => {
             ListHeaderComponent={() => (
               <View style={styles.tableHeader}>
                 <Text style={[styles.tableHeaderText, { flex: 2 }]}>
-                  Exam Name
-                </Text>
-                <Text style={[styles.tableHeaderText, { flex: 3 }]}>
-                  Description
-                </Text>
-                <Text style={[styles.tableHeaderText, { flex: 1 }]}>
-                  Exam Start From
-                </Text>
-                <Text style={[styles.tableHeaderText, { flex: 1 }]}>
-                  Exam End To
-                </Text>
-                <Text style={[styles.tableHeaderText, { flex: 1 }]}>
-                  Exam Controller
-                </Text>
-                <Text style={[styles.tableHeaderText, { flex: 1 }]}>
-                  Status
-                </Text>
-                <Text style={[styles.tableHeaderText, { flex: 1 }]}>
-                  Actions
+                  Student Name
                 </Text>
               </View>
             )}
             renderItem={({ item }) => (
               <View style={styles.listItem}>
                 <Text style={[styles.listItemText, { flex: 2 }]}>
-                  {item.studentName}
+                  {item.name}
                 </Text>
-                <Text style={[styles.listItemText, { flex: 3 }]}>
-                  {item.description}
-                </Text>
-                <Text style={[styles.listItemText, { flex: 1 }]}>
-                  {item.studentStartDate}
-                </Text>
-                <Text style={[styles.listItemText, { flex: 1 }]}>
-                  {item.studentEndDate}
-                </Text>
-                <Text style={[styles.listItemText, { flex: 1 }]}>
-                  {item.studentController}
-                </Text>
-                <TouchableOpacity
-                  onPress={() =>
-                    handleStudentStatus(item.PK_StudentId, item?.isActive)
-                  }
-                >
-                  <Text
-                    style={[
-                      styles.listItemText,
-                      { flex: 1 },
-                      item.isActive
-                        ? styles.listItemActiveStatus
-                        : styles.listItemInactiveStatus,
-                    ]}
-                  >
-                    {item.isActive ? "Active" : "Inactive"}
-                  </Text>
-                </TouchableOpacity>
 
                 <View
                   style={{
