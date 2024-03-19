@@ -1,2 +1,0 @@
-# attendee
-Attendee App

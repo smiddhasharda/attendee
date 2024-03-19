@@ -1,7 +1,7 @@
 // store.js
 import { createStore, applyMiddleware } from 'redux';
 import * as thunk from 'redux-thunk'; // Import all exports as 'thunk'
-import { composeWithDevTools } from 'redux-devtools-extension';
+import { composeWithDevTools } from '@redux-devtools/extension';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import rootReducer from './reducer';
 
@@ -31,7 +31,7 @@ const middleware = [thunk.thunk]; // Access 'thunk' property
 const store = createStore(
   rootReducer,
   loadState(),
-  composeWithDevTools(applyMiddleware(...middleware))
+  composeWithDevTools(applyMiddleware(...middleware)),
 );
 
 // Subscribe to store changes and save state to AsyncStorage
