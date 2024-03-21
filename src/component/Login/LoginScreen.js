@@ -10,7 +10,7 @@ import { login,emailVerify  } from '../../AuthService/AuthService';
 import { useToast } from '../../globalComponent/ToastContainer/ToastContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const LoginScreen = ({ style, logoImageStyle, loginTextStyle, loginButtonStyle, logoImageSource = require("../../local-assets/login-logo.png"), emailPlaceholder = "Email", OTPPlaceholder = "OTP", TouchableComponent = TouchableOpacity, navigation, children }) => {
+const LoginScreen = ({ style, logoImageStyle, loginTextStyle, loginButtonStyle, logoImageSource = require("../../local-assets/attendlogin.jpg"), emailPlaceholder = "Email", OTPPlaceholder = "OTP", TouchableComponent = TouchableOpacity, navigation, children }) => {
   const { showToast } = useToast();
 
   const [loginData, setLoginData] = useState({
@@ -190,24 +190,6 @@ const LoginScreen = ({ style, logoImageStyle, loginTextStyle, loginButtonStyle, 
   >
     <Text style={[LoginStyles.loginTextStyle, loginTextStyle]}>{isOTPInputDisabled ? "Send OTP" : "Login"}</Text>
   </TouchableComponent>
-     <TouchableComponent
-     style={[LoginStyles.signupStyle]}
-     onPress={() => {
-       navigation.navigate('Register');
-     }}
-   >
-   <Text style={[LoginStyles.signupTextStyle]}>  "Don't have an account? Signup "</Text>
-   </TouchableComponent>
-   <TouchableComponent
-        style={[LoginStyles.signupStyle]}
-        onPress={() => {
-          navigation.navigate('ForgetPassword');
-        }}
-      >
-        <Text style={[LoginStyles.signupTextStyle]}>
-          Forget Password  
-        </Text>
-      </TouchableComponent>
    </View>
    
   );
@@ -216,8 +198,10 @@ const LoginScreen = ({ style, logoImageStyle, loginTextStyle, loginButtonStyle, 
     <SafeAreaView style={[LoginStyles.container, style]}>
       <StatusBar barStyle="dark-content" />
       {renderLogo()}
-      {renderTextInputContainer()}
+      <SafeAreaView style={[LoginStyles.otpbtn, style]}>
+      {renderTextInputContainer()}np
       {renderButton()}
+      </SafeAreaView>
       {children}
     </SafeAreaView>
   );
