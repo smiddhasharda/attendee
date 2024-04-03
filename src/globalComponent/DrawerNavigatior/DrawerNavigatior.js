@@ -10,11 +10,12 @@ import ExamScreen from "../../component/Exam/ExamScreen";
 import StudentScreen from "../../component/Exam/StudentScreen";
 import { logout } from "../../AuthService/AuthService";
 import DropDownPicker from "react-native-dropdown-picker";
+import CustomeImagePicker from "../CustomeImagePicker/CustomeImagePicker";
 
 const Drawer = createDrawerNavigator();
 
 const CustomDrawerContent = ({ ...props }) => {
-  const [userImage, setUserImage] = useState(null);
+  const [userImage, setUserImage] = useState( props.userData?.profile_image_url || '');
   const [open, setOpen] = useState(false);
   const handleLogout = async () => {
     try {
@@ -24,28 +25,39 @@ const CustomDrawerContent = ({ ...props }) => {
       console.error("Error:", error);
     }
   };
+  const handleImageChange = (imageSource) => {
+    setUserImage(imageSource);
+  };
+  console.log("User Image : ",userImage);
+  // const handleImage = async () => {
+  //   try {
+  //     const response = await update(
+  //       {
+  //         operation: "update",
+  //         tblName: "tbl_user_master",
+  //         data: { isActive: !status },
+  //         conditionString: `user_id = ${userId}`,
+  //         checkAvailability: '',
+  //         customQuery: '',
+  //       }
+  //     );
+
+  //     if (response) {
+  //       showToast(
+  //         `User ${status === 0 ? "Active" : "Inactive"} Successful`,
+  //         "success"
+  //       );
+  //       handleGetUserList();
+  //     }
+  //   } catch (error) {
+  //     handleAuthErrors(error);
+  //   }
+  // };
+
   return (
     <DrawerContentScrollView {...props}>
       <View style={{ alignItems: "center", paddingVertical: 20 }}>
-        {userImage ? (
-          <Image
-            source={{ uri: userImage }}
-            style={{ width: 100, height: 100, borderRadius: 50 }}
-          />
-        ) : (
-          <View
-            style={{
-              width: 100,
-              height: 100,
-              borderRadius: 50,
-              backgroundColor: "lightgray",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Text style={{ color: "gray" }}>Placeholder</Text>
-          </View>
-        )}
+      <CustomeImagePicker imageUri={userImage} onImageChange={handleImageChange} />
         <Text>{props?.userData?.name}</Text>
         <DropDownPicker
           open={open}
@@ -60,7 +72,6 @@ const CustomDrawerContent = ({ ...props }) => {
           dropDownMaxHeight={150}
           dropDownDirection="TOP"
         />
-        
       </View>
       <DrawerItemList {...props} />
       <TouchableOpacity onPress={handleLogout}>
@@ -75,7 +86,6 @@ const DrawerNavigator = () => {
   const [userRoleList, setUserRoleList] = useState([]);
   const [userRoleIndex, setUserRoleIndex] = useState(0);
   const [userData, setUserData] = useState("");
-
   const handleRoleSelect = (value) => {
     setUserRoleIndex(value);
   };
@@ -98,7 +108,7 @@ const DrawerNavigator = () => {
         }));
         setUserRoleList(RoleList);
         setUserRolePermission(parsedUserRoleArray);
-        setUserData(parsedUserDataArray);
+        setUserData(parsedUserDataArray);       
       } catch (error) {
         console.error("Error fetching user role permission:", error);
       }
