@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Image, SafeAreaView, StatusBar, Text, TouchableOpacity, View, LayoutAnimation } from "react-native";
+import { Image, SafeAreaView, StatusBar, Text, TouchableOpacity, View, LayoutAnimation, } from "react-native";
 import CheckBox from 'expo-checkbox';
 import TextInput from "react-native-text-input-interactive";
 import LoginStyles from "./LoginScreen.style";
@@ -199,7 +199,7 @@ const LoginScreen = ({ style, logoImageStyle, loginTextStyle, loginButtonStyle, 
       <StatusBar barStyle="dark-content" />
       {renderLogo()}
       <SafeAreaView style={[LoginStyles.otpbtn, style]}>
-      {renderTextInputContainer()}np
+      {renderTextInputContainer()}
       {renderButton()}
       </SafeAreaView>
       {children}

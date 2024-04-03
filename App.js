@@ -11,6 +11,9 @@ import RegisterScreen from './src/component/Register/RegisterScreen';
 import ForgetPasswordScreen from './src/component/ForgetPassword/ForgetPasswordScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DrawerNavigator from './src/globalComponent/DrawerNavigatior/DrawerNavigatior';
+import LoginNew from './src/component/Login/LoginNew';
+import Learn from './src/component/Dashboard/Learn';
+import  Task from './src/component/Dashboard/Task';
 
 const Stack = createNativeStackNavigator();
 
@@ -44,7 +47,7 @@ const App = () => {
         <RoleProvider>
           <NavigationContainer>
             <Stack.Navigator initialRouteName={initialRoute}>
-              <Stack.Screen name="Login" component={LoginScreen} />
+              <Stack.Screen name="Login" component={LoginNew} />
               <Stack.Screen name="Register" component={RegisterScreen} />
               <Stack.Screen
                 name="ForgetPassword"
@@ -55,6 +58,9 @@ const App = () => {
                 component={DrawerNavigator}
                 options={{ headerShown: false }}
               />
+               <Stack.Screen name="Learn" component={Learn} />
+               <Stack.Screen name="Task" component={Task} />
+               
             </Stack.Navigator>
           </NavigationContainer>
         </RoleProvider>

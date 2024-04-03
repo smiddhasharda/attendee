@@ -6,7 +6,7 @@ import {
   TextStyle,
 } from "react-native";
 
-const { width: ScreenWidth } = Dimensions.get("screen");
+const { width: ScreenWidth, height:ScreenHeight } = Dimensions.get("screen");
 
 const LoginStyles = StyleSheet.create({
   container: {
@@ -16,19 +16,19 @@ const LoginStyles = StyleSheet.create({
     // margin: `auto`,
     height: `${100}%`,
     flexDirection:"row",
-  
   },
 
   otpbtn:{
    alignSelf:"center",
-   justifyContent:"center",
+   justifyContent:"center", 
   },
+  
 
   logoImageStyle: {
-    width: 620,
-    height: 620,   
-    // alignSelf: "center",  
-    // margin: 20
+    width: ScreenWidth * 0.5, 
+    height: ScreenWidth * 0.5,
+    alignSelf: "center",
+    // marginTop: ScreenHeight * 0.1, 
   },
 
   textInputContainer: {
@@ -36,12 +36,13 @@ const LoginStyles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    width: `${70}%` ,
+    // width: `${70}%` ,
+    width: ScreenWidth * 0.5,
     alignSelf:"center",
     // marginRight:80,
-    width:900,
-
-
+    // width:900, 
+    
+   
   },
 
   checkboxContainer: {
@@ -67,7 +68,8 @@ const LoginStyles = StyleSheet.create({
 
   loginButtonStyle: {
     height: 45,
-    width:   `${20.5}%`,
+    // width:   `${20.5}%`,
+    width: ScreenWidth * 0.3,
     maxwidth:`auto`,
     //width: ScreenWidth * 0.9,
     backgroundColor: "#fea500",
@@ -202,6 +204,29 @@ const LoginStyles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+
+  // --------------------------------------------------------Media Querry----------------------------------------------------------//
+  
+  '@media (max-width: 768px)': {
+    logoImageStyle: {
+      width: '${100}%', 
+      height: ScreenWidth * 0.3, 
+    },
+
+    otpbtn:{
+      with:ScreenWidth * 0.5,
+ 
+    },
+
+    textInputContainer:{
+
+    }
+  },
+
+  '@media (min-width: 1024px)': {
+    
+  },
+ 
 });
 
 export default LoginStyles;
