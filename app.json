@@ -38,6 +38,14 @@
         {
           "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow attendee to access your camera",
+          "microphonePermission": "Allow attendee to access your microphone",
+          "recordAudioAndroid": true
+        }
       ]
     ]
   }
