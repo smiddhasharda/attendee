@@ -15,7 +15,7 @@ const DashboardScreen = ({ navigation }) => {
           />
   
             <View style={styles.subtext}>
-              <Text  style={styles.taskheading}>Learn</Text>
+              <Text  style={styles.taskheading}>On Running Exam</Text>
               <Text  onPress={() => navigate('Learn')} style={styles.viewAll}>View All</Text>
             </View>
          
@@ -44,7 +44,7 @@ const DashboardScreen = ({ navigation }) => {
               
             </View>
             <View style={styles.subtext}>
-              <Text style={styles.taskheading}>Task</Text>
+              <Text style={styles.taskheading}>Up Coming Exam</Text>
               <Text onPress={() => navigate('Task')} style={styles.viewAll}>View All</Text>
             </View>
           
@@ -52,22 +52,20 @@ const DashboardScreen = ({ navigation }) => {
                 <View style={styles.taskbox}>
                 <Ionicons name="book" size={24} color="rgb(8 96 88)"  />
                 <View  style={styles.boxtext}>
-                  <Text>Hindi Lectures</Text>
-                  <Text>2 tasks</Text>
+                  <Text>19 Jan 2024</Text>
                 </View>
               </View>
           
               <View style={styles.taskbox}>
               <Ionicons name="book" size={24} color="rgb(8 96 88)" />
               <View  style={styles.boxtext}>
-                  <Text>English Lectures</Text>
-                  <Text>2 tasks</Text>
+              <Text>20 Jan 2024</Text>
                   </View>
               </View>
             
             </View>
             <View style={styles.subtext}>
-              <Text style={styles.taskheading}>Up Coming Classes</Text>
+              <Text style={styles.taskheading}>Past Exam</Text>
               <Text style={styles.viewAll}>View All</Text>
             </View>
          
