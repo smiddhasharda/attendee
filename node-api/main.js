@@ -4,6 +4,7 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const mysql = require("mysql2/promise");
 const nodemailer = require("nodemailer");
+const upload = require('./middlewares/multer.js');
 
 const dotenv = require("dotenv");
 dotenv.config(); // Load variables from .env file
