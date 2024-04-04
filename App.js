@@ -48,7 +48,7 @@ const App = () => {
         <RoleProvider>
           <NavigationContainer>
             <Stack.Navigator initialRouteName={initialRoute}>
-              <Stack.Screen name="Login" component={LoginNew} />
+              <Stack.Screen name="Login" component={LoginScreen} />
               <Stack.Screen name="Register" component={RegisterScreen} />
               <Stack.Screen
                 name="ForgetPassword"

@@ -29,30 +29,7 @@ const CustomDrawerContent = ({ ...props }) => {
     setUserImage(imageSource);
   };
   console.log("User Image : ",userImage);
-  // const handleImage = async () => {
-  //   try {
-  //     const response = await update(
-  //       {
-  //         operation: "update",
-  //         tblName: "tbl_user_master",
-  //         data: { isActive: !status },
-  //         conditionString: `user_id = ${userId}`,
-  //         checkAvailability: '',
-  //         customQuery: '',
-  //       }
-  //     );
 
-  //     if (response) {
-  //       showToast(
-  //         `User ${status === 0 ? "Active" : "Inactive"} Successful`,
-  //         "success"
-  //       );
-  //       handleGetUserList();
-  //     }
-  //   } catch (error) {
-  //     handleAuthErrors(error);
-  //   }
-  // };
 
   return (
     <DrawerContentScrollView {...props}>
