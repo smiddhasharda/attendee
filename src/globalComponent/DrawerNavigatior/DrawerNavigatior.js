@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import React, { useEffect, useState,useCallback } from "react";
+import { View, Text, TouchableOpacity, Image,Button } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem, } from "@react-navigation/drawer";
 import RoleScreen from "../../component/Roles/RoleScreen";
@@ -12,12 +12,26 @@ import { logout } from "../../AuthService/AuthService";
 import DropDownPicker from "react-native-dropdown-picker";
 import CustomeImagePicker from "../CustomeImagePicker/CustomeImagePicker";
 import Exam from '../../component/Dashboard/Exam';
-
+import { multer } from "../../AuthService/AuthService";
+import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 const Drawer = createDrawerNavigator();
 
 const CustomDrawerContent = ({ ...props }) => {
+  const { showToast } = useToast();
   const [userImage, setUserImage] = useState( props.userData?.profile_image_url || '');
   const [open, setOpen] = useState(false);
+
+  const checkAuthToken = useCallback(async () => {
+    const authToken = await AsyncStorage.getItem("authToken");
+
+    if (!authToken) {
+      showToast("Authentication token not available", "error");
+      throw new Error("Authentication token not available");
+    }
+
+    return authToken;
+  }, [showToast]);
+
   const handleLogout = async () => {
     try {
       await logout();
@@ -26,16 +40,59 @@ const CustomDrawerContent = ({ ...props }) => {
       console.error("Error:", error);
     }
   };
+
   const handleImageChange = (imageSource) => {
     setUserImage(imageSource);
   };
-  console.log("User Image : ",userImage);
+  const handleProfilePic = async () => {
+    try {
+      const authToken = await checkAuthToken();
+      const formData = new FormData();
+      formData.append('profile_pics', fileInputRef.current.files[0]); // Assuming you have a file input reference
+      formData.append('tblName', 'tbl_user_master');
+      formData.append('data', '');
+      formData.append('fileParam', 'profile_image_url');
+      formData.append('conditionString', `user_id = ${props.userData?.userId}`);
+      console.log(formData)
+      const response = await fetch('/api/multer', {
+        data: formData,
+        authToken
+    });
+      if (response) {
+        showToast(
+          `User File Update Successful`,
+          "success"
+        );
+      }
+    } catch (error) {
+      handleAuthErrors(error);
+    }
+  };
 
+  const handleAuthErrors = (error) => {
+    switch (error.message) {
+      case "Invalid credentials":
+        showToast("Invalid authentication credentials", "error");
+        break;
+      case "Data already exists":
+        showToast("Module with the same name already exists", "error");
+        break;
+      case "No response received from the server":
+        showToast("No response received from the server", "error");
+        break;
+      default:
+        showToast("Module Operation Failed", "error");
+    }
+  };
 
   return (
     <DrawerContentScrollView {...props}>
       <View style={{ alignItems: "center", paddingVertical: 20 }}>
       <CustomeImagePicker imageUri={userImage} onImageChange={handleImageChange} />
+     {props.userData?.profile_image_url != userImage && (<View style={{  flexDirection: 'row', justifyContent: 'space-between'}}>             
+              <Button title="Cancel" onPress={()=>setUserImage(props.userData?.profile_image_url || '')} />
+              <Button title="Save" onPress={handleProfilePic} />
+            </View>)}
         <Text>{props?.userData?.name}</Text>
         <DropDownPicker
           open={open}

@@ -94,5 +94,8 @@ const remove = async (data, authToken) => {
 const common = async (data, authToken) => {
   return request('post', 'common', data, authToken);
 };
+const multer = async (data, authToken) => {
+  return request('post', 'multer', data, authToken);
+};
 
-export { login, register,emailVerify, logout, insert, update, fetch, remove, common };
+export { login, register,emailVerify, logout, insert, update, fetch, remove, common,multer };
