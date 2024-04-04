@@ -11,6 +11,7 @@ import StudentScreen from "../../component/Exam/StudentScreen";
 import { logout } from "../../AuthService/AuthService";
 import DropDownPicker from "react-native-dropdown-picker";
 import CustomeImagePicker from "../CustomeImagePicker/CustomeImagePicker";
+import Exam from '../../component/Dashboard/Exam';
 
 const Drawer = createDrawerNavigator();
 
@@ -133,7 +134,7 @@ const DrawerNavigator = () => {
                 case "UserScreen":
                   return <UserScreen />;
                 case "ExamScreen":
-                  return <ExamScreen />;
+                  return <Exam />;
                   case "StudentScreen":
                   return <StudentScreen />;
                 default:
