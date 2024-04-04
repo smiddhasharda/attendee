@@ -1,4 +1,4 @@
- import React from 'react';
+import React from 'react';
 import { View, Text, FlatList, StyleSheet, Dimensions ,ScrollView} from 'react-native';
 import { Ionicons } from '@expo/vector-icons'
 
@@ -33,79 +33,88 @@ const Exam = () => {
       
           )}
           horizontal={true}
+          // showsHorizontalScrollIndicator={false}
+          // scrollEnabled={false} 
         />
       </View>
       <View style={styles.examstatus}>
           <Text style={styles.ongoing}>Ongoing</Text>
           <Text style={styles.upcoming}>Upcoming</Text>
       </View>
-      <ScrollView style={styles.roomNumber}>
-     
-    <View style={styles.box}>
-      <Ionicons style={styles.icons} name="book" size={24} color="rgb(8 96 88)" />
-      <View style={styles.boxtext}>
-        <Text>Room No.1</Text>
-        <Text>17/2/24</Text>
-        <Text>10:30 am</Text>
-      </View>
-    </View>
-    <View style={styles.box}>
-      <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-      <View style={styles.boxtext}>
-      <Text>Room No.1</Text>
-        <Text>17/2/24</Text>
-        <Text>10:30 am</Text>
-      </View>
-    </View>
-    <View style={styles.box}>
-      <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-      <View style={styles.boxtext}>
-      <Text>Room No.1</Text>
-        <Text>17/2/24</Text>
-        <Text>10:30 am</Text>
-      </View>
-    </View>
-    <View style={styles.box}>
-      <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-      <View style={styles.boxtext}>
-      <Text>Room No.1</Text>
-        <Text>17/2/24</Text>
-        <Text>10:30 am</Text>
-      </View>
-    </View>
-    <View style={styles.box}>
-      <Ionicons style={styles.icons} name="book" size={24} color="rgb(8 96 88)" />
-      <View style={styles.boxtext}>
-        <Text>Room No.1</Text>
-        <Text>17/2/24</Text>
-        <Text>10:30 am</Text>
-      </View>
-    </View>
-    <View style={styles.box}>
-      <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-      <View style={styles.boxtext}>
-      <Text>Room No.1</Text>
-        <Text>17/2/24</Text>
-        <Text>10:30 am</Text>
-      </View>
-    </View>
-    <View style={styles.box}>
-      <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-      <View style={styles.boxtext}>
-      <Text>Room No.1</Text>
-        <Text>17/2/24</Text>
-        <Text>10:30 am</Text>
-      </View>
-    </View>
-    <View style={styles.box}>
-      <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-      <View style={styles.boxtext}>
-      <Text>Room No.1</Text>
-        <Text>17/2/24</Text>
-        <Text>10:30 am</Text>
-      </View>
-    </View>
-  </ScrollView>
+      <ScrollView style={styles.roomNumber}>   
+        <View style={styles.box}>
+          <Ionicons style={styles.icons} name="book" size={24} color="rgb(8 96 88)" />
+          <View style={styles.boxtext}>
+          <Text style={styles.examname}>Exam Name</Text>     
+          <Text>Room No.1</Text>
+          <Text style={styles.examtime}>10:30 am</Text>
+          </View>
+        </View>
+        <View style={styles.box}>
+          <Ionicons name="book" size={24} color="rgb(8 96 88)" />
+          <View style={styles.boxtext}>
+          <Text style={styles.examname}>Exam Name</Text>       
+          <Text>Room No.1</Text>
+          <Text style={styles.examtime}>10:30 am</Text>
+          </View>
+        </View>
+        <View style={styles.box}>
+          <Ionicons name="book" size={24} color="rgb(8 96 88)" />
+          <View style={styles.boxtext}>
+          <Text style={styles.examname}>Exam Name</Text>       
+          <Text>Room No.1</Text>
+          <Text style={styles.examtime}>10:30 am</Text>
+          </View>
+        </View>
+        <View style={styles.box}>
+          <Ionicons name="book" size={24} color="rgb(8 96 88)" />
+          <View style={styles.boxtext}>
+          <Text style={styles.examname}>Exam Name</Text>      
+          <Text>Room No.1</Text>
+          <Text style={styles.examtime}>10:30 am</Text>
+          </View>
+        </View>
+        <View style={styles.box}>
+          <Ionicons name="book" size={24} color="rgb(8 96 88)" />
+          <View style={styles.boxtext}>
+          <Text style={styles.examname}>Exam Name</Text>      
+          <Text>Room No.1</Text>
+          <Text style={styles.examtime}>10:30 am</Text>
+          </View>
+        </View>
+        <View style={styles.box}>
+          <Ionicons name="book" size={24} color="rgb(8 96 88)" />
+          <View style={styles.boxtext}>
+          <Text style={styles.examname}>Exam Name</Text>      
+          <Text>Room No.1</Text>
+          <Text style={styles.examtime}>10:30 am</Text>
+          </View>
+        </View>
+        <View style={styles.box}>
+          <Ionicons name="book" size={24} color="rgb(8 96 88)" />
+          <View style={styles.boxtext}>
+          <Text style={styles.examname}>Exam Name</Text>      
+          <Text>Room No.1</Text>
+          <Text style={styles.examtime}>10:30 am</Text>
+          </View>
+        </View>
+        <View style={styles.box}>
+          <Ionicons name="book" size={24} color="rgb(8 96 88)" />
+          <View style={styles.boxtext}>
+          <Text style={styles.examname}>Exam Name</Text>      
+          <Text>Room No.1</Text>
+          <Text style={styles.examtime}>10:30 am</Text>
+          </View>
+        </View>
+        <View style={styles.box}>
+          <Ionicons name="book" size={24} color="rgb(8 96 88)" />
+          <View style={styles.boxtext}>
+          <Text style={styles.examname}>Exam Name</Text>      
+          <Text>Room No.1</Text>
+          <Text style={styles.examtime}>10:30 am</Text>
+          </View>
+        </View>
+      </ScrollView>
     </View>
   );
 };
@@ -113,6 +122,7 @@ const Exam = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    
   },
   heading: {
     fontSize: 20,
@@ -130,8 +140,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ddd',
     borderRadius: 5,
-    marginRight: 10,
-    alignItems:"center"
+    marginRight: 6,
+    alignItems:"center",
+    width: 45,
+
   },
  
   dateNumber: {
@@ -186,17 +198,35 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     width: Dimensions.get("window").width / 1 - 10, 
     backgroundColor: "#eaeaea",
-    height: 100,
-    textAlign: "center",
-    alignItems: "center",
+    // height: 55,
+    // textAlign: "center",
+    // alignItems: "center",
     borderRadius: 10,
     marginBottom: 10,
     padding:10,
-    
+    flexDirection:"row",
+
   },
   boxtext:{
-    alignItems:"center",  
+    // alignItems:"center",  
+    flexDirection:"row",
+    marginLeft:10,
+  
+  
   },
+  examtime:{
+    alignItems:"flex-start",
+    color:"#a79f9f",
+    marginRight:10,
+    marginLeft:40,
+ 
+  },
+  examname:{
+    fontWeight:"bold",
+    marginRight:30,
+    maxWidth:80,
+
+  }
 });
 
 export default Exam;
