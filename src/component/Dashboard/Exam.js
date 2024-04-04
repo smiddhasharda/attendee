@@ -24,8 +24,8 @@ const Exam = () => {
             { date: '13', weekday: 'Sat', month: 'Apr' },
             { date: '14', weekday: 'Sun', month: 'Apr' },       
           ]}
-          renderItem={({ item }) => (
-            <View style={styles.dateItem}>
+          renderItem={({ item }) => (           
+            <View style={[styles.dateItem] }>
                  <Text style={styles.dateDay}>{item.weekday}</Text>
                 <Text style={styles.dateNumber}>{item.date}</Text>
                 <Text style={styles.dateMonth}>{item.month}</Text>
@@ -42,12 +42,12 @@ const Exam = () => {
           <Text style={styles.upcoming}>Upcoming</Text>
       </View>
       <ScrollView style={styles.roomNumber}>   
-        <View style={styles.box}>
+        <View style={[styles.box, styles.activebox]}>
           <Ionicons style={styles.icons} name="book" size={24} color="rgb(8 96 88)" />
-          <View style={styles.boxtext}>
-          <Text style={styles.examname}>Exam Name</Text>     
-          <Text>Room No.1</Text>
-          <Text style={styles.examtime}>10:30 am</Text>
+          <View style={[styles.boxtext]}>
+          <Text style={[styles.examname,styles. activetext]}>Exam Name</Text>     
+          <Text style={[styles.examname,styles. activetext]}>Room No.1</Text>
+          <Text style={[styles.examtime,styles. activetext]}>10:30 am</Text>
           </View>
         </View>
         <View style={styles.box}>
@@ -106,12 +106,12 @@ const Exam = () => {
           <Text style={styles.examtime}>10:30 am</Text>
           </View>
         </View>
-        <View style={styles.box}>
-          <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-          <View style={styles.boxtext}>
-          <Text style={styles.examname}>Exam Name</Text>      
-          <Text>Room No.1</Text>
-          <Text style={styles.examtime}>10:30 am</Text>
+        <View style={[styles.box, styles.inactivebox]}>
+          <Ionicons style={styles.icons} name="book" size={24} color="rgb(8 96 88)" />
+          <View style={[styles.boxtext]}>
+          <Text style={[styles.examname,styles. inactivetext]}>Exam Name</Text>     
+          <Text style={[styles.examname,styles. inactivetext]}>Room No.1</Text>
+          <Text style={[styles.examtime,styles. inactivetext]}>10:30 am</Text>
           </View>
         </View>
       </ScrollView>
@@ -122,6 +122,7 @@ const Exam = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor:"#fff" 
     
   },
   heading: {
@@ -226,6 +227,19 @@ const styles = StyleSheet.create({
     marginRight:30,
     maxWidth:80,
 
+  },
+  activebox:{
+    backgroundColor:"#0cb551",
+    color:"#fff"
+  },
+  activetext:{
+    color:"#fff",
+  },
+  inactivetext:{
+    color:"#fff",
+  },
+  inactivebox:{
+    backgroundColor:"#e50d0d"
   }
 });
 
