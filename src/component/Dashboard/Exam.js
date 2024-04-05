@@ -40,29 +40,30 @@ const Exam = () => {
     fetchRoomDetails(examSelectedDate)
   }, []);
 
-  const [currentTime, setCurrentTime] = useState(new Date());
-  useEffect(() => {
-    // Update current time every second
-    const interval = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
+  // const [currentTime, setCurrentTime] = useState(new Date());
+  // useEffect(() => {
+  //   // Update current time every second
+  //   const interval = setInterval(() => {
+  //     setCurrentTime(new Date());
+  //   }, 1000);
 
-    // Clear interval on component unmount
-    return () => clearInterval(interval);
-  }, []);
-   // Format time to HH:MM:SS format
-   const formatTime = (time) => {
-    const hours = time.getHours().toString().padStart(2, '0');
-    const minutes = time.getMinutes().toString().padStart(2, '0');
-    const seconds = time.getSeconds().toString().padStart(2, '0');
-    return `${hours}:${minutes}:${seconds}`;
-  };
-
+  //   // Clear interval on component unmount
+  //   return () => clearInterval(interval);
+  // }, []);
+  //  // Format time to HH:MM:SS format
+  //  const formatTime = (time) => {
+  //   const hours = time.getHours().toString().padStart(2, '0');
+  //   const minutes = time.getMinutes().toString().padStart(2, '0');
+  //   const seconds = time.getSeconds().toString().padStart(2, '0');
+  //   return `${hours}:${minutes}:${seconds}`;
+  // };
+  // console.log(new Date()?.toLocaleDateString("en-GB", { day: "numeric", month: "numeric", year: "numeric", }) === new Date('05-APR-24')?.toLocaleDateString("en-GB", { day: "numeric", month: "numeric", year: "numeric", }))
+  
   return (
     <View style={styles.container}>
-       <View >
+       {/* <View >
       <Text style={styles.timeText}>{formatTime(currentTime)}</Text>
-    </View>
+    </View> */}
       <View style={styles.dates}>
         <FlatList
           data={examDates}
@@ -85,13 +86,22 @@ const Exam = () => {
           roomDetails.length > 0 ? (
             <ScrollView>
               {roomDetails.map((roomData, index) => (
-                <View key={index} style={[styles.box, styles.activebox]}>
-                  <Ionicons style={styles.icons} name="book" size={24} color="rgb(8 96 88)" />
-                  <View style={styles.boxtext}>
-                    <Text style={[styles.examname, styles.activetext]}>{roomData.ROOM_NBR}</Text>
-                    <Text style={[styles.examtime, styles.activetext]}>{roomData.EXAM_START_TIME}</Text>
-                  </View>
+                // <View key={index} style={[styles.box, styles.activebox]}>
+                //   <Ionicons style={styles.icons} name="book" size={24} color="rgb(8 96 88)" />
+                //   <View style={styles.boxtext}>
+                //     <Text style={[styles.examname, styles.activetext]}>{roomData.ROOM_NBR}</Text>
+                //     <Text style={[styles.examtime, styles.activetext]}>{roomData.EXAM_START_TIME}</Text>
+                //   </View>
+                // </View>
+                <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+                <View key={index} style={[styles.box]}>
+                <Ionicons style={styles.icons} name="book" size={24} color="rgb(8 96 88)" />
+                <View style={styles.boxtext}>
+                  <Text style={[styles.examname]}>{roomData.ROOM_NBR}</Text>
+                  <Text style={[styles.examtime]}>{roomData.EXAM_START_TIME}</Text>
                 </View>
+              </View>
+              </TouchableOpacity>
                  
         /* <View style={styles.box}>
           <Ionicons name="book" size={24} color="rgb(8 96 88)" />
