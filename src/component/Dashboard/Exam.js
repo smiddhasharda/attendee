@@ -149,11 +149,11 @@ const Exam = () => {
           <Text style={styles.examtime}>10:30 am</Text>
           </View>
         </View>
-        <View style={[styles.box, styles.inactivebox]}>
+        <View style={[styles.box, styles.inactiveboxx]}>
           <Ionicons style={styles.icons} name="book" size={24} color="rgb(8 96 88)" />
           <View style={[styles.boxtext]}>
-          <Text style={[styles.examname,styles. inactivetext]}>Exam Name</Text>     
-          <Text style={[styles.examname,styles. inactivetext]}>Room No.1</Text>
+          <Text style={[styles.examname,styles. inactivetexts]}>Exam Name</Text>     
+          <Text style={[styles.examname,styles. inactivetexts]}>Room No.1</Text>
           <Text style={[styles.examtime,styles. inactivetext]}>10:30 am</Text>
           </View>
         </View> */
@@ -210,12 +210,30 @@ const styles = StyleSheet.create({
     backgroundColor: "#eaeaea",
     borderRadius: 10,
     marginBottom: 10,
-    padding: 10,
-    flexDirection: "row",
+    padding:10,
+    flexDirection:"row",
   },
-  boxtext: {
-    flexDirection: "row",
-    marginLeft: 10,
+  boxtext:{
+    // alignItems:"center",  
+    flexDirection:"row",
+    marginLeft:10,
+    color:"#000",
+  
+  
+  },
+  examtime:{
+    alignItems:"flex-start",
+    color:"#a79f9f",
+    marginRight:10,
+    marginLeft:40,
+ 
+  },
+  examname:{
+    fontWeight:"bold",
+    marginRight:30,
+    maxWidth:80,
+    color:"#000"
+
   },
   examtime: {
     alignItems: "flex-start",
