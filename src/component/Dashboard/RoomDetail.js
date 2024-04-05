@@ -12,12 +12,15 @@ function RoomDetail() {
             placeholder="Search..."          
           />
   </View>
+  <View style={[styles.magnifying]}>
+    <Ionicons name="search-outline" size={27} color="#fff"  style={styles.searchIcon} />
+    </View>
     <ScrollView style={styles.roomNumber}>   
           <View style={[styles.box,]}>   
           <View style={[styles.boxtext]}>
           <Image source={user} style={styles.userimage}   />
-          <Text style={[styles.examname,styles. activetext]}>Shubham</Text>     
-          <Text style={[styles.examname,styles. activetext]}>Seat No</Text>
+          <Text style={[styles.examname,]}>Shubham</Text>     
+          <Text style={[styles.examname,]}>Seat No</Text>
           </View>  
           </View>
           <View style={[styles.box, styles.activebox]}>   
@@ -30,46 +33,48 @@ function RoomDetail() {
           <View style={[styles.box, ]}>   
           <View style={[styles.boxtext]}>
           <Image source={user} style={styles.userimage}   />
-          <Text style={[styles.examname,styles. activetext]}>Shubham</Text>     
-          <Text style={[styles.examname,styles. activetext]}>Seat No</Text>
+          <Text style={[styles.examname,]}>Shubham</Text>     
+          <Text style={[styles.examname,]}>Seat No</Text>
           </View>  
           </View>
           <View style={[styles.box, ]}>   
           <View style={[styles.boxtext]}>
           <Image source={user} style={styles.userimage}   />
-          <Text style={[styles.examname,styles. activetext]}>Shubham</Text>     
-          <Text style={[styles.examname,styles. activetext]}>Seat No</Text>
+          <Text style={[styles.examname,]}>Shubham</Text>     
+          <Text style={[styles.examname,]}>Seat No</Text>
           </View>  
           </View>
           <View style={[styles.box,]}>   
           <View style={[styles.boxtext]}>
           <Image source={user} style={styles.userimage}   />
-          <Text style={[styles.examname,styles. activetext]}>Shubham</Text>     
-          <Text style={[styles.examname,styles. activetext]}>Seat No</Text>
+          <Text style={[styles.examname,]}>Shubham</Text>     
+          <Text style={[styles.examname,]}>Seat No</Text>
           </View>  
           </View>
           <View style={[styles.box, ]}>   
           <View style={[styles.boxtext]}>
           <Image source={user} style={styles.userimage}   />
-          <Text style={[styles.examname,styles. activetext]}>Shubham</Text>     
-          <Text style={[styles.examname,styles. activetext]}>Seat No</Text>
+          <Text style={[styles.examname,]}>Shubham</Text>     
+          <Text style={[styles.examname,]}>Seat No</Text>
           </View>  
           </View>
           <View style={[styles.box, ]}>   
           <View style={[styles.boxtext]}>
           <Image source={user} style={styles.userimage}   />
-          <Text style={[styles.examname,styles. activetext]}>Shubham</Text>     
-          <Text style={[styles.examname,styles. activetext]}>Seat No</Text>
+          <Text style={[styles.examname,]}>Shubham</Text>     
+          <Text style={[styles.examname,]}>Seat No</Text>
           </View>  
           </View>
           <View style={[styles.box, ]}>   
           <View style={[styles.boxtext]}>
           <Image source={user} style={styles.userimage}   />
-          <Text style={[styles.examname,styles. activetext]}>Shubham</Text>     
-          <Text style={[styles.examname,styles. activetext]}>Seat No</Text>
+          <Text style={[styles.examname,]}>Shubham</Text>     
+          <Text style={[styles.examname,]}>Seat No</Text>
           </View>  
           </View>
+   
     </ScrollView>
+
   </View>
   );
 }
@@ -155,7 +160,7 @@ const styles = StyleSheet.create({
     box: {
       borderWidth: 1,
       borderColor: "#ccc",
-      width: Dimensions.get("window").width / 1 - 10, 
+      width: Dimensions.get("window").width / 1 - 20, 
       backgroundColor: "#eaeaea",
       // height: 55,
       // textAlign: "center",
@@ -182,13 +187,7 @@ const styles = StyleSheet.create({
         resizeMode:"cover",
         marginRight:10
     },
-    examtime:{
-      alignItems:"flex-start",
-      color:"#a79f9f",
-      marginRight:10,
-      marginLeft:40,
-   
-    },
+ 
     examname:{
       fontWeight:"bold",
       marginRight:30,
@@ -219,5 +218,22 @@ const styles = StyleSheet.create({
     },
     searchWrap:{
       padding:10,
-    }
+    },
+    searchIcon:{
+      position:"absolute",
+      // bottom:0,
+      left:4,
+      borderRadius:5,
+      backgroundColor:"#1b6913",
+      padding:10,
+      top:50,
+      
+    },
+    magnifying:{
+      padding:10,
+      width:40,
+      left:"85%",
+      position:"absolute",
+      zIndex:1,
+    },
   });
