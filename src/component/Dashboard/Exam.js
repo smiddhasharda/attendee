@@ -1,56 +1,99 @@
-import React from 'react';
-import { View, Text, FlatList, StyleSheet, Dimensions ,ScrollView} from 'react-native';
+import React, { useState,useEffect } from 'react';
+import { View, Text, FlatList, StyleSheet, Dimensions, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'
 
 const Exam = () => {
+  const [examDates, setExamDates] = useState([{ EXAM_DT: '06-FEB-24' }, { EXAM_DT: '07-FEB-24' }, { EXAM_DT: '10-FEB-24' }])
+  const [roomDetails, setRoomDetails] = useState([]);
+  const [examSelectedDate, setExamSelectedDate] = useState(examDates[0].EXAM_DT);
+  const [loading, setLoading] = useState(false);
+
+  // Sample data for room details
+  const sampleRoomData = [
+    { EXAM_DT: '06-FEB-24', ROOM_NBR: 'RM-202 (BLOCK 4)',EXAM_START_TIME:'09:30:00.000000000 AM' },
+    { EXAM_DT: '06-FEB-24', ROOM_NBR: 'RM-203 (BLOCK 4)',EXAM_START_TIME:'09:30:00.000000000 AM' },
+    { EXAM_DT: '06-FEB-24', ROOM_NBR: 'RM-204 (BLOCK 4)',EXAM_START_TIME:'09:30:00.000000000 AM' },
+    { EXAM_DT: '06-FEB-24', ROOM_NBR: 'RM-205 (BLOCK 4)',EXAM_START_TIME:'09:30:00.000000000 AM' },
+    { EXAM_DT: '07-FEB-24', ROOM_NBR: 'RM-202 (BLOCK 4)',EXAM_START_TIME:'09:30:00.000000000 AM' },
+    { EXAM_DT: '07-FEB-24', ROOM_NBR: 'RM-203 (BLOCK 4)',EXAM_START_TIME:'09:30:00.000000000 AM' },
+    { EXAM_DT: '07-FEB-24', ROOM_NBR: 'RM-204 (BLOCK 4)',EXAM_START_TIME:'09:30:00.000000000 AM' },
+    { EXAM_DT: '10-FEB-24', ROOM_NBR: 'RM-205 (BLOCK 4)',EXAM_START_TIME:'09:30:00.000000000 AM' }
+  ];
+
+  const fetchRoomDetails = (date) => {
+    setLoading(true);
+    // Simulate fetching data from API
+    setTimeout(() => {
+      const filteredRooms = sampleRoomData.filter(room => room.EXAM_DT === date);
+      setRoomDetails(filteredRooms);
+      setLoading(false);
+    }, 1000); // Simulate 1 second delay
+  };
+
+  const handleDateClick = (date) => {
+    setExamSelectedDate(date);
+    fetchRoomDetails(date);
+  };
+
+  
+  useEffect(() => {
+    fetchRoomDetails(examSelectedDate)
+  }, []);
+
+  const [currentTime, setCurrentTime] = useState(new Date());
+  useEffect(() => {
+    // Update current time every second
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    // Clear interval on component unmount
+    return () => clearInterval(interval);
+  }, []);
+   // Format time to HH:MM:SS format
+   const formatTime = (time) => {
+    const hours = time.getHours().toString().padStart(2, '0');
+    const minutes = time.getMinutes().toString().padStart(2, '0');
+    const seconds = time.getSeconds().toString().padStart(2, '0');
+    return `${hours}:${minutes}:${seconds}`;
+  };
+
   return (
     <View style={styles.container}>
-     
+       <View >
+      <Text style={styles.timeText}>{formatTime(currentTime)}</Text>
+    </View>
       <View style={styles.dates}>
         <FlatList
-          data={[
-            { date: '1', weekday: 'Mon', month: 'Apr' },
-            { date: '2',weekday: 'Tue', month: 'Apr' },
-            { date: '3', weekday: 'Wed', month: 'Apr' },
-            { date: '4',weekday: 'Thu', month: 'Apr' },
-            { date: '5', weekday: 'Fri', month: 'Apr' },
-            { date: '6', weekday: 'Sat', month: 'Apr' },
-            {date: '7', weekday: 'Sun', month: 'Apr' },
-            {date: '8', weekday: 'Mon', month: 'Apr' },
-            { date: '9', weekday: 'Tue', month: 'Apr' },
-            { date: '10', weekday: 'Wed', month: 'Apr' },
-            { date: '11', weekday: 'Thu', month: 'Apr' },
-            {date: '12', weekday: 'Fri', month: 'Apr' },
-            { date: '13', weekday: 'Sat', month: 'Apr' },
-            { date: '14', weekday: 'Sun', month: 'Apr' },       
-          ]}
-          renderItem={({ item }) => (           
-            <View style={[styles.dateItem] }>
-                 <Text style={styles.dateDay}>{item.weekday}</Text>
-                <Text style={styles.dateNumber}>{item.date}</Text>
-                <Text style={styles.dateMonth}>{item.month}</Text>
-            </View>
-      
+          data={examDates}
+          renderItem={({ item }) => (
+            <TouchableOpacity onPress={() => handleDateClick(item.EXAM_DT)}>
+              <View style={[styles.dateItem, (item.EXAM_DT === examSelectedDate) && styles.activebox]}>
+                <Text style={styles.dateDay}>{item.EXAM_DT.split('-')[1]}</Text>
+                <Text style={styles.dateNumber}>{item.EXAM_DT.split('-')[0]}</Text>
+                <Text style={styles.dateMonth}>{item.EXAM_DT.split('-')[2]}</Text>
+              </View>
+            </TouchableOpacity>
           )}
           horizontal={true}
-          // showsHorizontalScrollIndicator={false}
-          // scrollEnabled={false} 
         />
       </View>
-      <View style={styles.examstatus}>
-          <Text style={styles.ongoing}>Ongoing</Text>
-          <Text style={styles.upcoming}>Upcoming</Text>
-      </View>
-      <ScrollView style={styles.roomNumber}>   
-        <View style={[styles.box, styles.activebox]}>
-          <Ionicons style={styles.icons} name="book" size={24} color="rgb(8 96 88)" />
-          <View style={[styles.boxtext]}>
-          <Text style={[styles.examname,styles. activetext]}>Exam Name</Text>     
-          <Text style={[styles.examname,styles. activetext]}>Room No.1</Text>
-          <Text style={[styles.examtime,styles. activetext]}>10:30 am</Text>
-          </View>
-        </View>
-        <View style={styles.box}>
+      <View style={styles.roomNumber}>
+        {loading ? (
+          <ActivityIndicator size="large" color="#0000ff" />
+        ) : (
+          roomDetails.length > 0 ? (
+            <ScrollView>
+              {roomDetails.map((roomData, index) => (
+                <View key={index} style={[styles.box, styles.activebox]}>
+                  <Ionicons style={styles.icons} name="book" size={24} color="rgb(8 96 88)" />
+                  <View style={styles.boxtext}>
+                    <Text style={[styles.examname, styles.activetext]}>{roomData.ROOM_NBR}</Text>
+                    <Text style={[styles.examtime, styles.activetext]}>{roomData.EXAM_START_TIME}</Text>
+                  </View>
+                </View>
+                 
+        /* <View style={styles.box}>
           <Ionicons name="book" size={24} color="rgb(8 96 88)" />
           <View style={styles.boxtext}>
           <Text style={styles.examname}>Exam Name</Text>       
@@ -113,8 +156,14 @@ const Exam = () => {
           <Text style={[styles.examname,styles. inactivetexts]}>Room No.1</Text>
           <Text style={[styles.examtime,styles. inactivetext]}>10:30 am</Text>
           </View>
-        </View>
-      </ScrollView>
+        </View> */
+              ))}
+            </ScrollView>
+          ) : (
+            <Text>No rooms available for selected date.</Text>
+          )
+        )}
+      </View>
     </View>
   );
 };
@@ -122,19 +171,12 @@ const Exam = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor:"#fff" 
-    
-  },
-  heading: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
+    backgroundColor: "#fff"
   },
   dates: {
     flexDirection: 'row',
-    padding:10
+    padding: 10
   },
-  
   dateItem: {
     padding: 10,
     backgroundColor: '#f0f0f0',
@@ -142,71 +184,34 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
     borderRadius: 5,
     marginRight: 6,
-    alignItems:"center",
+    alignItems: "center",
     width: 45,
-
   },
- 
   dateNumber: {
     fontSize: 16,
     fontWeight: 'bold',
- 
   },
   dateDay: {
     fontSize: 12,
-    marginBottom:5,
+    marginBottom: 5,
   },
   dateMonth: {
     fontSize: 12,
-    marginTop:5
-  },
-  examstatus:{
-      flexDirection:"row",
-      justifyContent:"space-between",
-      padding:12,
-      borderBottomWidth: 1,
-      borderBottomColor:"#ccc",
-      marginBottom:10
-   
-  },
-  ongoing:{
-        fontSize:16,
-        fontWeight:"bold",
-        borderWidth:1,
-        borderColor:"#ccc",
-        padding:10,
-        backgroundColor:"#0cb551",
-        // color:"#fff"
-  },
-  upcoming:{
-    fontSize:16,
-    fontWeight:"bold",
-    borderWidth:1,
-    borderColor:"#ccc",
-    padding:10 ,
-    backgroundColor:"#ccc"
-
+    marginTop: 5
   },
   roomNumber: {
-    // flexDirection: "row",
-    // flexWrap: "wrap",
-    marginBottom: 10,
+    flex: 1,
     padding: 10,
-   
   },
   box: {
     borderWidth: 1,
     borderColor: "#ccc",
-    width: Dimensions.get("window").width / 1 - 10, 
+    width: Dimensions.get("window").width / 1 - 10,
     backgroundColor: "#eaeaea",
-    // height: 55,
-    // textAlign: "center",
-    // alignItems: "center",
     borderRadius: 10,
     marginBottom: 10,
     padding:10,
     flexDirection:"row",
-
   },
   boxtext:{
     // alignItems:"center",  
@@ -230,19 +235,25 @@ const styles = StyleSheet.create({
     color:"#000"
 
   },
-  activebox:{
-    backgroundColor:"#0cb551",
-    color:"#fff"
+  examtime: {
+    alignItems: "flex-start",
+    color: "#a79f9f",
+    marginRight: 10,
+    marginLeft: 40,
   },
-  activetext:{
-    color:"#fff",
+  examname: {
+    fontWeight: "bold",
+    marginRight: 30,
+    maxWidth: 80,
   },
-  inactivetext:{
-    color:"#fff",
+  activebox: {
+    backgroundColor: "#0cb551",
+    color: "#fff"
   },
-  inactivebox:{
-    backgroundColor:"#e50d0d"
+  activetext: {
+    color: "#fff",
   }
 });
 
 export default Exam;
+
