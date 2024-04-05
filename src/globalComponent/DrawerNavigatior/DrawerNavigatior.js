@@ -12,9 +12,10 @@ import { logout } from "../../AuthService/AuthService";
 import DropDownPicker from "react-native-dropdown-picker";
 import CustomeImagePicker from "../CustomeImagePicker/CustomeImagePicker";
 import Exam from '../../component/Dashboard/Exam';
-
+import RoomDetail from '../../component/Dashboard/RoomDetail';
 import { multer } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
+
 
 const Drawer = createDrawerNavigator();
 
