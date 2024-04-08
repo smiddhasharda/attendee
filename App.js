@@ -15,6 +15,7 @@ import LoginNew from './src/component/Login/LoginNew';
 import Learn from './src/component/Dashboard/Learn';
 import  Task from './src/component/Dashboard/Task';
 import  Exam from './src/component/Dashboard/Exam';
+import RoomDetail from './src/component/Dashboard/RoomDetail';
 
 const Stack = createNativeStackNavigator();
 
@@ -53,7 +54,6 @@ const App = () => {
               <Stack.Screen name="PostLogin" component={DrawerNavigator} options={{ headerShown: false }} />
                <Stack.Screen name="Learn" component={Learn} />
                <Stack.Screen name="Task" component={Task} />
-               {/* <Stack.Screen name="Exam" component={Exam} /> */}
                
             </Stack.Navigator>
           </NavigationContainer>
