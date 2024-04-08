@@ -13,7 +13,7 @@ import DropDownPicker from "react-native-dropdown-picker";
 import CustomeImagePicker from "../CustomeImagePicker/CustomeImagePicker";
 import Exam from '../../component/Dashboard/Exam';
 import RoomDetail from '../../component/Dashboard/RoomDetail';
-import StudentDetail from '../../component/Dashboard/StudentDetail';
+import StudentInfo from '../../component/Dashboard/StudentInfo';
 import { multer } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 
@@ -198,10 +198,10 @@ const DrawerNavigator = ({navigation}) => {
                   return <Exam navigation={navigation} />;
                   case "StudentScreen":
                   return <StudentScreen />;
-                  case "StudentScreen":
-                  return <StudentDetail />;
                   case "RoomDetail":
                   return <RoomDetail />;
+                  case "StudentInfo":
+                    return <StudentInfo />;
                 default:
                   return null;
               }
