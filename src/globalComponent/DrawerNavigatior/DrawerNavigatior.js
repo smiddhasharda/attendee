@@ -120,7 +120,7 @@ const CustomDrawerContent = ({ ...props }) => {
   );
 };
 
-const DrawerNavigator = () => {
+const DrawerNavigator = ({navigation}) => {
   const [userRolePermission, setUserRolePermission] = useState([]);
   const [userRoleList, setUserRoleList] = useState([]);
   const [userRoleIndex, setUserRoleIndex] = useState(0);
@@ -195,7 +195,7 @@ const DrawerNavigator = () => {
                 case "UserScreen":
                   return <UserScreen />;
                 case "ExamScreen":
-                  return <Exam />;
+                  return <Exam navigation={navigation} />;
                   case "StudentScreen":
                   return <StudentScreen />;
                   case "StudentScreen":
