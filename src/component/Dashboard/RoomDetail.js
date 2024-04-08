@@ -2,8 +2,11 @@ import {React,useState,useEffect} from 'react';
 import { View, Text, FlatList, StyleSheet, Dimensions ,ScrollView,Image,TextInput,ActivityIndicator} from 'react-native';
 import { Ionicons } from '@expo/vector-icons'
 import user from '../../local-assets/userimg.jpg'
+import { useRoute } from '@react-navigation/native';
 
 function RoomDetail() {
+  const route = useRoute(); // Add this line to access route params
+
     // Sample data for room details
     const sampleStudentData = [
       { EMPLID: '2023408405', STRM: '2301',CATALOG_NBR:'BCT112',EXAM_DT:'06-FEB-24',ROOM_NBR:'RM-202 (BLOCK 4)',PTP_SEQ_CHAR:'115' },
@@ -27,9 +30,10 @@ function RoomDetail() {
       setLoading(false);
     }, 1000); // Simulate 1 second delay
   };
-console.log(room_Nbr, exam_Dt, startTime)
   useEffect(() => {
-    fetchStudentDetails('06-FEB-24','RM-202 (BLOCK 4)')
+    // fetchStudentDetails('06-FEB-24','RM-202 (BLOCK 4)')
+    fetchStudentDetails(exam_Dt,room_Nbr)
+
   }, []);
   
   return (
