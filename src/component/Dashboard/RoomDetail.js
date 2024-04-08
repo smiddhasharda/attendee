@@ -54,9 +54,9 @@ function RoomDetail() {
           studentDetails?.length > 0 ? studentDetails?.map((studentData)=>
           ( <View style={[styles.box,]}>   
             <View style={[styles.boxtext]}>
-            <Image source={user} style={styles.userimage}   />
-            <Text style={[styles.examname,]}>{studentData.EMPLID}</Text>     
-            <Text style={[styles.examname,]}>{studentData.PTP_SEQ_CHAR}</Text>
+              <Image source={user} style={styles.userimage}   />
+              <Text style={[styles.examname,]}>{studentData.EMPLID}</Text>     
+              <Text style={[styles.examname,]}>{studentData.PTP_SEQ_CHAR}</Text>
             </View>  
             </View>)) :<Text>There Is No Student Present In this Class !!</Text>
         )} 
