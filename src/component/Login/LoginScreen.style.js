@@ -6,29 +6,45 @@ import {
   TextStyle,
 } from "react-native";
 
-const { width: ScreenWidth } = Dimensions.get("screen");
+const { width: ScreenWidth, height:ScreenHeight } = Dimensions.get("screen");
 
 const LoginStyles = StyleSheet.create({
   container: {
+    flex:1,
     backgroundColor: "#E5E4E2",
     width: `${100}%`,
-    margin: `auto`,
+    // margin: `auto`,
     height: `${100}%`,
+    flexDirection:"row",
+  },
+
+  otpbtn:{
+   alignSelf:"center",
+   justifyContent:"center", 
   },
   
+
   logoImageStyle: {
-    width: 150,
-    height:  150,
-    alignSelf: "center",  
-    margin: 20
+    width: ScreenWidth * 0.5, 
+    height: ScreenWidth * 0.5,
+    alignSelf: "center",
+    // marginTop: ScreenHeight * 0.1, 
   },
+
   textInputContainer: {
-    marginTop: 12,
+    // marginTop: 12,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    width:   `${95}%` 
+    // width: `${70}%` ,
+    width: ScreenWidth * 0.5,
+    alignSelf:"center",
+    // marginRight:80,
+    // width:900, 
+    
+   
   },
+
   checkboxContainer: {
     marginTop: 12,
     marginBottom: 12,
@@ -49,9 +65,11 @@ const LoginStyles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+
   loginButtonStyle: {
-    height: 40,
-    width:   `${35.5}%`,
+    height: 45,
+    // width:   `${20.5}%`,
+    width: ScreenWidth * 0.3,
     maxwidth:`auto`,
     //width: ScreenWidth * 0.9,
     backgroundColor: "#fea500",
@@ -62,10 +80,12 @@ const LoginStyles = StyleSheet.create({
     marginTop: 32,
     //elevation: 5,
     marginLeft:15,
-    marginRight:70,
+    // marginRight:98,
     shadowRadius: 10,
     shadowOpacity: 0.8,
     shadowColor: "#166080",
+     
+    
     shadowOffset: {
       width: 0,
       height: 10,
@@ -86,7 +106,9 @@ const LoginStyles = StyleSheet.create({
     color: "#acabb0",
     width: `${90}%`,
     marginTop: 8,
-    textAlign: 'center'
+    textAlign: 'center',
+    marginRight:10,
+
   },
   dividerStyle: {
     height: 0.5,
@@ -142,6 +164,7 @@ const LoginStyles = StyleSheet.create({
     padding: 12,
     alignItems: "center",
     justifyContent: "center",
+  
   },
   emailTooltipTextStyle: {
     fontSize: 16,
@@ -181,6 +204,29 @@ const LoginStyles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+
+  // --------------------------------------------------------Media Querry----------------------------------------------------------//
+  
+  '@media (max-width: 768px)': {
+    logoImageStyle: {
+      width: '${100}%', 
+      height: ScreenWidth * 0.3, 
+    },
+
+    otpbtn:{
+      with:ScreenWidth * 0.5,
+ 
+    },
+
+    textInputContainer:{
+
+    }
+  },
+
+  '@media (min-width: 1024px)': {
+    
+  },
+ 
 });
 
 export default LoginStyles;

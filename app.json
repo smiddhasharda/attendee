@@ -1,10 +1,7 @@
-
-
-
 {
   "expo": {
-    "name": "AttendenceApp",
-    "slug": "AttendenceApp",
+    "name": "attendee",
+    "slug": "attendee",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -18,30 +15,36 @@
       "**/*"
     ],
     "ios": {
-      "usesIcloudStorage": true,
-      "bundleIdentifier": "com.devsaxena.attendee"
+      "supportsTablet": true
     },
     "android": {
-      "googleServicesFile": "",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      },
-      "package": "com.dev.saxena.MasterTemplate"
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    },
-    "extra": {
-      "eas": {
-        "projectId": "765afe1b-95bc-43e8-934a-7e8bcc906ef6"
-      }
     },
     "plugins": [
       [
         "expo-document-picker",
         {
           "iCloudContainerEnvironment": "Development"
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow attendee to access your camera",
+          "microphonePermission": "Allow attendee to access your microphone",
+          "recordAudioAndroid": true
         }
       ]
     ]
