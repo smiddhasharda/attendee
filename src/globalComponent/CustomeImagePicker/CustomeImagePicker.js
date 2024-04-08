@@ -180,7 +180,7 @@ const CustomeImagePicker = ({...props }) => {
   let cameraRef;
 
   return (
-    Platform.OS === 'web' ?  
+    // Platform.OS === 'web' ?  
    ( <TouchableOpacity onPress={pickImage}>
     {props.imageUri ? (
              <Image source={{ uri: props.imageUri }} style={{ width: 100, height: 100, borderRadius: 50 }} />
@@ -190,23 +190,23 @@ const CustomeImagePicker = ({...props }) => {
             </View>
            )}
     </TouchableOpacity>)
-    : 
-  (  <View style={{ flex: 1 }}>
-    <Camera 
-      style={{ flex: 1 }} 
-      type={Camera.Constants.Type.back} 
-      ref={(ref) => (cameraRef = ref)}
-    >
-      <View style={{ flex: 1, backgroundColor: 'transparent', flexDirection: 'row' }}>
-        <TouchableOpacity
-          style={{ position: 'absolute', bottom: 20, alignSelf: 'center', }}
-          onPress={takePicture}
-        >
-          <Text style={{ fontSize: 20, marginBottom: 10, color: 'white' }}> Take Picture </Text>
-        </TouchableOpacity>
-      </View>
-    </Camera>
-  </View>)
+  //   : 
+  // (  <View style={{ flex: 1 }}>
+  //   <Camera 
+  //     style={{ flex: 1 }} 
+  //     type={Camera.Constants.Type.back} 
+  //     ref={(ref) => (cameraRef = ref)}
+  //   >
+  //     <View style={{ flex: 1, backgroundColor: 'transparent', flexDirection: 'row' }}>
+  //       <TouchableOpacity
+  //         style={{ position: 'absolute', bottom: 20, alignSelf: 'center', }}
+  //         onPress={takePicture}
+  //       >
+  //         <Text style={{ fontSize: 20, marginBottom: 10, color: 'white' }}> Take Picture </Text>
+  //       </TouchableOpacity>
+  //     </View>
+  //   </Camera>
+  // </View>)
   );
 };
 
