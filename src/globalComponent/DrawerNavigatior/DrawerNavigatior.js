@@ -23,7 +23,7 @@ const RoleComponent = () => <RoleScreen />;
 const ModuleComponent = () => <ModuleScreen />;
 const DashboardComponent = () => <DashboardScreen />;
 const UserComponent = () => <UserScreen />;
-const ExamComponent = ({ navigation }) => <ExamScreen navigation={navigation} />;
+const ExamComponent = ({ navigation }) => <Exam navigation={navigation} />;
 const StudentComponent = () => <StudentScreen />;
 const RoomDetailComponent = () => <RoomDetail />;
 

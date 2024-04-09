@@ -3,6 +3,7 @@ import { View, Text, FlatList, StyleSheet, Dimensions ,ScrollView,Image,TextInpu
 import { Ionicons } from '@expo/vector-icons'
 import user from '../../local-assets/userimg.jpg'
 import { useRoute } from '@react-navigation/native';
+import CodeScanner from '../../globalComponent/CodeScanner/CodeScanner';
 
 function RoomDetail() {
   const route = useRoute(); // Add this line to access route params
@@ -30,6 +31,17 @@ function RoomDetail() {
       setLoading(false);
     }, 1000); // Simulate 1 second delay
   };
+
+  const [scannedData, setScannedData] = useState(null);
+
+  const handleScannedData = (data) => {
+    setScannedData(data);
+  };
+
+  const handleCancel = () => {
+    navigation.goBack(); // Assuming you're using navigation prop
+  };
+
   useEffect(() => {
     // fetchStudentDetails('06-FEB-24','RM-202 (BLOCK 4)')
     fetchStudentDetails(exam_Dt,room_Nbr)
@@ -45,7 +57,12 @@ function RoomDetail() {
           />
   </View>
   <View style={[styles.magnifying]}>
-    <Ionicons name="search-outline" size={27} color="#fff"  style={styles.searchIcon} />
+    <Ionicons name="search-outline" size={27} color="#fff" onPress={()=> <CodeScanner onScannedData={handleScannedData} onCancel={handleCancel} />}  style={styles.searchIcon} />
+    {scannedData && (
+        <View>
+          <Text>Scanned Data: {scannedData}</Text>
+        </View>
+      )}
     </View>
     <ScrollView style={styles.roomNumber}>  
     {loading ? (
