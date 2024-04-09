@@ -605,7 +605,6 @@ const transporter = nodemailer.createTransport({
     try {
       const { tblName, data, conditionString,fileParam } = req.body;
       const file = req?.file?.filename;
-      console.log(req.file)
       if (!tblName) {
         return res
           .status(400)

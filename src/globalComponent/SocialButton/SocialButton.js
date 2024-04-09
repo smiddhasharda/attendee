@@ -7,7 +7,7 @@ import {
   ViewStyle,
   TextStyle,
   ImageStyle,
-  TouchableOpacity,
+  Pressable,
   ImageSourcePropType,
 } from "react-native";
 
@@ -22,13 +22,12 @@ const SocialButton = ({
   textStyle,
   iconImageStyle,
   textContainerStyle,
-  TouchableComponent = TouchableOpacity,
   imageSource = require("../../local-assets/facebook.png"),
   onPress,
 }) => {
   return (
-    <TouchableComponent style={[styles.container, style]} onPress={onPress}>
-      <Image
+    <Pressable style={[styles.container, style]} onPress={onPress}>
+     <Image
         resizeMode="contain"
         source={imageSource}
         style={[styles.iconImageStyle, iconImageStyle]}
@@ -36,7 +35,7 @@ const SocialButton = ({
       <View style={[styles.textContainer, textContainerStyle]}>
         <Text style={[styles.textStyle, textStyle]}>{text}</Text>
       </View>
-    </TouchableComponent>
+    </Pressable>
   );
 };
 

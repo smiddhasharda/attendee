@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import {Image, View, Text, Button, TextInput, FlatList, StyleSheet, TouchableOpacity, LayoutAnimation} from "react-native";
+import {Image, View, Text, Button, TextInput, FlatList, StyleSheet, Pressable, LayoutAnimation} from "react-native";
 import { insert, fetch, update } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -321,7 +321,7 @@ const UserScreen = () => {
             setPasswordTooltipVisible(false);
           }}
         />
-        <TouchableOpacity
+        <Pressable
           style={styles.eyeIconContainer}
           onPress={handleEyePress}
         >
@@ -330,7 +330,7 @@ const UserScreen = () => {
             source={eyeIcon}
             resizeMode="contain"
           />
-        </TouchableOpacity> */}
+        </Pressable> */}
         </View>
     );
   };
@@ -612,9 +612,9 @@ const UserScreen = () => {
     <View style={styles.listItem}>
       <Text style={[styles.listItemText, { flex: 2 }]}>{item.name}</Text>
       <Text style={[styles.listItemText, { flex: 3 }]}>{item.contact_number}</Text>
-      <TouchableOpacity onPress={() =>handleUserStatus(item.user_id, item?.isActive)}>
+      <Pressable onPress={() =>handleUserStatus(item.user_id, item?.isActive)}>
       <Text style={[styles.listItemText, { flex: 1 }, item.isActive ? styles.listItemActiveStatus : styles.listItemInactiveStatus]}>{item.isActive ? "Active" : "Inactive"}</Text>
-      </TouchableOpacity>
+      </Pressable>
   
       <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
         <Button
@@ -726,7 +726,7 @@ const styles = StyleSheet.create({
   eyeIcon: {
     width: 24,
     height: 24,
-    tintColor: "#555",
+    // tintColor: "#555",
   },
   
   shakeText: {
