@@ -13,6 +13,7 @@ import DropDownPicker from "react-native-dropdown-picker";
 import CustomeImagePicker from "../CustomeImagePicker/CustomeImagePicker";
 import Exam from '../../component/Dashboard/Exam';
 import RoomDetail from '../../component/Dashboard/RoomDetail';
+import StudentInfo from '../../component/Dashboard/StudentInfo';
 import { multer } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 
