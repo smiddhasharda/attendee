@@ -1,9 +1,41 @@
-import React from 'react';
-import { View, Text, FlatList, StyleSheet, Dimensions ,ScrollView,Image,TextInput} from 'react-native';
+import {React,useState,useEffect} from 'react';
+import { View, Text, FlatList, StyleSheet, Dimensions ,ScrollView,Image,TextInput,ActivityIndicator} from 'react-native';
 import { Ionicons } from '@expo/vector-icons'
 import user from '../../local-assets/userimg.jpg'
+import { useRoute } from '@react-navigation/native';
 
 function RoomDetail() {
+  const route = useRoute(); // Add this line to access route params
+
+    // Sample data for room details
+    const sampleStudentData = [
+      { EMPLID: '2023408405', STRM: '2301',CATALOG_NBR:'BCT112',EXAM_DT:'06-FEB-24',ROOM_NBR:'RM-202 (BLOCK 4)',PTP_SEQ_CHAR:'115' },
+      { EMPLID: '2023408406', STRM: '2301',CATALOG_NBR:'BCT112',EXAM_DT:'06-FEB-24',ROOM_NBR:'RM-202 (BLOCK 4)',PTP_SEQ_CHAR:'116' },
+      { EMPLID: '2023408407', STRM: '2301',CATALOG_NBR:'BCT112',EXAM_DT:'06-FEB-24',ROOM_NBR:'RM-202 (BLOCK 4)',PTP_SEQ_CHAR:'117' },
+      { EMPLID: '2023408408', STRM: '2301',CATALOG_NBR:'BCT112',EXAM_DT:'06-FEB-24',ROOM_NBR:'RM-202 (BLOCK 4)',PTP_SEQ_CHAR:'118' },
+      { EMPLID: '2023408409', STRM: '2301',CATALOG_NBR:'BCT112',EXAM_DT:'06-FEB-24',ROOM_NBR:'RM-202 (BLOCK 4)',PTP_SEQ_CHAR:'119' },
+      { EMPLID: '2023408410', STRM: '2301',CATALOG_NBR:'BCT112',EXAM_DT:'06-FEB-24',ROOM_NBR:'RM-202 (BLOCK 4)',PTP_SEQ_CHAR:'120' },
+      { EMPLID: '2023408411', STRM: '2301',CATALOG_NBR:'BCT112',EXAM_DT:'06-FEB-24',ROOM_NBR:'RM-202 (BLOCK 4)',PTP_SEQ_CHAR:'121' },
+    ];
+
+    const [studentDetails, setStudentDetails] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const { room_Nbr, exam_Dt, startTime} = route.params;
+  const fetchStudentDetails = (date,room) => {
+    setLoading(true);
+    // Simulate fetching data from API
+    setTimeout(() => {
+      const filteredStudentData = sampleStudentData.filter(studentData => (studentData.EXAM_DT === date) && (studentData.ROOM_NBR === room));
+      setStudentDetails(filteredStudentData);
+      setLoading(false);
+    }, 1000); // Simulate 1 second delay
+  };
+  useEffect(() => {
+    // fetchStudentDetails('06-FEB-24','RM-202 (BLOCK 4)')
+    fetchStudentDetails(exam_Dt,room_Nbr)
+
+  }, []);
+  
   return (
     <View style={styles.container}>   
     <View  style={styles.searchWrap}>
@@ -15,15 +47,21 @@ function RoomDetail() {
   <View style={[styles.magnifying]}>
     <Ionicons name="search-outline" size={27} color="#fff"  style={styles.searchIcon} />
     </View>
-    <ScrollView style={styles.roomNumber}>   
-          <View style={[styles.box,]}>   
-          <View style={[styles.boxtext]}>
-          <Image source={user} style={styles.userimage}   />
-          <Text style={[styles.examname,]}>Shubham</Text>     
-          <Text style={[styles.examname,]}>Seat No</Text>
-          </View>  
-          </View>
-          <View style={[styles.box, styles.activebox]}>   
+    <ScrollView style={styles.roomNumber}>  
+    {loading ? (
+          <ActivityIndicator size="large" color="#0000ff" />
+        ) : (
+          studentDetails?.length > 0 ? studentDetails?.map((studentData)=>
+          ( <View style={[styles.box,]}>   
+            <View style={[styles.boxtext]}>
+              <Image source={user} style={styles.userimage}   />
+              <Text style={[styles.examname,]}>{studentData.EMPLID}</Text>     
+              <Text style={[styles.examname,]}>{studentData.PTP_SEQ_CHAR}</Text>
+            </View>  
+            </View>)) :<Text>There Is No Student Present In this Class !!</Text>
+        )} 
+         
+          {/* <View style={[styles.box, styles.activebox]}>   
           <View style={[styles.boxtext]}>
           <Image source={user} style={styles.userimage}   />
           <Text style={[styles.examname,styles. activetext]}>Shubham</Text>     
@@ -71,7 +109,7 @@ function RoomDetail() {
           <Text style={[styles.examname,]}>Shubham</Text>     
           <Text style={[styles.examname,]}>Seat No</Text>
           </View>  
-          </View>
+          </View> */}
    
     </ScrollView>
 

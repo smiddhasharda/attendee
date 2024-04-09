@@ -15,6 +15,7 @@ import LoginNew from './src/component/Login/LoginNew';
 import Learn from './src/component/Dashboard/Learn';
 import  Task from './src/component/Dashboard/Task';
 import  Exam from './src/component/Dashboard/Exam';
+import RoomDetail from './src/component/Dashboard/RoomDetail';
 
 const Stack = createNativeStackNavigator();
 
@@ -41,7 +42,6 @@ const App = () => {
       <ActivityIndicator size="large" color="#0000ff" />
     </View>
   );
-
   const renderRouting = () => (
     <Provider store={store}>
       <ToastProvider>
@@ -50,18 +50,10 @@ const App = () => {
             <Stack.Navigator initialRouteName={initialRoute}>
               <Stack.Screen name="Login" component={LoginScreen} />
               <Stack.Screen name="Register" component={RegisterScreen} />
-              <Stack.Screen
-                name="ForgetPassword"
-                component={ForgetPasswordScreen}
-              />
-              <Stack.Screen
-                name="PostLogin"
-                component={DrawerNavigator}
-                options={{ headerShown: false }}
-              />
+              <Stack.Screen name="ForgetPassword" component={ForgetPasswordScreen} />
+              <Stack.Screen name="PostLogin" component={DrawerNavigator} options={{ headerShown: false }} />
                <Stack.Screen name="Learn" component={Learn} />
                <Stack.Screen name="Task" component={Task} />
-               <Stack.Screen name="Exam" component={Exam} />
                
             </Stack.Navigator>
           </NavigationContainer>

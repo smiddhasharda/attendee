@@ -2,7 +2,7 @@ import React, { useState,useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, Dimensions, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'
 
-const Exam = () => {
+const Exam = ({ navigation }) => {
   const [examDates, setExamDates] = useState([{ EXAM_DT: '06-FEB-24' }, { EXAM_DT: '07-FEB-24' }, { EXAM_DT: '10-FEB-24' }])
   const [roomDetails, setRoomDetails] = useState([]);
   const [examSelectedDate, setExamSelectedDate] = useState(examDates[0].EXAM_DT);
@@ -34,12 +34,10 @@ const Exam = () => {
     setExamSelectedDate(date);
     fetchRoomDetails(date);
   };
-
-  
   useEffect(() => {
     fetchRoomDetails(examSelectedDate)
   }, []);
-
+console.log(navigation)
   // const [currentTime, setCurrentTime] = useState(new Date());
   // useEffect(() => {
   //   // Update current time every second
@@ -93,7 +91,7 @@ const Exam = () => {
                 //     <Text style={[styles.examtime, styles.activetext]}>{roomData.EXAM_START_TIME}</Text>
                 //   </View>
                 // </View>
-                <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+                <TouchableOpacity onPress={() => navigation.navigate("RoomDetail", { room_Nbr: roomData.ROOM_NBR ,exam_Dt: roomData.EXAM_DT , startTime: roomData.EXAM_START_TIME })}>
                 <View key={index} style={[styles.box]}>
                 <Ionicons style={styles.icons} name="book" size={24} color="rgb(8 96 88)" />
                 <View style={styles.boxtext}>
