@@ -1,5 +1,5 @@
 import React, { useState,useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, Dimensions, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Dimensions, ScrollView, Pressable, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'
 
 const Exam = ({ navigation }) => {
@@ -66,13 +66,13 @@ console.log(navigation)
         <FlatList
           data={examDates}
           renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => handleDateClick(item.EXAM_DT)}>
+            <Pressable onPress={() => handleDateClick(item.EXAM_DT)}>
               <View style={[styles.dateItem, (item.EXAM_DT === examSelectedDate) && styles.activebox]}>
                 <Text style={styles.dateDay}>{item.EXAM_DT.split('-')[1]}</Text>
                 <Text style={styles.dateNumber}>{item.EXAM_DT.split('-')[0]}</Text>
                 <Text style={styles.dateMonth}>{item.EXAM_DT.split('-')[2]}</Text>
               </View>
-            </TouchableOpacity>
+            </Pressable>
           )}
           horizontal={true}
         />
@@ -91,7 +91,7 @@ console.log(navigation)
                 //     <Text style={[styles.examtime, styles.activetext]}>{roomData.EXAM_START_TIME}</Text>
                 //   </View>
                 // </View>
-                <TouchableOpacity onPress={() => navigation.navigate("RoomDetail", { room_Nbr: roomData.ROOM_NBR ,exam_Dt: roomData.EXAM_DT , startTime: roomData.EXAM_START_TIME })}>
+                <Pressable onPress={() => navigation.navigate("RoomDetail", { room_Nbr: roomData.ROOM_NBR ,exam_Dt: roomData.EXAM_DT , startTime: roomData.EXAM_START_TIME })}>
                 <View key={index} style={[styles.box]}>
                 <Ionicons style={styles.icons} name="book" size={24} color="rgb(8 96 88)" />
                 <View style={styles.boxtext}>
@@ -99,7 +99,7 @@ console.log(navigation)
                   <Text style={[styles.examtime]}>{roomData.EXAM_START_TIME}</Text>
                 </View>
               </View>
-              </TouchableOpacity>
+              </Pressable>
                  
         /* <View style={styles.box}>
           <Ionicons name="book" size={24} color="rgb(8 96 88)" />

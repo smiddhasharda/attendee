@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Platform, Text, TouchableOpacity, View } from 'react-native';
+import { Platform, Text, Pressable, View } from 'react-native';
 
 // For web, you might need to use a different date picker library or implement your own.
 let DatePickerComponent;
@@ -24,9 +24,9 @@ const CustomDateTimePicker = (props) => {
     } else if (Platform.OS === 'android') {
       // For Android, you can use a custom implementation
       return (
-        <TouchableOpacity onPress={showAndroidDatePicker}>
+        <Pressable onPress={showAndroidDatePicker}>
           <Text>{props.date.toDateString()}</Text>
-        </TouchableOpacity>
+        </Pressable>
       );
     } else {
       // For web, render a web-compatible date picker

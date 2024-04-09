@@ -54,7 +54,7 @@ function RoomDetail() {
           studentDetails?.length > 0 ? studentDetails?.map((studentData)=>
           ( <View style={[styles.box,]}>   
             <View style={[styles.boxtext]}>
-            <Image source={user} style={styles.userimage}   />
+            <Image source={user} style={styles.userimage} resizeMode="cover" />
             <Text style={[styles.examname,]}>{studentData.EMPLID}</Text>     
             <Text style={[styles.examname,]}>{studentData.PTP_SEQ_CHAR}</Text>
             </View>  
@@ -222,7 +222,6 @@ const styles = StyleSheet.create({
         width:40,
         height:40,
         borderRadius:50,
-        resizeMode:"cover",
         marginRight:10
     },
  

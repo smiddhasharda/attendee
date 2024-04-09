@@ -1,7 +1,10 @@
- import React from 'react'
+ import React from 'react';
  import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
- function Task() {
+
+const windowWidth = Dimensions.get("window").width;
+
+ const Task = () => {
    return (
     <View style={styles.boxcontainer}>
     <View style={styles.box}>
@@ -33,33 +36,34 @@ import { Ionicons } from '@expo/vector-icons';
       </View>
     </View>
   </View>
-   )
- }
+   );
+ };
  
- export default Task
+ export default Task;
+
  const styles = StyleSheet.create({
     boxcontainer: {
       flexDirection: "row",
       flexWrap: "wrap",
       marginBottom: 10,
       padding: 10,
-      justifyContent:"space-between"
+      justifyContent: "space-between"
     },
     box: {
       borderWidth: 1,
       borderColor: "#ccc",
-      width: Dimensions.get("window").width / 1 - 10, 
+      width: windowWidth / 1 - 10, 
       backgroundColor: "#eaeaea",
       height: 100,
       textAlign: "center",
       alignItems: "center",
       borderRadius: 10,
       marginBottom: 10,
-      padding:10,
-      
+      padding: 10,
     },
-    boxtext:{
-      marginTop:10,
-      alignItems:"center",  
+    boxtext: {
+      marginTop: 10,
+      alignItems: "center",  
     },
   });
+  

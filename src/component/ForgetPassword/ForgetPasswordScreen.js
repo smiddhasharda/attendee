@@ -14,7 +14,7 @@
 
 
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, Text, View, Pressable, Image } from 'react-native';
 import { Camera } from 'expo-camera';
 
 export default function ForgetPasswordScreen() {
@@ -47,9 +47,9 @@ export default function ForgetPasswordScreen() {
     <View style={styles.container}>
       <Camera style={styles.camera} ref={cameraRef}>
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={takePicture}>
+          <Pressable style={styles.button} onPress={takePicture}>
             <Text style={styles.text}>Take Photo</Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </Camera>
       {photoUri && <Image source={{ uri: photoUri }} style={styles.image} />}
