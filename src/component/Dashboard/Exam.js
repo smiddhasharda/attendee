@@ -37,7 +37,6 @@ const Exam = ({ navigation }) => {
   useEffect(() => {
     fetchRoomDetails(examSelectedDate)
   }, []);
-console.log(navigation)
   // const [currentTime, setCurrentTime] = useState(new Date());
   // useEffect(() => {
   //   // Update current time every second
