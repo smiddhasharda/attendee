@@ -5,10 +5,9 @@ import user from '../../local-assets/userimg.jpg'
 import { useRoute } from '@react-navigation/native';
 import CodeScanner from '../../globalComponent/CodeScanner/CodeScanner'; // Make sure to import CodeScanner properly
 
-function RoomDetail({ navigation }) {
+function RoomDetail() {
   const [isScanning, setIsScanning] = useState(false);
   const route = useRoute(); // Add this line to access route params
-
   // Sample data for room details
   const sampleStudentData = [
     { EMPLID: '2023408405', STRM: '2301',CATALOG_NBR:'BCT112',EXAM_DT:'06-FEB-24',ROOM_NBR:'RM-202 (BLOCK 4)',PTP_SEQ_CHAR:'115' },
@@ -22,7 +21,7 @@ function RoomDetail({ navigation }) {
 
   const [studentDetails, setStudentDetails] = useState([]);
   const [loading, setLoading] = useState(false);
-  const { room_Nbr, exam_Dt } = route.params;
+  const { room_Nbr, exam_Dt,navigation } = route.params;
 
   const fetchStudentDetails = (date, room) => {
     setLoading(true);
@@ -39,6 +38,8 @@ function RoomDetail({ navigation }) {
   const handleScannedData = (data) => {
     setScannedData(data);
     setIsScanning(false);
+    let studentData = studentDetails?.filter((data)=> data.EMPLID === scannedData)?.[0] || '';
+    navigation.navigate("StudentScreen", { room_Nbr: studentData.ROOM_NBR ,exam_Dt: studentData.EXAM_DT,catlog_Nbr: studentData.CATALOG_NBR ,system_Id:studentData.EMPLID, seat_Nbr: studentData.PTP_SEQ_CHAR ,navigation });
   };
 
   const handleCancel = () => {
@@ -80,13 +81,15 @@ function RoomDetail({ navigation }) {
           <ActivityIndicator size="large" color="#0000ff" />
         ) : (
           studentDetails?.length > 0 ? studentDetails?.map((studentData, index) =>
-            (<View style={[styles.box]} key={index}>
+            ( <Pressable onPress={() => navigation.navigate("StudentScreen", { room_Nbr: studentData.ROOM_NBR ,exam_Dt: studentData.EXAM_DT,catlog_Nbr: studentData.CATALOG_NBR ,system_Id:studentData.EMPLID, seat_Nbr: studentData.PTP_SEQ_CHAR ,navigation })}>
+            <View style={[styles.box]} key={index}>
               <View style={[styles.boxtext]}>
                 <Image source={user} style={styles.userimage} resizeMode="cover" />
                 <Text style={[styles.examname]}>{studentData.EMPLID}</Text>
                 <Text style={[styles.examname]}>{studentData.PTP_SEQ_CHAR}</Text>
               </View>
-            </View>)) : <Text>There Is No Student Present In this Class !!</Text>
+            </View>
+            </Pressable>)) : <Text>There Is No Student Present In this Class !!</Text>
         )}
          
           {/* <View style={[styles.box, styles.activebox]}>   
