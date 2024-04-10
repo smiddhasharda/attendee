@@ -90,7 +90,7 @@ const Exam = ({ navigation }) => {
                 //     <Text style={[styles.examtime, styles.activetext]}>{roomData.EXAM_START_TIME}</Text>
                 //   </View>
                 // </View>
-                <Pressable onPress={() => navigation.navigate("RoomDetail", { room_Nbr: roomData.ROOM_NBR ,exam_Dt: roomData.EXAM_DT , startTime: roomData.EXAM_START_TIME })}>
+                <Pressable onPress={() => navigation.navigate("RoomDetail", { room_Nbr: roomData.ROOM_NBR ,exam_Dt: roomData.EXAM_DT , startTime: roomData.EXAM_START_TIME ,navigation })}>
                 <View key={index} style={[styles.box]}>
                 <Ionicons style={styles.icons} name="book" size={24} color="rgb(8 96 88)" />
                 <View style={styles.boxtext}>
