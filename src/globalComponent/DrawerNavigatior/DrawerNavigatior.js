@@ -24,7 +24,7 @@ const ModuleComponent = () => <ModuleScreen />;
 const DashboardComponent = () => <DashboardScreen />;
 const UserComponent = () => <UserScreen />;
 const ExamComponent = ({ navigation }) => <Exam navigation={navigation} />;
-const StudentComponent = () => <StudentScreen />;
+const StudentComponent = () => <StudentInfo />;
 const RoomDetailComponent = () => <RoomDetail />;
 
 const Drawer = createDrawerNavigator();

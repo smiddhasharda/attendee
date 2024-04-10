@@ -86,25 +86,10 @@ const StudentInfo = () => {
               </View>
             </View>
           </View>
-        </View>     
-        <View>
-         <Text style={styles.infoHeader}>Course Info:</Text> 
-
-         
-        </View>
-        {/* <View style={styles.studentInfoWrap}>
-      <View style={[styles.row,]}>
-        <Text style={[styles.label,{marginRight:4}]}>Copy Number:</Text>
-        <TextInput style={[styles.input,{marginRight:10}]} placeholder="Enter Copy Number"  editable={false} />
-          <Ionicons  name="barcode-sharp" size={24} color="black"  ></Ionicons>
-          <Ionicons name="stop-circle" size={24} color="black" ></Ionicons>
-      </View>   
-  <Text style={styles.label}>Alternate Sheet 1</Text>
-    <Text  style={styles.label}>Alternate Sheet 2</Text>
-      <View style={[styles.row,{justifyContent:"right"}]} >
-          <Ionicons name="add" size={24} color="black" ></Ionicons>
-          </View>
-        </View> */}
+        </View>   
+    
+        
+  
 
        <View style={styles.studentInfoWrap}>
             <Pressable style={styles.addButton}>
@@ -130,7 +115,8 @@ const StudentInfo = () => {
               </View>
             </View>
        </View>
-      </View>
+       </View>
+ 
   </ScrollView>
   )
 }
@@ -146,7 +132,7 @@ const styles = StyleSheet.create({
       fontSize: 16,
       backgroundColor: '#EAEAEA',
       padding:20,
-      marginLeft: 20,
+      // marginLeft: 20,
       marginRight: 20,
       marginBottom: 15,
       borderRadius: 8,
@@ -261,5 +247,14 @@ const styles = StyleSheet.create({
       addButtonText:{
         color:"#fff"
       },
-    
+      basicdetails:{
+        flexDirection:"row",
+        justifyContent:"space-between",
+        marginBottom:10,
+        
+      },
+      basicinfo:{
+        flexDirection:"row",
+        alignItems:"center",
+      }
   });
