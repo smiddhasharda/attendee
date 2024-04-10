@@ -9,6 +9,7 @@ const Exam = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
 
   // Sample data for room details
+  // Table Name [ EXAM_CODE_TBL ] with Distinct
   const sampleRoomData = [
     { EXAM_DT: '06-FEB-24', ROOM_NBR: 'RM-202 (BLOCK 4)',EXAM_START_TIME:'09:30:00.000000000 AM' },
     { EXAM_DT: '06-FEB-24', ROOM_NBR: 'RM-203 (BLOCK 4)',EXAM_START_TIME:'09:30:00.000000000 AM' },
