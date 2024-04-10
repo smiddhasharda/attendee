@@ -1,9 +1,67 @@
 import {React,useState,useEffect} from 'react';
 import { View, Text, FlatList, StyleSheet, Dimensions ,ScrollView,Image,TextInput,ActivityIndicator, Pressable} from 'react-native';
-import { Ionicons } from '@expo/vector-icons'
-import user from '../../local-assets/userimg.jpg'
+import { Ionicons } from '@expo/vector-icons';
+import { useRoute } from '@react-navigation/native';
 
 const StudentInfo = () => {
+  const route = useRoute(); 
+  const [studentDetails, setStudentDetails] = useState([]);
+  const [courseDetails, setCourseDetails] = useState([]);
+  const [attendenceDetails, sethAttendenceDetails] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const { room_Nbr,exam_Dt,catlog_Nbr,system_Id, seat_Nbr,navigation } = route.params;
+
+    // Sample data for room details
+    // Table Name [ SU_CS_BRAHM_VW ]
+    const sampleStudentData = [
+      {NAME_FORMAL: 'Dev Saxena',EMPLID: '2023408405',ADM_APPL_NBR:'00021604',ADMIT_TERM:'0901',STRM:'1501',DESCR:'School of Dental Sciences',DESCR2:'Bachelor of Dental Science',DESCR3:'Mechanical'},
+      {NAME_FORMAL: 'Medha Yadav',EMPLID: '2023408406',ADM_APPL_NBR:'00021604',ADMIT_TERM:'0901',STRM:'1501',DESCR:'School of Dental Sciences',DESCR2:'Bachelor of Dental Science',DESCR3:'Mechanical'},
+      {NAME_FORMAL: 'Rohit Mehra',EMPLID: '2023408407',ADM_APPL_NBR:'00021604',ADMIT_TERM:'0901',STRM:'1501',DESCR:'School of Dental Sciences',DESCR2:'Bachelor of Dental Science',DESCR3:'Mechanical'},
+      {NAME_FORMAL: 'Saurabh Middha',EMPLID: '2023408408',ADM_APPL_NBR:'00021604',ADMIT_TERM:'0901',STRM:'1501',DESCR:'School of Dental Sciences',DESCR2:'Bachelor of Dental Science',DESCR3:'Mechanical'},
+      {NAME_FORMAL: 'Aman Bhadoriya',EMPLID: '2023408409',ADM_APPL_NBR:'00021604',ADMIT_TERM:'0901',STRM:'1501',DESCR:'School of Dental Sciences',DESCR2:'Bachelor of Dental Science',DESCR3:'Mechanical'},
+      {NAME_FORMAL: 'Abhishak patel',EMPLID: '2023408410',ADM_APPL_NBR:'00021604',ADMIT_TERM:'0901',STRM:'1501',DESCR:'School of Dental Sciences',DESCR2:'Bachelor of Dental Science',DESCR3:'Mechanical'}    
+    ];
+
+    // Sample data for course details
+    // Table Name [ SU_CAT_DESC_TBL ]
+    const sampleCourseData = [
+      {SU_PAPER_ID:'1000021',CATALOG_NBR: 'BPO353',DESCR100:'Enzymology'},
+      {SU_PAPER_ID:'1000021',CATALOG_NBR: 'BPO353',DESCR100:'Enzymology'},
+      {SU_PAPER_ID:'1000021',CATALOG_NBR: 'BPO353',DESCR100:'Enzymology'},
+      {SU_PAPER_ID:'1000021',CATALOG_NBR: 'BPO353',DESCR100:'Enzymology'},
+      {SU_PAPER_ID:'1000021',CATALOG_NBR: 'BPO353',DESCR100:'Enzymology'}
+       ];
+
+        // Sample data for course details
+    // Table Name [ S_ADM_CARD_SS ]         comined the tables         [S_ICL_ATT_RC]
+    const sampleAttendenceData = [
+      {EMPLID:'2023408405',STRM:'2301',PERCENTCHG:'65',    CATALOG_NBR: 'BPO353',SSR_COMPONENT : 'PRA', PERCENTAGE : '85.71' },
+      {EMPLID:'2023408406',STRM:'2301',PERCENTCHG:'65',    CATALOG_NBR: 'BPO353',SSR_COMPONENT : 'PRA', PERCENTAGE : '85.71' },
+      {EMPLID:'2023408407',STRM:'2301',PERCENTCHG:'65',    CATALOG_NBR: 'BPO353',SSR_COMPONENT : 'PRA', PERCENTAGE : '85.71' },
+      {EMPLID:'2023408408',STRM:'2301',PERCENTCHG:'65',    CATALOG_NBR: 'BPO353',SSR_COMPONENT : 'PRA', PERCENTAGE : '85.71' },
+      {EMPLID:'2023408409',STRM:'2301',PERCENTCHG:'65',    CATALOG_NBR: 'BPO353',SSR_COMPONENT : 'PRA', PERCENTAGE : '85.71' },
+      {EMPLID:'2023408410',STRM:'2301',PERCENTCHG:'65',    CATALOG_NBR: 'BPO353',SSR_COMPONENT : 'PRA', PERCENTAGE : '85.71' },
+       ];
+
+       const fetchStudentDetails = (system_Id,catlog_Nbr) => {
+        setLoading(true);
+        // Simulate fetching data from API
+        setTimeout(() => {
+          const filteredStudentData = sampleStudentData.filter(studentData => (studentData.EMPLID === system_Id));
+          setStudentDetails(filteredStudentData[0] || []);
+          const filteredCourseData = sampleCourseData.filter(courseData => (courseData.CATALOG_NBR === catlog_Nbr));
+          setCourseDetails(filteredCourseData[0] || []);
+          const filteredAttendenceData = sampleAttendenceData.filter(attendenceData => (attendenceData.EMPLID === system_Id) && (attendenceData.CATALOG_NBR === catlog_Nbr));
+          sethAttendenceDetails(filteredAttendenceData[0] || []);
+          setLoading(false);
+        }, 1000); // Simulate 1 second delay
+      };
+
+      useEffect(() => {
+    fetchStudentDetails(system_Id,catlog_Nbr)
+  }, []);
+
+
   return (
     <ScrollView >
       <View style={styles.container}>   
@@ -13,44 +71,44 @@ const StudentInfo = () => {
             <View style={styles.row}>
               <View style={styles.column}>
                 <Text style={styles.label}>Name:</Text>
-                <Text style={styles.value}>John Doe</Text>
+                <Text style={styles.value}>{studentDetails.NAME_FORMAL || ''}</Text>
               </View>
-              <View style={styles.column}>
+              {/* <View style={styles.column}>
                 <Text style={styles.label}>Father Name:</Text>
                 <Text style={styles.value}>Michael Doe</Text>
               </View>
               <View style={styles.column}>
                 <Text style={styles.label}>Mother Name:</Text>
                 <Text style={styles.value}>Kathie Doe</Text>
-              </View>
+              </View> */}
             </View>
             <View style={styles.row}>
               <View style={styles.column}>
                 <Text style={styles.label}>Roll No:</Text>
-                <Text style={styles.value}>2010503</Text>
+                <Text style={styles.value}>{studentDetails.ADM_APPL_NBR || ''}</Text>
               </View>
               <View style={styles.column}>
                 <Text style={styles.label}>System Id:</Text>
-                <Text style={styles.value}>0008873</Text>
+                <Text style={styles.value}>{studentDetails.EMPLID || ''}</Text>
               </View>
               <View style={styles.column}>
                 <Text style={styles.label}>Semester:</Text>
-                <Text style={styles.value}>2</Text>
+                <Text style={styles.value}>{studentDetails.STRM?.split('')?.[3] || ''}</Text>
               </View>
             </View>
+            <View style={styles.column}>
+                <Text style={styles.label}>School Name:</Text>
+                <Text style={styles.value}>{studentDetails.DESCR || ''}</Text>
+              </View>
             <View style={styles.row}>
               <View style={styles.column}>
                 <Text style={styles.label}>Program Name:</Text>
-                <Text style={styles.value}>Bachelor of Technology</Text>
+                <Text style={styles.value}>{studentDetails.DESCR2 || ''}</Text>
               </View>
               <View style={styles.column}>
                 <Text style={styles.label}>Branch Name:</Text>
-                <Text style={styles.value}>Computer Science</Text>
-              </View>
-              <View style={styles.column}>
-                <Text style={styles.label}>School Name:</Text>
-                <Text style={styles.value}>School of Dental Science</Text>
-              </View>
+                <Text style={styles.value}>{studentDetails.DESCR3 || ''}</Text>
+              </View>             
             </View>
           </View>
         </View>
@@ -60,37 +118,34 @@ const StudentInfo = () => {
             <View style={styles.row}>
               <View style={styles.column}>
                 <Text style={styles.label}>Paper Id:</Text>
-                <Text style={styles.value}>123456</Text>
+                <Text style={styles.value}>{courseDetails.SU_PAPER_ID || ''}</Text>
               </View>
               <View style={styles.column}>
                 <Text style={styles.label}>Course Code:</Text>
-                <Text style={styles.value}>SDBE123</Text>
+                <Text style={styles.value}>{courseDetails.CATALOG_NBR || ''}</Text>
               </View>
               <View style={styles.column}>
                 <Text style={styles.label}>Course Name:</Text>
-                <Text style={styles.value}>Data Networks</Text>
+                <Text style={styles.value}>{courseDetails.DESCR100 || ''}</Text>
               </View>
             </View>
             <View style={styles.row}>
               <View style={styles.column}>
                 <Text style={styles.label}>Room No:</Text>
-                <Text style={styles.value}>101/Block D</Text>
+                <Text style={styles.value}>{room_Nbr}</Text>
               </View>
               <View style={styles.column}>
                 <Text style={styles.label}>Seat No:</Text>
-                <Text style={styles.value}>12</Text>
+                <Text style={styles.value}>{seat_Nbr}</Text>
               </View>
               <View style={styles.column}>
                 <Text style={styles.label}>Status:</Text>
-                <Text style={styles.value}>Eligible</Text>
+                <Text style={styles.value}>{attendenceDetails.PERCENTAGE >= attendenceDetails.PERCENTCHG ? 'Eligible': 'Debart'}</Text>
               </View>
             </View>
           </View>
         </View>   
-    
         
-  
-
        <View style={styles.studentInfoWrap}>
             <Pressable style={styles.addButton}>
               <Text style={styles.addButtonText}>Add Copies</Text>
