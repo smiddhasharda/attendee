@@ -7,8 +7,10 @@ import CodeScanner from '../../globalComponent/CodeScanner/CodeScanner'; // Make
 
 function RoomDetail() {
   const [isScanning, setIsScanning] = useState(false);
-  const route = useRoute(); // Add this line to access route params
+  const route = useRoute();
+
   // Sample data for room details
+      // Table Name [ SU_ADM_SEATNMRC ]
   const sampleStudentData = [
     { EMPLID: '2023408405', STRM: '2301',CATALOG_NBR:'BCT112',EXAM_DT:'06-FEB-24',ROOM_NBR:'RM-202 (BLOCK 4)',PTP_SEQ_CHAR:'115' },
     { EMPLID: '2023408406', STRM: '2301',CATALOG_NBR:'BCT112',EXAM_DT:'06-FEB-24',ROOM_NBR:'RM-202 (BLOCK 4)',PTP_SEQ_CHAR:'116' },
