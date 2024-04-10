@@ -47,7 +47,7 @@
 
 //   useEffect(() => {
 //     (async () => {
-//       const { status } = await Camera.requestPermissionsAsync();
+//       const { status } = await Camera.requestCameraPermissionsAsync();
 //       setHasPermission(status === 'granted');
 //     })();
 //   }, []);
@@ -149,7 +149,7 @@ import * as ImagePicker from 'expo-image-picker';
 
 const CustomeImagePicker = ({...props }) => {
   const takePicture = async () => {
-    const { status } = await Camera.requestPermissionsAsync();
+    const { status } = await Camera.requestCameraPermissionsAsync();
     if (status !== 'granted') {
       alert('Permission to access camera was denied');
       return;
