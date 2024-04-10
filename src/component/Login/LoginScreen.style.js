@@ -144,7 +144,7 @@ const LoginStyles = StyleSheet.create({
   eyeIcon: {
     width: 24,
     height: 24,
-    tintColor: "#555",
+    // tintColor: "#555",
   },
   
   shakeText: {

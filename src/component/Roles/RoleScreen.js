@@ -6,7 +6,7 @@ import {
   TextInput,
   FlatList,
   StyleSheet,
-  TouchableOpacity,
+  Pressable,
 } from "react-native";
 import { insert, fetch, update } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
@@ -423,7 +423,7 @@ const RoleScreen = () => {
             <Text style={[styles.listItemText, { flex: 3 }]}>
               {item.description}
             </Text>
-            <TouchableOpacity
+            <Pressable
               onPress={() => handleRoleStatus(item.PK_RoleId, item?.isActive)}
             >
               <Text
@@ -437,7 +437,7 @@ const RoleScreen = () => {
               >
                 {item.isActive ? "Active" : "Inactive"}
               </Text>
-            </TouchableOpacity>
+            </Pressable>
 
             <View
               style={{

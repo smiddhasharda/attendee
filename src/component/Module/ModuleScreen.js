@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, Text, Button, TextInput, FlatList, StyleSheet,TouchableOpacity } from "react-native";
+import { View, Text, Button, TextInput, FlatList, StyleSheet,Pressable } from "react-native";
 import { insert, fetch, update } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -223,9 +223,9 @@ const ModuleScreen = () => {
     <View style={styles.listItem}>
       <Text style={[styles.listItemText, { flex: 2 }]}>{item.moduleName}</Text>
       <Text style={[styles.listItemText, { flex: 3 }]}>{item.description}</Text>
-      <TouchableOpacity onPress={() =>handleModuleStatus(item.PK_ModuleId, item?.isActive)}>
+      <Pressable onPress={() =>handleModuleStatus(item.PK_ModuleId, item?.isActive)}>
       <Text style={[styles.listItemText, { flex: 1 }, item.isActive ? styles.listItemActiveStatus : styles.listItemInactiveStatus]}>{item.isActive ? "Active" : "Inactive"}</Text>
-      </TouchableOpacity>
+      </Pressable>
   
       <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
         <Button

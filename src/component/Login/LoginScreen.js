@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Image, SafeAreaView, StatusBar, Text, TouchableOpacity, View, LayoutAnimation, } from "react-native";
+import { Image, SafeAreaView, StatusBar, Text, Pressable, View, LayoutAnimation, } from "react-native";
 import CheckBox from 'expo-checkbox';
 import TextInput from "react-native-text-input-interactive";
 import LoginStyles from "./LoginScreen.style";
@@ -10,7 +10,7 @@ import { login,emailVerify  } from '../../AuthService/AuthService';
 import { useToast } from '../../globalComponent/ToastContainer/ToastContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const LoginScreen = ({ style, logoImageStyle, loginTextStyle, loginButtonStyle, logoImageSource = require("../../local-assets/attendlogin.jpg"), emailPlaceholder = "Email", OTPPlaceholder = "OTP", TouchableComponent = TouchableOpacity, navigation, children }) => {
+const LoginScreen = ({ style, logoImageStyle, loginTextStyle, loginButtonStyle, logoImageSource = require("../../local-assets/attendlogin.jpg"), emailPlaceholder = "Email", OTPPlaceholder = "OTP", navigation, children }) => {
   const { showToast } = useToast();
 
   const [loginData, setLoginData] = useState({
@@ -104,10 +104,10 @@ const LoginScreen = ({ style, logoImageStyle, loginTextStyle, loginButtonStyle, 
 
   const renderLogo = () => (
     <Image
-      resizeMode="contain"
-      source={logoImageSource}
-      style={[LoginStyles.logoImageStyle, logoImageStyle]}
-    />
+    resizeMode="contain"
+    source={logoImageSource}
+    style={[LoginStyles.logoImageStyle, logoImageStyle]}
+  />
   );
 
   const renderEmailInput = () => {
@@ -184,12 +184,12 @@ const LoginScreen = ({ style, logoImageStyle, loginTextStyle, loginButtonStyle, 
 
   const renderButton = () => (
     <View> 
-      <TouchableComponent
+      <Pressable
     style={[LoginStyles.loginButtonStyle, loginButtonStyle]}
     onPress={() => { isOTPInputDisabled ? handleEmailValidation() : handleOTPValidation();}}
   >
     <Text style={[LoginStyles.loginTextStyle, loginTextStyle]}>{isOTPInputDisabled ? "Send OTP" : "Login"}</Text>
-  </TouchableComponent>
+  </Pressable>
    </View>
    
   );

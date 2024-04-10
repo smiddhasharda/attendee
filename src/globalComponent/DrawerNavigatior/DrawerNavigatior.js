@@ -1,5 +1,5 @@
 import React, { useEffect, useState,useCallback } from "react";
-import { View, Text, TouchableOpacity, Image,Button } from "react-native";
+import { View, Text, Pressable, Image,Button } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem, } from "@react-navigation/drawer";
 import RoleScreen from "../../component/Roles/RoleScreen";
@@ -17,6 +17,15 @@ import StudentInfo from '../../component/Dashboard/StudentInfo';
 import { multer } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 
+// Define your screen components
+
+const RoleComponent = () => <RoleScreen />;
+const ModuleComponent = () => <ModuleScreen />;
+const DashboardComponent = () => <DashboardScreen />;
+const UserComponent = () => <UserScreen />;
+const ExamComponent = ({ navigation }) => <Exam navigation={navigation} />;
+const StudentComponent = () => <StudentScreen />;
+const RoomDetailComponent = () => <RoomDetail />;
 
 const Drawer = createDrawerNavigator();
 
@@ -113,9 +122,9 @@ const CustomDrawerContent = ({ ...props }) => {
         />
       </View>
       <DrawerItemList {...props} />
-      <TouchableOpacity onPress={handleLogout}>
+      <Pressable onPress={handleLogout}>
         <Text style={{ margin: 16 }}>Logout</Text>
-      </TouchableOpacity>
+      </Pressable>
     </DrawerContentScrollView>
   );
 };
@@ -167,48 +176,47 @@ const DrawerNavigator = ({navigation}) => {
   }
   return (
     <Drawer.Navigator
-      initialRouteName="Dashboard"
-      drawerContent={(props) => (
-        <CustomDrawerContent
-          {...props}
-          handleRoleSelect={handleRoleSelect}
-          userRoleList={userRoleList}
-          userRoleIndex={userRoleIndex}
-          userData={userData}
-        />
-      )}
-    >
-      {userRoleList?.[userRoleIndex]?.module
-        .filter((module) => module?.read === 1)
-        .map((module, index) => (
-          <Drawer.Screen
-            key={index}
-            name={module?.moduleMaster[0]?.moduleName}
-            component={() => {
-              switch (module?.moduleMaster[0]?.moduleName) {
-                case "RoleScreen":
-                  return <RoleScreen />;
-                case "ModuleScreen":
-                  return <ModuleScreen />;
-                case "Dashboard":
-                  return <DashboardScreen />;
-                case "UserScreen":
-                  return <UserScreen />;
-                case "ExamScreen":
-                  return <Exam navigation={navigation} />;
-                  case "StudentScreen":
-                  return <StudentScreen />;
-                  case "RoomDetail":
-                  return <RoomDetail />;
-                  case "StudentInfo":
-                    return <StudentInfo />;
-                default:
-                  return null;
-              }
-            }}
-          />
-        ))}
-    </Drawer.Navigator>
+    initialRouteName="Dashboard"
+    drawerContent={(props) => (
+      <CustomDrawerContent
+        {...props}
+        handleRoleSelect={handleRoleSelect}
+        userRoleList={userRoleList}
+        userRoleIndex={userRoleIndex}
+        userData={userData}
+      />
+    )}
+  >
+    {userRoleList?.[userRoleIndex]?.module
+      .filter((module) => module?.read === 1)
+      .map((module, index) => (
+        <Drawer.Screen
+          key={index}
+          name={module?.moduleMaster[0]?.moduleName}
+        >
+          {() => {
+            switch (module?.moduleMaster[0]?.moduleName) {
+              case "RoleScreen":
+                return <RoleComponent />;
+              case "ModuleScreen":
+                return <ModuleComponent />;
+              case "Dashboard":
+                return <DashboardComponent />;
+              case "UserScreen":
+                return <UserComponent />;
+              case "ExamScreen":
+                return <ExamComponent navigation={navigation} />;
+              case "StudentScreen":
+                return <StudentComponent />;
+              case "RoomDetail":
+                return <RoomDetailComponent />;
+              default:
+                return null;
+            }
+          }}
+        </Drawer.Screen>
+      ))}
+  </Drawer.Navigator>
   );
 };
 

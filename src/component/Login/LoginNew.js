@@ -1,6 +1,6 @@
 import React from 'react';
 import { ScrollView, ImageBackground, StyleSheet, Text, View, Dimensions, TextInput } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { Pressable } from 'react-native-gesture-handler';
 import loginBackground from '../../local-assets/attendlogin.jpg';
 const { width, height } = Dimensions.get('window');
 const isMobile = width < 768;
@@ -27,9 +27,9 @@ function LoginNew() {
             placeholder="Enter the Email"
           />
           </View>
-          <TouchableOpacity style={styles.button}>
+          <Pressable style={styles.button}>
             <Text style={styles.buttonText}>Send Otp</Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </View>
     </ScrollView>
@@ -58,7 +58,6 @@ const styles = StyleSheet.create({
   imageBackground: {
     height: '100%',
     width: '100%',
-    // resizeMode: 'cover',
   },
   emailinput:{
       flexDirection:"row",
