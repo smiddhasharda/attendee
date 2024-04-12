@@ -1,4 +1,4 @@
-// import { Image, View, TouchableOpacity,Text  } from 'react-native';
+// import { Image, View, Pressable,Text  } from 'react-native';
 // import * as ImagePicker from 'expo-image-picker';
 
 // const CustomeImagePicker = ({ ...props }) => {
@@ -19,7 +19,7 @@
 //   };
 
 //   return (
-//     <TouchableOpacity onPress={pickImage}>
+//     <Pressable onPress={pickImage}>
 //     {props.imageUri ? (
 //         <Image source={props.imageUri} style={{ width: 100, height: 100, borderRadius: 50 }} />
 //       ) : (
@@ -27,7 +27,7 @@
 //           <Text style={{ color: 'gray' }}>Placeholder</Text>
 //         </View>
 //       )}
-//     </TouchableOpacity>
+//     </Pressable>
 //   );
 // }
 
@@ -37,7 +37,7 @@
 
 
 // import React, { useState, useEffect } from 'react';
-// import { View, TouchableOpacity, Text } from 'react-native';
+// import { View, Pressable, Text } from 'react-native';
 // import { Camera } from 'expo-camera';
 // import * as MediaLibrary from 'expo-media-library';
 
@@ -47,7 +47,7 @@
 
 //   useEffect(() => {
 //     (async () => {
-//       const { status } = await Camera.requestPermissionsAsync();
+//       const { status } = await Camera.requestCameraPermissionsAsync();
 //       setHasPermission(status === 'granted');
 //     })();
 //   }, []);
@@ -82,7 +82,7 @@
 //             backgroundColor: 'transparent',
 //             flexDirection: 'row',
 //           }}>
-//           <TouchableOpacity
+//           <Pressable
 //             style={{
 //               flex: 0.1,
 //               alignSelf: 'flex-end',
@@ -90,7 +90,7 @@
 //             }}
 //             onPress={takePicture}>
 //             <Text style={{ fontSize: 18, marginBottom: 10, color: 'white' }}> Take Picture </Text>
-//           </TouchableOpacity>
+//           </Pressable>
 //         </View>
 //       </Camera>
 //     </View>
@@ -103,7 +103,7 @@
 
 
 // import React from 'react';
-// import { TouchableOpacity, Image, Text,View } from 'react-native';
+// import { Pressable, Image, Text,View } from 'react-native';
 // import * as ImagePicker from 'expo-image-picker';
 
 // const CustomeImagePicker = ({ ...props }) => {
@@ -127,7 +127,7 @@
 //     }
 //   };
 //   return (
-//     <TouchableOpacity onPress={pickImage}>
+//     <Pressable onPress={pickImage}>
 //       {props.imageUri ? (
 //         <Image source={{ uri: props.imageUri }} style={{ width: 100, height: 100, borderRadius: 50 }} />
 //       ) : (
@@ -135,7 +135,7 @@
 //           <Text style={{ color: 'gray' }}>Placeholder</Text>
 //         </View>
 //       )}
-//     </TouchableOpacity>
+//     </Pressable>
 //   );
 // }
 
@@ -143,13 +143,13 @@
 
 
 import React from 'react';
-import { TouchableOpacity, Image, Text, View,Platform } from 'react-native';
+import { Pressable, Image, Text, View,Platform } from 'react-native';
 import { Camera } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 
 const CustomeImagePicker = ({...props }) => {
   const takePicture = async () => {
-    const { status } = await Camera.requestPermissionsAsync();
+    const { status } = await Camera.requestCameraPermissionsAsync();
     if (status !== 'granted') {
       alert('Permission to access camera was denied');
       return;
@@ -181,7 +181,7 @@ const CustomeImagePicker = ({...props }) => {
 
   return (
     // Platform.OS === 'web' ?  
-   ( <TouchableOpacity onPress={pickImage}>
+   ( <Pressable onPress={pickImage}>
     {props.imageUri ? (
              <Image source={{ uri: props.imageUri }} style={{ width: 100, height: 100, borderRadius: 50 }} />
            ) : (
@@ -189,7 +189,7 @@ const CustomeImagePicker = ({...props }) => {
               <Text style={{ color: 'gray' }}>Placeholder</Text>
             </View>
            )}
-    </TouchableOpacity>)
+    </Pressable>)
   //   : 
   // (  <View style={{ flex: 1 }}>
   //   <Camera 
@@ -198,12 +198,12 @@ const CustomeImagePicker = ({...props }) => {
   //     ref={(ref) => (cameraRef = ref)}
   //   >
   //     <View style={{ flex: 1, backgroundColor: 'transparent', flexDirection: 'row' }}>
-  //       <TouchableOpacity
+  //       <Pressable
   //         style={{ position: 'absolute', bottom: 20, alignSelf: 'center', }}
   //         onPress={takePicture}
   //       >
   //         <Text style={{ fontSize: 20, marginBottom: 10, color: 'white' }}> Take Picture </Text>
-  //       </TouchableOpacity>
+  //       </Pressable>
   //     </View>
   //   </Camera>
   // </View>)

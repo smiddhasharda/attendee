@@ -1,11 +1,18 @@
 import React, { useState } from 'react';
-import { View, Text, Button, TextInput, FlatList, StyleSheet, TouchableOpacity ,ScrollView,Image} from 'react-native';
+import { View, Text, Button, TextInput, FlatList, StyleSheet, Pressable ,ScrollView,Image} from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; 
 import loginBackground from '../../local-assets/attendlogin.jpg';
 import classe from '../../local-assets/classes.jpg';
 import { useNavigation } from '@react-navigation/native'; 
-const DashboardScreen = ({ navigation }) => {
+const DashboardScreen = () => {
   const { navigate } = useNavigation();
+  const handleLearnPress = () => {
+    navigate('Learn');
+  };
+
+  const handleTaskPress = () => {
+    navigate('Task');
+  };
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Welcome</Text>      
@@ -16,7 +23,7 @@ const DashboardScreen = ({ navigation }) => {
   
             <View style={styles.subtext}>
               <Text  style={styles.taskheading}>On Running Exam</Text>
-              <Text  onPress={() => navigate('Learn')} style={styles.viewAll}>View All</Text>
+              <Text  onPress={handleLearnPress} style={styles.viewAll}>View All</Text>
             </View>
          
             <View style={styles.boxcontainer}>            
@@ -45,7 +52,7 @@ const DashboardScreen = ({ navigation }) => {
             </View>
             <View style={styles.subtext}>
               <Text style={styles.taskheading}>Up Coming Exam</Text>
-              <Text onPress={() => navigate('Task')} style={styles.viewAll}>View All</Text>
+              <Text onPress={handleTaskPress} style={styles.viewAll}>View All</Text>
             </View>
           
             <View style={styles.boxcontainer}>            

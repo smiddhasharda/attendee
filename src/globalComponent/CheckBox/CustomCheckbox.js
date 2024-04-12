@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import PropTypes from 'prop-types';
 import CustomeCheckBoxStyle from './CustomeCheckBox.style';
 
@@ -7,14 +7,14 @@ const CustomCheckbox = ({ label, checked, onChange }) => {
  const backgroundColor = checked ? 'black' : 'transparent';
 
  return (
-    <TouchableOpacity onPress={onChange}>
+    <Pressable onPress={onChange}>
       <View style={CustomeCheckBoxStyle.container}>
         <View
           style={[CustomeCheckBoxStyle.body, { backgroundColor }]}
         />
         <Text style={CustomeCheckBoxStyle.text}>{label}</Text>
       </View>
-    </TouchableOpacity>
+    </Pressable>
  );
 };
 

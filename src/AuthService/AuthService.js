@@ -1,8 +1,10 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URL = 'http://localhost:5000/api';
-// const API_URL = 'http://3.111.185.105:3500/api';
+
+// const API_URL = 'http://localhost:5000/api';
+const API_URL = 'http://3.111.185.105:3502/api';
+
 
 const request = async (method, endpoint, data, authToken,params) => {
   try {

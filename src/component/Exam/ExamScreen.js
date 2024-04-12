@@ -6,7 +6,7 @@ import {
   TextInput,
   FlatList,
   StyleSheet,
-  TouchableOpacity,
+  Pressable,
 } from "react-native";
 import { insert, fetch, update } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
@@ -293,7 +293,7 @@ const ExamScreen = () => {
                 <Text style={[styles.listItemText, { flex: 1 }]}>
                   {item.examType}
                 </Text>
-                <TouchableOpacity
+                <Pressable
                   onPress={() =>
                     handleExamStatus(item.PK_ExamId, item?.isActive)
                   }
@@ -309,7 +309,7 @@ const ExamScreen = () => {
                   >
                     {item.isActive ? "Active" : "Inactive"}
                   </Text>
-                </TouchableOpacity>
+                </Pressable>
 
                 <View
                   style={{
