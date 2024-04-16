@@ -6,13 +6,15 @@ import {
     TextStyle,
   } from "react-native";
   
-  const styles = StyleSheet.create({
+  const styles = StyleSheet.create({   
     container: {
       flex: 1,
       padding: 10,
     },
     formContainer: {
       marginBottom: 20,
+      backgroundColor:"#fff",
+      padding:20,
     },
     input: {
       height: 40,
@@ -67,6 +69,16 @@ import {
     listItemEditText: {
       color: 'white',
     },
+    addbtnWrap:{
+      width:100,
+      alignSelf:"flex-end",
+      marginBottom:10,
+    },
+    modulists:{
+      backgroundColor:"#fff",
+      padding:40,
+    },
+    
   });
 
   export default styles;

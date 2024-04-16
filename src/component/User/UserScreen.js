@@ -594,42 +594,42 @@ const UserScreen = () => {
             </View>
           )}
         </View>
-      ) : <View>
-        <Text style={styles.header}>User List:</Text>
-      <Button title="Add" onPress={() => setUserContainerVisible(true)} />
-      <FlatList
-  data={userList}
-  keyExtractor={(item) => item.user_id.toString()}
-  ListHeaderComponent={() => (
-    <View style={styles.tableHeader}>
-      <Text style={[styles.tableHeaderText, { flex: 2 }]}>User Name</Text>
-      <Text style={[styles.tableHeaderText, { flex: 3 }]}>Contact Number</Text>
-      <Text style={[styles.tableHeaderText, { flex: 1 }]}>Status</Text>
-      <Text style={[styles.tableHeaderText, { flex: 1 }]}>Actions</Text>
-    </View>
-  )}
-  renderItem={({ item }) => (
-    <View style={styles.listItem}>
-      <Text style={[styles.listItemText, { flex: 2 }]}>{item.name}</Text>
-      <Text style={[styles.listItemText, { flex: 3 }]}>{item.contact_number}</Text>
-      <Pressable onPress={() =>handleUserStatus(item.user_id, item?.isActive)}>
-      <Text style={[styles.listItemText, { flex: 1 }, item.isActive ? styles.listItemActiveStatus : styles.listItemInactiveStatus]}>{item.isActive ? "Active" : "Inactive"}</Text>
-      </Pressable>
-  
-      <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
-        <Button
-          title="Edit"
-          onPress={() => handleEditUser(item)}
-          style={styles.listItemEditButton}
-          textStyle={styles.listItemEditText}
-        />
+      ) : 
+      <View>
+        <Text style={styles.header}>User List:</Text>      
+          <Button title="Add" onPress={() => setUserContainerVisible(true)} />   
+        <FlatList 
+          data={userList}
+          keyExtractor={(item) => item.user_id.toString()}
+          ListHeaderComponent={() => (
+            <View style={styles.tableHeader}>
+              <Text style={[styles.tableHeaderText, { flex: 2 }]}>User Name</Text>
+              <Text style={[styles.tableHeaderText, { flex: 3 }]}>Contact Number</Text>
+              <Text style={[styles.tableHeaderText, { flex: 1 }]}>Status</Text>
+              <Text style={[styles.tableHeaderText, { flex: 1 }]}>Actions</Text>
+            </View>
+          )}
+          renderItem={({ item }) => (
+            <View style={styles.listItem}>
+              <Text style={[styles.listItemText, { flex: 2 }]}>{item.name}</Text>
+              <Text style={[styles.listItemText, { flex: 3 }]}>{item.contact_number}</Text>
+                <Pressable onPress={() =>handleUserStatus(item.user_id, item?.isActive)}>
+              <Text style={[styles.listItemText, { flex: 1 }, item.isActive ? styles.listItemActiveStatus : styles.listItemInactiveStatus]}>{item.isActive ? "Active" : "Inactive"}</Text>
+              </Pressable>          
+              <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
+                <Button
+                  title="Edit"
+                  onPress={() => handleEditUser(item)}
+                  style={styles.listItemEditButton}
+                  textStyle={styles.listItemEditText}
+                />
+              </View>
+            </View>
+          )}
+         />
       </View>
-    </View>
-  )}
-/>
-        </View>}
-    </View>
-       
+      }
+      </View>      
       );
 }
 

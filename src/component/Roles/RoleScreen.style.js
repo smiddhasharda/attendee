@@ -13,6 +13,8 @@ import {
     },
     formContainer: {
       marginBottom: 20,
+      backgroundColor:"#fff",
+      padding:40,
     },
     input: {
       height: 40,
@@ -40,6 +42,7 @@ import {
     },
     tableHeaderText: {
       fontWeight: "bold",
+
     },
     listItem: {
       flexDirection: "row",
@@ -72,6 +75,15 @@ import {
       alignItems: "center",
       justifyContent: "center",
     },
+    roleLists:{
+      backgroundColor:"#fff",
+      padding:40,
+    },
+    addbtnWrap:{
+      width:100,
+      alignSelf:"flex-end",
+      marginBottom:10,
+    }
   });
 
   export default styles;
