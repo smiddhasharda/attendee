@@ -4,6 +4,7 @@ import { insert, fetch, update } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from "./ModuleScreen.style";
+import { ScrollView } from "react-native-gesture-handler";
 
 const ModuleScreen = () => {
   const { showToast } = useToast();
@@ -13,6 +14,7 @@ const ModuleScreen = () => {
     moduleDescription: '',
     moduleStatus: 1,
   });
+
   const [moduleList, setModuleList] = useState([]);
   const [moduleContainerVisible, setModuleContainerVisible] = useState(false);
 
@@ -176,6 +178,7 @@ const ModuleScreen = () => {
   }, []);
 
   return (
+    <ScrollView>
     <View style={styles.container}>
       {moduleContainerVisible ? (
         <View style={styles.formContainer}>
@@ -185,6 +188,7 @@ const ModuleScreen = () => {
             value={moduleData.moduleName}
             onChangeText={(text) => setModuleData({ ...moduleData, moduleName: text })}
           />
+
           <TextInput
             style={styles.input}
             placeholder="Module Description"
@@ -199,47 +203,55 @@ const ModuleScreen = () => {
               <Button title="Cancel" onPress={handleClose} />
             </View>
           ) : (
+            
             <View style={styles.buttonContainer}>
               <Button title="Add New Module" onPress={handleAddModule} />
               <Button title="Cancel" onPress={handleClose} />
             </View>
+
           )}
         </View>
-      ) : <View>
-        <Text style={styles.header}>Module List:</Text>
-      <Button title="Add" onPress={() => setModuleContainerVisible(true)} />
-      <FlatList
-  data={moduleList}
-  keyExtractor={(item) => item.PK_ModuleId.toString()}
-  ListHeaderComponent={() => (
-    <View style={styles.tableHeader}>
-      <Text style={[styles.tableHeaderText, { flex: 2 }]}>Module Name</Text>
-      <Text style={[styles.tableHeaderText, { flex: 3 }]}>Description</Text>
-      <Text style={[styles.tableHeaderText, { flex: 1 }]}>Status</Text>
-      <Text style={[styles.tableHeaderText, { flex: 1 }]}>Actions</Text>
+      ) : 
+      
+           <View style={styles.modulists}>
+           <Text style={styles.header}>Module List:</Text>
+           <View style={styles.addbtnWrap}>
+            <Button title="Add" onPress={() => setModuleContainerVisible(true)} />
+          </View>
+              <FlatList
+                  data={moduleList}
+                  keyExtractor={(item) => item.PK_ModuleId.toString()}
+                  ListHeaderComponent={() => (
+                  <View style={styles.tableHeader}>
+                    <Text style={[styles.tableHeaderText, { flex: 2 }]}>Module Name</Text>
+                    <Text style={[styles.tableHeaderText, { flex: 3 }]}>Description</Text>
+                    <Text style={[styles.tableHeaderText, { flex: 1 }]}>Status</Text>
+                    <Text style={[styles.tableHeaderText, { flex: 1 }]}>Actions</Text>
+                  </View>
+          )}
+          renderItem={({ item }) => (
+            
+            <View style={styles.listItem}>
+              <Text style={[styles.listItemText, { flex: 2 }]}>{item.moduleName}</Text>
+              <Text style={[styles.listItemText, { flex: 3 }]}>{item.description}</Text>
+              <Pressable onPress={() =>handleModuleStatus(item.PK_ModuleId, item?.isActive)}>
+              <Text style={[styles.listItemText, { flex: 1 }, item.isActive ? styles.listItemActiveStatus : styles.listItemInactiveStatus]}>{item.isActive ? "Active" : "Inactive"}</Text>
+              </Pressable>         
+              <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
+                <Button
+                  title="Edit"
+                  onPress={() => handleEditModule(item)}
+                  style={styles.listItemEditButton}
+                  textStyle={styles.listItemEditText}
+                />
+              </View>
+            </View>
+            )}
+          />
+           </View>
+        }
     </View>
-  )}
-  renderItem={({ item }) => (
-    <View style={styles.listItem}>
-      <Text style={[styles.listItemText, { flex: 2 }]}>{item.moduleName}</Text>
-      <Text style={[styles.listItemText, { flex: 3 }]}>{item.description}</Text>
-      <Pressable onPress={() =>handleModuleStatus(item.PK_ModuleId, item?.isActive)}>
-      <Text style={[styles.listItemText, { flex: 1 }, item.isActive ? styles.listItemActiveStatus : styles.listItemInactiveStatus]}>{item.isActive ? "Active" : "Inactive"}</Text>
-      </Pressable>
-  
-      <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
-        <Button
-          title="Edit"
-          onPress={() => handleEditModule(item)}
-          style={styles.listItemEditButton}
-          textStyle={styles.listItemEditText}
-        />
-      </View>
-    </View>
-  )}
-/>
-        </View>}
-    </View>
+    </ScrollView>
   );
 };
 

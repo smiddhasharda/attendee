@@ -14,6 +14,7 @@ const DashboardScreen = () => {
     navigate('Task');
   };
   return (
+    <ScrollView>
     <View style={styles.container}>
       <Text style={styles.heading}>Welcome</Text>      
           <TextInput
@@ -86,6 +87,7 @@ const DashboardScreen = () => {
             </View>
       
     </View>
+    </ScrollView>
   );
 };
 
