@@ -1,35 +1,29 @@
 import React from 'react';
-import { ScrollView, ImageBackground, StyleSheet, Text, View, Dimensions, TextInput } from 'react-native';
-import { Pressable } from 'react-native-gesture-handler';
+import { ScrollView, ImageBackground, StyleSheet, Text, View, Dimensions, TextInput, TouchableOpacity } from 'react-native';
 import loginBackground from '../../local-assets/attendlogin.jpg';
+
 const { width, height } = Dimensions.get('window');
 const isMobile = width < 768;
 
 function LoginNew() {
   return (
-    <ScrollView contentContainerStyle={{ flex: 1 }}>
+    <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
       <View style={styles.container}>
         <View style={styles.imageContainer}>
-          <ImageBackground source={loginBackground} style={styles.imageBackground}>
-            {/* <View style={styles.brandView}>
-              <Text style={styles.brandViewText}>Vision To Go</Text>
-            </View> */}
-          </ImageBackground>
+          <ImageBackground source={loginBackground} style={styles.imageBackground}/>
         </View>
         <View style={styles.formContainer}>
-        <View>
-             <Text style={styles.heading}>Login To Attendee</Text>
-        </View>
-        <View style={styles.emailinput}> 
-          <Text style={styles.label}>Email:</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter the Email"
-          />
+          <Text style={styles.heading}>Login To Attendee</Text>
+          <View style={styles.emailInput}>
+            <Text style={styles.label}>Email:</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter the Email"
+            />
           </View>
-          <Pressable style={styles.button}>
-            <Text style={styles.buttonText}>Send Otp</Text>
-          </Pressable>
+          <TouchableOpacity style={styles.button} onPress={() => alert("OTP sent!")}>
+            <Text style={styles.buttonText}>Send OTP</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </ScrollView>
@@ -44,67 +38,52 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   imageContainer: {
-    flex: 1,
-    maxHeight: Dimensions.get('window').height * 0.5,
-    // maxHeight: isMobile ? height * 0.5 : height * 0.9,
+    flex: isMobile ? 1 : 0.5,
   },
   formContainer: {
     flex: 1,
     padding: 20,
     justifyContent: 'center',
-    alignItems:'center'
+    alignItems: 'center',
   },
-
   imageBackground: {
-    height: '100%',
+    flex: 1,
     width: '100%',
+    resizeMode: 'cover',
   },
-  emailinput:{
-      flexDirection:"row",
- 
+  emailInput:{
+    flexDirection: "row",
+    alignItems: 'center',
+    marginBottom: 20,
   },
   heading:{
-   fontSize:25,
-   fontWeight:700,
-   padding:10,
-  },
-
-  brandView: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
+    fontSize: 25,
+    fontWeight: "bold",
+    marginBottom: 20,
   },
   label: {
-    marginRight:10,
     fontSize: 16,
     fontWeight: 'bold',
-    marginTop:6,
-  
-  },
-  brandViewText: {
-    color: '#fff',
-    fontSize: 40,
-    fontWeight: 'bold',
-    textTransform: 'uppercase'
+    marginRight: 10,
   },
   input: {
+    flex: 1,
     height: 40,
     padding: 10,
-    marginBottom: 20,
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
- 
   },
   button: {
-    padding: 10,
+    width: '100%',
+    padding: 15,
     backgroundColor: '#ef1313',
     borderRadius: 10,
     alignItems: 'center',
- 
-  
   },
   buttonText: {
-    color: '#fff'
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   }
 });
