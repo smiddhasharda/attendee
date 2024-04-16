@@ -13,6 +13,7 @@ import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CheckBox from "expo-checkbox";
 import styles from "./RoleScreen.style";
+import { ScrollView } from "react-native-gesture-handler";
 const RoleScreen = () => {
   const { showToast } = useToast();
   const [roleData, setRoleData] = useState({
@@ -344,6 +345,7 @@ const RoleScreen = () => {
   }, []);
 
   return (
+    <ScrollView>
     <View style={styles.container}>
       {roleContainerVisible ? (
         <View style={styles.formContainer}>
@@ -399,15 +401,18 @@ const RoleScreen = () => {
             </View>
           )}
         </View>
-      ) : <View>
+      ) :
+       <View style={styles.roleLists}>
         <Text style={styles.header}>Role List:</Text>
-      <Button title="Add" onPress={() => setRoleContainerVisible(true)} />
+        <View style={styles.addbtnWrap}>
+          <Button  title="Add" onPress={() => setRoleContainerVisible(true)} />
+      </View>
       <FlatList
         data={roleList}
         keyExtractor={(item) => item.PK_RoleId.toString()}
         ListHeaderComponent={() => (
           <View style={styles.tableHeader}>
-            <Text style={[styles.tableHeaderText, { flex: 2 }]}>Role Name</Text>
+            <Text  numberOfLines={1} style={[styles.tableHeaderText, { flex: 2 }]}>Role Name</Text>
             <Text style={[styles.tableHeaderText, { flex: 3 }]}>
               Description
             </Text>
@@ -438,7 +443,6 @@ const RoleScreen = () => {
                 {item.isActive ? "Active" : "Inactive"}
               </Text>
             </Pressable>
-
             <View
               style={{
                 flex: 1,
@@ -457,10 +461,12 @@ const RoleScreen = () => {
           </View>
         )}
       />
-
-        </View>}
+        </View>
+        }
     </View>
+    </ScrollView>
   );
 };
 
 export default RoleScreen;
+ 
