@@ -17,6 +17,7 @@ const request = async (method, endpoint, data, authToken,params) => {
       headers,
       params: params || {},
     };
+
     if (method === 'get') {
       config.params = { ...config.params, ...data };
     } else {
@@ -96,7 +97,7 @@ const remove = async (data, authToken) => {
 const common = async (data, authToken) => {
   return request('post', 'common', data, authToken);
 };
-const multer = async (data, authToken) => {
+const multer = async (data, authToken) => {     
   return request('post', 'multer', data, authToken);
 };
 

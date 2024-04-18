@@ -37,10 +37,10 @@ function RoomDetail() {
 
   const [scannedData, setScannedData] = useState(null);
 
-  const handleScannedData = (data) => {
-    setScannedData(data);
+  const handleScannedData = (ScannedData) => {
+    setScannedData(ScannedData);
     setIsScanning(false);
-    let studentData = studentDetails?.filter((data)=> data.EMPLID === scannedData)?.[0] || '';
+    let studentData = studentDetails?.filter((data)=> data.EMPLID === ScannedData)?.[0] || '';
     navigation.navigate("StudentScreen", { room_Nbr: studentData.ROOM_NBR ,exam_Dt: studentData.EXAM_DT,catlog_Nbr: studentData.CATALOG_NBR ,system_Id:studentData.EMPLID, seat_Nbr: studentData.PTP_SEQ_CHAR ,navigation });
   };
 

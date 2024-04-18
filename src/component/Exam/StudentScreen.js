@@ -223,7 +223,6 @@ const StudentScreen = () => {
   }, []);
  
   const handleExamSelect = (value) => {
-    console.log(value)
     setStudentData({ ...StudentData, examData: value })
   };
 
