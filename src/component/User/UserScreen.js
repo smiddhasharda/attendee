@@ -8,6 +8,7 @@ import emailValidator from "../../helpers/emailValidator";
 import useStateWithCallback from "../../helpers/useStateWithCallback";
 import Tooltip from "../../globalComponent/ToolTip/Tooltip";
 import CheckBox from "expo-checkbox";
+import { ScrollView } from "react-native-gesture-handler";
 const UserScreen = () => { 
   const { showToast } = useToast();
   const [userData, setUserData] = useState({
@@ -227,7 +228,8 @@ const UserScreen = () => {
         emailId: selectedUser.email_id,
         contactNumber: selectedUser.contact_number,
         status: selectedUser.isActive,
-        rolePermissions: selectedUser.rolePermission
+        rolePermissions: selectedUser.rolePermission,
+        
       });
       setUserContainerVisible(true);
   };
@@ -542,24 +544,26 @@ const UserScreen = () => {
 
   const renderRoleList = () =>{
     return(
-  <View>
-    <Text style={styles.header}> Role List : </Text>
-    <FlatList
-      data={roleList}
-      keyExtractor={(item) => item?.PK_RoleId?.toString()}
-      ListHeaderComponent={() => (
-        <View style={styles.tableHeader}>
-          <Text style={[styles.tableHeaderText, { flex: 2 }]}>
-            Role Name
-          </Text>
-          <Text style={[styles.tableHeaderText, { flex: 1 }]}>
-            Access
-          </Text>
+      <ScrollView>
+        <View>
+        <Text style={styles.header}> Role List : </Text>
+        <FlatList
+          data={roleList}
+          keyExtractor={(item) => item?.PK_RoleId?.toString()}
+          ListHeaderComponent={() => (
+            <View style={styles.tableHeader}>
+              <Text style={[styles.tableHeaderText, { flex: 2 }]}>
+                Role Name
+              </Text>
+              <Text style={[styles.tableHeaderText, { flex: 1 }]}>
+                Access
+              </Text>
+            </View>
+          )}
+          renderItem={({ item }) => renderRoleCheckboxes(item)}
+        />
         </View>
-      )}
-      renderItem={({ item }) => renderRoleCheckboxes(item)}
-    />
-    </View>
+    </ScrollView>
     )
   }
 
@@ -574,6 +578,7 @@ const UserScreen = () => {
   //   </View>
   // );
     return (
+   
       <View style={styles.container}>
       {userContainerVisible ? (
         <View style={styles.formContainer}>
@@ -582,6 +587,7 @@ const UserScreen = () => {
           {renderEmailInput()}
           {renderContactNumberInput()}
           {renderRoleList()}
+          <View style={styles.adddetails}>
           {userData.userId ? (
             <View style={styles.buttonContainer}>
               <Button title="Update User" onPress={handleUpdateUser} />
@@ -594,10 +600,13 @@ const UserScreen = () => {
             </View>
           )}
         </View>
+        </View>
       ) : 
-      <View>
+      <View style={styles.userListWrap}>
         <Text style={styles.header}>User List:</Text>      
-          <Button title="Add" onPress={() => setUserContainerVisible(true)} />   
+          <View style={styles.addWrap}>
+            <Button title="Add" onPress={() => setUserContainerVisible(true)} />   
+          </View>
         <FlatList 
           data={userList}
           keyExtractor={(item) => item.user_id.toString()}
@@ -640,6 +649,13 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     marginBottom: 20,
+    backgroundColor:"#fff",
+    padding:20,
+    elevation:2,
+  },
+  userListWrap:{
+   backgroundColor:"#fff",
+   padding:20,
   },
   input: {
     height: 40,
@@ -649,6 +665,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   buttonContainer: {
+    marginTop:10,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
@@ -781,6 +798,11 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
+  },
+  addWrap:{
+   width:100,
+   alignSelf:"flex-end",
+   marginBottom:10,
   },
 });
 
