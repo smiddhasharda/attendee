@@ -7,7 +7,7 @@ import {
   TextInput,
   Pressable,
 } from "react-native";
-import { Ionicons, FontAwesome6 } from "@expo/vector-icons";
+import { Ionicons, FontAwesome,AntDesign  } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
 import CodeScanner from "../../globalComponent/CodeScanner/CodeScanner";
 
@@ -182,9 +182,8 @@ const StudentInfo = () => {
     setCopiesData(updatedCopies);
   };
 
-  const handleScanBarcode = (data,copyType, index, copyIndex) => {
+  const handleScanBarcode = (scannedCopyNumber,copyType, index, copyIndex) => {
     handleCancel();
-    const scannedCopyNumber = "123456";
     copyType === "Main"
       ? handleMainCopyChange(scannedCopyNumber, index)
       : handleAlternateCopyChange(scannedCopyNumber, copyIndex, index);
@@ -204,7 +203,7 @@ const StudentInfo = () => {
         <TextInput
           style={[styles.cell, styles.input]}
           placeholder={`Enter ${copyType} Copy ${copyIndex + 1} Number`}
-          value={tempCopyNumber}
+          // value={tempCopyNumber}
           onChangeText={(copyNumber) => setTempNumber(copyNumber)}
         />
         {tempCopyNumber && (
@@ -222,7 +221,7 @@ const StudentInfo = () => {
             style={styles.removeButton}
             onPress={() => handleRemoveAlternateCopy(copyIndex, index)}
           >
-            <Text style={styles.addButtonText}>Remove</Text>
+            <Text style={styles.addButtonText} ><FontAwesome name="trash-o" size={24}  alignItems="center"  /></Text>
           </Pressable>
         )}
       </View>
@@ -350,19 +349,19 @@ const StudentInfo = () => {
           <View style={styles.inputContainer}>
             {copiesData.length > 1 && (
               <Pressable
-                style={styles.removeButton}
+                // style={styles.removeButton}
                 onPress={() => handleRemoveCopy(index)}
               >
-                <Text style={styles.addButtonText}>Remove Copy</Text>
+                <Text style={styles.addButtonText}> <FontAwesome name="trash-o" size={24}  alignItems="center" color="#e60e1c" /></Text>
               </Pressable>
             )}
           </View>
-          <View style={styles.table}>
+          <View style={styles.table}>        
             <View style={styles.row}>
               <Text style={[styles.cell, styles.header]}>Main Copy</Text>
               {copy.mainCopy ? (
                 <View>
-                  <Text>{copy.mainCopy}</Text>
+                  <Text style={styles.mainCopyText}>{copy.mainCopy}</Text>
                   {!(
                     copy.alternateCopies.length > 0 ||
                     copy.alternateCopies?.includes("")
@@ -371,20 +370,20 @@ const StudentInfo = () => {
                       style={styles.removeButton}
                       onPress={() => handleSaveCopy("Main", "", index)}
                     >
-                      <Text style={styles.addButtonText}>Clear</Text>
+                      <Text style={styles.addButtonText}><AntDesign name="close" size={20} /></Text>
                     </Pressable>
                   )}
                 </View>
               ) : (
-                <View>
-                  {renderCopyInput("Main", index)}
-                  <Text>OR</Text>
+                <View style={styles.mainText}>                  
                   <Pressable
                     style={styles.scanButton}
                     onPress={() => startScanning("Main", index)}
                   >
-                    <Ionicons name="barcode-sharp" size={24} color="black" />
+                    <Ionicons name="barcode-sharp" />
                   </Pressable>
+                  <Text>or</Text>
+                  {renderCopyInput("Main", index)}               
                 </View>
               )}
             </View>
@@ -398,14 +397,22 @@ const StudentInfo = () => {
                       </Text>
                       <Text>{alternateCopy}</Text>
                       {copyIndex === copy.alternateCopies.length - 1 && (
+                        <View>
                         <Pressable
                           style={styles.removeButton}
                           onPress={() =>
                             handleSaveCopy("Alternate", "", index, copyIndex)
                           }
                         >
-                          <Text style={styles.addButtonText}>Clear</Text>
+                          <Text style={styles.addButtonText}><AntDesign name="close" size={20} /></Text>
                         </Pressable>
+                          <Pressable
+                            style={styles.addButton}
+                            onPress={() => handleAddAlternateCopy(index)}
+                            >
+                           <Text style={styles.addButtonText}>Add Supply Sheet</Text>
+                          </Pressable>
+                        </View>
                       )}
                     </View>
                   ) : (
@@ -427,20 +434,29 @@ const StudentInfo = () => {
                     </View>
                   )
                 )}
-                <Pressable
+                {copy.alternateCopies.length === 0 && (
+                  <Pressable
                   style={styles.addButton}
                   onPress={() => handleAddAlternateCopy(index)}
                 >
                   <Text style={styles.addButtonText}>Add Alternate Copy</Text>
                 </Pressable>
+                )}               
               </View>
             )}
           </View>
         </View>
       ))}
+      <View style={styles.buttonWrap}>
+
       <Pressable style={styles.addButton} onPress={handleAddCopy}>
-        <Text style={styles.addButtonText}>Add Copy</Text>
-      </Pressable>
+        <Text style={styles.addButtonText}> Add Copy</Text>
+      </Pressable> 
+      <Pressable style={styles.submitButton}>
+        <Text style={styles.addButtonText}> Submit</Text>
+      </Pressable> 
+      </View>
+   
        </View>) }
     
     </ScrollView>
@@ -459,6 +475,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#EAEAEA",
     marginBottom: 20,
     borderRadius: 8,
+    padding:5,
   },
   infoHeader: {
     fontSize: 18,
@@ -488,6 +505,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     backgroundColor: "#f9f9f9",
     marginBottom: 20,
+    padding:10,
   },
   row: {
     flexDirection: "row",
@@ -521,13 +539,14 @@ const styles = StyleSheet.create({
     marginRight: 4,
   },
   addButton: {
-    alignSelf: "flex-end",
     padding: 10,
-    borderRadius: 5,
+    borderRadius: 7,
     backgroundColor: "#129912",
     marginBottom: 10,
     justifyContent: "center",
     alignItems: "center",
+    marginRight:10,
+    marginTop:6,
   },
   addButtonText: {
     color: "#fff",
@@ -535,11 +554,47 @@ const styles = StyleSheet.create({
   },
   removeButton: {
     alignSelf: "flex-end",
-    padding: 10,
+    padding: 5,
     borderRadius: 5,
     backgroundColor: "#e60e1c",
-    marginBottom: 10,
+    marginBottom: 20,
     justifyContent: "center",
     alignItems: "center",
+    marginRight:10,
+    marginTop:12,
   },
+  mainText:{
+    flexDirection:"row",
+    alignItems:"center",
+  },
+  addcopybtn:{
+    flexDirection:"row",
+    alignSelf:"flex-end"
+  },
+  addtext:{
+    alignItems:"center",
+    marginLeft:5,
+    marginTop:10,
+  },
+  buttonWrap:{ 
+    flexDirection:"row",
+    justifyContent:"space-between",
+  },
+  submitButton: {
+    backgroundColor: "#0c7c62",
+    paddingVertical: 5,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    justifyContent: "center",
+    alignItems: "center",
+    marginVertical: 10,
+  },
+  mainCopyText:{
+    color:"#000",
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    fontWeight:"bold",   
+  }
 });
