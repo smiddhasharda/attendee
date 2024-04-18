@@ -1,13 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import {
-  View,
-  Text,
-  Button,
-  TextInput,
-  FlatList,
-  StyleSheet,
-  Pressable,
-} from "react-native";
+import { View, Text, Button, TextInput, FlatList, StyleSheet, Pressable, } from "react-native";
 import { insert, fetch, update } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -156,7 +148,7 @@ const RoleScreen = () => {
           data: "",
           conditionString: "",
           checkAvailability: "",
-          customQuery: `select JSON_ARRAYAGG(json_object('PK_RoleId',p.PK_RoleId,'roleName',roleName,'description',p.description,'isActive',p.isActive,'modulePermission',( SELECT CAST( CONCAT('[', GROUP_CONCAT( JSON_OBJECT( 'Id',q.PK_role_module_permissionId,'FK_RoleId', q.FK_RoleId,'FK_ModuleId', q.FK_ModuleId, 'create', q.create, 'read', q.read, 'update', q.update, 'delete', q.delete) ), ']') AS JSON ) FROM tbl_role_module_permission q WHERE q.FK_RoleId = p.PK_RoleId ))) AS RoleMaster from tbl_role_master p`,
+          customQuery: `select JSON_ARRAYAGG(json_object('PK_RoleId',p.PK_RoleId,'roleName',roleName,'description',p.description,'isActive',p.isActive,'modulePermission',( SELECT CAST( CONCAT('[', GROUP_CONCAT( JSON_OBJECT( 'Id',q.PK_role_module_permissionId,'FK_RoleId', q.FK_RoleId,'FK_ModuleId', q.FK_ModuleId, 'create', q.create, 'read', q.read, 'update', q.update, 'delete', q.delete, 'special', q.special) ), ']') AS JSON ) FROM tbl_role_module_permission q WHERE q.FK_RoleId = p.PK_RoleId ))) AS RoleMaster from tbl_role_master p`,
         },
         authToken
       );
@@ -197,7 +189,6 @@ const RoleScreen = () => {
   };
 
   const handleEditRole = async (selectedRole) => {
-    console.log(selectedRole);
     setRoleData({
       roleId: selectedRole.PK_RoleId,
       roleName: selectedRole.roleName,
@@ -230,6 +221,7 @@ const RoleScreen = () => {
           delete: 0,
           read: 0,
           update: 0,
+          special: 0
         }));
         setRoleData({ ...roleData, modulePermissions: ModulePermissionData });
         setTempModulePermission(ModulePermissionData);
@@ -335,6 +327,12 @@ const RoleScreen = () => {
             onValueChange={() => handleUpdatePermissions(item, "delete")}
           />
         </View>
+        <View style={[styles.checkboxContainer, { flex: 1 }]}>
+          <CheckBox
+            value={getModulePermission(item, "special")}
+            onValueChange={() => handleUpdatePermissions(item, "special")}
+          />
+        </View>
       </View>
     );
   };
@@ -383,6 +381,9 @@ const RoleScreen = () => {
                 </Text>
                 <Text style={[styles.tableHeaderText, { flex: 1 }]}>
                   Delete
+                </Text>
+                <Text style={[styles.tableHeaderText, { flex: 1 }]}>
+                  Special
                 </Text>
               </View>
             )}
