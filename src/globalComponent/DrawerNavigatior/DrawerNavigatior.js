@@ -31,7 +31,10 @@ const Drawer = createDrawerNavigator();
 
 const CustomDrawerContent = ({ ...props }) => {
   const { showToast } = useToast();
-  const [userImage, setUserImage] = useState( props.userData?.profile_image_url || '');
+  // const [userImage, setUserImage] = useState( props.userData?.profile_image_url || '');
+    const [file, setFile] = useState('');
+
+
   const [open, setOpen] = useState(false);
 
   const checkAuthToken = useCallback(async () => {
@@ -55,23 +58,24 @@ const CustomDrawerContent = ({ ...props }) => {
   };
 
   const handleImageChange = (imageSource) => {
-    setUserImage(imageSource);
+    // setUserImage(imageSource);
+    setFile(imageSource);
   };
   const handleProfilePic = async () => {
     try {
       const authToken = await checkAuthToken();
       const formData = new FormData();
-      formData.append('profile_pics', fileInputRef.current.files[0]); // Assuming you have a file input reference
+      formData.append('profile_pics', file);
       formData.append('tblName', 'tbl_user_master');
       formData.append('data', '');
       formData.append('fileParam', 'profile_image_url');
-      formData.append('conditionString', `user_id = ${props.userData?.userId}`);
-      console.log(formData)
-      const response = await fetch('/api/multer', {
-        data: formData,
+      formData.append('conditionString', `user_id = ${props.userData?.user_id}`);
+      const response = await multer(
+        formData,
         authToken
-    });
+      );
       if (response) {
+        console.log(response);
         showToast(
           `User File Update Successful`,
           "success"
@@ -101,9 +105,9 @@ const CustomDrawerContent = ({ ...props }) => {
   return (
     <DrawerContentScrollView {...props}>
       <View style={{ alignItems: "center", paddingVertical: 20 }}>
-      <CustomeImagePicker imageUri={userImage} onImageChange={handleImageChange} />
-     {props.userData?.profile_image_url != userImage && (<View style={{  flexDirection: 'row', justifyContent: 'space-between'}}>             
-              <Button title="Cancel" onPress={()=>setUserImage(props.userData?.profile_image_url || '')} />
+      <CustomeImagePicker imageUri={file?.[0]?.uri || ''} onImageChange={handleImageChange} />
+     {props.userData?.profile_image_url != file && (<View style={{  flexDirection: 'row', justifyContent: 'space-between'}}>             
+              <Button title="Cancel" onPress={()=>file('')} />
               <Button title="Save" onPress={handleProfilePic} />
             </View>)}
         <Text>{props?.userData?.name}</Text>

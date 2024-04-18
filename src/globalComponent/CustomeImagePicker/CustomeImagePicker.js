@@ -172,9 +172,11 @@ const CustomeImagePicker = ({...props }) => {
           aspect: [4, 3],
           quality: 1,
         });
-    
+    console.log(result)
         if (!result.canceled) {
-          props.onImageChange(result.assets?.[0]?.uri);
+          // props.onImageChange(result.assets?.[0]?.uri);
+          props.onImageChange(result.assets);
+
         }
       };
   let cameraRef;

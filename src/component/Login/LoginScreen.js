@@ -18,7 +18,7 @@ const LoginScreen = ({ style, logoImageStyle, loginTextStyle, loginButtonStyle, 
     OTP: '',
   });
 
-  const [isOTPVisible, setOTPVisible] = useState(false);
+  // const [isOTPVisible, setOTPVisible] = useState(false);
   const [isEmailTooltipVisible, setEmailTooltipVisible] = useStateWithCallback(false);
   const [isOTPTooltipVisible, setOTPTooltipVisible] = useStateWithCallback(false);
   const [isOTPInputDisabled, setOTPInputDiasbled] = useStateWithCallback(true);
@@ -34,9 +34,9 @@ const LoginScreen = ({ style, logoImageStyle, loginTextStyle, loginButtonStyle, 
     setLoginData({ ...loginData, OTP: text });
   };
 
-  const handleEyePress = () => {
-    setOTPVisible((oldValue) => !oldValue);
-  };
+  // const handleEyePress = () => {
+  //   setOTPVisible((oldValue) => !oldValue);
+  // };
 
   const handleEmailValidation = () => {
     if (emailValidator(loginData?.email)) {
@@ -133,6 +133,7 @@ const LoginScreen = ({ style, logoImageStyle, loginTextStyle, loginButtonStyle, 
             onChangeText={handleEmailChange}
             autoCapitalize="none"
             onFocus={() => setEmailTooltipVisible(false)}
+            readOnly={!isOTPInputDisabled}
           />
         </>
       </View>
@@ -140,9 +141,9 @@ const LoginScreen = ({ style, logoImageStyle, loginTextStyle, loginButtonStyle, 
   };
 
   const renderOTPInput = () => {
-    const eyeIcon = isOTPVisible
-      ? require("../../local-assets/eye.png")
-      : require("../../local-assets/eye-off.png");
+    // const eyeIcon = isOTPVisible
+    //   ? require("../../local-assets/eye.png")
+    //   : require("../../local-assets/eye-off.png");
 
     const renderTooltipContent = () =>
       <View style={LoginStyles.passwordTooltipContainer}>
@@ -159,16 +160,16 @@ const LoginScreen = ({ style, logoImageStyle, loginTextStyle, loginButtonStyle, 
           <TextInput
             placeholder={OTPPlaceholder}
             value={loginData.OTP}
-            secureTextEntry={!isOTPVisible}
+            // secureTextEntry={!isOTPVisible}
             onChangeText={handleOTPChange}
-            enableIcon
+            // enableIcon
             style={LoginStyles.textInputValue}
-            iconImageSource={eyeIcon}
+            // iconImageSource={eyeIcon}
             autoCapitalize="none"
             onFocus={() => {
               setOTPTooltipVisible(false);
             }}
-            onIconPress={handleEyePress}
+            // onIconPress={handleEyePress}
           />
         </View>
       
