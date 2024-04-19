@@ -16,6 +16,7 @@ import RoomDetail from '../../component/Dashboard/RoomDetail';
 import StudentInfo from '../../component/Dashboard/StudentInfo';
 import { multer } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
+import styles from "./DrawerNavigator.style";
 
 // Define your screen components
 
@@ -26,16 +27,13 @@ const UserComponent = () => <UserScreen />;
 const ExamComponent = ({ navigation }) => <Exam navigation={navigation} />;
 const StudentComponent = () => <StudentInfo />;
 const RoomDetailComponent = () => <RoomDetail />;
-
 const Drawer = createDrawerNavigator();
 
 const CustomDrawerContent = ({ ...props }) => {
   const { showToast } = useToast();
   // const [userImage, setUserImage] = useState( props.userData?.profile_image_url || '');
     const [file, setFile] = useState('');
-
-
-  const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(false);
 
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
@@ -102,33 +100,40 @@ const CustomDrawerContent = ({ ...props }) => {
     }
   };
 
-  return (
+ return (
     <DrawerContentScrollView {...props}>
-      <View style={{ alignItems: "center", paddingVertical: 20 }}>
-      <CustomeImagePicker imageUri={file?.[0]?.uri || ''} onImageChange={handleImageChange} />
-     {props.userData?.profile_image_url != file && (<View style={{  flexDirection: 'row', justifyContent: 'space-between'}}>             
-              <Button title="Cancel" onPress={()=>file('')} />
-              <Button title="Save" onPress={handleProfilePic} />
-            </View>)}
-        <Text>{props?.userData?.name}</Text>
-        <DropDownPicker
-          open={open}
-          value={props?.userRoleIndex}
-          items={props?.userRoleList}
-          setOpen={setOpen}
-          setValue={(value) => props?.handleRoleSelect(value)}
-          containerStyle={{ marginTop: 20, width: "30%", alignSelf: "center" }}
-          style={{ backgroundColor: "#fafafa" }}
-          labelStyle={{ fontSize: 16, textAlign: "left", color: "#000" }}
-          dropDownStyle={{ backgroundColor: "#fafafa" }}
-          dropDownMaxHeight={150}
-          dropDownDirection="TOP"
-        />
+      <View  style={styles.container}>
+        <View style={styles.header}>
+        <CustomeImagePicker imageUri={file?.[0]?.uri || ''} onImageChange={handleImageChange} />
+      {props.userData?.profile_image_url != file && (<View style={{  flexDirection: 'row', justifyContent: 'space-between'}}>  
+                {/* <View style={styles.buttonwrap}>           
+                <Button title="Cancel" onPress={()=>file('')} />
+                <Button style={styles.savebtn}  title="Save" onPress={handleProfilePic} />
+                </View> */}
+              </View>)}
+          <Text style={styles.username}> {props?.userData?.name}</Text>
+          <View   style={styles.dropdownWrap}>
+            <DropDownPicker
+              open={open}
+              value={props?.userRoleIndex}
+              items={props?.userRoleList}
+              setOpen={setOpen}
+              setValue={(value) => props?.handleRoleSelect(value)}
+              // containerStyle={{ marginTop: 20, width: "30%", alignSelf: "center" }}
+              style={ styles.dropdown}
+              // labelStyle={{ fontSize: 16, textAlign: "left", color: "#000" }}
+              dropDownStyle={{ backgroundColor: "#fafafa" }}
+              dropDownMaxHeight={150}
+              dropDownDirection="TOP" 
+              containerStyle={styles.rolePicker}
+            />
+          </View>
+        </View>
       </View>
-      <DrawerItemList {...props} />
-      <Pressable onPress={handleLogout}>
-        <Text style={{ margin: 16 }}>Logout</Text>
-      </Pressable>
+      <DrawerItemList {...props} style={styles.dropdownmain} />
+        <Pressable onPress={handleLogout}>
+          <Text style={{ margin: 16 }}>Logout</Text>
+        </Pressable>
     </DrawerContentScrollView>
   );
 };
@@ -165,7 +170,6 @@ const DrawerNavigator = ({navigation}) => {
         console.error("Error fetching user role permission:", error);
       }
     };
-
     fetchUserRolePermission();
   }, []);
 
@@ -225,3 +229,5 @@ const DrawerNavigator = ({navigation}) => {
 };
 
 export default DrawerNavigator;
+
+ 
