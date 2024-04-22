@@ -1,13 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useCallback  } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TextInput, ActivityIndicator, Dimensions, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'
 import user from '../../local-assets/userimg.jpg'
 import { useRoute } from '@react-navigation/native';
 import CodeScanner from '../../globalComponent/CodeScanner/CodeScanner'; // Make sure to import CodeScanner properly
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { insert, fetch, update } from "../../AuthService/AuthService";
+import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 
 function RoomDetail() {
   const [isScanning, setIsScanning] = useState(false);
   const route = useRoute();
+  const { showToast } = useToast();
 
   // Sample data for room details
       // Table Name [ SU_ADM_SEATNMRC ]
@@ -23,7 +27,19 @@ function RoomDetail() {
 
   const [studentDetails, setStudentDetails] = useState([]);
   const [loading, setLoading] = useState(false);
-  const { room_Nbr, exam_Dt,navigation } = route.params;
+  const [presentStudentList, setPresentStudentList] = useState();
+  const { room_Nbr, exam_Dt,startTime,navigation } = route.params;
+
+  const checkAuthToken = useCallback(async () => {
+    const authToken = await AsyncStorage.getItem("authToken");
+
+    if (!authToken) {
+      showToast("Authentication token not available", "error");
+      throw new Error("Authentication token not available");
+    }
+
+    return authToken;
+  }, [showToast]);
 
   const fetchStudentDetails = (date, room) => {
     setLoading(true);
@@ -40,10 +56,9 @@ function RoomDetail() {
   const handleScannedData = (ScannedData) => {
     setScannedData(ScannedData);
     setIsScanning(false);
-    let studentData = studentDetails?.filter((data)=> data.EMPLID === ScannedData)?.[0] || '';
-    navigation.navigate("StudentScreen", { room_Nbr: studentData.ROOM_NBR ,exam_Dt: studentData.EXAM_DT,catlog_Nbr: studentData.CATALOG_NBR ,system_Id:studentData.EMPLID, seat_Nbr: studentData.PTP_SEQ_CHAR ,navigation });
+   let studentData = studentDetails?.filter((data)=> data.EMPLID === ScannedData)?.[0] || '';
+    navigation.navigate("StudentScreen", { room_Nbr: studentData.ROOM_NBR ,exam_Dt: studentData.EXAM_DT,catlog_Nbr: studentData.CATALOG_NBR ,system_Id:studentData.EMPLID, seat_Nbr: studentData.PTP_SEQ_CHAR ,startTime: startTime,reportId: presentStudentList?.filter((item)=>item.EMPLID === Number(studentData.EMPLID))?.[0]?.PK_Report_Id ,navigation });
   };
-
   const handleCancel = () => {
     setIsScanning(false);
   };
@@ -52,9 +67,48 @@ function RoomDetail() {
     setIsScanning(true);
     setScannedData(null); // Reset scanned data when starting a new scan
   };
+ const handleGetReportData = async () => {
+    try {
+      const authToken = await checkAuthToken();
+      const response = await fetch(
+        {
+          operation: "custom",
+          tblName: "tbl_report_master",
+          data: '',
+          conditionString:'',
+          checkAvailability: '',
+          customQuery: `select PK_Report_Id,EMPLID from tbl_report_master where EXAM_DT = '${exam_Dt}' AND ROOM_NBR = '${room_Nbr}' AND EXAM_START_TIME = '${startTime}' `, 
+        },
+        authToken
+      );
+
+      if (response) {
+        setPresentStudentList(response.data)
+      }
+    } catch (error) {
+      handleAuthErrors(error);
+    }
+  };
+  const handleAuthErrors = (error) => {
+    switch (error.message) {
+      case "Invalid credentials":
+        showToast("Invalid authentication credentials", "error");
+        break;
+      case "Data already exists":
+        showToast("Student Info with the same name already exists", "error");
+        break;
+      case "No response received from the server":
+        showToast("No response received from the server", "error");
+        break;
+      default:
+        showToast("Student Info Operation Failed", "error");
+    }
+  };
+
   useEffect(() => {
         // fetchStudentDetails('06-FEB-24','RM-202 (BLOCK 4)')
-    fetchStudentDetails(exam_Dt, room_Nbr)
+    fetchStudentDetails(exam_Dt, room_Nbr);
+    handleGetReportData();
   }, []);
 
   return (
@@ -83,8 +137,8 @@ function RoomDetail() {
           <ActivityIndicator size="large" color="#0000ff" />
         ) : (
           studentDetails?.length > 0 ? studentDetails?.map((studentData, index) =>
-            ( <Pressable onPress={() => navigation.navigate("StudentScreen", { room_Nbr: studentData.ROOM_NBR ,exam_Dt: studentData.EXAM_DT,catlog_Nbr: studentData.CATALOG_NBR ,system_Id:studentData.EMPLID, seat_Nbr: studentData.PTP_SEQ_CHAR ,navigation })}>
-            <View style={[styles.box]} key={index}>
+            ( <Pressable onPress={() => navigation.navigate("StudentScreen", { room_Nbr: studentData.ROOM_NBR ,exam_Dt: studentData.EXAM_DT,catlog_Nbr: studentData.CATALOG_NBR ,system_Id:studentData.EMPLID, seat_Nbr: studentData.PTP_SEQ_CHAR, reportId: presentStudentList?.filter((item)=>item.EMPLID === Number(studentData.EMPLID))?.[0]?.PK_Report_Id, navigation })}>
+            <View style={[styles.box,presentStudentList?.find((item)=>item.EMPLID === Number(studentData.EMPLID)) ? styles.activebox :'' ]} key={index}>
               <View style={[styles.boxtext]}>
                 <Image source={user} style={styles.userimage} resizeMode="cover" />
                 <Text style={[styles.examname]}>{studentData.EMPLID}</Text>
@@ -93,57 +147,6 @@ function RoomDetail() {
             </View>
             </Pressable>)) : <Text>There Is No Student Present In this Class !!</Text>
         )}
-         
-          {/* <View style={[styles.box, styles.activebox]}>   
-          <View style={[styles.boxtext]}>
-          <Image source={user} style={styles.userimage}   />
-          <Text style={[styles.examname,styles. activetext]}>Shubham</Text>     
-          <Text style={[styles.examname,styles. activetext]}>Seat No</Text>
-          </View>  
-          </View>
-          <View style={[styles.box, ]}>   
-          <View style={[styles.boxtext]}>
-          <Image source={user} style={styles.userimage}   />
-          <Text style={[styles.examname,]}>Shubham</Text>     
-          <Text style={[styles.examname,]}>Seat No</Text>
-          </View>  
-          </View>
-          <View style={[styles.box, ]}>   
-          <View style={[styles.boxtext]}>
-          <Image source={user} style={styles.userimage}   />
-          <Text style={[styles.examname,]}>Shubham</Text>     
-          <Text style={[styles.examname,]}>Seat No</Text>
-          </View>  
-          </View>
-          <View style={[styles.box,]}>   
-          <View style={[styles.boxtext]}>
-          <Image source={user} style={styles.userimage}   />
-          <Text style={[styles.examname,]}>Shubham</Text>     
-          <Text style={[styles.examname,]}>Seat No</Text>
-          </View>  
-          </View>
-          <View style={[styles.box, ]}>   
-          <View style={[styles.boxtext]}>
-          <Image source={user} style={styles.userimage}   />
-          <Text style={[styles.examname,]}>Shubham</Text>     
-          <Text style={[styles.examname,]}>Seat No</Text>
-          </View>  
-          </View>
-          <View style={[styles.box, ]}>   
-          <View style={[styles.boxtext]}>
-          <Image source={user} style={styles.userimage}   />
-          <Text style={[styles.examname,]}>Shubham</Text>     
-          <Text style={[styles.examname,]}>Seat No</Text>
-          </View>  
-          </View>
-          <View style={[styles.box, ]}>   
-          <View style={[styles.boxtext]}>
-          <Image source={user} style={styles.userimage}   />
-          <Text style={[styles.examname,]}>Shubham</Text>     
-          <Text style={[styles.examname,]}>Seat No</Text>
-          </View>  
-          </View> */}
-   
     </ScrollView>
           </View>}
   </View>

@@ -84,15 +84,9 @@ const Exam = ({ navigation }) => {
           roomDetails.length > 0 ? (
             <ScrollView>
               {roomDetails.map((roomData, index) => (
-                // <View key={index} style={[styles.box, styles.activebox]}>
-                //   <Ionicons style={styles.icons} name="book" size={24} color="rgb(8 96 88)" />
-                //   <View style={styles.boxtext}>
-                //     <Text style={[styles.examname, styles.activetext]}>{roomData.ROOM_NBR}</Text>
-                //     <Text style={[styles.examtime, styles.activetext]}>{roomData.EXAM_START_TIME}</Text>
-                //   </View>
-                // </View>
                 <Pressable onPress={() => navigation.navigate("RoomDetail", { room_Nbr: roomData.ROOM_NBR ,exam_Dt: roomData.EXAM_DT , startTime: roomData.EXAM_START_TIME ,navigation })}>
                 <View key={index} style={[styles.box]}>
+                {/* <View key={index} style={[styles.box, styles.activebox]}> */}
                 <Ionicons style={styles.icons} name="book" size={24} color="rgb(8 96 88)" />
                 <View style={styles.boxtext}>
                   <Text style={[styles.examname]}>{roomData.ROOM_NBR}</Text>
@@ -100,71 +94,6 @@ const Exam = ({ navigation }) => {
                 </View>
               </View>
               </Pressable>
-                 
-        /* <View style={styles.box}>
-          <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-          <View style={styles.boxtext}>
-          <Text style={styles.examname}>Exam Name</Text>       
-          <Text>Room No.1</Text>
-          <Text style={styles.examtime}>10:30 am</Text>
-          </View>
-        </View>
-        <View style={styles.box}>
-          <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-          <View style={styles.boxtext}>
-          <Text style={styles.examname}>Exam Name</Text>       
-          <Text>Room No.1</Text>
-          <Text style={styles.examtime}>10:30 am</Text>
-          </View>
-        </View>
-        <View style={styles.box}>
-          <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-          <View style={styles.boxtext}>
-          <Text style={styles.examname}>Exam Name</Text>      
-          <Text>Room No.1</Text>
-          <Text style={styles.examtime}>10:30 am</Text>
-          </View>
-        </View>
-        <View style={styles.box}>
-          <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-          <View style={styles.boxtext}>
-          <Text style={styles.examname}>Exam Name</Text>      
-          <Text>Room No.1</Text>
-          <Text style={styles.examtime}>10:30 am</Text>
-          </View>
-        </View>
-        <View style={styles.box}>
-          <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-          <View style={styles.boxtext}>
-          <Text style={styles.examname}>Exam Name</Text>      
-          <Text>Room No.1</Text>
-          <Text style={styles.examtime}>10:30 am</Text>
-          </View>
-        </View>
-        <View style={styles.box}>
-          <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-          <View style={styles.boxtext}>
-          <Text style={styles.examname}>Exam Name</Text>      
-          <Text>Room No.1</Text>
-          <Text style={styles.examtime}>10:30 am</Text>
-          </View>
-        </View>
-        <View style={styles.box}>
-          <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-          <View style={styles.boxtext}>
-          <Text style={styles.examname}>Exam Name</Text>      
-          <Text>Room No.1</Text>
-          <Text style={styles.examtime}>10:30 am</Text>
-          </View>
-        </View>
-        <View style={[styles.box, styles.inactiveboxx]}>
-          <Ionicons style={styles.icons} name="book" size={24} color="rgb(8 96 88)" />
-          <View style={[styles.boxtext]}>
-          <Text style={[styles.examname,styles. inactivetexts]}>Exam Name</Text>     
-          <Text style={[styles.examname,styles. inactivetexts]}>Room No.1</Text>
-          <Text style={[styles.examtime,styles. inactivetext]}>10:30 am</Text>
-          </View>
-        </View> */
               ))}
             </ScrollView>
           ) : (

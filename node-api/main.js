@@ -554,7 +554,6 @@ const transporter = nodemailer.createTransport({
           checkAvailability,
           customQuery,
         } = req.body;
-
         if (operation === undefined || tblName === undefined) {
           return res
             .status(400)
@@ -605,7 +604,6 @@ const transporter = nodemailer.createTransport({
     try {
       const { tblName, data, conditionString,fileParam } = req.body;
       const file = req?.file?.filename;
-      console.log(req)
       if (!tblName) {
         return res
           .status(400)
