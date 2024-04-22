@@ -43,9 +43,18 @@ const transporter = nodemailer.createTransport({
     database: process.env.DB_DATABASE,
   };
 
+  // const viewConfig = {
+  //   host: process.env.VIEW_HOST,
+  //   user: process.env.VIEW_USER,
+  //   password: process.env.VIEW_PASSWORD,
+  //   database: process.env.VIEW_DATABASE,
+  //   port: process.env.VIEW_PORT || 9999,
+  // };
+
   try {
     // Create a promise-based pool
     const pool = await mysql.createPool(dbConfig);
+    // const viewPool = await mysql.createPool(viewConfig);
 
     // Set group_concat_max_len
     await pool.query('SET SESSION group_concat_max_len = 4294967295');
@@ -54,6 +63,10 @@ const transporter = nodemailer.createTransport({
     const connection = await pool.getConnection();
     console.log("Connected to MySQL database:", process.env.DB_DATABASE);
     connection.release();
+
+    // const viewConnection = await viewPool.getConnection();
+    // console.log("View Connected to MySQL database:", process.env.VIEW_DATABASE);
+    // viewConnection.release();
 
     // Middleware to authenticate JWT token
     function authenticateToken(req, res, next) {
@@ -599,7 +612,6 @@ const transporter = nodemailer.createTransport({
     });
 
     // For Multer Api  
-
   app.post("/api/multer", upload.single('profile_pics'), authenticateToken, async (req, res) => {
     try {
       const { tblName, data, conditionString,fileParam } = req.body;
@@ -634,6 +646,48 @@ const transporter = nodemailer.createTransport({
       return res.status(500).json({ error: "Internal server error" });
     }
   });
+
+  // // For View Api
+  // app.get("/api/view", authenticateToken, async (req, res) => {
+  //   try {
+  //     const { operation, tblName, data, conditionString, checkAvailability, customQuery, } = req.query;
+  //     if (!operation || !tblName) {
+  //       return res
+  //         .status(400)
+  //         .json({ error: "Operation and table are required" });
+  //     }
+
+  //     if (checkAvailability) {
+  //       const [checkRows] = await viewPool.query(
+  //         `SELECT * FROM ${tblName} WHERE ${conditionString}`
+  //       );
+  //       if (checkRows.length > 0) {
+  //         return res.status(400).json({ error: "Data already exists" });
+  //       }
+  //     }
+  //     switch (operation) {
+  //       case "fetch":
+  //         const [selectRows] = await viewPool.query(
+  //           `SELECT * FROM ${tblName} ${
+  //             conditionString ? "WHERE " + conditionString : ""
+  //           }`
+  //         );
+  //         return res.json({ message: "Fetch successful", data: selectRows });
+  //       case "custom":
+  //         const [customRows] = await viewPool.query(customQuery);
+  //         return res.json({
+  //           message: "Custom query successful",
+  //           data: customRows,
+  //         });
+  //       default:
+  //         return res.status(400).json({ error: "Invalid operation type" });
+  //     }
+  //   } catch (error) {
+  //     console.error("Error in view fetch:", error.message || error);
+  //     return res.status(500).json({ error: "Internal server error" });
+  //   }
+  // });
+
 
 
     // Start the server
