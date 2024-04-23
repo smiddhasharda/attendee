@@ -114,8 +114,8 @@ const LoginScreen = ({ style, logoImageStyle, loginTextStyle, loginButtonStyle, 
     const tooltipContent = () => (
       <View style={LoginStyles.emailTooltipContainer}>
         <Text style={LoginStyles.emailTooltipTextStyle}>
-          That{" "}
-          <Text style={LoginStyles.emailTooltipRedTextStyle}>email address</Text>{" "}
+          That
+          <Text style={LoginStyles.emailTooltipRedTextStyle}>email address</Text>
           doesn't look right
         </Text>
       </View>
@@ -148,7 +148,7 @@ const LoginScreen = ({ style, logoImageStyle, loginTextStyle, loginButtonStyle, 
     const renderTooltipContent = () =>
       <View style={LoginStyles.passwordTooltipContainer}>
         <Text style={LoginStyles.passwordTooltipTextStyle}>
-          Incorrect{" "}
+          Incorrect
           <Text style={LoginStyles.passwordTooltipRedTextStyle}>OTP</Text>
         </Text>
       </View>;

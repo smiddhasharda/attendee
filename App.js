@@ -18,7 +18,7 @@ import  Exam from './src/component/Dashboard/Exam';
 import RoomDetail from './src/component/Dashboard/RoomDetail';
 
 const Stack = createNativeStackNavigator();
-
+global.SERVER_URL = `http://localhost:5000`;
 const App = () => {
   const [initialRoute, setInitialRoute] = useState('Login');
   const [loading, setLoading] = useState(true);
@@ -53,8 +53,7 @@ const App = () => {
               <Stack.Screen name="ForgetPassword" component={ForgetPasswordScreen} />
               <Stack.Screen name="PostLogin" component={DrawerNavigator} options={{ headerShown: false }} />
                <Stack.Screen name="Learn" component={Learn} />
-               <Stack.Screen name="Task" component={Task} />
-               
+               <Stack.Screen name="Task" component={Task} />               
             </Stack.Navigator>
           </NavigationContainer>
         </RoleProvider>
