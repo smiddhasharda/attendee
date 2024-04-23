@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const mysql = require("mysql2/promise");
 const nodemailer = require("nodemailer");
 const upload = require('./middlewares/multer.js');
+const path = require('path');
 
 const dotenv = require("dotenv");
 dotenv.config(); // Load variables from .env file
@@ -14,6 +15,15 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(bodyParser.json());
+
+
+global.__basedir = __dirname;
+
+// built-in middleware to handle urlencoded form data
+app.use(express.urlencoded({ extended: false, limit: '100mb' }));
+
+// built-in middleware for json 
+app.use(express.json({ limit: '100mb' }));
 
 // JWT Secret Key
 const secretKey = process.env.SECRET_KEY || null;
@@ -110,6 +120,8 @@ const transporter = nodemailer.createTransport({
         }
       });
     }
+
+    app.use('/userImg', express.static(path.join(__dirname, './resources/assets/ProfilePics')))
 
     // Email Verified
     app.post("/api/emailVerify", async (req, res) => {
@@ -612,40 +624,42 @@ const transporter = nodemailer.createTransport({
     });
 
     // For Multer Api  
-  app.post("/api/multer", upload.single('profile_pics'), authenticateToken, async (req, res) => {
-    try {
-      const { tblName, data, conditionString,fileParam } = req.body;
-      const file = req?.file?.filename;
-      if (!tblName) {
-        return res
-          .status(400)
-          .json({ error: "Operation and table are required" });
+    app.post("/api/multer", upload.single('profile_pics'), authenticateToken, async (req, res) => {
+      try {
+        const { tblName, data, conditionString, fileParam } = req.body;
+        const file = req.file?.filename; 
+    
+        if (!tblName) {
+          return res.status(400).json({ error: "Operation and table are required" });
+        }
+    
+        if (!file) {
+          return res.status(400).send('No files were uploaded.');
+        }
+    
+        const [checkRows] = await pool.query(`SELECT * FROM ${tblName} WHERE ${conditionString}`);
+    
+        if (checkRows.length > 0) {
+          const [updateRows] = await pool.query(`UPDATE ${tblName} SET ${fileParam} = ? WHERE ${conditionString}`, [file]);
+          if (updateRows.affectedRows > 0) {
+            return res.json({ message: "Update successful" });
+          } else {
+            return res.status(500).json({ error: "Update failed" });
+          }
+        } else {
+          const [insertRows] = await pool.query(`INSERT INTO ${tblName} SET ${fileParam} = ?, data = ?`, [file, data]);
+          if (insertRows.affectedRows > 0) {
+            return res.json({ message: "Insert successful", data: insertRows });
+          } else {
+            return res.status(500).json({ error: "Insert failed" });
+          }
+        }
+      } catch (error) {
+        console.error("Error:", error.message || error);
+        return res.status(500).json({ error: "Internal server error" });
       }
-      if (!req.file) {
-        return res.status(400).send('No files were uploaded.');
-    }
-    const [checkRows] = await pool.query( `SELECT * FROM ${tblName} WHERE ${conditionString}`);
-
-    if (checkRows.length > 0) {
-      const [updateRows] = await pool.query(`UPDATE ${tblName} SET ${fileParam} = ?,? WHERE ${conditionString}`, [file,data] );
-      if (updateRows.affectedRows > 0) {
-        return { message: "Update successful" };
-      } else {
-        return { error: "Update failed" };
-      }
-    } else {
-      const [insertRows] = await pool.query(`INSERT INTO ${tblName} SET ${fileParam} = ?, ?`,[file,data]);
-      if (insertRows.affectedRows > 0) {
-        return { message: "Insert successful", data: insertRows };
-      } else {
-        return { error: "Insert failed" };
-      }
-    }
-    } catch (error) {
-      console.error("Error:", error.message || error);
-      return res.status(500).json({ error: "Internal server error" });
-    }
-  });
+    });
+    
 
   // // For View Api
   // app.get("/api/view", authenticateToken, async (req, res) => {

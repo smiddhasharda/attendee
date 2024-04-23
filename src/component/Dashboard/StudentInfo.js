@@ -619,7 +619,6 @@ const StudentInfo = () => {
                     onPress={() => handleRemoveCopy(index)}
                   >
                     <Text style={styles.addButtonText}>
-                      {" "}
                       <FontAwesome
                         name="trash-o"
                         size={24}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, Text, Button, TextInput, FlatList, StyleSheet,Pressable } from "react-native";
+import { View, Text, TextInput, FlatList, StyleSheet,Pressable } from "react-native";
 import { insert, fetch, update } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -199,14 +199,26 @@ const ModuleScreen = () => {
           />
           {moduleData.moduleId ? (
             <View style={styles.buttonContainer}>
-              <Button title="Update Module" onPress={handleUpdateModule} />
-              <Button title="Cancel" onPress={handleClose} />
+               <Pressable onPress={() => handleUpdateModule()}>
+                    <Text>Update Module</Text>
+                  </Pressable>
+                  <Pressable onPress={() => handleClose()}>
+                    <Text>Cancel</Text>
+                  </Pressable>
+              {/* <Button title="Update Module" onPress={handleUpdateModule} />
+              <Button title="Cancel" onPress={handleClose} /> */}
             </View>
           ) : (
             
             <View style={styles.buttonContainer}>
-              <Button title="Add New Module" onPress={handleAddModule} />
-              <Button title="Cancel" onPress={handleClose} />
+                <Pressable onPress={() => handleAddModule()}>
+                    <Text>Add New Module</Text>
+                  </Pressable>
+                  <Pressable onPress={() => handleClose()}>
+                    <Text>Cancel</Text>
+                  </Pressable>
+              {/* <Button title="Add New Module" onPress={handleAddModule} />
+              <Button title="Cancel" onPress={handleClose} /> */}
             </View>
 
           )}
@@ -216,7 +228,10 @@ const ModuleScreen = () => {
            <View style={styles.modulists}>
            <Text style={styles.header}>Module List:</Text>
            <View style={styles.addbtnWrap}>
-            <Button title="Add" onPress={() => setModuleContainerVisible(true)} />
+           <Pressable onPress={() => setModuleContainerVisible(true)}>
+                    <Text>Add</Text>
+                  </Pressable>
+            {/* <Button title="Add" onPress={() => setModuleContainerVisible(true)} /> */}
           </View>
               <FlatList
                   data={moduleList}
@@ -238,12 +253,15 @@ const ModuleScreen = () => {
               <Text style={[styles.listItemText, { flex: 1 }, item.isActive ? styles.listItemActiveStatus : styles.listItemInactiveStatus]}>{item.isActive ? "Active" : "Inactive"}</Text>
               </Pressable>         
               <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
-                <Button
+              <Pressable onPress={() => handleEditModule(item)}>
+                    <Text>Edit</Text>
+                  </Pressable>
+                {/* <Button
                   title="Edit"
                   onPress={() => handleEditModule(item)}
                   style={styles.listItemEditButton}
                   textStyle={styles.listItemEditText}
-                />
+                /> */}
               </View>
             </View>
             )}

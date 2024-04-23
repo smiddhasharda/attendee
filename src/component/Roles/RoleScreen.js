@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, Text, Button, TextInput, FlatList, StyleSheet, Pressable, } from "react-native";
+import { View, Text, TextInput, FlatList, StyleSheet, Pressable, } from "react-native";
 import { insert, fetch, update } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -392,13 +392,25 @@ const RoleScreen = () => {
 
           {roleData.roleId ? (
             <View style={styles.buttonContainer}>
-              <Button title="Update Role" onPress={handleUpdateRole} />
-              <Button title="Cancel" onPress={handleClose} />
+               <Pressable onPress={() => handleUpdateRole()}>
+                    <Text>Update Role</Text>
+                  </Pressable>
+                  <Pressable onPress={() => handleClose()}>
+                    <Text>Cancel</Text>
+                  </Pressable>
+              {/* <Button title="Update Role" onPress={handleUpdateRole} />
+              <Button title="Cancel" onPress={handleClose} /> */}
             </View>
           ) : (
             <View style={styles.buttonContainer}>
-              <Button title="Add New Role" onPress={handleAddRole} />
-              <Button title="Cancel" onPress={handleClose} />
+              <Pressable onPress={() => handleAddRole()}>
+                    <Text>Add New Role</Text>
+                  </Pressable>
+                  <Pressable onPress={() => handleClose()}>
+                    <Text>Cancel</Text>
+                  </Pressable>
+              {/* <Button title="Add New Role" onPress={handleAddRole} />
+              <Button title="Cancel" onPress={handleClose} /> */}
             </View>
           )}
         </View>
@@ -406,7 +418,10 @@ const RoleScreen = () => {
        <View style={styles.roleLists}>
         <Text style={styles.header}>Role List:</Text>
         <View style={styles.addbtnWrap}>
-          <Button  title="Add" onPress={() => setRoleContainerVisible(true)} />
+        <Pressable onPress={() => setRoleContainerVisible(true)}>
+                    <Text>Add</Text>
+                  </Pressable>
+          {/* <Button  title="Add" onPress={() => setRoleContainerVisible(true)} /> */}
       </View>
       <FlatList
         data={roleList}
@@ -452,12 +467,15 @@ const RoleScreen = () => {
                 alignItems: "center",
               }}
             >
-              <Button
+                <Pressable onPress={() => handleEditRole(item)}>
+                    <Text>Edit</Text>
+                  </Pressable>
+              {/* <Button
                 title="Edit"
                 onPress={() => handleEditRole(item)}
                 style={styles.listItemEditButton}
                 textStyle={styles.listItemEditText}
-              />
+              /> */}
             </View>
           </View>
         )}

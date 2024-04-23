@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
-  Button,
   TextInput,
   FlatList,
   StyleSheet,
@@ -11,7 +10,7 @@ import {
 import { insert, fetch, update } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import CustomDateTimePicker from '../../globalComponent/DateTimePicker/CustomDateTimePicker';
+import CustomDateTimePicker from "../../globalComponent/DateTimePicker/CustomDateTimePicker";
 
 const ExamScreen = () => {
   const { showToast } = useToast();
@@ -193,11 +192,11 @@ const ExamScreen = () => {
   }, []);
 
   const handelChangeDateFrom = async (date) => {
-    setExamData({ ...examData, examStartFrom: date })
+    setExamData({ ...examData, examStartFrom: date });
   };
 
   const handelChangeDateTo = async (date) => {
-    setExamData({ ...examData, examEndTo: date })
+    setExamData({ ...examData, examEndTo: date });
   };
 
   return (
@@ -221,10 +220,16 @@ const ExamScreen = () => {
             }
           />
           <Text>Exam Start From </Text>
-          <CustomDateTimePicker date={examData.examStartFrom} handelChangeDate={handelChangeDateFrom}/>
+          <CustomDateTimePicker
+            date={examData.examStartFrom}
+            handelChangeDate={handelChangeDateFrom}
+          />
           <Text>Exam End To </Text>
-          <CustomDateTimePicker date={examData.examEndTo} handelChangeDate={handelChangeDateTo}/>
-            <TextInput
+          <CustomDateTimePicker
+            date={examData.examEndTo}
+            handelChangeDate={handelChangeDateTo}
+          />
+          <TextInput
             style={styles.input}
             placeholder="Exam Type"
             value={examData.examType}
@@ -234,20 +239,35 @@ const ExamScreen = () => {
           />
           {examData.examId ? (
             <View style={styles.buttonContainer}>
-              <Button title="Update Exam" onPress={handleUpdateExam} />
-              <Button title="Cancel" onPress={handleClose} />
+               <Pressable onPress={() => handleUpdateExam()}>
+                    <Text>Update Exam</Text>
+                  </Pressable>
+                  <Pressable onPress={() => handleClose()}>
+                    <Text>Cancel</Text>
+                  </Pressable>
+              {/* <Button title="Update Exam" onPress={handleUpdateExam} />
+              <Button title="Cancel" onPress={handleClose} /> */}
             </View>
           ) : (
             <View style={styles.buttonContainer}>
-              <Button title="Add New Exam" onPress={handleAddExam} />
-              <Button title="Cancel" onPress={handleClose} />
+                <Pressable onPress={() => handleAddExam()}>
+                    <Text>Add New Exam</Text>
+                  </Pressable>
+                  <Pressable onPress={() => handleClose()}>
+                    <Text>Cancel</Text>
+                  </Pressable>
+              {/* <Button title="Add New Exam" onPress={handleAddExam} />
+              <Button title="Cancel" onPress={handleClose} /> */}
             </View>
           )}
         </View>
       ) : (
         <View>
           <Text style={styles.header}>Exam List:</Text>
-          <Button title="Add" onPress={() => setExamContainerVisible(true)} />
+          <Pressable onPress={() => setExamContainerVisible(true)}>
+                    <Text>Add</Text>
+                  </Pressable>
+          {/* <Button title="Add" onPress={() => setExamContainerVisible(true)} /> */}
           <FlatList
             data={examList}
             keyExtractor={(item) => item.PK_ExamId.toString()}
@@ -319,12 +339,15 @@ const ExamScreen = () => {
                     alignItems: "center",
                   }}
                 >
-                  <Button
+                  <Pressable onPress={() => handleEditExam(item)}>
+                    <Text>Edit</Text>
+                  </Pressable>
+                  {/* <Button
                     title="Edit"
                     onPress={() => handleEditExam(item)}
                     style={styles.listItemEditButton}
                     textStyle={styles.listItemEditText}
-                  />
+                  /> */}
                 </View>
               </View>
             )}
@@ -342,8 +365,8 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     marginBottom: 20,
-    backgroundColor:"#fff",
-    padding:30,
+    backgroundColor: "#fff",
+    padding: 30,
   },
   input: {
     height: 40,

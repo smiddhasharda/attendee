@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Alert, KeyboardAvoidingView, StyleSheet } from 'react-native';
+import { View, TextInput, Pressable, Alert, KeyboardAvoidingView, StyleSheet } from 'react-native';
 import RegisterStyle from "./RegisterScreen.style";
 import {register} from '../../AuthService/AuthService';
 
@@ -75,8 +75,14 @@ const RegisterScreen = ({ navigation }) => {
         onChangeText={(text) => handleInputChange('password', text)}
         secureTextEntry
       />
-      <Button title="Register" onPress={handleRegister} style={ RegisterStyle.registerButtonStyle}/>
-      <Button title="Login" style={ RegisterStyle.registerButtonStyle} onPress={() => navigation.navigate('Login')} />
+       <Pressable onPress={() => handleRegister()}>
+                    <Text>Register</Text>
+                  </Pressable>
+                  <Pressable onPress={() => navigation.navigate('Login')}>
+                    <Text>Login</Text>
+                  </Pressable>
+      {/* <Button title="Register" onPress={handleRegister} style={ RegisterStyle.registerButtonStyle}/>
+      <Button title="Login" style={ RegisterStyle.registerButtonStyle} onPress={() => navigation.navigate('Login')} /> */}
     </KeyboardAvoidingView>
   );
 };
