@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Image, SafeAreaView, StatusBar, Text, Pressable, View, LayoutAnimation, } from "react-native";
+import { Image, SafeAreaView, StatusBar, Text, Pressable, View, LayoutAnimation,TextInput } from "react-native";
 import CheckBox from 'expo-checkbox';
-import TextInput from "react-native-text-input-interactive";
 import LoginStyles from "./LoginScreen.style";
 import useStateWithCallback from "../../helpers/useStateWithCallback";
 import emailValidator from "../../helpers/emailValidator";
