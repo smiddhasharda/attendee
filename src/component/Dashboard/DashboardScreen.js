@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { View, Text, Button, TextInput, FlatList, StyleSheet, Pressable ,ScrollView,Image} from 'react-native';
+import { View, Text, Button, TextInput, FlatList, StyleSheet, Pressable ,ScrollView,Image,} from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; 
 import loginBackground from '../../local-assets/attendlogin.jpg';
 import classe from '../../local-assets/classes.jpg';
 import { useNavigation } from '@react-navigation/native'; 
 import PieChart from './PieChart';
+import DropDownPicker from "react-native-dropdown-picker";
 const DashboardScreen = () => {
-  const { navigate } = useNavigation();
-  
+const { navigate } = useNavigation(); 
   const handleLearnPress = () => {
     navigate('Learn');
   };
@@ -17,7 +17,7 @@ const DashboardScreen = () => {
   };
 
   const data = [
-    { key: 'A', value: 50 },
+    { key: 'A', value: 50,},
     { key: 'B', value: 30 },
     { key: 'C', value: 20 },
   ];
@@ -91,55 +91,57 @@ const DashboardScreen = () => {
             </View>      */}
             <View style={styles.boxtable}>
               <ScrollView horizontal>
-                <View style={styles.tableWrap}>      
-                    <View style={[styles.row, styles.header]}>
-                      <Text style={styles.headerText}>Exam 1</Text>
-                      <Text style={styles.headerText}>Exam 2</Text>
-                      <Text style={styles.headerText}>Exam 3</Text>
-                      <Text style={styles.headerText}>Exam 1</Text>
-                      <Text style={styles.headerText}>Exam 2</Text>
-                      <Text style={styles.headerText}>Exam 3</Text>
-                      <Text style={styles.headerText}>Exam 2</Text>
-                      <Text style={styles.headerText}>Exam 3</Text>
-                    </View>
-                    <View style={styles.row}>
-                      <Text style={styles.cell}>Computer Science</Text>
-                      <Text style={styles.cell}>Computer Science</Text>
-                      <Text style={styles.cell}>Computer Science</Text>
-                      <Text style={styles.cell}>Computer Science</Text>
-                      <Text style={styles.cell}>Computer Science</Text>
-                      <Text style={styles.cell}>Computer Science</Text>          
-                    </View>
-                    <View style={styles.row}>
-                      <Text style={styles.cell}>Data Structure</Text>
-                      <Text style={styles.cell}>Data Structure</Text>
-                      <Text style={styles.cell}>Data Structure</Text>
-                      <Text style={styles.cell}>Data Structure</Text>
-                      <Text style={styles.cell}>Data Structure</Text>
-                      <Text style={styles.cell}>Data Structure</Text>          
-                    </View>
-                    <View style={styles.row}>
-                      <Text style={styles.cell}>Data Structure</Text>
-                      <Text style={styles.cell}>Data Structure</Text>
-                      <Text style={styles.cell}>Data Structure</Text>
-                      <Text style={styles.cell}>Data Structure</Text>
-                      <Text style={styles.cell}>Data Structure</Text>
-                      <Text style={styles.cell}>Data Structure</Text>          
-                    </View>
-                    <View style={styles.row}>
-                      <Text style={styles.cell}>Data Structure</Text>
-                      <Text style={styles.cell}>Data Structure</Text>
-                      <Text style={styles.cell}>Data Structure</Text>
-                      <Text style={styles.cell}>Data Structure</Text>
-                      <Text style={styles.cell}>Data Structure</Text>
-                      <Text style={styles.cell}>Data Structure</Text>          
-                    </View>
-                </View>
+                  <View style={styles.tableWrap}>      
+                      <View style={[styles.row, styles.header]}>
+                        <Text style={styles.headerText}>Exam 1</Text>
+                        <Text style={styles.headerText}>Exam 2</Text>
+                        <Text style={styles.headerText}>Exam 3</Text>
+                        <Text style={styles.headerText}>Exam 1</Text>
+                        <Text style={styles.headerText}>Exam 2</Text>
+                        <Text style={styles.headerText}>Exam 3</Text>
+                        <Text style={styles.headerText}>Exam 2</Text>
+                        <Text style={styles.headerText}>Exam 3</Text>
+                      </View>
+                      <View style={styles.row}>
+                        <Text style={styles.cell}>Computer Science</Text>
+                        <Text style={styles.cell}>Computer Science</Text>
+                        <Text style={styles.cell}>Computer Science</Text>
+                        <Text style={styles.cell}>Computer Science</Text>
+                        <Text style={styles.cell}>Computer Science</Text>
+                        <Text style={styles.cell}>Computer Science</Text>          
+                      </View>
+                      <View style={styles.row}>
+                        <Text style={styles.cell}>Data Structure</Text>
+                        <Text style={styles.cell}>Data Structure</Text>
+                        <Text style={styles.cell}>Data Structure</Text>
+                        <Text style={styles.cell}>Data Structure</Text>
+                        <Text style={styles.cell}>Data Structure</Text>
+                        <Text style={styles.cell}>Data Structure</Text>          
+                      </View>
+                      <View style={styles.row}>
+                        <Text style={styles.cell}>Data Structure</Text>
+                        <Text style={styles.cell}>Data Structure</Text>
+                        <Text style={styles.cell}>Data Structure</Text>
+                        <Text style={styles.cell}>Data Structure</Text>
+                        <Text style={styles.cell}>Data Structure</Text>
+                        <Text style={styles.cell}>Data Structure</Text>          
+                      </View>
+                      <View style={styles.row}>
+                        <Text style={styles.cell}>Data Structure</Text>
+                        <Text style={styles.cell}>Data Structure</Text>
+                        <Text style={styles.cell}>Data Structure</Text>
+                        <Text style={styles.cell}>Data Structure</Text>
+                        <Text style={styles.cell}>Data Structure</Text>
+                        <Text style={styles.cell}>Data Structure</Text>          
+                      </View>
+                  </View>
             </ScrollView>
             </View>      
             <View  style={styles.piechart}>        
                <PieChart />     
-            </View>
+            </View>   
+
+              
     </View>
     </ScrollView>
   );
@@ -247,6 +249,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     textAlign: 'center',
   },
+  // dropdown: {
+  //   width: 150,
+  //   height: 50,
+  //   transform: [{ scaleX: 1.5 }, { scaleY: 1.5 }], 
+  // },
 });
 
 export default DashboardScreen;
