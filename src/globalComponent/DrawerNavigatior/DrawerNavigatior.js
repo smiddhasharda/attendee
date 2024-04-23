@@ -177,7 +177,7 @@ const CustomDrawerContent = ({ ...props }) => {
       </View>
       <DrawerItemList {...props} style={styles.dropdownmain} />
       <View>
-      <Pressable onPress={props.handleLogout}>
+      <Pressable onPress={props.handleLogout()}>
         <Text style={{ margin: 16 }}>Logout</Text>
       </Pressable>
       </View>
