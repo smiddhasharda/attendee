@@ -4,8 +4,10 @@ import { Ionicons } from '@expo/vector-icons';
 import loginBackground from '../../local-assets/attendlogin.jpg';
 import classe from '../../local-assets/classes.jpg';
 import { useNavigation } from '@react-navigation/native'; 
+import PieChart from './PieChart';
 const DashboardScreen = () => {
   const { navigate } = useNavigation();
+  
   const handleLearnPress = () => {
     navigate('Learn');
   };
@@ -13,6 +15,13 @@ const DashboardScreen = () => {
   const handleTaskPress = () => {
     navigate('Task');
   };
+
+  const data = [
+    { key: 'A', value: 50 },
+    { key: 'B', value: 30 },
+    { key: 'C', value: 20 },
+  ];
+
   return (
     <ScrollView>
     <View style={styles.container}>
@@ -21,42 +30,38 @@ const DashboardScreen = () => {
             style={styles.searchBox}
             placeholder="Search..."          
           />
-  
             <View style={styles.subtext}>
-              <Text  style={styles.taskheading}>On Running Exam</Text>
+              <Text  style={styles.taskheading}>Exam Details</Text>
               <Text  onPress={handleLearnPress} style={styles.viewAll}>View All</Text>
-            </View>
-         
+            </View>        
             <View style={styles.boxcontainer}>            
                 <View style={styles.box}>
                 <Ionicons style={styles.icons} name="book" size={24} color="rgb(8 96 88)"  />
                 <View  style={styles.boxtext}>
-                  <Text>Maths</Text>
-                  <Text>Chapter 1</Text>
+                  <Text>Exam 1</Text>
+                  {/* <Text>Chapter 1</Text> */}
                 </View>
               </View>
               <View style={styles.box}>
               <Ionicons name="book" size={24} color="rgb(8 96 88)" />
               <View  style={styles.boxtext}>
-                  <Text>Statics</Text>
-                  <Text>Chapter 2</Text>
+                  <Text>Exam 2</Text>
+                  {/* <Text>Chapter 2</Text> */}
                   </View>
               </View>
               <View style={styles.box}>
               <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-              <View  style={styles.boxtext}>
-                  <Text>Econamics</Text>
-                  <Text>Chapter 3</Text>
+                   <View  style={styles.boxtext}>
+                  <Text>Exam 3</Text>
+                  {/* <Text>Chapter 3</Text> */}
                   </View>
-              </View>
-              
+              </View>             
             </View>
-            <View style={styles.subtext}>
+            {/* <View style={styles.subtext}>
               <Text style={styles.taskheading}>Up Coming Exam</Text>
               <Text onPress={handleTaskPress} style={styles.viewAll}>View All</Text>
-            </View>
-          
-            <View style={styles.boxcontainer}>            
+            </View>         */}
+            {/* <View style={styles.boxcontainer}>            
                 <View style={styles.taskbox}>
                 <Ionicons name="book" size={24} color="rgb(8 96 88)"  />
                 <View  style={styles.boxtext}>
@@ -71,21 +76,70 @@ const DashboardScreen = () => {
                   </View>
               </View>
             
-            </View>
-            <View style={styles.subtext}>
+            </View> */}
+            {/* <View style={styles.subtext}>
               <Text style={styles.taskheading}>Past Exam</Text>
               <Text style={styles.viewAll}>View All</Text>
-            </View>
-         
-            <View style={styles.boxcontainer}>            
+            </View>         */}
+            {/* <View style={styles.boxcontainer}>            
                 <View style={styles.taskbox}>               
                 <Image source ={classe} style={styles.imagebg} />       
               </View>
               <View style={styles.taskbox}>               
                 <Image source ={classe} style={styles.imagebg} />       
               </View>              
+            </View>      */}
+            <View style={styles.boxtable}>
+              <ScrollView horizontal>
+                <View style={styles.tableWrap}>      
+                    <View style={[styles.row, styles.header]}>
+                      <Text style={styles.headerText}>Exam 1</Text>
+                      <Text style={styles.headerText}>Exam 2</Text>
+                      <Text style={styles.headerText}>Exam 3</Text>
+                      <Text style={styles.headerText}>Exam 1</Text>
+                      <Text style={styles.headerText}>Exam 2</Text>
+                      <Text style={styles.headerText}>Exam 3</Text>
+                      <Text style={styles.headerText}>Exam 2</Text>
+                      <Text style={styles.headerText}>Exam 3</Text>
+                    </View>
+                    <View style={styles.row}>
+                      <Text style={styles.cell}>Computer Science</Text>
+                      <Text style={styles.cell}>Computer Science</Text>
+                      <Text style={styles.cell}>Computer Science</Text>
+                      <Text style={styles.cell}>Computer Science</Text>
+                      <Text style={styles.cell}>Computer Science</Text>
+                      <Text style={styles.cell}>Computer Science</Text>          
+                    </View>
+                    <View style={styles.row}>
+                      <Text style={styles.cell}>Data Structure</Text>
+                      <Text style={styles.cell}>Data Structure</Text>
+                      <Text style={styles.cell}>Data Structure</Text>
+                      <Text style={styles.cell}>Data Structure</Text>
+                      <Text style={styles.cell}>Data Structure</Text>
+                      <Text style={styles.cell}>Data Structure</Text>          
+                    </View>
+                    <View style={styles.row}>
+                      <Text style={styles.cell}>Data Structure</Text>
+                      <Text style={styles.cell}>Data Structure</Text>
+                      <Text style={styles.cell}>Data Structure</Text>
+                      <Text style={styles.cell}>Data Structure</Text>
+                      <Text style={styles.cell}>Data Structure</Text>
+                      <Text style={styles.cell}>Data Structure</Text>          
+                    </View>
+                    <View style={styles.row}>
+                      <Text style={styles.cell}>Data Structure</Text>
+                      <Text style={styles.cell}>Data Structure</Text>
+                      <Text style={styles.cell}>Data Structure</Text>
+                      <Text style={styles.cell}>Data Structure</Text>
+                      <Text style={styles.cell}>Data Structure</Text>
+                      <Text style={styles.cell}>Data Structure</Text>          
+                    </View>
+                </View>
+            </ScrollView>
+            </View>      
+            <View  style={styles.piechart}>        
+               <PieChart />     
             </View>
-      
     </View>
     </ScrollView>
   );
@@ -106,8 +160,7 @@ const styles = StyleSheet.create({
   subtext:{
     flexDirection:"row",
     justifyContent:"space-between",
-    marginBottom:10,
-   
+    marginBottom:10,  
   },
   taskheading:{
    fontSize:24,
@@ -131,9 +184,8 @@ const styles = StyleSheet.create({
     flexDirection:"row",
     justifyContent:"space-between",
     marginBottom:10,
-  
   },
- 
+
   box:{
     borderWidth:1,
     borderColor:"#ccc",
@@ -154,8 +206,6 @@ const styles = StyleSheet.create({
   textAlign:"center",
   alignItems:"center",
   borderRadius:10,
- 
- 
   },
   boxtext:{
     marginTop:10,
@@ -165,7 +215,38 @@ const styles = StyleSheet.create({
     width:"100%",
     height:"100%",
   },
-
+  boxtable:{
+    padding:5,
+  },
+  tableWrap: {
+    flexDirection: 'column',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 4,
+    marginBottom: 10,
+    backgroundColor: '#fff',
+  },
+  row: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  header: {
+    backgroundColor: '#f0f0f0',
+  },
+  headerText: {
+    flex: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 5,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  cell: {
+    flex: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 5,
+    textAlign: 'center',
+  },
 });
 
 export default DashboardScreen;
