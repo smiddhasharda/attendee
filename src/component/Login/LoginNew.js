@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, ImageBackground, StyleSheet, Text, View, Dimensions, TextInput, TouchableOpacity } from 'react-native';
+import { ScrollView, ImageBackground, StyleSheet, Text, View, Dimensions, TextInput, Pressable } from 'react-native';
 import loginBackground from '../../local-assets/attendlogin.jpg';
 
 const { width, height } = Dimensions.get('window');
@@ -21,9 +21,9 @@ function LoginNew() {
               placeholder="Enter the Email"
             />
           </View>
-          <TouchableOpacity style={styles.button} onPress={() => alert("OTP sent!")}>
+          <Pressable style={styles.button} onPress={() => alert("OTP sent!")}>
             <Text style={styles.buttonText}>Send OTP</Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </View>
     </ScrollView>

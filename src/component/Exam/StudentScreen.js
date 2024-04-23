@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, Text, Button, TextInput, FlatList, StyleSheet, } from "react-native";
+import { View, Text, Pressable, TextInput, FlatList, StyleSheet, } from "react-native";
 import { insert, fetch, update } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -374,20 +374,35 @@ const StudentScreen = () => {
           />
           {StudentData.studentId ? (
             <View style={styles.buttonContainer}>
-              <Button title="Update Student" onPress={handleUpdateStudent} />
-              <Button title="Cancel" onPress={handleClose} />
+              <Pressable onPress={() => handleUpdateStudent()}>
+                    <Text>Update Student</Text>
+                  </Pressable>
+                  <Pressable onPress={() => handleClose()}>
+                    <Text>Cancel</Text>
+                  </Pressable>
+              {/* <Button title="Update Student" onPress={handleUpdateStudent} />
+              <Button title="Cancel" onPress={handleClose} /> */}
             </View>
           ) : (
             <View style={styles.buttonContainer}>
-              <Button title="Add New Student" onPress={handleAddStudent} />
-              <Button title="Cancel" onPress={handleClose} />
+              <Pressable onPress={() => handleAddStudent()}>
+                    <Text>Add New Student</Text>
+                  </Pressable>
+                  <Pressable onPress={() => handleClose()}>
+                    <Text>Cancel</Text>
+                  </Pressable>
+              {/* <Button title="Add New Student" onPress={handleAddStudent} />
+              <Button title="Cancel" onPress={handleClose} /> */}
             </View>
           )}
         </View>
       ) : (
         <View>
           <Text style={styles.header}>Student List:</Text>
-          <Button title="Add" onPress={() => setStudentContainerVisible(true)} />
+          <Pressable onPress={() => setStudentContainerVisible(true)}>
+                    <Text>Add</Text>
+                  </Pressable>
+          {/* <Button title="Add" onPress={() => setStudentContainerVisible(true)} /> */}
           <FlatList
             data={studentList}
             keyExtractor={(item) => item.PK_StudentId.toString()}
@@ -412,12 +427,15 @@ const StudentScreen = () => {
                     alignItems: "center",
                   }}
                 >
-                  <Button
+                    <Pressable onPress={() => handleEditStatus(item)}>
+                    <Text>Edit</Text>
+                  </Pressable>
+                  {/* <Button
                     title="Edit"
                     onPress={() => handleEditStatus(item)}
                     style={styles.listItemEditButton}
                     textStyle={styles.listItemEditText}
-                  />
+                  /> */}
                 </View>
               </View>
             )}

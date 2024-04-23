@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import {Image, View, Text, Button, TextInput, FlatList, StyleSheet, Pressable, LayoutAnimation} from "react-native";
+import {Image, View, Text, TextInput, FlatList, StyleSheet, Pressable, LayoutAnimation} from "react-native";
 import { insert, fetch, update } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -288,7 +288,7 @@ const UserScreen = () => {
     const renderTooltipContent = () =>
         <View style={styles.passwordTooltipContainer}>
           <Text style={styles.passwordTooltipTextStyle}>
-            Incorrect{" "}
+            Incorrect
             <Text style={styles.passwordTooltipRedTextStyle}>password</Text>
           </Text>
         </View>;
@@ -341,8 +341,8 @@ const UserScreen = () => {
     const tooltipContent = () => (
       <View style={styles.emailTooltipContainer}>
         <Text style={styles.emailTooltipTextStyle}>
-          That{" "}
-          <Text style={styles.emailTooltipRedTextStyle}>email address</Text>{" "}
+          That
+          <Text style={styles.emailTooltipRedTextStyle}>email address</Text>
           doesn't look right
         </Text>
       </View>
@@ -384,8 +384,8 @@ const UserScreen = () => {
     const tooltipContent = () => (
       <View style={styles.emailTooltipContainer}>
         <Text style={styles.emailTooltipTextStyle}>
-          That{" "}
-          <Text style={styles.emailTooltipRedTextStyle}>name</Text>{" "}
+          That
+          <Text style={styles.emailTooltipRedTextStyle}>name</Text>
           is required !
         </Text>
       </View>
@@ -426,8 +426,8 @@ const UserScreen = () => {
     const tooltipContent = () => (
       <View style={styles.emailTooltipContainer}>
         <Text style={styles.emailTooltipTextStyle}>
-          That{" "}
-          <Text style={styles.emailTooltipRedTextStyle}>contact number</Text>{" "}
+          That
+          <Text style={styles.emailTooltipRedTextStyle}>contact number</Text>
           is required !
         </Text>
       </View>
@@ -590,13 +590,25 @@ const UserScreen = () => {
           <View style={styles.adddetails}>
           {userData.userId ? (
             <View style={styles.buttonContainer}>
-              <Button title="Update User" onPress={handleUpdateUser} />
-              <Button title="Cancel" onPress={handleClose} />
+              <Pressable onPress={() => handleUpdateUser()}>
+                    <Text>Update User</Text>
+                  </Pressable>
+                  <Pressable onPress={() => handleClose()}>
+                    <Text>Cancel</Text>
+                  </Pressable>
+              {/* <Button title="Update User" onPress={handleUpdateUser} />
+              <Button title="Cancel" onPress={handleClose} /> */}
             </View>
           ) : (
             <View style={styles.buttonContainer}>
-              <Button title="Add New User" onPress={handleAddUser} />
-              <Button title="Cancel" onPress={handleClose} />
+              <Pressable onPress={() => handleAddUser()}>
+                    <Text>Add New User</Text>
+                  </Pressable>
+                  <Pressable onPress={() => handleClose()}>
+                    <Text>Cancel</Text>
+                  </Pressable>
+              {/* <Button title="Add New User" onPress={handleAddUser} />
+              <Button title="Cancel" onPress={handleClose} /> */}
             </View>
           )}
         </View>
@@ -605,7 +617,10 @@ const UserScreen = () => {
       <View style={styles.userListWrap}>
         <Text style={styles.header}>User List:</Text>      
           <View style={styles.addWrap}>
-            <Button title="Add" onPress={() => setUserContainerVisible(true)} />   
+          <Pressable onPress={() => setUserContainerVisible(true)}>
+                    <Text>Add</Text>
+                  </Pressable>
+            {/* <Button title="Add" onPress={() => setUserContainerVisible(true)} />    */}
           </View>
         <FlatList 
           data={userList}
@@ -626,12 +641,15 @@ const UserScreen = () => {
               <Text style={[styles.listItemText, { flex: 1 }, item.isActive ? styles.listItemActiveStatus : styles.listItemInactiveStatus]}>{item.isActive ? "Active" : "Inactive"}</Text>
               </Pressable>          
               <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
-                <Button
+              <Pressable onPress={() => handleEditUser(item)}>
+                    <Text>Edit</Text>
+                  </Pressable>
+                {/* <Button
                   title="Edit"
                   onPress={() => handleEditUser(item)}
                   style={styles.listItemEditButton}
                   textStyle={styles.listItemEditText}
-                />
+                /> */}
               </View>
             </View>
           )}
