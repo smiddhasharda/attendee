@@ -175,7 +175,7 @@ const CustomDrawerContent = ({ ...props }) => {
       </View>
       <DrawerItemList {...props} style={styles.dropdownmain} />
       <View>
-      <Pressable onPress={props.handleLogout()}>
+      <Pressable onPress={() =>props.handleLogout()}>
         <Text style={{ margin: 16 }}>Logout</Text>
       </Pressable>
       </View>
@@ -194,7 +194,7 @@ const DrawerNavigator = ({ navigation }) => {
   const handleLogout = async () => {
     try {
       await logout();
-      props?.navigation.replace("Login");
+      navigation.replace("Login");
     } catch (error) {
       console.error("Error:", error);
     }
@@ -232,7 +232,7 @@ const DrawerNavigator = ({ navigation }) => {
         <Text>
           You do not have access to any modules. Please contact admin first!
         </Text>
-        <Pressable onPress={handleLogout}>
+        <Pressable onPress={() =>handleLogout()}>
           <Text style={{ margin: 16 }}>Logout</Text>
         </Pressable>
       </View>
