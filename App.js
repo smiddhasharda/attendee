@@ -11,11 +11,8 @@ import RegisterScreen from './src/component/Register/RegisterScreen';
 import ForgetPasswordScreen from './src/component/ForgetPassword/ForgetPasswordScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DrawerNavigator from './src/globalComponent/DrawerNavigatior/DrawerNavigatior';
-import LoginNew from './src/component/Login/LoginNew';
 import Learn from './src/component/Dashboard/Learn';
 import  Task from './src/component/Dashboard/Task';
-import  Exam from './src/component/Dashboard/Exam';
-import RoomDetail from './src/component/Dashboard/RoomDetail';
 import PieChart from './src/component/Dashboard/PieChart';
 
 
