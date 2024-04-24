@@ -12,13 +12,11 @@ import ModuleScreen from "../../component/Module/ModuleScreen";
 import DashboardScreen from "../../component/Dashboard/DashboardScreen";
 import UserScreen from "../../component/User/UserScreen";
 import ExamScreen from "../../component/Exam/ExamScreen";
-import StudentScreen from "../../component/Exam/StudentScreen";
 import { logout } from "../../AuthService/AuthService";
 import DropDownPicker from "react-native-dropdown-picker";
 import CustomeImagePicker from "../CustomeImagePicker/CustomeImagePicker";
-import Exam from "../../component/Dashboard/Exam";
-import RoomDetail from "../../component/Dashboard/RoomDetail";
-import StudentInfo from "../../component/Dashboard/StudentInfo";
+import RoomDetail from "../../component/Room/RoomDetail";
+import StudentInfo from "../../component/Student/StudentInfo";
 import { multer, fetch as FetchData } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import styles from "./DrawerNavigator.style";
@@ -29,7 +27,7 @@ const RoleComponent = () => <RoleScreen />;
 const ModuleComponent = () => <ModuleScreen />;
 const DashboardComponent = () => <DashboardScreen />;
 const UserComponent = () => <UserScreen />;
-const ExamComponent = ({ navigation }) => <Exam navigation={navigation} />;
+const ExamComponent = ({ navigation }) => <ExamScreen navigation={navigation} />;
 const StudentComponent = () => <StudentInfo />;
 const RoomDetailComponent = () => <RoomDetail />;
 const Drawer = createDrawerNavigator();
@@ -271,7 +269,7 @@ const DrawerNavigator = ({ navigation }) => {
                   return <UserComponent />;
                 case "ExamScreen":
                   return <ExamComponent navigation={navigation} />;
-                case "StudentScreen":
+                case "StudentInfo":
                   return <StudentComponent />;
                 case "RoomDetail":
                   return <RoomDetailComponent />;
