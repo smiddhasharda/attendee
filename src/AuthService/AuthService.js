@@ -77,6 +77,7 @@ const logout = async () => {
     await AsyncStorage.removeItem('tokenExpiration').catch(handleAsyncStorageError);
     await AsyncStorage.removeItem('credentials').catch(handleAsyncStorageError);
     await AsyncStorage.removeItem('userRolePermission').catch(handleAsyncStorageError);
+    await AsyncStorage.removeItem('userData', userData ? JSON?.stringify(userData) : '').catch(handleAsyncStorageError);
   } catch (error) {
     handleAsyncStorageError(error);
   }
