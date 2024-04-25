@@ -1,67 +1,103 @@
 import React from 'react';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { ScrollView } from 'react-native-gesture-handler';
+import DropDownPicker from "react-native-dropdown-picker";
 
 function Learn() {
+
   return (
-    <View style={styles.boxcontainer}>
-      <View style={styles.box}>
-        <Ionicons style={styles.icons} name="book" size={24} color="rgb(8 96 88)" />
-        <View style={styles.boxtext}>
-          <Text>Maths</Text>
-          <Text>Chapter 1</Text>
-        </View>
-      </View>
-      <View style={styles.box}>
-        <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-        <View style={styles.boxtext}>
-          <Text>Statics</Text>
-          <Text>Chapter 2</Text>
-        </View>
-      </View>
-      <View style={styles.box}>
-        <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-        <View style={styles.boxtext}>
-          <Text>Statics</Text>
-          <Text>Chapter 2</Text>
-        </View>
-      </View>
-      <View style={styles.box}>
-        <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-        <View style={styles.boxtext}>
-          <Text>Statics</Text>
-          <Text>Chapter 2</Text>
-        </View>
-      </View>
-    </View>
+    <View style={styles.container}>   
+        <Text style={styles.heading}>Student Report</Text>       
+        <View style={styles.boxtable}>
+             <ScrollView  horizontal>
+                <View style={styles.tableWrap}>      
+                    <View style={[styles.row, styles.header]}>
+                      <Text style={styles.headerText}>Exam 1</Text>
+                      <Text style={styles.headerText}>Exam 2</Text>
+                      <Text style={styles.headerText}>Exam 3</Text>
+                      <Text style={styles.headerText}>Exam 1</Text>
+                      <Text style={styles.headerText}>Exam 2</Text>
+                      <Text style={styles.headerText}>Exam 3</Text>                
+                    </View>         
+                    <View style={styles.row}>
+                      <Text style={styles.cell}>Data Structure</Text>
+                      <Text style={styles.cell}>Data Structure</Text>
+                      <Text style={styles.cell}>Data Structure</Text>
+                      <Text style={styles.cell}>Data Structure</Text>
+                      <Text style={styles.cell}>Data Structure</Text>
+                      <Text style={styles.cell}>Data Structure</Text>          
+                    </View>
+                    <View style={styles.row}>
+                      <Text style={styles.cell}>Data Structure</Text>
+                      <Text style={styles.cell}>Data Structure</Text>
+                      <Text style={styles.cell}>Data Structure</Text>
+                      <Text style={styles.cell}>Data Structure</Text>
+                      <Text style={styles.cell}>Data Structure</Text>
+                      <Text style={styles.cell}>Data Structure</Text>          
+                    </View>
+                    <View style={styles.row}>
+                      <Text style={styles.cell}>Data Structure</Text>
+                      <Text style={styles.cell}>Data Structure</Text>
+                      <Text style={styles.cell}>Data Structure</Text>
+                      <Text style={styles.cell}>Data Structure</Text>
+                      <Text style={styles.cell}>Data Structure</Text>
+                      <Text style={styles.cell}>Data Structure</Text>          
+                    </View>
+                </View> 
+              </ScrollView> 
+      </View> 
+
+  </View> 
   );
 }
 
 export default Learn;
 
 const styles = StyleSheet.create({
-  boxcontainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    marginBottom: 10,
-    padding: 10,
-    justifyContent:"space-between"
+
+  container: {
+    flex: 1,
+    padding: 16,
+    backgroundColor: '#fff',
   },
-  box: {
+  boxtable: {
+    padding:5,
+    // flex: 1,
+    // marginTop: 20,
+    // marginBottom: 20,
+  },
+  heading:{
+  fontWeight:"bold",
+  marginBottom:5,
+  },
+  tableWrap: {
+    flexDirection: 'column',
     borderWidth: 1,
-    borderColor: "#ccc",
-    width: Dimensions.get("window").width / 2 - 20, 
-    backgroundColor: "#eaeaea",
-    height: 100,
-    textAlign: "center",
-    alignItems: "center",
-    borderRadius: 10,
+    borderColor: '#ccc',
+    borderRadius: 4,
     marginBottom: 10,
-    padding:10,
-    
+    backgroundColor: '#fff',
   },
-  boxtext:{
-    marginTop:10,
-    alignItems:"center",  
+  row: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  header: {
+    backgroundColor: '#f0f0f0',
+  },
+  headerText: {
+    flex: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 5,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  cell: {
+    flex: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 5,
+    textAlign: 'center',
   },
 });

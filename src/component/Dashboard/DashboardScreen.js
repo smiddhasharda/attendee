@@ -32,13 +32,13 @@ const { navigate } = useNavigation();
           />
             <View style={styles.subtext}>
               <Text  style={styles.taskheading}>Exam Details</Text>
-              <Text  onPress={handleLearnPress} style={styles.viewAll}>View All</Text>
+              {/* <Text  onPress={handleLearnPress} style={styles.viewAll}>View All</Text> */}
             </View>        
-            <View style={styles.boxcontainer}>            
-                <View style={styles.box}>
+            <View style={[styles.boxcontainer,]}>            
+                <View style={[styles.box, styles.activebox]} >
                 <Ionicons style={styles.icons} name="book" size={24} color="rgb(8 96 88)"  />
-                <View  style={styles.boxtext}>
-                  <Text>Exam 1</Text>
+                <View  style={[styles.boxtext,]}>
+                  <Text style={styles.activeboxtext} onPress={handleLearnPress}>Exam 1</Text>
                   {/* <Text>Chapter 1</Text> */}
                 </View>
               </View>
@@ -89,59 +89,10 @@ const { navigate } = useNavigation();
                 <Image source ={classe} style={styles.imagebg} />       
               </View>              
             </View>      */}
-            <View style={styles.boxtable}>
-              <ScrollView horizontal>
-                  <View style={styles.tableWrap}>      
-                      <View style={[styles.row, styles.header]}>
-                        <Text style={styles.headerText}>Exam 1</Text>
-                        <Text style={styles.headerText}>Exam 2</Text>
-                        <Text style={styles.headerText}>Exam 3</Text>
-                        <Text style={styles.headerText}>Exam 1</Text>
-                        <Text style={styles.headerText}>Exam 2</Text>
-                        <Text style={styles.headerText}>Exam 3</Text>
-                        <Text style={styles.headerText}>Exam 2</Text>
-                        <Text style={styles.headerText}>Exam 3</Text>
-                      </View>
-                      <View style={styles.row}>
-                        <Text style={styles.cell}>Computer Science</Text>
-                        <Text style={styles.cell}>Computer Science</Text>
-                        <Text style={styles.cell}>Computer Science</Text>
-                        <Text style={styles.cell}>Computer Science</Text>
-                        <Text style={styles.cell}>Computer Science</Text>
-                        <Text style={styles.cell}>Computer Science</Text>          
-                      </View>
-                      <View style={styles.row}>
-                        <Text style={styles.cell}>Data Structure</Text>
-                        <Text style={styles.cell}>Data Structure</Text>
-                        <Text style={styles.cell}>Data Structure</Text>
-                        <Text style={styles.cell}>Data Structure</Text>
-                        <Text style={styles.cell}>Data Structure</Text>
-                        <Text style={styles.cell}>Data Structure</Text>          
-                      </View>
-                      <View style={styles.row}>
-                        <Text style={styles.cell}>Data Structure</Text>
-                        <Text style={styles.cell}>Data Structure</Text>
-                        <Text style={styles.cell}>Data Structure</Text>
-                        <Text style={styles.cell}>Data Structure</Text>
-                        <Text style={styles.cell}>Data Structure</Text>
-                        <Text style={styles.cell}>Data Structure</Text>          
-                      </View>
-                      <View style={styles.row}>
-                        <Text style={styles.cell}>Data Structure</Text>
-                        <Text style={styles.cell}>Data Structure</Text>
-                        <Text style={styles.cell}>Data Structure</Text>
-                        <Text style={styles.cell}>Data Structure</Text>
-                        <Text style={styles.cell}>Data Structure</Text>
-                        <Text style={styles.cell}>Data Structure</Text>          
-                      </View>
-                  </View>
-            </ScrollView>
-            </View>      
-            <View  style={styles.piechart}>        
+           
+            {/* <View  style={styles.piechart}>        
                <PieChart />     
-            </View>   
-
-              
+            </View>    */}             
     </View>
     </ScrollView>
   );
@@ -153,6 +104,13 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#fff',
    
+  },
+  activebox:{
+   backgroundColor:"green",
+
+  },
+  activeboxtext:{
+    color:"#fff"
   },
   heading: {
     fontSize: 24,
@@ -172,6 +130,7 @@ const styles = StyleSheet.create({
     fontSize:16,
     marginTop:10,
   },
+
   searchBox: {
     height: 40,
     borderWidth: 1,
@@ -220,35 +179,7 @@ const styles = StyleSheet.create({
   boxtable:{
     padding:5,
   },
-  tableWrap: {
-    flexDirection: 'column',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 4,
-    marginBottom: 10,
-    backgroundColor: '#fff',
-  },
-  row: {
-    flexDirection: 'row',
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-  },
-  header: {
-    backgroundColor: '#f0f0f0',
-  },
-  headerText: {
-    flex: 1,
-    paddingVertical: 10,
-    paddingHorizontal: 5,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  cell: {
-    flex: 1,
-    paddingVertical: 10,
-    paddingHorizontal: 5,
-    textAlign: 'center',
-  },
+ 
   // dropdown: {
   //   width: 150,
   //   height: 50,
