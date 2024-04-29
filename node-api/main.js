@@ -7,6 +7,10 @@ const nodemailer = require("nodemailer");
 const upload = require('./middlewares/multer.js');
 const path = require('path');
 
+const corsOptions = require('./config/corsOptions.js');
+const credentials = require('./middlewares/credentials.js');
+const {logger} = require('./middlewares/logEvents.js')
+
 const dotenv = require("dotenv");
 dotenv.config(); // Load variables from .env file
 
@@ -24,6 +28,15 @@ app.use(express.urlencoded({ extended: false, limit: '100mb' }));
 
 // built-in middleware for json 
 app.use(express.json({ limit: '100mb' }));
+
+// custom middleware logger
+// app.use(logger);
+
+// and fetch cookies credentials requirement
+app.use(credentials);
+
+// Cross Origin Resource Sharing
+app.use(cors(corsOptions));
 
 // JWT Secret Key
 const secretKey = process.env.SECRET_KEY || null;
@@ -61,6 +74,15 @@ const transporter = nodemailer.createTransport({
   //   port: process.env.VIEW_PORT || 9999,
   // };
 
+//   const viewConfig = {
+//     host: process.env.VIEW_HOST,
+//     user: process.env.VIEW_USER,
+//     password: process.env.VIEW_PASSWORD,
+//     database: process.env.VIEW_DATABASE,
+//     port: process.env.VIEW_PORT || 9999,
+//     connectTimeout: 180000, // Adjust the timeout value as needed (in milliseconds)
+// };
+
   try {
     // Create a promise-based pool
     const pool = await mysql.createPool(dbConfig);
@@ -71,7 +93,7 @@ const transporter = nodemailer.createTransport({
 
     // Handle database connection errors
     const connection = await pool.getConnection();
-    console.log("Connected to MySQL database:", process.env.DB_DATABASE);
+    console.log("Local Connected to MySQL database:", process.env.DB_DATABASE);
     connection.release();
 
     // const viewConnection = await viewPool.getConnection();
@@ -104,6 +126,7 @@ const transporter = nodemailer.createTransport({
       // Email message options
       const mailOptions = {
         from: process.env.MAIL_FROM,
+        // to: userData?.EMAIL_ADDR,    In case of View
         to: userData?.email_id,
         subject: "Your OTP to Login",
         text: `Your OTP is: ${otp}`,
@@ -130,9 +153,47 @@ const transporter = nodemailer.createTransport({
         const [rows] = await pool.query(
           `SELECT * FROM ${tblName} WHERE ${conditionString}`
         );
+        // const [rows] = await viewPool.query(
+        //   `SELECT * FROM your_view_tbl_name WHERE ${conditionString}`
+        // );
         if (rows.length > 0) {
           const userData = rows[0];
           const otp = Math.floor(100000 + Math.random() * 900000);
+          // const [checkRow] = await pool.query(
+          //   `SELECT * FROM tbl_user_master WHERE username = ${userData.EMPLID}`
+          // );
+          // if(checkRow){
+          //   const [updateRows] = await pool.query(
+          //     `UPDATE tbl_user_master SET otp = ?  WHERE user_id = ?`,
+          //     [otp, userData?.user_id]
+          //   );
+          //   if (updateRows?.affectedRows > 0) {
+          //     sendOTP(otp, userData);
+          //     res.json({ message: "Email Sent Successfully" });
+          //   } else {
+          //     res.status(401).json({ error: "Email Not Send" });
+          //   }
+          // }
+          // else{
+          //   const [insertRows] = await pool.query(
+          //     `INSERT INTO tbl_user_master (username, name, contact_number, email_id) VALUES (?,?,?,?)`,
+          //     [userData.EMPLID, userData.NAME_PREFIX || '' + userData.FIRST_NAME || '' + userData.MIDDLE_NAME || '' + userData.LAST_NAME ,userData.PHONE, userData.EMAIL_ADDR]
+          //   );
+          //   if (insertRows?.affectedRows > 0) {
+          //     const [insertUserRole] = await pool.query(
+          //       `INSERT INTO tbl_user_role_permission (FK_userId, FK_RoleId) VALUES (?,?)`,
+          //       [insertRows.insertId,'2']
+          //     );
+          //     if (insertUserRole?.affectedRows > 0) {
+          //       sendOTP(otp, userData);
+          //       res.json({ message: "Email Sent Successfully" });
+          //     } else {
+          //       res.status(401).json({ error: "Email Not Send" });
+          //     }
+          //   } else {
+          //     res.status(401).json({ error: "Email Not Send" });
+          //   }
+          // }
           const [updateRows] = await pool.query(
             `UPDATE ${tblName} SET otp = ?  WHERE user_id = ?`,
             [otp, userData?.user_id]
