@@ -18,44 +18,7 @@ function Learn() {
     <ScrollView>
        <View style={styles.container}>   
         <Text style={styles.heading}>Student Report</Text>       
-            <View style={styles.boxtable}>
-                  <ScrollView  horizontal>
-                    <View style={styles.tableWrap}>      
-                        <View style={[styles.row, styles.header]}>
-                          <Text style={styles.headerText}>Exam 1</Text>
-                          <Text style={styles.headerText}>Exam 2</Text>
-                          <Text style={styles.headerText}>Exam 3</Text>
-                          <Text style={styles.headerText}>Exam 1</Text>
-                          <Text style={styles.headerText}>Exam 2</Text>
-                          <Text style={styles.headerText}>Exam 3</Text>                
-                        </View>         
-                        <View style={styles.row}>
-                          <Text style={styles.cell}>Data Structure</Text>
-                          <Text style={styles.cell}>Data Structure</Text>
-                          <Text style={styles.cell}>Data Structure</Text>
-                          <Text style={styles.cell}>Data Structure</Text>
-                          <Text style={styles.cell}>Data Structure</Text>
-                          <Text style={styles.cell}>Data Structure</Text>          
-                        </View>
-                        <View style={styles.row}>
-                          <Text style={styles.cell}>Data Structure</Text>
-                          <Text style={styles.cell}>Data Structure</Text>
-                          <Text style={styles.cell}>Data Structure</Text>
-                          <Text style={styles.cell}>Data Structure</Text>
-                          <Text style={styles.cell}>Data Structure</Text>
-                          <Text style={styles.cell}>Data Structure</Text>          
-                        </View>
-                        <View style={styles.row}>
-                          <Text style={styles.cell}>Data Structure</Text>
-                          <Text style={styles.cell}>Data Structure</Text>
-                          <Text style={styles.cell}>Data Structure</Text>
-                          <Text style={styles.cell}>Data Structure</Text>
-                          <Text style={styles.cell}>Data Structure</Text>
-                          <Text style={styles.cell}>Data Structure</Text>          
-                        </View>
-                    </View> 
-                  </ScrollView> 
-            </View> 
+     
           <View style={styles.container}>    
                <View style={styles.dates}>
                 <FlatList
@@ -118,6 +81,44 @@ function Learn() {
                 </View>
                   <PieChart/>
                </View>
+               <View style={styles.boxtable}>
+                  <ScrollView  horizontal>
+                    <View style={styles.tableWrap}>      
+                        <View style={[styles.row, styles.header]}>
+                          <Text style={styles.headerText}>Exam 1</Text>
+                          <Text style={styles.headerText}>Exam 2</Text>
+                          <Text style={styles.headerText}>Exam 3</Text>
+                          <Text style={styles.headerText}>Exam 1</Text>
+                          <Text style={styles.headerText}>Exam 2</Text>
+                          <Text style={styles.headerText}>Exam 3</Text>                
+                        </View>         
+                        <View style={styles.row}>
+                          <Text style={styles.cell}>Data Structure</Text>
+                          <Text style={styles.cell}>Data Structure</Text>
+                          <Text style={styles.cell}>Data Structure</Text>
+                          <Text style={styles.cell}>Data Structure</Text>
+                          <Text style={styles.cell}>Data Structure</Text>
+                          <Text style={styles.cell}>Data Structure</Text>          
+                        </View>
+                        <View style={styles.row}>
+                          <Text style={styles.cell}>Data Structure</Text>
+                          <Text style={styles.cell}>Data Structure</Text>
+                          <Text style={styles.cell}>Data Structure</Text>
+                          <Text style={styles.cell}>Data Structure</Text>
+                          <Text style={styles.cell}>Data Structure</Text>
+                          <Text style={styles.cell}>Data Structure</Text>          
+                        </View>
+                        <View style={styles.row}>
+                          <Text style={styles.cell}>Data Structure</Text>
+                          <Text style={styles.cell}>Data Structure</Text>
+                          <Text style={styles.cell}>Data Structure</Text>
+                          <Text style={styles.cell}>Data Structure</Text>
+                          <Text style={styles.cell}>Data Structure</Text>
+                          <Text style={styles.cell}>Data Structure</Text>          
+                        </View>
+                    </View> 
+                  </ScrollView> 
+            </View> 
           <Text>Total Student:50</Text>     
           </View>
        </View> 
