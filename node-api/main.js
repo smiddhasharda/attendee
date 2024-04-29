@@ -164,18 +164,21 @@ const transporter = nodemailer.createTransport({
           const [UserRole] = await pool.query(
           `SELECT JSON_ARRAYAGG( JSON_OBJECT( 'FK_userId', p.FK_userId, 'FK_RoleId', p.FK_RoleId, 'rolePermission', ( SELECT CAST( CONCAT( '[', GROUP_CONCAT( JSON_OBJECT( 'PK_RoleId', r.PK_RoleId, 'roleName', r.roleName ) ORDER BY r.PK_RoleId ASC ), ']' ) AS JSON ) FROM tbl_role_master r WHERE r.PK_RoleId = p.FK_RoleId ), 'modulePermission', ( SELECT CAST( CONCAT( '[', GROUP_CONCAT( JSON_OBJECT( 'PK_role_module_permissionId', q.PK_role_module_permissionId, 'FK_RoleId', q.FK_RoleId, 'FK_ModuleId', q.FK_ModuleId, 'create', q.create, 'read', q.read, 'update', q.update, 'delete', q.delete, 'moduleMaster', ( SELECT CAST( CONCAT( '[', GROUP_CONCAT( JSON_OBJECT( 'PK_ModuleId', s.PK_ModuleId, 'moduleName', s.moduleName ) ), ']' ) AS JSON ) FROM tbl_module_master s WHERE s.PK_ModuleId = q.FK_ModuleId ) ) ORDER BY q.FK_ModuleId ASC ), ']' ) AS JSON ) FROM tbl_role_module_permission q WHERE q.FK_RoleId = p.FK_RoleId ) ) ) AS UserRoleData FROM tbl_user_role_permission p WHERE p.FK_userId = ${userData.user_id} ORDER BY p.FK_RoleId ASC;`
           );
-          const expirationTimestamp =
-            Math.floor(Date.now() / 1000) + 60 * 60 * 24; // 24 hours expiry
+          // const expirationTimestamp =
+            // Math.floor(Date.now() / 1000) + 60 * 60 * 24; // 24 hours expiry
+            // Math.floor((Date.now() / 1000 + 60 * 60 * 24) / 60) // 1 minutes expiry
           const token = jwt.sign(
             {
               id: userData.user_id,
               username: userData.username,
-              exp: expirationTimestamp,
+              // exp: expirationTimestamp,
             },
             secretKey
           );
           const userRole = UserRole?.[0]?.UserRoleData;
-          res.json({ token, expirationTimestamp, userRole, userData });
+          // res.json({ token, expirationTimestamp, userRole, userData });
+          res.json({ token, userRole, userData });
+
         } else {
           res.status(401).json({ error: "Invalid credentials" });
         }
