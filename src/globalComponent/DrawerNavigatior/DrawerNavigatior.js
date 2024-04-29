@@ -188,9 +188,11 @@ const DrawerNavigator = ({ navigation }) => {
   const [userRoleList, setUserRoleList] = useState([]);
   const [userRoleIndex, setUserRoleIndex] = useState(0);
   const [userData, setUserData] = useState("");
+
   const handleRoleSelect = (value) => {
     setUserRoleIndex(value);
   };
+
   const handleLogout = async () => {
     try {
       await logout();
@@ -225,6 +227,7 @@ const DrawerNavigator = ({ navigation }) => {
   useEffect(() => {
     fetchUserRolePermission();
   }, []);
+  
 
   if (!userRolePermission || userRolePermission.length === 0 || !userRoleList) {
     return (
