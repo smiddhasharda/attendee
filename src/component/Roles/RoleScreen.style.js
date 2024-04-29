@@ -92,6 +92,13 @@ import {
     addbtntext:{
      color:"#fff",
      textAlign:"center",
+    },
+    cancelbtn:{
+      width:100,
+      marginBottom:10,
+      backgroundColor:"grey",
+      padding:10,
+      borderRadius:5,
     }
   });
 

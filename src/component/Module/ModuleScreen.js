@@ -203,7 +203,7 @@ const ModuleScreen = () => {
                     <Text>Update Module</Text>
                   </Pressable>
                   <Pressable onPress={() => handleClose()}>
-                    <Text>Cancel</Text>
+                    <Text style={styles.cancelbtn}>Cancel</Text>
                   </Pressable>
               {/* <Button title="Update Module" onPress={handleUpdateModule} />
               <Button title="Cancel" onPress={handleClose} /> */}
@@ -229,8 +229,8 @@ const ModuleScreen = () => {
            <Text style={styles.header}>Module List:</Text>
            <View style={styles.addbtnWrap}>
            <Pressable onPress={() => setModuleContainerVisible(true)}>
-                    <Text>Add</Text>
-                  </Pressable>
+                    <Text style={styles.addbtntext}>Add</Text>
+            </Pressable>
             {/* <Button title="Add" onPress={() => setModuleContainerVisible(true)} /> */}
           </View>
               <FlatList
@@ -244,27 +244,26 @@ const ModuleScreen = () => {
                     <Text style={[styles.tableHeaderText, { flex: 1 }]}>Actions</Text>
                   </View>
           )}
-          renderItem={({ item }) => (
-            
-            <View style={styles.listItem}>
-              <Text style={[styles.listItemText, { flex: 2 }]}>{item.moduleName}</Text>
-              <Text style={[styles.listItemText, { flex: 3 }]}>{item.description}</Text>
-              <Pressable onPress={() =>handleModuleStatus(item.PK_ModuleId, item?.isActive)}>
-              <Text style={[styles.listItemText, { flex: 1 }, item.isActive ? styles.listItemActiveStatus : styles.listItemInactiveStatus]}>{item.isActive ? "Active" : "Inactive"}</Text>
-              </Pressable>         
-              <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
-              <Pressable onPress={() => handleEditModule(item)}>
-                    <Text>Edit</Text>
-                  </Pressable>
-                {/* <Button
-                  title="Edit"
-                  onPress={() => handleEditModule(item)}
-                  style={styles.listItemEditButton}
-                  textStyle={styles.listItemEditText}
-                /> */}
-              </View>
-            </View>
-            )}
+                renderItem={({ item }) => (          
+                  <View style={styles.listItem}>
+                    <Text style={[styles.listItemText, { flex: 2 }]}>{item.moduleName}</Text>
+                    <Text style={[styles.listItemText, { flex: 3 }]}>{item.description}</Text>
+                    <Pressable onPress={() =>handleModuleStatus(item.PK_ModuleId, item?.isActive)}>
+                    <Text style={[styles.listItemText, { flex: 1 }, item.isActive ? styles.listItemActiveStatus : styles.listItemInactiveStatus]}>{item.isActive ? "Active" : "Inactive"}</Text>
+                    </Pressable>         
+                    <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
+                    <Pressable onPress={() => handleEditModule(item)}>
+                          <Text>Edit</Text>
+                        </Pressable>
+                      {/* <Button
+                        title="Edit"
+                        onPress={() => handleEditModule(item)}
+                        style={styles.listItemEditButton}
+                        textStyle={styles.listItemEditText}
+                      /> */}
+                    </View>
+                  </View>
+                  )}
           />
            </View>
         }

@@ -6,6 +6,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import CheckBox from "expo-checkbox";
 import styles from "./RoleScreen.style";
 import { ScrollView } from "react-native-gesture-handler";
+import { Button } from "react-native-web";
 const RoleScreen = () => {
   const { showToast } = useToast();
   const [roleData, setRoleData] = useState({
@@ -402,14 +403,19 @@ const RoleScreen = () => {
               <Button title="Cancel" onPress={handleClose} /> */}
             </View>
           ) : (
-            <View style={styles.buttonContainer}>
-              
+            <View style={styles.buttonContainer}>          
               <Pressable style={styles.addbtnWrap} onPress={() => handleAddRole()} >
-                    <Text style={styles.addbtntext}>Add New Role</Text>
+                    <Text style={styles.addbtntext} numberOfLines={1}>Add New Role</Text>
                   </Pressable>
-                  <Pressable onPress={() => handleClose()}>
-                    <Text>Cancel</Text>
-                  </Pressable>
+                  {/* <Pressable onPress={() => handleClose()}>
+                    <Text style={styles.cancelbtn}>Cancel</Text>
+                  </Pressable> */}
+                  <Button 
+                   title="cancel"
+                   onPress={() => handleClose()}
+                   color="grey"
+
+                  />
               {/* <Button title="Add New Role" onPress={handleAddRole} />
               <Button title="Cancel" onPress={handleClose} /> */}
             </View>
@@ -420,66 +426,66 @@ const RoleScreen = () => {
         <Text style={styles.header}>Role List:</Text>
         <View style={styles.addbtnWrap}>
         <Pressable onPress={() => setRoleContainerVisible(true)}>
-                    <Text>Add</Text>
+                    <Text style={styles.addbtntext}>Add</Text>
                   </Pressable>
           {/* <Button  title="Add" onPress={() => setRoleContainerVisible(true)} /> */}
       </View>
       <FlatList
         data={roleList}
         keyExtractor={(item) => item.PK_RoleId.toString()}
-        ListHeaderComponent={() => (
-          <View style={styles.tableHeader}>
-            <Text  numberOfLines={1} style={[styles.tableHeaderText, { flex: 2 }]}>Role Name</Text>
-            <Text style={[styles.tableHeaderText, { flex: 3 }]}>
-              Description
-            </Text>
-            <Text style={[styles.tableHeaderText, { flex: 1 }]}>Status</Text>
-            <Text style={[styles.tableHeaderText, { flex: 1 }]}>Actions</Text>
-          </View>
-        )}
-        renderItem={({ item }) => (
-          <View style={styles.listItem}>
-            <Text style={[styles.listItemText, { flex: 2 }]}>
-              {item.roleName}
-            </Text>
-            <Text style={[styles.listItemText, { flex: 3 }]}>
-              {item.description}
-            </Text>
-            <Pressable
-              onPress={() => handleRoleStatus(item.PK_RoleId, item?.isActive)}
-            >
-              <Text
-                style={[
-                  styles.listItemText,
-                  { flex: 1 },
-                  item.isActive
-                    ? styles.listItemActiveStatus
-                    : styles.listItemInactiveStatus,
-                ]}
-              >
-                {item.isActive ? "Active" : "Inactive"}
+          ListHeaderComponent={() => (
+            <View style={styles.tableHeader}>
+              <Text  numberOfLines={1} style={[styles.tableHeaderText, { flex: 2 }]}>Role Name</Text>
+              <Text style={[styles.tableHeaderText, { flex: 3 }]}>
+                Description
               </Text>
-            </Pressable>
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                justifyContent: "flex-end",
-                alignItems: "center",
-              }}
-            >
-                <Pressable onPress={() => handleEditRole(item)}>
-                    <Text>Edit</Text>
-                  </Pressable>
-              {/* <Button
-                title="Edit"
-                onPress={() => handleEditRole(item)}
-                style={styles.listItemEditButton}
-                textStyle={styles.listItemEditText}
-              /> */}
+              <Text style={[styles.tableHeaderText, { flex: 1 }]}>Status</Text>
+              <Text style={[styles.tableHeaderText, { flex: 1 }]}>Actions</Text>
             </View>
-          </View>
-        )}
+          )}
+          renderItem={({ item }) => (
+            <View style={styles.listItem}>
+              <Text style={[styles.listItemText, { flex: 2 }]}>
+                {item.roleName}
+              </Text>
+              <Text style={[styles.listItemText, { flex: 3 }]}>
+                {item.description}
+              </Text>
+              <Pressable
+                onPress={() => handleRoleStatus(item.PK_RoleId, item?.isActive)}
+              >
+                <Text
+                  style={[
+                    styles.listItemText,
+                    { flex: 1 },
+                    item.isActive
+                      ? styles.listItemActiveStatus
+                      : styles.listItemInactiveStatus,
+                  ]}
+                >
+                  {item.isActive ? "Active" : "Inactive"}
+                </Text>
+              </Pressable>
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "row",
+                  justifyContent: "flex-end",
+                  alignItems: "center",
+                }}
+              >
+                  <Pressable onPress={() => handleEditRole(item)}>
+                      <Text>Edit</Text>
+                    </Pressable>
+                {/* <Button
+                  title="Edit"
+                  onPress={() => handleEditRole(item)}
+                  style={styles.listItemEditButton}
+                  textStyle={styles.listItemEditText}
+                /> */}
+              </View>
+            </View>
+          )}
       />
         </View>
         }

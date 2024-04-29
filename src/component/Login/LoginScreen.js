@@ -191,7 +191,7 @@ const LoginScreen = ({ style, logoImageStyle, loginTextStyle, loginButtonStyle, 
     <Text style={[LoginStyles.loginTextStyle, loginTextStyle]}>{isOTPInputDisabled ? "Send OTP" : "Login"}</Text>
   </Pressable>
    </View>
-   
+ 
   );
     
   return (
