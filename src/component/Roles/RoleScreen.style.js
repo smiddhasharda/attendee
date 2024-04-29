@@ -26,6 +26,7 @@ import {
     buttonContainer: {
       flexDirection: "row",
       justifyContent: "space-between",
+      
     },
     header: {
       fontSize: 18,
@@ -43,7 +44,6 @@ import {
     },
     tableHeaderText: {
       fontWeight: "bold",
-
     },
     listItem: {
       flexDirection: "row",
@@ -84,6 +84,14 @@ import {
       width:100,
       alignSelf:"flex-end",
       marginBottom:10,
+      backgroundColor:"blue",
+      padding:10,
+      borderRadius:5,
+      
+    },
+    addbtntext:{
+     color:"#fff",
+     textAlign:"center",
     }
   });
 

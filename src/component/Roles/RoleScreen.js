@@ -403,8 +403,9 @@ const RoleScreen = () => {
             </View>
           ) : (
             <View style={styles.buttonContainer}>
-              <Pressable onPress={() => handleAddRole()}>
-                    <Text>Add New Role</Text>
+              
+              <Pressable style={styles.addbtnWrap} onPress={() => handleAddRole()} >
+                    <Text style={styles.addbtntext}>Add New Role</Text>
                   </Pressable>
                   <Pressable onPress={() => handleClose()}>
                     <Text>Cancel</Text>
@@ -414,7 +415,7 @@ const RoleScreen = () => {
             </View>
           )}
         </View>
-      ) :
+           ) :
        <View style={styles.roleLists}>
         <Text style={styles.header}>Role List:</Text>
         <View style={styles.addbtnWrap}>
