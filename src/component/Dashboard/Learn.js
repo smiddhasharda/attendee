@@ -7,6 +7,8 @@ import PieChart from './PieChart';
 
 function Learn() {
   const [open, setOpen] = useState(false);
+  const [examDates, setExamDates] = useState([])
+  
   const [userRoleList, setUserRoleList] = useState([
     { label: 'Admin', value: 'admin' },
     { label: 'Teacher', value: 'teacher' },
@@ -14,114 +16,111 @@ function Learn() {
   ]);
   return (
     <ScrollView>
-    <View style={styles.container}>   
+       <View style={styles.container}>   
         <Text style={styles.heading}>Student Report</Text>       
-        <View style={styles.boxtable}>
-             <ScrollView  horizontal>
-                <View style={styles.tableWrap}>      
-                    <View style={[styles.row, styles.header]}>
-                      <Text style={styles.headerText}>Exam 1</Text>
-                      <Text style={styles.headerText}>Exam 2</Text>
-                      <Text style={styles.headerText}>Exam 3</Text>
-                      <Text style={styles.headerText}>Exam 1</Text>
-                      <Text style={styles.headerText}>Exam 2</Text>
-                      <Text style={styles.headerText}>Exam 3</Text>                
-                    </View>         
-                    <View style={styles.row}>
-                      <Text style={styles.cell}>Data Structure</Text>
-                      <Text style={styles.cell}>Data Structure</Text>
-                      <Text style={styles.cell}>Data Structure</Text>
-                      <Text style={styles.cell}>Data Structure</Text>
-                      <Text style={styles.cell}>Data Structure</Text>
-                      <Text style={styles.cell}>Data Structure</Text>          
-                    </View>
-                    <View style={styles.row}>
-                      <Text style={styles.cell}>Data Structure</Text>
-                      <Text style={styles.cell}>Data Structure</Text>
-                      <Text style={styles.cell}>Data Structure</Text>
-                      <Text style={styles.cell}>Data Structure</Text>
-                      <Text style={styles.cell}>Data Structure</Text>
-                      <Text style={styles.cell}>Data Structure</Text>          
-                    </View>
-                    <View style={styles.row}>
-                      <Text style={styles.cell}>Data Structure</Text>
-                      <Text style={styles.cell}>Data Structure</Text>
-                      <Text style={styles.cell}>Data Structure</Text>
-                      <Text style={styles.cell}>Data Structure</Text>
-                      <Text style={styles.cell}>Data Structure</Text>
-                      <Text style={styles.cell}>Data Structure</Text>          
-                    </View>
-                </View> 
-              </ScrollView> 
-      </View> 
+            <View style={styles.boxtable}>
+                  <ScrollView  horizontal>
+                    <View style={styles.tableWrap}>      
+                        <View style={[styles.row, styles.header]}>
+                          <Text style={styles.headerText}>Exam 1</Text>
+                          <Text style={styles.headerText}>Exam 2</Text>
+                          <Text style={styles.headerText}>Exam 3</Text>
+                          <Text style={styles.headerText}>Exam 1</Text>
+                          <Text style={styles.headerText}>Exam 2</Text>
+                          <Text style={styles.headerText}>Exam 3</Text>                
+                        </View>         
+                        <View style={styles.row}>
+                          <Text style={styles.cell}>Data Structure</Text>
+                          <Text style={styles.cell}>Data Structure</Text>
+                          <Text style={styles.cell}>Data Structure</Text>
+                          <Text style={styles.cell}>Data Structure</Text>
+                          <Text style={styles.cell}>Data Structure</Text>
+                          <Text style={styles.cell}>Data Structure</Text>          
+                        </View>
+                        <View style={styles.row}>
+                          <Text style={styles.cell}>Data Structure</Text>
+                          <Text style={styles.cell}>Data Structure</Text>
+                          <Text style={styles.cell}>Data Structure</Text>
+                          <Text style={styles.cell}>Data Structure</Text>
+                          <Text style={styles.cell}>Data Structure</Text>
+                          <Text style={styles.cell}>Data Structure</Text>          
+                        </View>
+                        <View style={styles.row}>
+                          <Text style={styles.cell}>Data Structure</Text>
+                          <Text style={styles.cell}>Data Structure</Text>
+                          <Text style={styles.cell}>Data Structure</Text>
+                          <Text style={styles.cell}>Data Structure</Text>
+                          <Text style={styles.cell}>Data Structure</Text>
+                          <Text style={styles.cell}>Data Structure</Text>          
+                        </View>
+                    </View> 
+                  </ScrollView> 
+            </View> 
           <View style={styles.container}>    
-            <View style={styles.dates}>
-              <FlatList
-                data={[
-                  { date: '1', weekday: 'Mon', month: 'Apr' },
-                  { date: '2',weekday: 'Tue', month: 'Apr' },
-                  { date: '3', weekday: 'Wed', month: 'Apr' },
-                  { date: '4',weekday: 'Thu', month: 'Apr' },
-                  { date: '5', weekday: 'Fri', month: 'Apr' },
-                  { date: '6', weekday: 'Sat', month: 'Apr' },
-                  {date: '7', weekday: 'Sun', month: 'Apr' },
-                  {date: '8', weekday: 'Mon', month: 'Apr' },
-                  { date: '9', weekday: 'Tue', month: 'Apr' },
-                  { date: '10', weekday: 'Wed', month: 'Apr' },
-                  { date: '11', weekday: 'Thu', month: 'Apr' },
-                  {date: '12', weekday: 'Fri', month: 'Apr' },
-                  { date: '13', weekday: 'Sat', month: 'Apr' },
-                  { date: '14', weekday: 'Sun', month: 'Apr' },       
-                ]}
-                renderItem={({ item }) => (           
-                  <View style={[styles.dateItem] }>
-                      <Text style={styles.dateDay}>{item.weekday}</Text>
-                      <Text style={styles.dateNumber}>{item.date}</Text>
-                      <Text style={styles.dateMonth}>{item.month}</Text>
-                  </View>
-            
-                )}
-                horizontal={true}
-                // showsHorizontalScrollIndicator={false}
-                // scrollEnabled={false} 
-              />
-            </View>
-            <View>
-            <View style={styles.dropdownWrap}>
-                <DropDownPicker
-                  open={open}
-                  value={''}
-                  items={userRoleList}
-                  setOpen={setOpen}
-                  setValue={(value) => ''}
-                  style={styles.dropdown}
-                  dropDownStyle={styles.dropDownList}
-                 
-                  // dropDownStyle={{ backgroundColor: "#fafafa" }}
-                  dropDownMaxHeight={150}   
-                  dropDownDirection="TOP"
-                  containerStyle={styles.rolePicker}
+               <View style={styles.dates}>
+                <FlatList
+                  data={[
+                    { date: '1', weekday: 'Mon', month: 'Apr' },
+                    { date: '2',weekday: 'Tue', month: 'Apr' },
+                    { date: '3', weekday: 'Wed', month: 'Apr' },
+                    { date: '4',weekday: 'Thu', month: 'Apr' },
+                    { date: '5', weekday: 'Fri', month: 'Apr' },
+                    { date: '6', weekday: 'Sat', month: 'Apr' },
+                    {date: '7', weekday: 'Sun', month: 'Apr' },
+                    {date: '8', weekday: 'Mon', month: 'Apr' },
+                    { date: '9', weekday: 'Tue', month: 'Apr' },
+                    { date: '10', weekday: 'Wed', month: 'Apr' },
+                    { date: '11', weekday: 'Thu', month: 'Apr' },
+                    {date: '12', weekday: 'Fri', month: 'Apr' },
+                    { date: '13', weekday: 'Sat', month: 'Apr' },
+                    { date: '14', weekday: 'Sun', month: 'Apr' },       
+                  ]}
+                  renderItem={({ item }) => (           
+                    <View style={[styles.dateItem] }>
+                        <Text style={styles.dateDay}>{item.weekday}</Text>
+                        <Text style={styles.dateNumber}>{item.date}</Text>
+                        <Text style={styles.dateMonth}>{item.month}</Text>
+                    </View>
+              
+                  )}
+                  horizontal={true}
+                  // showsHorizontalScrollIndicator={false}
+                  // scrollEnabled={false} 
                 />
-                 <DropDownPicker
-                  open={open}
-                  value={''}
-                  items={userRoleList}
-                  setOpen={setOpen}
-                  setValue={(value) => ''}
-                  style={styles.dropdown}
-                  dropDownStyle={{ backgroundColor: "#fafafa" }}
-                  dropDownMaxHeight={150}
-                  dropDownDirection="TOP"
-                  
-                  containerStyle={styles.rolePicker}
-                />
-            </View>
-              <PieChart/>
+               </View>
+                <View>
+                <View style={styles.dropdownWrap}>
+                    <DropDownPicker
+                      open={open}
+                      value={''}
+                      items={userRoleList}
+                      setOpen={setOpen}
+                      setValue={(value) => ''}
+                      style={styles.dropdown}
+                      dropDownStyle={styles.dropDownList}               
+                      // dropDownStyle={{ backgroundColor: "#fafafa" }}
+                      dropDownMaxHeight={150}   
+                      dropDownDirection="TOP"
+                      containerStyle={styles.rolePicker}
+                    />
+                    <DropDownPicker
+                      open={open}
+                      value={''}
+                      items={userRoleList}
+                      setOpen={setOpen}
+                      setValue={(value) => ''}
+                      style={styles.dropdown}
+                      dropDownStyle={{ backgroundColor: "#fafafa" }}
+                      dropDownMaxHeight={150}
+                      dropDownDirection="TOP"                  
+                      containerStyle={styles.rolePicker}
+                    />
+                </View>
+                  <PieChart/>
+               </View>
+          <Text>Total Student:50</Text>     
           </View>
-          <Text>Total Student:50</Text>
-       
-          </View>
-  </View> 
+       </View> 
   </ScrollView>
   );
 }
@@ -290,8 +289,8 @@ const styles = StyleSheet.create({
     width: '100%',
     
   },
-  
-  rolePicker:
-  {width: 200,}
+  rolePicker:{
+    width: 180,
+  }
   
 });
