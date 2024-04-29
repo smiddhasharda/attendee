@@ -96,12 +96,13 @@ function Learn() {
                   setValue={(value) => ''}
                   style={styles.dropdown}
                   dropDownStyle={styles.dropDownList}
+                 
                   // dropDownStyle={{ backgroundColor: "#fafafa" }}
                   dropDownMaxHeight={150}   
                   dropDownDirection="TOP"
                   containerStyle={styles.rolePicker}
                 />
-                    <DropDownPicker
+                 <DropDownPicker
                   open={open}
                   value={''}
                   items={userRoleList}
@@ -286,12 +287,11 @@ const styles = StyleSheet.create({
     padding:20,
   },
   dropdown: {
-    width: '50%',
+    width: '100%',
     
   },
-  rolePicker: {
-    
-    width: '60%',
-  },
+  
+  rolePicker:
+  {width: 200,}
   
 });
