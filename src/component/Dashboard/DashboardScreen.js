@@ -16,11 +16,6 @@ const { navigate } = useNavigation();
     navigate('Task');
   };
 
-  const data = [
-    { key: 'A', value: 50,},
-    { key: 'B', value: 30 },
-    { key: 'C', value: 20 },
-  ];
 
   return (
     <ScrollView>
@@ -45,7 +40,7 @@ const { navigate } = useNavigation();
               <View style={styles.box}>
               <Ionicons name="book" size={24} color="rgb(8 96 88)" />
               <View  style={styles.boxtext}>
-                  <Text>Exam 2</Text>
+                  <Text onPress={handleTaskPress}>Exam 2</Text>
                   {/* <Text>Chapter 2</Text> */}
                   </View>
               </View>

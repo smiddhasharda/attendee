@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Pressable, Text, FlatList, StyleSheet, Platform } from 'react-native';
+import { View, Pressable, Text, FlatList, StyleSheet, Platform, ScrollView } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
 import * as XLSX from 'xlsx';
@@ -123,34 +123,35 @@ const BulkUpload = () => {
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                  <Pressable onPress={() => pickFile()}>
-                    <Text>Pick Excel File</Text>
-                  </Pressable>
-      {/* <Button title="Pick Excel File" onPress={pickFile} /> */}
-      {selectedFile && (
-        <View style={{ marginTop: 20 }}>
-          <Text>Selected File:</Text>
-          <Text>{selectedFile.name}</Text>
-          <Text style={styles.previewTitle}>Preview:</Text>
-          <FlatList
-            data={excelData}
-            renderItem={({ item }) => (
-              <Text style={styles.cell}>{item}</Text>
-            )}
-            keyExtractor={(item, index) => index.toString()}
-          />
-          <View style={{ flexDirection: 'row', marginTop: 10 }}>
-          <Pressable onPress={() => uploadFile()}>
-                    <Text>Upload</Text>
-                  </Pressable>
-                  <Pressable onPress={() => cancelUpload()}>
-                    <Text>Cancel</Text>
-                  </Pressable>
-            {/* <Button title="Cancel" onPress={cancelUpload} />
-            <Button title="Upload" onPress={uploadFile} /> */}
+      <Pressable onPress={() => pickFile()}>
+        <Text>Pick Excel File</Text>
+      </Pressable>
+      <ScrollView>
+        {selectedFile && (
+          <View style={{ marginTop: 20 }}>
+            <Text>Selected File:</Text>
+            <Text>{selectedFile.name}</Text>
+            <Text style={styles.previewTitle}>Preview:</Text>
+            <ScrollView>
+              <FlatList
+                data={excelData}
+                renderItem={({ item }) => (
+                  <Text style={styles.cell}>{item}</Text>
+                )}
+                keyExtractor={(item, index) => index.toString()}
+              />
+            </ScrollView>
+            <View style={{ flexDirection: 'row', marginTop: 10 }}>
+              <Pressable onPress={() => uploadFile()}>
+                <Text>Upload</Text>
+              </Pressable>
+              <Pressable onPress={() => cancelUpload()}>
+                <Text>Cancel</Text>
+              </Pressable>
+            </View>
           </View>
-        </View>
-      )}
+        )}
+      </ScrollView>
     </View>
   );
 };
