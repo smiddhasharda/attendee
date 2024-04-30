@@ -103,5 +103,8 @@ const common = async (data, authToken) => {
 const multer = async (data, authToken) => {     
   return request('post', 'multer', data, authToken);
 };
+const bulkupload = async (data, authToken) => {     
+  return request('post', 'bulkupload', data, authToken);
+};
 
-export { login, register,emailVerify, logout, insert, update, fetch, remove, common,multer };
+export { login, register,emailVerify, logout, insert, update, fetch, remove, common,multer,bulkupload };
