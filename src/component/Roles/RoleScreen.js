@@ -20,6 +20,7 @@ const RoleScreen = () => {
   const [roleContainerVisible, setRoleContainerVisible] = useState(false);
   const [moduleList, setModuleList] = useState([]);
   const [tempModulePermission, setTempModulePermission] = useState([]);
+  
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
 
