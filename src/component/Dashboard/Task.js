@@ -1,13 +1,13 @@
  import React from 'react';
  import { View, Text, StyleSheet, Dimensions } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-
+ import Bulkpload from '../../globalComponent/Bulkupload/BulkUpload';
 const windowWidth = Dimensions.get("window").width;
 
  const Task = () => {
    return (
     <View style={styles.boxcontainer}>
-    <View style={styles.box}>
+      <Bulkpload/>
+    {/* <View style={styles.box}>
       <Ionicons style={styles.icons} name="book" size={24} color="rgb(8 96 88)" />
       <View style={styles.boxtext}>
         <Text>Maths</Text>
@@ -34,7 +34,7 @@ const windowWidth = Dimensions.get("window").width;
         <Text>Statics</Text>
         <Text>Chapter 2</Text>
       </View>
-    </View>
+    </View> */}
   </View>
    );
  };
