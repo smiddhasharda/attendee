@@ -31,6 +31,7 @@ const SERVER_BASE_URL = getServerUrl();
 const allowedOrigins = [
   'http://35.154.115.237:9999',
   'http://localhost:8081',
+  'http://3.111.185.105:3502',
   SERVER_BASE_URL,
   // CLIENT_BASE_URL
 ];

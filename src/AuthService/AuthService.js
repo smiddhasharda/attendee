@@ -2,8 +2,8 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
-const API_URL = 'http://localhost:5000/api';
-// const API_URL = 'http://3.111.185.105:3502/api';
+// const API_URL = 'http://localhost:5000/api';
+const API_URL = 'http://3.111.185.105:3502/api';
 
 
 const request = async (method, endpoint, data, authToken,params) => {
@@ -106,5 +106,7 @@ const multer = async (data, authToken) => {
 const bulkupload = async (data, authToken) => {     
   return request('post', 'bulkupload', data, authToken);
 };
-
-export { login, register,emailVerify, logout, insert, update, fetch, remove, common,multer,bulkupload };
+const view = async (data, authToken) => {     
+  return request('get', 'view', data, authToken);
+};
+export { login, register,emailVerify, logout, insert, update, fetch, remove, common,multer,bulkupload,view };

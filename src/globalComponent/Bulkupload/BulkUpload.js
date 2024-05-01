@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState,useCallback } from 'react';
 import { View, Pressable, Text, FlatList, StyleSheet, Platform, ScrollView } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
 import * as XLSX from 'xlsx';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { bulkupload } from "../../AuthService/AuthService";
+import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 
-const BulkUpload = () => {
+
+const BulkUpload = (props) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [excelData, setExcelData] = useState([]);
 
@@ -81,40 +85,59 @@ const BulkUpload = () => {
     return XLSX.utils.sheet_to_json(worksheet, { header: 1 });
   };
 
-  const uploadFile = async () => {
-    if (!selectedFile) {
-      alert('Please select a file to upload.');
-      return;
+  const { showToast } = useToast();
+  const checkAuthToken = useCallback(async () => {
+    const authToken = await AsyncStorage.getItem("authToken");
+
+    if (!authToken) {
+      showToast("Authentication token not available", "error");
+      throw new Error("Authentication token not available");
     }
 
-    const uploadUrl = 'http://your-server-ip:3000/upload';
-    const formData = new FormData();
+    return authToken;
+  }, [showToast]);
 
-    formData.append('file', {
-      uri: selectedFile.uri,
-      type: selectedFile.type,
-      name: selectedFile.name,
-    });
-
+  const handleBulkInvigiltor = async () => {
     try {
-      const response = await fetch(uploadUrl, {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        // Add progress tracking using platform-specific methods (optional)
-      });
-
-      const data = await response.json();
-      console.log('Upload successful:', data);
-      setSelectedFile(null);
-      setUploadProgress(0);
+      if (!selectedFile) {
+        showToast('Please select a file to upload.',"error");
+        return;
+      }
+      else{
+        const authToken = await checkAuthToken();
+        const formData = new FormData();
+        formData.append("tblName", "tbl_user_master");
+        formData.append("data", "");
+        formData.append("showToast", selectedFile);
+        const response = await bulkupload(formData, authToken);
+  
+        if (response) {
+          setSelectedFile(null);
+          setUploadProgress(0);
+          showToast(`Invigilator Data Upload Successfully`, "success");
+        }
+      }    
     } catch (error) {
-      console.error('Upload failed:', error);
-      alert('Error uploading file.');
+      handleAuthErrors(error);
     }
   };
+
+  const handleAuthErrors = (error) => {
+    switch (error.message) {
+      case "Invalid credentials":
+        showToast("Invalid authentication credentials", "error");
+        break;
+      case "Data already exists":
+        showToast("Data with the same name already exists", "error");
+        break;
+      case "No response received from the server":
+        showToast("No response received from the server", "error");
+        break;
+      default:
+        showToast("Module Operation Failed", "error");
+    }
+  };
+
 
   const cancelUpload = () => {
     setSelectedFile(null);
@@ -142,7 +165,7 @@ const BulkUpload = () => {
               />
             </ScrollView>
             <View style={{ flexDirection: 'row', marginTop: 10 }}>
-              <Pressable onPress={() => uploadFile()}>
+              <Pressable onPress={() => handleBulkInvigiltor()}>
                 <Text>Upload</Text>
               </Pressable>
               <Pressable onPress={() => cancelUpload()}>
