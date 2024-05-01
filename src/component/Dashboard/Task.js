@@ -27,7 +27,7 @@ const windowWidth = Dimensions.get("window").width;
       const response = await view(
         {
           operation: "fetch",
-          tblName: "PS_S_PRD_EX_TME_VW",
+          tblName: "PS_S_PRD_EX_RME_VW",
           data: '',
           conditionString: '',
           checkAvailability: '',
