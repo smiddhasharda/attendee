@@ -73,12 +73,26 @@ import {
       width:100,
       alignSelf:"flex-end",
       marginBottom:10,
+      backgroundColor:"blue",
+      padding:10,
+      borderRadius:5,
+      
+    },
+    addbtntext:{
+     color:"#fff",
     },
     modulists:{
       backgroundColor:"#fff",
       padding:40,
     },
-    
+    cancelbtn:{
+      width:100,
+      marginBottom:10,
+      backgroundColor:"grey",
+      padding:10,
+      borderRadius:5, 
+      alignItems:"center",
+    }
   });
 
   export default styles;

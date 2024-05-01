@@ -17,20 +17,20 @@ const LoginStyles = StyleSheet.create({
     height: `${100}%`,
     flexDirection:"row",
   },
-
   otpbtn:{
    alignSelf:"center",
    justifyContent:"center", 
   },
-  
-
   logoImageStyle: {
-    width: ScreenWidth * 0.5, 
-    height: ScreenWidth * 0.5,
-    alignSelf: "center",
+    flex:1,
+    width:"100%",
+    resizeMode:"cover",
+    height:"100%",
+    // width: ScreenWidth * 0.5, 
+    // height: ScreenWidth * 0.5,
+    // alignSelf: "center",
     // marginTop: ScreenHeight * 0.1, 
   },
-
   textInputContainer: {
     // marginTop: 12,
     display: 'flex',
@@ -44,7 +44,6 @@ const LoginStyles = StyleSheet.create({
     
    
   },
-
   checkboxContainer: {
     marginTop: 12,
     marginBottom: 12,
@@ -68,29 +67,23 @@ const LoginStyles = StyleSheet.create({
 
   loginButtonStyle: {
     height: 45,
-    // width:   `${20.5}%`,
-    width: ScreenWidth * 0.3,
-    maxwidth:`auto`,
-    //width: ScreenWidth * 0.9,
+    width: 150, 
     backgroundColor: "#fea500",
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
     marginTop: 32,
-    //elevation: 5,
-    marginLeft:15,
-    // marginRight:98,
+    marginLeft: 15,
     shadowRadius: 10,
-    shadowOpacity: 0.8,
-    shadowColor: "#166080",
-     
-    
-    shadowOffset: {
-      width: 0,
-      height: 10,
-    },
+    // shadowOpacity: 0.8,
+    // shadowColor: "#166080",
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 10,
+    // },
   },
+  
   loginTextStyle: {
     color: "#fff",
     fontSize: 16,
@@ -158,7 +151,14 @@ const LoginStyles = StyleSheet.create({
     justifyContent: "center",
   },
   textInputValue:{
-    width: `${40}%`
+    flex: 1,
+    height: 40,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    // width: `${40}%`
+    
   },
   emailTooltipContainer: {
     padding: 12,
