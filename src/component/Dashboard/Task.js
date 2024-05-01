@@ -1,40 +1,74 @@
- import React from 'react';
+ import React,{useEffect,useCallback} from 'react';
  import { View, Text, StyleSheet, Dimensions } from 'react-native';
  import Bulkpload from '../../globalComponent/Bulkupload/BulkUpload';
+
+ import {  view } from "../../AuthService/AuthService";
+import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 const windowWidth = Dimensions.get("window").width;
 
  const Task = () => {
+  const { showToast } = useToast();
+  const checkAuthToken = useCallback(async () => {
+    const authToken = await AsyncStorage.getItem("authToken");
+
+    if (!authToken) {
+      showToast("Authentication token not available", "error");
+      throw new Error("Authentication token not available");
+    }
+
+    return authToken;
+  }, [showToast]);
+
+  const handleGetView = async () => {
+    try {
+      const authToken = await checkAuthToken();
+      const response = await view(
+        {
+          operation: "fetch",
+          tblName: "PS_S_PRD_EX_TME_VW",
+          data: '',
+          conditionString: '',
+          checkAvailability: '',
+          customQuery: '',
+        },
+        authToken
+      );
+
+      if (response) {
+        console.log(response?.data);
+      }
+    } catch (error) {
+      console.log(error)
+      handleAuthErrors(error);
+    }
+  };
+
+
+  const handleAuthErrors = (error) => {
+    switch (error.message) {
+      case "Invalid credentials":
+        showToast("Invalid authentication credentials", "error");
+        break;
+      case "Data already exists":
+        showToast("Module with the same name already exists", "error");
+        break;
+      case "No response received from the server":
+        showToast("No response received from the server", "error");
+        break;
+      default:
+        showToast("Module Operation Failed", "error");
+    }
+  };
+
+  useEffect(() => {
+    handleGetView();
+  }, []);
+
    return (
     <View style={styles.boxcontainer}>
-      <Bulkpload/>
-    {/* <View style={styles.box}>
-      <Ionicons style={styles.icons} name="book" size={24} color="rgb(8 96 88)" />
-      <View style={styles.boxtext}>
-        <Text>Maths</Text>
-        <Text>Chapter 1</Text>
-      </View>
-    </View>
-    <View style={styles.box}>
-      <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-      <View style={styles.boxtext}>
-        <Text>Statics</Text>
-        <Text>Chapter 2</Text>
-      </View>
-    </View>
-    <View style={styles.box}>
-      <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-      <View style={styles.boxtext}>
-        <Text>Statics</Text>
-        <Text>Chapter 2</Text>
-      </View>
-    </View>
-    <View style={styles.box}>
-      <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-      <View style={styles.boxtext}>
-        <Text>Statics</Text>
-        <Text>Chapter 2</Text>
-      </View>
-    </View> */}
+      <Bulkpload />
   </View>
    );
  };
