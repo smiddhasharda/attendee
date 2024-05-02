@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, ActivityIndicator, Alert,StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Provider } from 'react-redux';
@@ -14,7 +14,8 @@ import DrawerNavigator from './src/globalComponent/DrawerNavigatior/DrawerNaviga
 import Learn from './src/component/Dashboard/Learn';
 import  Task from './src/component/Dashboard/Task';
 import PieChart from './src/component/Dashboard/PieChart';
-
+import LoginNew from './src/component/Login/LoginNew';
+import TabNavigator from './src/globalComponent/TabNavigator';
 
 const Stack = createNativeStackNavigator();
 global.SERVER_URL = `http://localhost:5000`;
@@ -37,7 +38,8 @@ const App = () => {
   }, []);
 
   const renderLoading = () => (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <View style={{ flex: 1, backgroundColor:"plum",padding:60 }}>
+      <StatusBar />     
       <ActivityIndicator size="large" color="#0000ff" />
     </View>
   );
@@ -46,12 +48,12 @@ const App = () => {
       <ToastProvider>
         <RoleProvider>
           <NavigationContainer>
-            <Stack.Navigator initialRouteName={initialRoute}>
-              <Stack.Screen name="Login" component={LoginScreen} />
-              <Stack.Screen name="Register" component={RegisterScreen} />
-              <Stack.Screen name="ForgetPassword" component={ForgetPasswordScreen} />
-              <Stack.Screen name="PostLogin" component={DrawerNavigator} options={{ headerShown: false }} />
-               <Stack.Screen name="Learn" component={Learn} />
+            <Stack.Navigator initialRouteName={initialRoute}  >          
+              <Stack.Screen  name="Login" component={LoginScreen}  />
+              <Stack.Screen  name="Register"  component={RegisterScreen} />
+              <Stack.Screen  name="ForgetPassword" component={ForgetPasswordScreen} />
+              <Stack.Screen  name="PostLogin" component={TabNavigator} options={{ headerShown: false }}  />
+               <Stack.Screen name="Learn" component={Learn}  />
                <Stack.Screen name="Task" component={Task} />
                <Stack.Screen name="PieChart" component={PieChart} />
             </Stack.Navigator>
@@ -62,6 +64,8 @@ const App = () => {
   );
 
   return loading ? renderLoading() : renderRouting();
+ 
+  
 };
 
 export default App;

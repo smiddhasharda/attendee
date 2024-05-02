@@ -160,7 +160,6 @@ function Learn() {
     <ScrollView>
       <View style={styles.container}>
         <Text style={styles.heading}>Student Report</Text>
-
         <View style={styles.container}>
           <View style={styles.dates}>
             <FlatList
