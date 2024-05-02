@@ -1,11 +1,14 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState,useEffect,useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet, Dimensions, ScrollView, Pressable, ActivityIndicator } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'
+import { Ionicons } from '@expo/vector-icons';
+import {  view } from "../../AuthService/AuthService";
+import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ExamScreen = ({ navigation }) => {
-  const [examDates, setExamDates] = useState([{ EXAM_DT: '06-FEB-24' }, { EXAM_DT: '07-FEB-24' }, { EXAM_DT: '10-FEB-24' }])
+  const [examDates, setExamDates] = useState([])
   const [roomDetails, setRoomDetails] = useState([]);
-  const [examSelectedDate, setExamSelectedDate] = useState(examDates[0].EXAM_DT);
+  const [examSelectedDate, setExamSelectedDate] = useState('');
   const [loading, setLoading] = useState(false);
 
   // Sample data for room details
@@ -21,20 +24,97 @@ const ExamScreen = ({ navigation }) => {
     { EXAM_DT: '10-FEB-24', ROOM_NBR: 'RM-205 (BLOCK 4)',EXAM_START_TIME:'09:30:00.000000000 AM' }
   ];
 
-  const fetchRoomDetails = (date) => {
+  const fetchRoomDetails = async(date) => {
     setLoading(true);
-    // Simulate fetching data from API
-    setTimeout(() => {
-      const filteredRooms = sampleRoomData.filter(room => room.EXAM_DT === date);
-      setRoomDetails(filteredRooms);
-      setLoading(false);
-    }, 1000); // Simulate 1 second delay
+    await handleGetDateView();
   };
 
   const handleDateClick = (date) => {
+    setLoading(true);
     setExamSelectedDate(date);
-    fetchRoomDetails(date);
+    handleGetRoomView(date);
   };
+
+  const { showToast } = useToast();
+  const checkAuthToken = useCallback(async () => {
+    const authToken = await AsyncStorage.getItem("authToken");
+
+    if (!authToken) {
+      showToast("Authentication token not available", "error");
+      throw new Error("Authentication token not available");
+    }
+
+    return authToken;
+  }, [showToast]);
+
+  const handleGetDateView = async () => {
+    try {
+      const authToken = await checkAuthToken();
+      const response = await view(
+        {
+          operation: "custom",
+          tblName: "PS_S_PRD_EX_TME_VW",
+          data: '',
+          conditionString: '',
+          checkAvailability: '',
+          customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW ORDER BY EXAM_DT ASC `,                 
+        },
+        authToken
+      );
+
+      if (response) {
+        setExamDates(response?.data);
+        setExamSelectedDate(response?.data?.[0]?.EXAM_DT);
+        handleGetRoomView(response?.data?.[0]?.EXAM_DT);
+      }
+    } catch (error) {
+      setLoading(false);
+      handleAuthErrors(error);
+    }
+  };
+  const handleGetRoomView = async (SelectedDate) => {
+    try {
+      const authToken = await checkAuthToken();
+      const response = await view(
+        {
+          operation: "custom",
+          tblName: "PS_S_PRD_EX_RME_VW",
+          data: '',
+          conditionString: '',
+          checkAvailability: '',
+          customQuery: `SELECT DISTINCT EXAM_DT,ROOM_NBR FROM PS_S_PRD_EX_RME_VW WHERE EXAM_DT =  '${new Date(SelectedDate).toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-')}'`,         
+        },
+        authToken
+      );
+
+      if (response) {
+        console.log(response?.data);
+        setRoomDetails(response?.data);
+        setLoading(false);
+      }
+    } catch (error) {
+      setLoading(false);
+      handleAuthErrors(error);
+    }
+  };
+
+
+  const handleAuthErrors = (error) => {
+    switch (error.message) {
+      case "Invalid credentials":
+        showToast("Invalid authentication credentials", "error");
+        break;
+      case "Data already exists":
+        showToast("Module with the same name already exists", "error");
+        break;
+      case "No response received from the server":
+        showToast("No response received from the server", "error");
+        break;
+      default:
+        showToast("Module Operation Failed", "error");
+    }
+  };
+
   useEffect(() => {
     fetchRoomDetails(examSelectedDate)
   }, []);
@@ -68,9 +148,9 @@ const ExamScreen = ({ navigation }) => {
           renderItem={({ item }) => (
             <Pressable onPress={() => handleDateClick(item.EXAM_DT)}>
               <View style={[styles.dateItem, (item.EXAM_DT === examSelectedDate) && styles.activebox]}>
-                <Text style={styles.dateDay}>{item.EXAM_DT.split('-')[1]}</Text>
-                <Text style={styles.dateNumber}>{item.EXAM_DT.split('-')[0]}</Text>
-                <Text style={styles.dateMonth}>{item.EXAM_DT.split('-')[2]}</Text>
+                <Text style={styles.dateDay}>{new Date(item.EXAM_DT).toString().split(' ')[1]}</Text>
+                <Text style={styles.dateNumber}>{new Date(item.EXAM_DT).toString().split(' ')[2]}</Text>
+                <Text style={styles.dateMonth}>{new Date(item.EXAM_DT).toString().split(' ')[3]}</Text>
               </View>
             </Pressable>
           )}

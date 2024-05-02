@@ -86,6 +86,7 @@ function RoomDetail() {
         setPresentStudentList(response.data)
       }
     } catch (error) {
+      console.log(error);
       handleAuthErrors(error);
     }
   };

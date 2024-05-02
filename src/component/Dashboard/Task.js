@@ -40,7 +40,6 @@ const windowWidth = Dimensions.get("window").width;
         console.log(response?.data);
       }
     } catch (error) {
-      console.log(error)
       handleAuthErrors(error);
     }
   };
