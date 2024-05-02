@@ -736,15 +736,39 @@ app.get("/api/view", authenticateToken, async (req, res) => {
     }
     switch (operation) {
       case "fetch":
-        const selectRows = await viewPool.execute(
-          `SELECT * FROM ${tblName} ${
+    const selectRows = await viewPool.execute(
+        `SELECT * FROM ${tblName} ${
             conditionString ? "WHERE " + conditionString : ""
-          }`
-        ).catch(error => {
-          console.error("Error fetching data:", error.message || error);
-          throw error;
-        });
-        return res.json({ message: "Fetch successful", data: selectRows.rows });
+        }`
+    ).catch(error => {
+        console.error("Error fetching data:", error.message || error);
+        throw error;
+    });
+
+    // Extracting column names from metaData
+    const columnNames = selectRows.metaData.map(column => column.name);
+
+    // Transforming rows into the desired JSON format
+    const transformedData = selectRows.rows.map(row => {
+        const rowData = {};
+        for (let i = 0; i < columnNames.length; i++) {
+            rowData[columnNames[i]] = row[i];
+        }
+        return rowData;
+    });
+
+    return res.json({ message: "Fetch successful", data: transformedData });
+
+      // case "fetch":
+      //   const selectRows = await viewPool.execute(
+      //     `SELECT * FROM ${tblName} ${
+      //       conditionString ? "WHERE " + conditionString : ""
+      //     }`
+      //   ).catch(error => {
+      //     console.error("Error fetching data:", error.message || error);
+      //     throw error;
+      //   });
+      //   return res.json({ message: "Fetch successful", data: selectRows.rows });
       case "custom":
         const customRows = await viewPool.execute(customQuery).catch(error => {
           console.error("Error executing custom query:", error.message || error);
