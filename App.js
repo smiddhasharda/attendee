@@ -12,7 +12,7 @@ import ForgetPasswordScreen from './src/component/ForgetPassword/ForgetPasswordS
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DrawerNavigator from './src/globalComponent/DrawerNavigatior/DrawerNavigatior';
 import Learn from './src/component/Dashboard/Learn';
-import  Task from './src/component/Dashboard/Task';
+import  InvigilatorScreen from './src/component/Invigilator/InvigilatorScreen';
 import PieChart from './src/component/Dashboard/PieChart';
 import LoginNew from './src/component/Login/LoginNew';
 import TabNavigator from './src/globalComponent/TabNavigator';
@@ -50,13 +50,14 @@ const App = () => {
       <ToastProvider>
         <RoleProvider>
           <NavigationContainer>
-            <Stack.Navigator initialRouteName={initialRoute}  >          
-              <Stack.Screen  name="Login" component={LoginScreen}  />
-              <Stack.Screen  name="Register"  component={RegisterScreen} />
-              <Stack.Screen  name="ForgetPassword" component={ForgetPasswordScreen} />
-              <Stack.Screen  name="PostLogin" component={TabNavigator} options={{ headerShown: false }}  />
-               <Stack.Screen name="Learn" component={Learn}  />
-               <Stack.Screen name="Task" component={Task} />
+
+            <Stack.Navigator initialRouteName={initialRoute}>
+              <Stack.Screen name="Login" component={LoginScreen} />
+              <Stack.Screen name="Register" component={RegisterScreen} />
+              <Stack.Screen name="ForgetPassword" component={ForgetPasswordScreen} />
+              <Stack.Screen name="PostLogin" component={DrawerNavigator} options={{ headerShown: false }} />
+               <Stack.Screen name="Learn" component={Learn} />
+               <Stack.Screen name="InvigilatorScreen" component={InvigilatorScreen} />
                <Stack.Screen name="PieChart" component={PieChart} />
             </Stack.Navigator>
           </NavigationContainer>

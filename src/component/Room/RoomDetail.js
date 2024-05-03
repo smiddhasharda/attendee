@@ -43,6 +43,7 @@ function RoomDetail() {
 
   const fetchStudentDetails = (date, room) => {
     setLoading(true);
+    handleGetStudentView(date, room);
     // Simulate fetching data from API
     setTimeout(() => {
       const filteredStudentData = sampleStudentData.filter(studentData => (studentData.EXAM_DT === date) && (studentData.ROOM_NBR === room));
@@ -87,6 +88,33 @@ function RoomDetail() {
       }
     } catch (error) {
       console.log(error);
+      handleAuthErrors(error);
+    }
+  };
+
+  const handleGetStudentView = async (SelectedDate,SelectedRoom) => {
+    try {
+      const authToken = await checkAuthToken();
+      const response = await view(
+        {
+          operation: "fetch",
+          tblName: "PS_S_PRD_EX_RME_VW",
+          data: '',
+          conditionString: `EXAM_DT = ${SelectedDate} AND ROOM_NBR = ${SelectedRoom}`,
+          checkAvailability: '',
+          customQuery: ''
+        },
+        authToken
+      );
+
+
+
+      if (response) {
+        console.log(response?.data);
+        setLoading(false);
+      }
+    } catch (error) {
+      setLoading(false);
       handleAuthErrors(error);
     }
   };
