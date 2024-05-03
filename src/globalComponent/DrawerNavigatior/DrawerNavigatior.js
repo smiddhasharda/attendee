@@ -265,9 +265,9 @@ const DrawerNavigator = ({ navigation }) => {
                 case "RoleScreen":
                   return <RoleComponent />;
                 case "ModuleScreen":
-                  return <ModuleComponent />;
+                  return <ModuleComponent  />;
                 case "Dashboard":
-                  return <DashboardComponent />;
+                  return <DashboardComponent  />;
                 case "UserScreen":
                   return <UserComponent />;
                 case "ExamScreen":
