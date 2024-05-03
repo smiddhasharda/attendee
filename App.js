@@ -12,7 +12,7 @@ import ForgetPasswordScreen from './src/component/ForgetPassword/ForgetPasswordS
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DrawerNavigator from './src/globalComponent/DrawerNavigatior/DrawerNavigatior';
 import Learn from './src/component/Dashboard/Learn';
-import  Task from './src/component/Dashboard/Task';
+import  InvigilatorScreen from './src/component/Invigilator/InvigilatorScreen';
 import PieChart from './src/component/Dashboard/PieChart';
 
 
@@ -54,7 +54,7 @@ const App = () => {
               <Stack.Screen name="ForgetPassword" component={ForgetPasswordScreen} />
               <Stack.Screen name="PostLogin" component={DrawerNavigator} options={{ headerShown: false }} />
                <Stack.Screen name="Learn" component={Learn} />
-               <Stack.Screen name="Task" component={Task} />
+               <Stack.Screen name="InvigilatorScreen" component={InvigilatorScreen} />
                <Stack.Screen name="PieChart" component={PieChart} />
             </Stack.Navigator>
           </NavigationContainer>
