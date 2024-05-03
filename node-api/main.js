@@ -772,12 +772,10 @@ app.get("/api/view", authenticateToken, async (req, res) => {
 
 
       case "custom":
-      console.log(customQuery);
         const customRows = await viewPool.execute(customQuery, {},{ outFormat: oracledb.OUT_FORMAT_OBJECT }).catch(error => {
           console.error("Error executing custom query:", error.message || error);
           throw error;
         });
-        console.log(customRows)
 
     //        let customColumnNames = customRows.metaData.map(column => column.name);
 
