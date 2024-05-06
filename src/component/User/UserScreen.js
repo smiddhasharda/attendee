@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import {Image, View, Text, TextInput, FlatList, StyleSheet, Pressable, LayoutAnimation} from "react-native";
+import {View, Text, TextInput, FlatList, StyleSheet, Pressable, LayoutAnimation} from "react-native";
 import { insert, fetch, update } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -9,7 +9,8 @@ import useStateWithCallback from "../../helpers/useStateWithCallback";
 import Tooltip from "../../globalComponent/ToolTip/Tooltip";
 import CheckBox from "expo-checkbox";
 import { ScrollView } from "react-native-gesture-handler";
-const UserScreen = () => { 
+const UserScreen = ({userAccess}) => { 
+  const UserAccess = userAccess?.module?.filter( (item) => item?.FK_ModuleId === 4 );
   const { showToast } = useToast();
   const [userData, setUserData] = useState({
     userId: '',
@@ -312,27 +313,6 @@ const UserScreen = () => {
             }}
             onIconPress={handleEyePress}
           />
-           {/* <TextInput
-          style={styles.input} 
-          placeholder="Password"
-          value={userData.password}
-          secureTextEntry={!isPasswordVisible}
-          onChangeText={handlePasswordChange}
-          autoCapitalize="none"
-          onFocus={() => {
-            setPasswordTooltipVisible(false);
-          }}
-        />
-        <Pressable
-          style={styles.eyeIconContainer}
-          onPress={handleEyePress}
-        >
-          <Image
-            style={styles.eyeIcon}
-            source={eyeIcon}
-            resizeMode="contain"
-          />
-        </Pressable> */}
         </View>
     );
   };
@@ -478,9 +458,6 @@ const UserScreen = () => {
 
         updatedRolePermissions[existingRoleIndex] = updatedRole;
       }
-      // if (existingRoleIndex !== -1) {
-      //   updatedRolePermissions.splice(existingRoleIndex, 1);
-      // }
        else {
         const newRole = {
           FK_RoleId: role?.PK_RoleId,
@@ -571,12 +548,6 @@ const UserScreen = () => {
     handleGetUserList();
     handleGetRoleList();
   }, []);
-  // const renderItem = ({ item }) => (
-  //   <View style={{ padding: 10, borderBottomWidth: 1, borderBottomColor: '#ccc' }}>
-  //     <Text>Name: {item.name}</Text>
-  //     <Text>Role: {item.role}</Text>
-  //   </View>
-  // );
     return (
    
       <View style={styles.container}>
@@ -596,8 +567,6 @@ const UserScreen = () => {
                   <Pressable onPress={() => handleClose()}>
                     <Text>Cancel</Text>
                   </Pressable>
-              {/* <Button title="Update User" onPress={handleUpdateUser} />
-              <Button title="Cancel" onPress={handleClose} /> */}
             </View>
           ) : (
             <View style={styles.buttonContainer}>
@@ -607,8 +576,6 @@ const UserScreen = () => {
                   <Pressable onPress={() => handleClose()}>
                     <Text>Cancel</Text>
                   </Pressable>
-              {/* <Button title="Add New User" onPress={handleAddUser} />
-              <Button title="Cancel" onPress={handleClose} /> */}
             </View>
           )}
         </View>
@@ -617,10 +584,10 @@ const UserScreen = () => {
       <View style={styles.userListWrap}>
         <Text style={styles.header}>User List:</Text>      
           <View style={styles.addWrap}>
+          {UserAccess?.create === 1 &&    
           <Pressable onPress={() => setUserContainerVisible(true)}>
                     <Text>Add</Text>
-                  </Pressable>
-            {/* <Button title="Add" onPress={() => setUserContainerVisible(true)} />    */}
+                  </Pressable> }
           </View>
         <FlatList 
           data={userList}
@@ -637,19 +604,14 @@ const UserScreen = () => {
             <View style={styles.listItem}>
               <Text style={[styles.listItemText, { flex: 2 }]}>{item.name}</Text>
               <Text style={[styles.listItemText, { flex: 3 }]}>{item.contact_number}</Text>
-                <Pressable onPress={() =>handleUserStatus(item.user_id, item?.isActive)}>
+                <Pressable onPress={() =>UserAccess?.update === 1 ? handleUserStatus(item.user_id, item?.isActive) : ''}>
               <Text style={[styles.listItemText, { flex: 1 }, item.isActive ? styles.listItemActiveStatus : styles.listItemInactiveStatus]}>{item.isActive ? "Active" : "Inactive"}</Text>
               </Pressable>          
               <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
-              <Pressable onPress={() => handleEditUser(item)}>
-                    <Text>Edit</Text>
-                  </Pressable>
-                {/* <Button
-                  title="Edit"
-                  onPress={() => handleEditUser(item)}
-                  style={styles.listItemEditButton}
-                  textStyle={styles.listItemEditText}
-                /> */}
+              {UserAccess?.update === 1 ? 
+              <Pressable style={styles.listItemEditButton} onPress={() => handleEditUser(item)}>
+                    <Text style={styles.listItemEditText} >Edit</Text>
+                  </Pressable> : ' - '}
               </View>
             </View>
           )}

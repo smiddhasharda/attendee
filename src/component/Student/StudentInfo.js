@@ -20,16 +20,8 @@ const StudentInfo = () => {
   const [studentDetails, setStudentDetails] = useState({});
   const [courseDetails, setCourseDetails] = useState({});
   const [attendanceDetails, setAttendanceDetails] = useState({});
-  const {
-    room_Nbr,
-    catlog_Nbr,
-    system_Id,
-    seat_Nbr,
-    exam_Dt,
-    startTime,
-    reportId,
-    navigation,
-  } = route.params;
+  const { room_Nbr, catlog_Nbr, system_Id, seat_Nbr, exam_Dt, startTime, reportId, navigation, userAccess } = route.params;
+  const UserAccess = userAccess?.module?.filter((item)=> item?.FK_ModuleId === 6);
   const [copiesData, setCopiesData] = useState([
     {
       id: 0,
@@ -522,12 +514,7 @@ const StudentInfo = () => {
       {isScanning ? (
         <CodeScanner
           onScannedData={(data) =>
-            handleScanBarcode(
-              data,
-              tempCopyType,
-              mainCopyIndex,
-              alternateCopyIndex
-            )
+            handleScanBarcode( data, tempCopyType, mainCopyIndex, alternateCopyIndex )
           }
           onCancel={handleCancel}
         />
