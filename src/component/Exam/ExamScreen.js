@@ -6,6 +6,7 @@ import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ExamScreen = ({ navigation,userAccess }) => {
+  const UserAccess = userAccess?.module?.filter((item)=> item?.FK_ModuleId === 5);
   const [examDates, setExamDates] = useState([])
   const [roomDetails, setRoomDetails] = useState([]);
   const [examSelectedDate, setExamSelectedDate] = useState('');
@@ -163,7 +164,7 @@ const ExamScreen = ({ navigation,userAccess }) => {
           roomDetails.length > 0 ? (
             <ScrollView>
               {roomDetails.map((roomData, index) => (
-                <Pressable onPress={() => navigation.navigate("RoomDetail", { room_Nbr: roomData.ROOM_NBR ,exam_Dt: roomData.EXAM_DT , startTime: roomData.EXAM_START_TIME ,navigation })}>
+                <Pressable onPress={() => UserAccess?.create === 0 ? navigation.navigate("RoomDetail", { room_Nbr: roomData.ROOM_NBR ,exam_Dt: roomData.EXAM_DT , startTime: roomData.EXAM_START_TIME ,navigation,userAccess }) : ''}>
                 <View key={index} style={[styles.box]}>
                 {/* <View key={index} style={[styles.box, styles.activebox]}> */}
                 <Ionicons style={styles.icons} name="book" size={24} color="rgb(8 96 88)" />

@@ -21,7 +21,7 @@ import RoomDetail from './src/component/Room/RoomDetail';
 
 const Stack = createNativeStackNavigator();
 // global.SERVER_URL = `http://localhost:5000`;
-global.SERVER_URL= 'http://3.111.185.105:3502/api';
+global.SERVER_URL= 'http://3.111.185.105:3502';
 
 const App = () => {
   const [initialRoute, setInitialRoute] = useState('Login');
