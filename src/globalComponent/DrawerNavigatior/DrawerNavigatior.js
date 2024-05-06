@@ -1,12 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { View, Text, Pressable, Image } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  createDrawerNavigator,
-  DrawerContentScrollView,
-  DrawerItemList,
-  DrawerItem,
-} from "@react-navigation/drawer";
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem, } from "@react-navigation/drawer";
 import RoleScreen from "../../component/Roles/RoleScreen";
 import ModuleScreen from "../../component/Module/ModuleScreen";
 import DashboardScreen from "../../component/Dashboard/DashboardScreen";
@@ -15,21 +10,17 @@ import ExamScreen from "../../component/Exam/ExamScreen";
 import { logout } from "../../AuthService/AuthService";
 import DropDownPicker from "react-native-dropdown-picker";
 import CustomeImagePicker from "../CustomeImagePicker/CustomeImagePicker";
-import RoomDetail from "../../component/Room/RoomDetail";
-import StudentInfo from "../../component/Student/StudentInfo";
 import { multer, fetch as FetchData } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import styles from "./DrawerNavigator.style";
 
 // Screen components
 
-const RoleComponent = () => <RoleScreen />;
-const ModuleComponent = () => <ModuleScreen />;
-const DashboardComponent = () => <DashboardScreen />;
-const UserComponent = () => <UserScreen />;
-const ExamComponent = ({ navigation }) => <ExamScreen navigation={navigation} />;
-const StudentComponent = () => <StudentInfo />;
-const RoomDetailComponent = () => <RoomDetail />;
+const RoleComponent = ({ userAccess }) => <RoleScreen userAccess={userAccess} />;
+const ModuleComponent = ({ userAccess }) => <ModuleScreen userAccess={userAccess} />;
+const DashboardComponent = ({ userAccess }) => <DashboardScreen userAccess={userAccess} />;
+const UserComponent = ({ userAccess }) => <UserScreen userAccess={userAccess} />;
+const ExamComponent = ({ navigation, userAccess }) => <ExamScreen navigation={navigation} userAccess={userAccess} />;
 const Drawer = createDrawerNavigator();
 
 const CustomDrawerContent = ({ ...props }) => {
@@ -151,8 +142,6 @@ const CustomDrawerContent = ({ ...props }) => {
                 <Pressable onPress={() => setFile("")}>
                   <Text>Cancel</Text>
                 </Pressable>
-                {/* <Button title="Cancel" onPress={()=>setFile('')} />
-                <Button style={styles.savebtn}  title="Save" onPress={handleProfilePic} /> */}
               </View>
             </View>
           )}
@@ -175,9 +164,9 @@ const CustomDrawerContent = ({ ...props }) => {
       </View>
       <DrawerItemList {...props} style={styles.dropdownmain} />
       <View>
-      <Pressable onPress={() =>props.handleLogout()}>
-        <Text style={{ margin: 16 }}>Logout</Text>
-      </Pressable>
+        <Pressable onPress={() =>props.handleLogout()}>
+          <Text style={{ margin: 16 }}>Logout</Text>
+        </Pressable>
       </View>
     </DrawerContentScrollView>
   );
@@ -228,7 +217,6 @@ const DrawerNavigator = ({ navigation }) => {
     fetchUserRolePermission();
   }, []);
   
-
   if (!userRolePermission || userRolePermission.length === 0 || !userRoleList) {
     return (
       <View>
@@ -257,26 +245,22 @@ const DrawerNavigator = ({ navigation }) => {
       )}
     >
       {userRoleList?.[userRoleIndex]?.module
-        .filter((module) => module?.read === 1)
+        .filter((module) => module?.read === 1 && (module?.moduleMaster[0]?.moduleName !== "StudentInfo" && module?.moduleMaster[0]?.moduleName !== "RoomDetail" ))
         .map((module, index) => (
           <Drawer.Screen key={index} name={module?.moduleMaster[0]?.moduleName}>
-            {() => {
+            {(props) => {
               switch (module?.moduleMaster[0]?.moduleName) {
                 case "RoleScreen":
-                  return <RoleComponent />;
+                  return <RoleComponent {...props} userAccess={userRoleList?.[userRoleIndex]} />;
                 case "ModuleScreen":
-                  return <ModuleComponent  />;
+                  return <ModuleComponent {...props} userAccess={userRoleList?.[userRoleIndex]} />;
                 case "Dashboard":
-                  return <DashboardComponent  />;
+                  return <DashboardComponent {...props} userAccess={userRoleList?.[userRoleIndex]} />;
                 case "UserScreen":
-                  return <UserComponent />;
+                  return <UserComponent {...props} userAccess={userRoleList?.[userRoleIndex]} />;
                 case "ExamScreen":
-                  return <ExamComponent navigation={navigation} />;
-                case "StudentInfo":
-                  return <StudentComponent />;
-                case "RoomDetail":
-                  return <RoomDetailComponent />;
-                default:
+                  return <ExamComponent {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} />;
+               default:
                   return null;
               }
             }}

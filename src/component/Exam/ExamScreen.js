@@ -5,7 +5,7 @@ import {  view } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const ExamScreen = ({ navigation }) => {
+const ExamScreen = ({ navigation,userAccess }) => {
   const [examDates, setExamDates] = useState([])
   const [roomDetails, setRoomDetails] = useState([]);
   const [examSelectedDate, setExamSelectedDate] = useState('');
@@ -88,7 +88,6 @@ const ExamScreen = ({ navigation }) => {
       );
 
       if (response) {
-        console.log(response?.data);
         setRoomDetails(response?.data);
         setLoading(false);
       }
