@@ -7,8 +7,13 @@ function LoginNew() {
    <View style={styles.container}>
       <View style={styles.form}>
       <Image style={styles.image} source= {require("../../local-assets/attendlogin.jpg")} />
+      <View style={styles.loginheadWrap}>
+      <Text style={styles.loginheading}>Attendee</Text>
+      <Text style={styles.loginsubheading}>Login into your Account</Text></View>
       <Text style={styles.label}>Email Id</Text>
       <TextInput  style={styles.input} placeholder='Enter Your Email ID'/>
+      <Text style={styles.label}>OTP</Text>
+      <TextInput  style={styles.input} placeholder='Enter The Otp'/>
       <Button title='Send Otp' />
       </View>
    </View>    
@@ -67,5 +72,16 @@ const styles = StyleSheet.create({
   headingtext:{
   paddingVertical:10,
   },
-
+  loginheading:{
+    fontWeight:"bold",
+    fontSize:"28px",
+    alignItems:"center",
+  },
+  loginsubheading:{
+    fontSize:"16px",
+  },
+  loginheadWrap:{
+    padding:"20px",
+    alignItems:"center"
+  }
 });
