@@ -5,7 +5,8 @@ import {  view } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const ExamScreen = ({ navigation }) => {
+const ExamScreen = ({ navigation,userAccess }) => {
+  const UserAccess = userAccess?.module?.filter((item)=> item?.FK_ModuleId === 5);
   const [examDates, setExamDates] = useState([])
   const [roomDetails, setRoomDetails] = useState([]);
   const [examSelectedDate, setExamSelectedDate] = useState('');
@@ -82,13 +83,12 @@ const ExamScreen = ({ navigation }) => {
           data: '',
           conditionString: '',
           checkAvailability: '',
-          customQuery: `SELECT DISTINCT EXAM_DT,ROOM_NBR FROM PS_S_PRD_EX_RME_VW WHERE EXAM_DT =  '${new Date(SelectedDate).toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-')}'`,         
+          customQuery: `SELECT DISTINCT PS_S_PRD_EX_RME_VW.EXAM_DT, PS_S_PRD_EX_RME_VW.ROOM_NBR, PS_S_PRD_EX_TME_VW.EXAM_START_TIME FROM PS_S_PRD_EX_RME_VW JOIN PS_S_PRD_EX_TME_VW ON PS_S_PRD_EX_RME_VW.EXAM_DT = PS_S_PRD_EX_TME_VW.EXAM_DT WHERE PS_S_PRD_EX_RME_VW.EXAM_DT = '${new Date(SelectedDate).toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-')}'`
         },
         authToken
       );
 
       if (response) {
-        console.log(response?.data);
         setRoomDetails(response?.data);
         setLoading(false);
       }
@@ -164,7 +164,7 @@ const ExamScreen = ({ navigation }) => {
           roomDetails.length > 0 ? (
             <ScrollView>
               {roomDetails.map((roomData, index) => (
-                <Pressable onPress={() => navigation.navigate("RoomDetail", { room_Nbr: roomData.ROOM_NBR ,exam_Dt: roomData.EXAM_DT , startTime: roomData.EXAM_START_TIME ,navigation })}>
+                <Pressable onPress={() => UserAccess?.create === 0 ? navigation.navigate("RoomDetail", { room_Nbr: roomData.ROOM_NBR ,exam_Dt: roomData.EXAM_DT , startTime: roomData.EXAM_START_TIME ,navigation,userAccess }) : ''}>
                 <View key={index} style={[styles.box]}>
                 {/* <View key={index} style={[styles.box, styles.activebox]}> */}
                 <Ionicons style={styles.icons} name="book" size={24} color="rgb(8 96 88)" />

@@ -739,25 +739,25 @@ app.get("/api/view", authenticateToken, async (req, res) => {
     const selectRows = await viewPool.execute(
         `SELECT * FROM ${tblName} ${
             conditionString ? "WHERE " + conditionString : ""
-        }`
+        }`, {},{ outFormat: oracledb.OUT_FORMAT_OBJECT }
     ).catch(error => {
         console.error("Error fetching data:", error.message || error);
         throw error;
     });
 
-    // Extracting column names from metaData
-    const columnNames = selectRows.metaData.map(column => column.name);
+    // // Extracting column names from metaData
+    // let columnNames = selectRows.metaData.map(column => column.name);
 
-    // Transforming rows into the desired JSON format
-    const transformedData = selectRows.rows.map(row => {
-        const rowData = {};
-        for (let i = 0; i < columnNames.length; i++) {
-            rowData[columnNames[i]] = row[i];
-        }
-        return rowData;
-    });
+    // // Transforming rows into the desired JSON format
+    // const transformedData = selectRows.rows.map(row => {
+    //     const rowData = {};
+    //     for (let i = 0; i < columnNames.length; i++) {
+    //         rowData[columnNames[i]] = row[i];
+    //     }
+    //     return rowData;
+    // });
 
-    return res.json({ message: "Fetch successful", data: transformedData });
+    return res.json({ message: "Fetch successful", data: selectRows?.rows });
 
       // case "fetch":
       //   const selectRows = await viewPool.execute(
@@ -768,22 +768,104 @@ app.get("/api/view", authenticateToken, async (req, res) => {
       //     console.error("Error fetching data:", error.message || error);
       //     throw error;
       //   });
-      //   return res.json({ message: "Fetch successful", data: selectRows.rows });
+      //   return res.json({ message: "Fetch successful", data: selectRows });
+
+
       case "custom":
-        const customRows = await viewPool.execute(customQuery).catch(error => {
+        const customRows = await viewPool.execute(customQuery, {},{ outFormat: oracledb.OUT_FORMAT_OBJECT }).catch(error => {
           console.error("Error executing custom query:", error.message || error);
           throw error;
         });
-        return res.json({
-          message: "Custom query successful",
-          data: customRows.rows,
-        });
+
+    //        let customColumnNames = customRows.metaData.map(column => column.name);
+
+    // // Transforming rows into the desired JSON format
+    // const CustomTransformedData = customRows.rows.map(row => {
+    //     const rowData = {};
+    //     for (let i = 0; i < customColumnNames.length; i++) {
+    //         rowData[customColumnNames[i]] = row[i];
+    //     }
+    //     return rowData;
+    // });
+
+    return res.json({ message: "Fetch successful", data: customRows?.rows });
+
+        // return res.json({
+        //   message: "Custom query successful",
+        //   data: customRows.rows,
+        // });
       default:
         return res.status(400).json({ error: "Invalid operation type" });
     }
   } catch (error) {
     console.error("Error in view fetch:", error.message || error);
     return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// For Bulkupload Api
+app.post("/api/bulkupload", upload.single("bulkupload_doc"), authenticateToken, async (req, res) => {
+  try {
+    const {
+      tblName,
+      conditionString,
+      checkAvailability,
+      checkColumn
+    } = req.body;
+    const file = req.file;
+    if (tblName === undefined) {
+      return res
+        .status(400)
+        .json({ error: "Table are required" });
+    }
+
+    const workbook = XLSX.readFile(file.path);
+    const sheetName = workbook.SheetNames?.[0];
+    const worksheet = workbook.Sheets[sheetName];
+    const excelData = XLSX.utils.sheet_to_json(worksheet);
+    const existingData = [];
+    const newData = [];
+    if (checkAvailability === "true") {
+      for (const item of excelData) {
+        let Data = item[checkColumn];
+        const [checkRows] = await pool.query(
+          `SELECT * FROM ${tblName} WHERE ${conditionString}`,[Data]
+        );
+        if (checkRows.length > 0) {
+          existingData.push(checkRows[0]);
+        } else {
+          newData.push(item);
+        }
+      }
+    } else {
+      newData.push(...excelData);
+    }
+
+    const insertResults = await Promise.all(
+      newData.map(async (item) => {
+        const [insertRows] = await pool.query( `INSERT INTO ${tblName} SET ?`, item );
+        return insertRows;
+      })
+    );
+
+    //   const allData = existingData.concat(insertResults);
+    if (existingData.length > 0) {
+      res.status(202).json({
+        message: "Some rows already exist and were not inserted",
+        existingRows: existingData,
+        insertResults: insertResults,
+
+      });
+    } else {
+      res.json({
+        message: "Data inserted successfully",
+        insertResults: insertResults,
+      });
+    }
+      // res.json({ message: "Bulk upload completed", data: allData });
+  } catch (error) {
+    console.error("Error:", error.message || error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 

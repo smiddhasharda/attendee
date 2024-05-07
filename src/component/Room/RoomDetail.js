@@ -5,7 +5,7 @@ import user from '../../local-assets/userimg.jpg'
 import { useRoute } from '@react-navigation/native';
 import CodeScanner from '../../globalComponent/CodeScanner/CodeScanner'; // Make sure to import CodeScanner properly
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { insert, fetch, update } from "../../AuthService/AuthService";
+import { fetch, view } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 
 function RoomDetail() {
@@ -28,7 +28,8 @@ function RoomDetail() {
   const [studentDetails, setStudentDetails] = useState([]);
   const [loading, setLoading] = useState(false);
   const [presentStudentList, setPresentStudentList] = useState();
-  const { room_Nbr, exam_Dt,startTime,navigation } = route.params;
+  const { room_Nbr, exam_Dt,startTime,navigation,userAccess } = route.params;
+  const UserAccess = userAccess?.module?.filter((item)=> item?.FK_ModuleId === 7);
 
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
@@ -43,6 +44,7 @@ function RoomDetail() {
 
   const fetchStudentDetails = (date, room) => {
     setLoading(true);
+    handleGetStudentView(date, room);
     // Simulate fetching data from API
     setTimeout(() => {
       const filteredStudentData = sampleStudentData.filter(studentData => (studentData.EXAM_DT === date) && (studentData.ROOM_NBR === room));
@@ -57,7 +59,7 @@ function RoomDetail() {
     setScannedData(ScannedData);
     setIsScanning(false);
    let studentData = studentDetails?.filter((data)=> data.EMPLID === ScannedData)?.[0] || '';
-    navigation.navigate("StudentInfo", { room_Nbr: studentData.ROOM_NBR ,exam_Dt: studentData.EXAM_DT,catlog_Nbr: studentData.CATALOG_NBR ,system_Id:studentData.EMPLID, seat_Nbr: studentData.PTP_SEQ_CHAR ,startTime: startTime,reportId: presentStudentList?.filter((item)=>item.EMPLID === Number(studentData.EMPLID))?.[0]?.PK_Report_Id ,navigation });
+    navigation.navigate("StudentInfo", { room_Nbr: studentData.ROOM_NBR ,exam_Dt: studentData.EXAM_DT,catlog_Nbr: studentData.CATALOG_NBR ,system_Id:studentData.EMPLID, seat_Nbr: studentData.PTP_SEQ_CHAR ,startTime: startTime,reportId: presentStudentList?.filter((item)=>item.EMPLID === Number(studentData.EMPLID))?.[0]?.PK_Report_Id ,navigation,userAccess });
   };
   const handleCancel = () => {
     setIsScanning(false);
@@ -90,6 +92,33 @@ function RoomDetail() {
       handleAuthErrors(error);
     }
   };
+
+  const handleGetStudentView = async (SelectedDate,SelectedRoom) => {
+    try {
+      const authToken = await checkAuthToken();
+      const response = await view(
+        {
+          operation: "fetch",
+          tblName: "PS_S_PRD_EX_RME_VW",
+          data: '',
+          conditionString: `EXAM_DT = ${SelectedDate} AND ROOM_NBR = ${SelectedRoom}`,
+          checkAvailability: '',
+          customQuery: ''
+        },
+        authToken
+      );
+
+
+
+      if (response) {
+        console.log(response?.data);
+        setLoading(false);
+      }
+    } catch (error) {
+      setLoading(false);
+      handleAuthErrors(error);
+    }
+  };
   const handleAuthErrors = (error) => {
     switch (error.message) {
       case "Invalid credentials":
@@ -114,7 +143,7 @@ function RoomDetail() {
 
   return (
     <View style={styles.container}>
-        {isScanning ? <CodeScanner onScannedData={handleScannedData} onCancel={handleCancel} /> : 
+        {isScanning ? <CodeScanner onScannedData={UserAccess?.create === 1 ? handleScannedData : ''} onCancel={handleCancel} /> : 
         <View>
            <View style={styles.searchWrap}>
         <TextInput
@@ -138,7 +167,7 @@ function RoomDetail() {
           <ActivityIndicator size="large" color="#0000ff" />
         ) : (
           studentDetails?.length > 0 ? studentDetails?.map((studentData, index) =>
-            ( <Pressable onPress={() => navigation.navigate("StudentInfo", { room_Nbr: studentData.ROOM_NBR ,exam_Dt: studentData.EXAM_DT,catlog_Nbr: studentData.CATALOG_NBR ,system_Id:studentData.EMPLID, seat_Nbr: studentData.PTP_SEQ_CHAR, reportId: presentStudentList?.filter((item)=>item.EMPLID === Number(studentData.EMPLID))?.[0]?.PK_Report_Id, navigation })}>
+            ( <Pressable onPress={() => UserAccess?.create === 1 ?navigation.navigate("StudentInfo", { room_Nbr: studentData.ROOM_NBR ,exam_Dt: studentData.EXAM_DT,catlog_Nbr: studentData.CATALOG_NBR ,system_Id:studentData.EMPLID, seat_Nbr: studentData.PTP_SEQ_CHAR, reportId: presentStudentList?.filter((item)=>item.EMPLID === Number(studentData.EMPLID))?.[0]?.PK_Report_Id, navigation,userAccess }) : ''}>
             <View style={[styles.box,presentStudentList?.find((item)=>item.EMPLID === Number(studentData.EMPLID)) ? styles.activebox :'' ]} key={index}>
               <View style={[styles.boxtext]}>
                 <Image source={user} style={styles.userimage} resizeMode="cover" />

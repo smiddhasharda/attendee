@@ -13,7 +13,7 @@ const { navigate } = useNavigation();
   };
 
   const handleTaskPress = () => {
-    navigate('Task');
+    navigate('InvigilatorScreen');
   };
 
 

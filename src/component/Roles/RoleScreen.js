@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, Text, TextInput, FlatList, StyleSheet, Pressable, } from "react-native";
+import { View, Text, TextInput, FlatList, Pressable, } from "react-native";
 import { insert, fetch, update } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CheckBox from "expo-checkbox";
 import styles from "./RoleScreen.style";
 import { ScrollView } from "react-native-gesture-handler";
-import { Button } from "react-native-web";
-const RoleScreen = () => {
+const RoleScreen = ({userAccess}) => {
+  const UserAccess = userAccess?.module?.filter( (item) => item?.FK_ModuleId === 2 );
   const { showToast } = useToast();
   const [roleData, setRoleData] = useState({
     roleId: "",
@@ -150,7 +150,7 @@ const RoleScreen = () => {
           data: "",
           conditionString: "",
           checkAvailability: "",
-          customQuery: `DESCR3`,
+          customQuery: `select JSON_ARRAYAGG(json_object('PK_RoleId',p.PK_RoleId,'roleName',roleName,'description',p.description,'isActive',p.isActive,'modulePermission',( SELECT CAST( CONCAT('[', GROUP_CONCAT( JSON_OBJECT( 'Id',q.PK_role_module_permissionId,'FK_RoleId', q.FK_RoleId,'FK_ModuleId', q.FK_ModuleId, 'create', q.create, 'read', q.read, 'update', q.update, 'delete', q.delete, 'special', q.special) ), ']') AS JSON ) FROM tbl_role_module_permission q WHERE q.FK_RoleId = p.PK_RoleId ))) AS RoleMaster from tbl_role_master p`,
         },
         authToken
       );
@@ -408,17 +408,9 @@ const RoleScreen = () => {
               <Pressable style={styles.addbtnWrap} onPress={() => handleAddRole()} >
                     <Text style={styles.addbtntext} numberOfLines={1}>Add New Role</Text>
                   </Pressable>
-                  {/* <Pressable onPress={() => handleClose()}>
+                  <Pressable onPress={() => handleClose()}>
                     <Text style={styles.cancelbtn}>Cancel</Text>
-                  </Pressable> */}
-                  <Button 
-                   title="cancel"
-                   onPress={() => handleClose()}
-                   color="grey"
-
-                  />
-              {/* <Button title="Add New Role" onPress={handleAddRole} />
-              <Button title="Cancel" onPress={handleClose} /> */}
+                  </Pressable>
             </View>
           )}
         </View>
@@ -426,10 +418,10 @@ const RoleScreen = () => {
        <View style={styles.roleLists}>
         <Text style={styles.header}>Role List:</Text>
         <View style={styles.addbtnWrap}>
+        {UserAccess?.create === 1 &&
         <Pressable onPress={() => setRoleContainerVisible(true)}>
                     <Text style={styles.addbtntext}>Add</Text>
-                  </Pressable>
-          {/* <Button  title="Add" onPress={() => setRoleContainerVisible(true)} /> */}
+                  </Pressable> }
       </View>
       <FlatList
         data={roleList}
@@ -453,7 +445,7 @@ const RoleScreen = () => {
                 {item.description}
               </Text>
               <Pressable
-                onPress={() => handleRoleStatus(item.PK_RoleId, item?.isActive)}
+                onPress={() => UserAccess?.update === 1 ? handleRoleStatus(item.PK_RoleId, item?.isActive) : ''}
               >
                 <Text
                   style={[
@@ -467,23 +459,11 @@ const RoleScreen = () => {
                   {item.isActive ? "Active" : "Inactive"}
                 </Text>
               </Pressable>
-              <View
-                style={{
-                  flex: 1,
-                  flexDirection: "row",
-                  justifyContent: "flex-end",
-                  alignItems: "center",
-                }}
-              >
-                  <Pressable onPress={() => handleEditRole(item)}>
-                      <Text>Edit</Text>
-                    </Pressable>
-                {/* <Button
-                  title="Edit"
-                  onPress={() => handleEditRole(item)}
-                  style={styles.listItemEditButton}
-                  textStyle={styles.listItemEditText}
-                /> */}
+              <View style={{ flex: 1, flexDirection: "row", justifyContent: "flex-end", alignItems: "center", }} >
+                {UserAccess?.update === 1 ?
+                  <Pressable style={styles.listItemEditButton} onPress={() => handleEditRole(item)}>
+                      <Text style={styles.listItemEditText}>Edit</Text>
+                    </Pressable> : ' - '}
               </View>
             </View>
           )}

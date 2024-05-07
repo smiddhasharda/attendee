@@ -11,7 +11,6 @@ import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 const BulkUpload = (props) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [excelData, setExcelData] = useState([]);
-
   const pickFile = async () => {
     let result = await DocumentPicker.getDocumentAsync({
       type: Platform.OS === 'ios' || Platform.OS === 'android'
@@ -102,25 +101,32 @@ const BulkUpload = (props) => {
       if (!selectedFile) {
         showToast('Please select a file to upload.',"error");
         return;
-      }
-      else{
+      } else {
         const authToken = await checkAuthToken();
         const formData = new FormData();
-        formData.append("tblName", "tbl_user_master");
-        formData.append("data", "");
-        formData.append("showToast", selectedFile);
+        formData.append("tblName", "tbl_invigilator_duty");
+        formData.append("conditionString", "employeeId = ?");
+        formData.append("checkColumn", "employeeId");
+        formData.append("checkAvailability", true);
+        formData.append("bulkupload_doc", selectedFile);
+        const { fileName, uri, mimeType } = selectedFile;
+        const response1 = await fetch(uri);
+        const blob = await response1.blob();
+        const ProfilePics = new File([blob], fileName, { type: mimeType });
+        formData.append("bulkupload_doc", ProfilePics);
+        
+        // Assuming bulkupload is a function that handles the file upload
         const response = await bulkupload(formData, authToken);
   
         if (response) {
           setSelectedFile(null);
-          setUploadProgress(0);
-          showToast(`Invigilator Data Upload Successfully`, "success");
+          showToast(response.message, "success");
         }
       }    
     } catch (error) {
       handleAuthErrors(error);
     }
-  };
+  };  
 
   const handleAuthErrors = (error) => {
     switch (error.message) {
@@ -134,7 +140,7 @@ const BulkUpload = (props) => {
         showToast("No response received from the server", "error");
         break;
       default:
-        showToast("Module Operation Failed", "error");
+        showToast("Bulkupload Operation Failed", "error");
     }
   };
 
@@ -169,12 +175,16 @@ const BulkUpload = (props) => {
                 <Text>Upload</Text>
               </Pressable>
               <Pressable onPress={() => cancelUpload()}>
-                <Text>Cancel</Text>
+                <Text>Cancel Upload</Text>
               </Pressable>
             </View>
           </View>
         )}
       </ScrollView>
+      {props?.handleClose &&
+      <Pressable onPress={() => props?.handleClose()}>
+                <Text>Cancel</Text>
+       </Pressable>}
     </View>
   );
 };
