@@ -7,11 +7,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ExamScreen = ({ navigation,userAccess }) => {
   const UserAccess = userAccess?.module?.filter((item)=> item?.FK_ModuleId === 5);
-  const [examDates, setExamDates] = useState([])
-  const [roomDetails, setRoomDetails] = useState([]);
-  const [examSelectedDate, setExamSelectedDate] = useState('');
-  const [loading, setLoading] = useState(false);
+  // const [examDates, setExamDates] = useState([]);
+  const [examDates, setExamDates] = useState([{ EXAM_DT: '06-FEB-24' }, { EXAM_DT: '07-FEB-24' }, { EXAM_DT: '10-FEB-24' }, { EXAM_DT: '10-FEB-24' }, { EXAM_DT: '10-FEB-24' }, { EXAM_DT: '10-FEB-24' }, { EXAM_DT: '10-FEB-24' }])
 
+  const [roomDetails, setRoomDetails] = useState([]);
+  // const [examSelectedDate, setExamSelectedDate] = useState('');
+  const [examSelectedDate, setExamSelectedDate] = useState(examDates[0].EXAM_DT);
+
+  const [loading, setLoading] = useState(false);
   // Sample data for room details
   // Table Name [ EXAM_CODE_TBL ] with Distinct
   const sampleRoomData = [
@@ -25,10 +28,21 @@ const ExamScreen = ({ navigation,userAccess }) => {
     { EXAM_DT: '10-FEB-24', ROOM_NBR: 'RM-205 (BLOCK 4)',EXAM_START_TIME:'09:30:00.000000000 AM' }
   ];
 
-  const fetchRoomDetails = async(date) => {
+  // const fetchRoomDetails = async(date) => {
+  //   setLoading(true);
+  //   await handleGetDateView();
+  // };
+
+  const fetchRoomDetails = (date) => {
     setLoading(true);
-    await handleGetDateView();
+    // Simulate fetching data from API
+    setTimeout(() => {
+      const filteredRooms = sampleRoomData.filter(room => room.EXAM_DT === date);
+      setRoomDetails(filteredRooms);
+      setLoading(false);
+    }, 1000); // Simulate 1 second delay
   };
+
 
   const handleDateClick = (date) => {
     setLoading(true);
@@ -145,6 +159,7 @@ const ExamScreen = ({ navigation,userAccess }) => {
       <View style={styles.dates}>
         <FlatList
           data={examDates}
+          // numColumns={3}
           renderItem={({ item }) => (
             <Pressable onPress={() => handleDateClick(item.EXAM_DT)}>
               <View style={[styles.dateItem, (item.EXAM_DT === examSelectedDate) && styles.activebox]}>
@@ -154,6 +169,7 @@ const ExamScreen = ({ navigation,userAccess }) => {
               </View>
             </Pressable>
           )}
+          // ItemSeparatorComponent={() => <View style={{ height: 5 }} />}
           horizontal={true}
         />
       </View>
@@ -188,10 +204,10 @@ const ExamScreen = ({ navigation,userAccess }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    // flexDirection: 'row',
     backgroundColor: "#fff"
   },
   dates: {
-    flexDirection: 'row',
     padding: 10
   },
   dateItem: {
@@ -202,7 +218,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginRight: 6,
     alignItems: "center",
-    width: 45,
   },
   dateNumber: {
     fontSize: 16,
@@ -223,8 +238,8 @@ const styles = StyleSheet.create({
   box: {
     borderWidth: 1,
     borderColor: "#ccc",
-    width: Dimensions.get("window").width / 1 - 10,
-    backgroundColor: "#eaeaea",
+    width: 'auto',
+    // backgroundColor: "#eaeaea",
     borderRadius: 10,
     marginBottom: 10,
     padding:10,
