@@ -111,7 +111,28 @@ const ExamScreen = ({ navigation,userAccess }) => {
       handleAuthErrors(error);
     }
   };
+  // const handleGetInigilatorDuty = async () => {
+  //   try {
+  //     const authToken = await checkAuthToken();
+  //     const response = await fetch(
+  //       {
+  //         operation: "fetch",
+  //         tblName: "tbl_invigilator_duty",
+  //         data: "",
+  //         conditionString: "",
+  //         checkAvailability: "",
+  //         customQuery: "",
+  //       },
+  //       authToken
+  //     );
 
+  //     if (response) {
+  //       setInvigilatorData(response.data)
+  //     }
+  //   } catch (error) {
+  //     handleAuthErrors(error);
+  //   }
+  // };
 
   const handleAuthErrors = (error) => {
     switch (error.message) {
@@ -157,21 +178,25 @@ const ExamScreen = ({ navigation,userAccess }) => {
       <Text style={styles.timeText}>{formatTime(currentTime)}</Text>
     </View> */}
       <View style={styles.dates}>
-        <FlatList
-          data={examDates}
-          // numColumns={3}
-          renderItem={({ item }) => (
-            <Pressable onPress={() => handleDateClick(item.EXAM_DT)}>
-              <View style={[styles.dateItem, (item.EXAM_DT === examSelectedDate) && styles.activebox]}>
-                <Text style={styles.dateDay}>{new Date(item.EXAM_DT).toString().split(' ')[1]}</Text>
-                <Text style={styles.dateNumber}>{new Date(item.EXAM_DT).toString().split(' ')[2]}</Text>
-                <Text style={styles.dateMonth}>{new Date(item.EXAM_DT).toString().split(' ')[3]}</Text>
-              </View>
-            </Pressable>
-          )}
-          // ItemSeparatorComponent={() => <View style={{ height: 5 }} />}
-          horizontal={true}
-        />
+      <FlatList
+  data={examDates}
+  // numColumns={3}
+  renderItem={({ item }) => {
+    let isActiveItem = item.EXAM_DT === examSelectedDate;
+    return (
+      <Pressable onPress={() => handleDateClick(item.EXAM_DT)}> 
+        <View style={[styles.dateItem, isActiveItem && styles.activebox]}>
+        <Text style={[styles.dateDay, isActiveItem && { color: 'white' }]}> {new Date(item.EXAM_DT).toString().split(' ')[1]} </Text>
+          <Text style={[styles.dateNumber, isActiveItem && { color: 'white' }]}>{new Date(item.EXAM_DT).toString().split(' ')[2]}</Text>
+          <Text style={[styles.dateMonth, isActiveItem && { color: 'white' }]}>{new Date(item.EXAM_DT).toString().split(' ')[3]}</Text>
+        </View>
+      </Pressable>
+    );
+  }}
+  // ItemSeparatorComponent={() => <View style={{ height: 5 }} />}
+  horizontal={true}
+/>
+
       </View>
       <View style={styles.roomNumber}>
         {loading ? (
@@ -180,7 +205,7 @@ const ExamScreen = ({ navigation,userAccess }) => {
           roomDetails.length > 0 ? (
             <ScrollView>
               {roomDetails.map((roomData, index) => (
-                <Pressable onPress={() => UserAccess?.create === 0 ? navigation.navigate("RoomDetail", { room_Nbr: roomData.ROOM_NBR ,exam_Dt: roomData.EXAM_DT , startTime: roomData.EXAM_START_TIME ,navigation,userAccess }) : ''}>
+                <Pressable onPress={() => UserAccess?.create === 1 ? navigation.navigate("RoomDetail", { room_Nbr: roomData.ROOM_NBR ,exam_Dt: roomData.EXAM_DT , startTime: roomData.EXAM_START_TIME ,navigation,userAccess }) : ''}>
                 <View key={index} style={[styles.box]}>
                 {/* <View key={index} style={[styles.box, styles.activebox]}> */}
                 <Ionicons style={styles.icons} name="book" size={24} color="rgb(8 96 88)" />
