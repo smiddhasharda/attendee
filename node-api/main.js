@@ -10,6 +10,7 @@ const oracledb = require('oracledb');
 const corsOptions = require('./config/corsOptions.js');
 const credentials = require('./middlewares/credentials.js');
 const {logger} = require('./middlewares/logEvents.js');
+const XLSX = require('xlsx');
 
 
 const dotenv = require("dotenv");
