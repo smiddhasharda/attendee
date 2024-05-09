@@ -149,7 +149,6 @@ const BulkUpload = (props) => {
     setSelectedFile(null);
     setExcelData([]);
   };
-
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Pressable onPress={() => pickFile()}>
