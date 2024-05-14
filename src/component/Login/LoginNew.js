@@ -20,7 +20,6 @@ function LoginNew() {
   const [isOTPTooltipVisible, setOTPTooltipVisible] = useStateWithCallback(false);
   const [isOTPInputDisabled, setOTPInputDiasbled] = useStateWithCallback(true);
 
-
   const handleEmailChange = (text) => {
     isEmailTooltipVisible && setEmailTooltipVisible(false);
     setLoginData({ ...loginData, email: text });
@@ -103,13 +102,15 @@ function LoginNew() {
       <Text style={styles.loginsubheading}>Login into your Account</Text></View>
       <Text style={styles.label}>Email Id</Text>
       {isEmailTooltipVisible && (
-            <Tooltip><View style={LoginStyles.emailTooltipContainer}>
+            <Tooltip>
+            <View style={LoginStyles.emailTooltipContainer}>
             <Text style={LoginStyles.emailTooltipTextStyle}>
               That
               <Text style={LoginStyles.emailTooltipRedTextStyle}>email address</Text>
               doesn't look right
             </Text>
-          </View></Tooltip>
+             </View>
+          </Tooltip>
           )}
           <TextInput
             placeholder='Enter Your Email ID'
@@ -153,6 +154,10 @@ const styles = StyleSheet.create({
     paddingHorizontal:20,
     paddingVertical:20,
     backgroundColor:"#f5f5f5",
+    width:"34%",
+    marginHorizontal:"auto",
+    marginTop:0,
+    marginBottom:0, 
   },
 
   form:{
@@ -165,6 +170,7 @@ const styles = StyleSheet.create({
     //   height:2
     // }
   },
+
   label:{
     fontSize:16,
     marginBottom:5,
@@ -206,5 +212,6 @@ const styles = StyleSheet.create({
   loginheadWrap:{
     padding:"20px",
     alignItems:"center"
-  }
+  },
+
 });
