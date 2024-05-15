@@ -12,7 +12,7 @@ import { useRoute } from "@react-navigation/native";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import CodeScanner from "../../globalComponent/CodeScanner/CodeScanner";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { insert, fetch, update,remove } from "../../AuthService/AuthService";
+import { insert, fetch, update,remove,view } from "../../AuthService/AuthService";
 
 const StudentInfo = () => {
   const route = useRoute();
@@ -481,9 +481,60 @@ const StudentInfo = () => {
     }
   };
 
+  // const handleGetStudentAttendece = async (SelectedStudent) => {
+  //   try {
+  //     const authToken = await checkAuthToken();
+  //     const response = await view(
+  //       {
+  //         operation: "fetch",
+  //         tblName: "PS_S_PRD_CT_ATT_VW", 
+  //         data: '',
+  //         conditionString: '',
+  //         checkAvailability: '',
+  //         customQuery: ''
+  //       },
+  //       authToken
+  //     );
+  //     if (response) {
+  //       console.log(response?.data)
+  //       setLoading(false);
+  //     }
+  //   } catch (error) {
+  //     console.log(error)
+  //     setLoading(false);
+  //     handleAuthErrors(error);
+  //   }
+  // };
+
+  // const handleGetStudentInfo = async (SelectedStudent) => {
+  //   try {
+  //     const authToken = await checkAuthToken();
+  //     const response = await view(
+  //       {
+  //         operation: "fetch",
+  //         tblName: "PS_S_PRD_CT_ATT_VW", 
+  //         data: '',
+  //         conditionString: '',
+  //         checkAvailability: '',
+  //         customQuery: ''
+  //       },
+  //       authToken
+  //     );
+  //     if (response) {
+  //       console.log(response?.data)
+  //       setLoading(false);
+  //     }
+  //   } catch (error) {
+  //     console.log(error)
+  //     setLoading(false);
+  //     handleAuthErrors(error);
+  //   }
+  // };
+
   useEffect(() => {
-    const fetchData = () => {
+    const fetchData = async() => {
       try {
+      //  await handleGetStudentInfo();
         const filteredStudentData =
           sampleStudentData.find((student) => student.EMPLID === system_Id) ||
           {};

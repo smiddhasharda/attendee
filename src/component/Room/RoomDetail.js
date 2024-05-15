@@ -12,24 +12,11 @@ function RoomDetail() {
   const [isScanning, setIsScanning] = useState(false);
   const route = useRoute();
   const { showToast } = useToast();
-
-  // Sample data for room details
-      // Table Name [ SU_ADM_SEATNMRC ]
-  const sampleStudentData = [
-    { EMPLID: '2023408405', STRM: '2301',CATALOG_NBR:'BCT112',EXAM_DT:'06-FEB-24',ROOM_NBR:'RM-202 (BLOCK 4)',PTP_SEQ_CHAR:'115' },
-    { EMPLID: '2023408406', STRM: '2301',CATALOG_NBR:'BCT112',EXAM_DT:'06-FEB-24',ROOM_NBR:'RM-202 (BLOCK 4)',PTP_SEQ_CHAR:'116' },
-    { EMPLID: '2023408407', STRM: '2301',CATALOG_NBR:'BCT112',EXAM_DT:'06-FEB-24',ROOM_NBR:'RM-202 (BLOCK 4)',PTP_SEQ_CHAR:'117' },
-    { EMPLID: '2023408408', STRM: '2301',CATALOG_NBR:'BCT112',EXAM_DT:'06-FEB-24',ROOM_NBR:'RM-202 (BLOCK 4)',PTP_SEQ_CHAR:'118' },
-    { EMPLID: '2023408409', STRM: '2301',CATALOG_NBR:'BCT112',EXAM_DT:'06-FEB-24',ROOM_NBR:'RM-202 (BLOCK 4)',PTP_SEQ_CHAR:'119' },
-    { EMPLID: '2023408410', STRM: '2301',CATALOG_NBR:'BCT112',EXAM_DT:'06-FEB-24',ROOM_NBR:'RM-202 (BLOCK 4)',PTP_SEQ_CHAR:'120' },
-    { EMPLID: '2023408411', STRM: '2301',CATALOG_NBR:'BCT112',EXAM_DT:'06-FEB-24',ROOM_NBR:'RM-202 (BLOCK 4)',PTP_SEQ_CHAR:'121' },
-  ];
-
   const [studentDetails, setStudentDetails] = useState([]);
   const [loading, setLoading] = useState(false);
   const [presentStudentList, setPresentStudentList] = useState();
   const { room_Nbr, exam_Dt,startTime,navigation,userAccess } = route.params;
-  const UserAccess = userAccess?.module?.filter((item)=> item?.FK_ModuleId === 7);
+  const UserAccess = userAccess?.module?.filter((item)=> item?.FK_ModuleId === 7)?.[0];
 
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
@@ -45,12 +32,6 @@ function RoomDetail() {
   const fetchStudentDetails = (date, room) => {
     setLoading(true);
     handleGetStudentView(date, room);
-    // Simulate fetching data from API
-    setTimeout(() => {
-      const filteredStudentData = sampleStudentData.filter(studentData => (studentData.EXAM_DT === date) && (studentData.ROOM_NBR === room));
-      setStudentDetails(filteredStudentData);
-      setLoading(false);
-    }, 1000); // Simulate 1 second delay
   };
 
   const [scannedData, setScannedData] = useState(null);
@@ -101,7 +82,7 @@ function RoomDetail() {
           operation: "fetch",
           tblName: "PS_S_PRD_EX_RME_VW",
           data: '',
-          conditionString: `EXAM_DT = ${SelectedDate} AND ROOM_NBR = ${SelectedRoom}`,
+          conditionString: `EXAM_DT = '${new Date(SelectedDate).toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-')}' AND ROOM_NBR = '${SelectedRoom}'`,
           checkAvailability: '',
           customQuery: ''
         },
@@ -111,7 +92,7 @@ function RoomDetail() {
 
 
       if (response) {
-        console.log(response?.data);
+       setStudentDetails(response?.data);
         setLoading(false);
       }
     } catch (error) {
@@ -134,9 +115,7 @@ function RoomDetail() {
         showToast("Student Info Operation Failed", "error");
     }
   };
-
   useEffect(() => {
-        // fetchStudentDetails('06-FEB-24','RM-202 (BLOCK 4)')
     fetchStudentDetails(exam_Dt, room_Nbr);
     handleGetReportData();
   }, []);
@@ -171,6 +150,7 @@ function RoomDetail() {
             <View style={[styles.box,presentStudentList?.find((item)=>item.EMPLID === Number(studentData.EMPLID)) ? styles.activebox :'' ]} key={index}>
               <View style={[styles.boxtext]}>
                 <Image source={user} style={styles.userimage} resizeMode="cover" />
+                <Text style={[styles.examname]}>{studentData.NAME}</Text>
                 <Text style={[styles.examname]}>{studentData.EMPLID}</Text>
                 <Text style={[styles.examname]}>{studentData.PTP_SEQ_CHAR}</Text>
               </View>
