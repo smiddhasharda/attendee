@@ -6,13 +6,13 @@ import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ExamScreen = ({ navigation,userAccess }) => {
-  const UserAccess = userAccess?.module?.filter((item)=> item?.FK_ModuleId === 5);
-  // const [examDates, setExamDates] = useState([]);
-  const [examDates, setExamDates] = useState([{ EXAM_DT: '06-FEB-24' }, { EXAM_DT: '07-FEB-24' }, { EXAM_DT: '10-FEB-24' }, { EXAM_DT: '10-FEB-24' }, { EXAM_DT: '10-FEB-24' }, { EXAM_DT: '10-FEB-24' }, { EXAM_DT: '10-FEB-24' }])
+  const UserAccess = userAccess?.module?.filter((item)=> item?.FK_ModuleId === 5)?.[0];
+  const [examDates, setExamDates] = useState([]);
+  // const [examDates, setExamDates] = useState([{ EXAM_DT: '06-FEB-24' }, { EXAM_DT: '07-FEB-24' }, { EXAM_DT: '10-FEB-24' }, { EXAM_DT: '10-FEB-24' }, { EXAM_DT: '10-FEB-24' }, { EXAM_DT: '10-FEB-24' }, { EXAM_DT: '10-FEB-24' }])
 
   const [roomDetails, setRoomDetails] = useState([]);
-  // const [examSelectedDate, setExamSelectedDate] = useState('');
-  const [examSelectedDate, setExamSelectedDate] = useState(examDates[0].EXAM_DT);
+  const [examSelectedDate, setExamSelectedDate] = useState('');
+  // const [examSelectedDate, setExamSelectedDate] = useState(examDates[0].EXAM_DT);
 
   const [loading, setLoading] = useState(false);
   // Sample data for room details
@@ -33,14 +33,16 @@ const ExamScreen = ({ navigation,userAccess }) => {
   //   await handleGetDateView();
   // };
 
-  const fetchRoomDetails = (date) => {
+  const fetchRoomDetails = async(date) => {
     setLoading(true);
+    await handleGetDateView();
+
     // Simulate fetching data from API
-    setTimeout(() => {
-      const filteredRooms = sampleRoomData.filter(room => room.EXAM_DT === date);
-      setRoomDetails(filteredRooms);
-      setLoading(false);
-    }, 1000); // Simulate 1 second delay
+    // setTimeout(() => {
+    //   const filteredRooms = sampleRoomData.filter(room => room.EXAM_DT === date);
+    //   setRoomDetails(filteredRooms);
+    //   setLoading(false);
+    // }, 1000); // Simulate 1 second delay
   };
 
 
@@ -211,7 +213,7 @@ const ExamScreen = ({ navigation,userAccess }) => {
                 <Ionicons style={styles.icons} name="book" size={24} color="rgb(8 96 88)" />
                 <View style={styles.boxtext}>
                   <Text style={[styles.examname]}>{roomData.ROOM_NBR}</Text>
-                  <Text style={[styles.examtime]}>{roomData.EXAM_START_TIME}</Text>
+                  <Text style={[styles.examtime]}>{roomData.EXAM_START_TIME?.split("T")?.[1]?.split(".")?.[0]}</Text>
                 </View>
               </View>
               </Pressable>
