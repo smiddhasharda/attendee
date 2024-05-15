@@ -54,14 +54,13 @@ const App = () => {
         <RoleProvider>
           <NavigationContainer>
             <Stack.Navigator initialRouteName={initialRoute}>
-              <Stack.Screen name="Login" component={LoginNew} />
+              <Stack.Screen name="Login"  options={{ headerShown: false }} component={LoginNew} />
               <Stack.Screen name="Register" component={RegisterScreen} />
               <Stack.Screen name="ForgetPassword" component={ForgetPasswordScreen} />
               <Stack.Screen name="PostLogin" component={DrawerNavigator} options={{ headerShown: false }} />
               <Stack.Screen name="StudentInfo" component={StudentInfo} />
               <Stack.Screen name="RoomDetail" component={RoomDetail} />
               <Stack.Screen name="TopHeader" component={TopHeader} />
-
                <Stack.Screen name="Learn" component={Learn} />
                <Stack.Screen name="InvigilatorScreen" component={InvigilatorScreen} />
                <Stack.Screen name="PieChart" component={PieChart} />

@@ -11,6 +11,7 @@ function TopHeader() {
                 <Text  style={{color:"#fff",fontSize:"16px"}}>Btech CS</Text>
                 </View>
                 <View>
+                <Image  style={styles.bgimg1}  source= {require("../../local-assets/login-shape-bg-1.png")} />   
                     <Text>My Profile Info</Text>
                 </View>
         </View>  
