@@ -18,6 +18,7 @@ import LoginNew from './src/component/Login/LoginNew';
 import TabNavigator from './src/globalComponent/TabNavigator';
 import StudentInfo from './src/component/Student/StudentInfo';
 import RoomDetail from './src/component/Room/RoomDetail';
+import TopHeader from './src/globalComponent/Header/TopHeader';
 
 const Stack = createNativeStackNavigator();
 // global.SERVER_URL = `http://localhost:5000`;
@@ -53,13 +54,13 @@ const App = () => {
         <RoleProvider>
           <NavigationContainer>
             <Stack.Navigator initialRouteName={initialRoute}>
-              <Stack.Screen name="Login" component={LoginNew} />
+              <Stack.Screen name="Login"  options={{ headerShown: false }} component={LoginNew} />
               <Stack.Screen name="Register" component={RegisterScreen} />
               <Stack.Screen name="ForgetPassword" component={ForgetPasswordScreen} />
               <Stack.Screen name="PostLogin" component={DrawerNavigator} options={{ headerShown: false }} />
               <Stack.Screen name="StudentInfo" component={StudentInfo} />
               <Stack.Screen name="RoomDetail" component={RoomDetail} />
-
+              <Stack.Screen name="TopHeader" component={TopHeader} />
                <Stack.Screen name="Learn" component={Learn} />
                <Stack.Screen name="InvigilatorScreen" component={InvigilatorScreen} />
                <Stack.Screen name="PieChart" component={PieChart} />

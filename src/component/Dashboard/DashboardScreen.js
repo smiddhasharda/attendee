@@ -6,19 +6,19 @@ import classe from '../../local-assets/classes.jpg';
 import { useNavigation } from '@react-navigation/native'; 
 import PieChart from './PieChart';
 import DropDownPicker from "react-native-dropdown-picker";
+import TopHeader from '../../globalComponent/Header/TopHeader';
 const DashboardScreen = () => {
 const { navigate } = useNavigation(); 
   const handleLearnPress = () => {
     navigate('Learn');
   };
-
   const handleTaskPress = () => {
     navigate('InvigilatorScreen');
   };
 
 
   return (
-  
+
     <View style={styles.container}>
       <Text style={styles.heading}>Welcome to Attendace Portal</Text>      
           <TextInput
@@ -47,7 +47,7 @@ const { navigate } = useNavigation();
                   </View>
               </View>
               <View style={styles.box}>
-              <Ionicons name="book" size={24} color="rgb(8 96 88)" />
+              <Ionicons name="book" onPress={()=> navigate('TopHeader')} size={24} color="rgb(8 96 88)" />
                    <View  style={styles.boxtext}>
                   <Text>Setting</Text>
                   {/* <Text>Chapter 3</Text> */}
