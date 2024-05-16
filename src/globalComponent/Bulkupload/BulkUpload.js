@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
-import { View, Button, Text, FlatList, StyleSheet, Platform } from 'react-native';
+import React, { useState,useCallback } from 'react';
+import { View, Pressable, Text, FlatList, StyleSheet, Platform, ScrollView } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
 import * as XLSX from 'xlsx';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { bulkupload } from "../../AuthService/AuthService";
+import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 
-const BulkUpload = () => {
+
+const BulkUpload = (props) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [excelData, setExcelData] = useState([]);
-
   const pickFile = async () => {
     let result = await DocumentPicker.getDocumentAsync({
       type: Platform.OS === 'ios' || Platform.OS === 'android'
@@ -81,67 +84,106 @@ const BulkUpload = () => {
     return XLSX.utils.sheet_to_json(worksheet, { header: 1 });
   };
 
-  const uploadFile = async () => {
-    if (!selectedFile) {
-      alert('Please select a file to upload.');
-      return;
+  const { showToast } = useToast();
+  const checkAuthToken = useCallback(async () => {
+    const authToken = await AsyncStorage.getItem("authToken");
+
+    if (!authToken) {
+      showToast("Authentication token not available", "error");
+      throw new Error("Authentication token not available");
     }
 
-    const uploadUrl = 'http://your-server-ip:3000/upload';
-    const formData = new FormData();
+    return authToken;
+  }, [showToast]);
 
-    formData.append('file', {
-      uri: selectedFile.uri,
-      type: selectedFile.type,
-      name: selectedFile.name,
-    });
-
+  const handleBulkInvigiltor = async () => {
     try {
-      const response = await fetch(uploadUrl, {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        // Add progress tracking using platform-specific methods (optional)
-      });
-
-      const data = await response.json();
-      console.log('Upload successful:', data);
-      setSelectedFile(null);
-      setUploadProgress(0);
+      if (!selectedFile) {
+        showToast('Please select a file to upload.',"error");
+        return;
+      } else {
+        const authToken = await checkAuthToken();
+        const formData = new FormData();
+        formData.append("tblName", "tbl_invigilator_duty");
+        formData.append("conditionString", "employeeId = ?");
+        formData.append("checkColumn", "employeeId");
+        formData.append("checkAvailability", true);
+        formData.append("bulkupload_doc", selectedFile);
+        const { fileName, uri, mimeType } = selectedFile;
+        const response1 = await fetch(uri);
+        const blob = await response1.blob();
+        const ProfilePics = new File([blob], fileName, { type: mimeType });
+        formData.append("bulkupload_doc", ProfilePics);
+        
+        // Assuming bulkupload is a function that handles the file upload
+        const response = await bulkupload(formData, authToken);
+  
+        if (response) {
+          setSelectedFile(null);
+          showToast(response.message, "success");
+        }
+      }    
     } catch (error) {
-      console.error('Upload failed:', error);
-      alert('Error uploading file.');
+      handleAuthErrors(error);
+    }
+  };  
+
+  const handleAuthErrors = (error) => {
+    switch (error.message) {
+      case "Invalid credentials":
+        showToast("Invalid authentication credentials", "error");
+        break;
+      case "Data already exists":
+        showToast("Data with the same name already exists", "error");
+        break;
+      case "No response received from the server":
+        showToast("No response received from the server", "error");
+        break;
+      default:
+        showToast("Bulkupload Operation Failed", "error");
     }
   };
+
 
   const cancelUpload = () => {
     setSelectedFile(null);
     setExcelData([]);
   };
-
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Button title="Pick Excel File" onPress={pickFile} />
-      {selectedFile && (
-        <View style={{ marginTop: 20 }}>
-          <Text>Selected File:</Text>
-          <Text>{selectedFile.name}</Text>
-          <Text style={styles.previewTitle}>Preview:</Text>
-          <FlatList
-            data={excelData}
-            renderItem={({ item }) => (
-              <Text style={styles.cell}>{item}</Text>
-            )}
-            keyExtractor={(item, index) => index.toString()}
-          />
-          <View style={{ flexDirection: 'row', marginTop: 10 }}>
-            <Button title="Cancel" onPress={cancelUpload} />
-            <Button title="Upload" onPress={uploadFile} />
+      <Pressable onPress={() => pickFile()}>
+        <Text>Pick Excel File</Text>
+      </Pressable>
+      <ScrollView>
+        {selectedFile && (
+          <View style={{ marginTop: 20 }}>
+            <Text>Selected File:</Text>
+            <Text>{selectedFile.name}</Text>
+            <Text style={styles.previewTitle}>Preview:</Text>
+            <ScrollView>
+              <FlatList
+                data={excelData}
+                renderItem={({ item }) => (
+                  <Text style={styles.cell}>{item}</Text>
+                )}
+                keyExtractor={(item, index) => index.toString()}
+              />
+            </ScrollView>
+            <View style={{ flexDirection: 'row', marginTop: 10 }}>
+              <Pressable onPress={() => handleBulkInvigiltor()}>
+                <Text>Upload</Text>
+              </Pressable>
+              <Pressable onPress={() => cancelUpload()}>
+                <Text>Cancel Upload</Text>
+              </Pressable>
+            </View>
           </View>
-        </View>
-      )}
+        )}
+      </ScrollView>
+      {props?.handleClose &&
+      <Pressable onPress={() => props?.handleClose()}>
+                <Text>Cancel</Text>
+       </Pressable>}
     </View>
   );
 };

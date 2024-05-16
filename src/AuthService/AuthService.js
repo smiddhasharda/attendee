@@ -17,6 +17,7 @@ const request = async (method, endpoint, data, authToken,params) => {
       headers,
       params: params || {},
     };
+
     if (method === 'get') {
       config.params = { ...config.params, ...data };
     } else {
@@ -52,11 +53,13 @@ const handleAsyncStorageError = (error) => {
 const login = async (tblName, conditionString) => {
   try {
     const response = await request('post', 'login', { tblName, conditionString });
-    const { token, expirationTimestamp,userRole,userData } = response;
+    const { token,userRole,userData } = response;
+    // const { token, expirationTimestamp,userRole,userData } = response;
+
     await AsyncStorage.setItem('userRolePermission', userRole ? JSON?.stringify(userRole) : '').catch(handleAsyncStorageError);
     await AsyncStorage.setItem('authToken', token).catch(handleAsyncStorageError);
     await AsyncStorage.setItem('userData', userData ? JSON?.stringify(userData) : '').catch(handleAsyncStorageError);
-    await AsyncStorage.setItem('tokenExpiration', expirationTimestamp.toString()).catch(handleAsyncStorageError);
+    // await AsyncStorage.setItem('tokenExpiration', expirationTimestamp.toString()).catch(handleAsyncStorageError);
     return token;
   } catch (error) {
     throw error;
@@ -73,9 +76,10 @@ const emailVerify = async (tblName, conditionString) => {
 const logout = async () => {
   try {
     await AsyncStorage.removeItem('authToken').catch(handleAsyncStorageError);
-    await AsyncStorage.removeItem('tokenExpiration').catch(handleAsyncStorageError);
+    // await AsyncStorage.removeItem('tokenExpiration').catch(handleAsyncStorageError);
     await AsyncStorage.removeItem('credentials').catch(handleAsyncStorageError);
     await AsyncStorage.removeItem('userRolePermission').catch(handleAsyncStorageError);
+    await AsyncStorage.removeItem('userData').catch(handleAsyncStorageError);
   } catch (error) {
     handleAsyncStorageError(error);
   }
@@ -96,8 +100,13 @@ const remove = async (data, authToken) => {
 const common = async (data, authToken) => {
   return request('post', 'common', data, authToken);
 };
-const multer = async (data, authToken) => {
+const multer = async (data, authToken) => {     
   return request('post', 'multer', data, authToken);
 };
-
-export { login, register,emailVerify, logout, insert, update, fetch, remove, common,multer };
+const bulkupload = async (data, authToken) => {  
+  return request('post', 'bulkupload', data, authToken);
+};
+const view = async (data, authToken) => {     
+  return request('get', 'view', data, authToken);
+};
+export { login, register,emailVerify, logout, insert, update, fetch, remove, common,multer,bulkupload,view };

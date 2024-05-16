@@ -13,6 +13,8 @@ import {
     },
     formContainer: {
       marginBottom: 20,
+      backgroundColor:"#fff",
+      padding:40,
     },
     input: {
       height: 40,
@@ -24,10 +26,12 @@ import {
     buttonContainer: {
       flexDirection: "row",
       justifyContent: "space-between",
+      
     },
     header: {
       fontSize: 18,
       fontWeight: "bold",
+      marginBottom:10,
       marginBottom: 10,
     },
     tableHeader: {
@@ -72,6 +76,30 @@ import {
       alignItems: "center",
       justifyContent: "center",
     },
+    roleLists:{
+      backgroundColor:"#fff",
+      padding:40,
+    },
+    addbtnWrap:{
+      width:100,
+      alignSelf:"flex-end",
+      marginBottom:10,
+      backgroundColor:"blue",
+      padding:10,
+      borderRadius:5,
+      
+    },
+    addbtntext:{
+     color:"#fff",
+     textAlign:"center",
+    },
+    cancelbtn:{
+      width:100,
+      marginBottom:10,
+      backgroundColor:"grey",
+      padding:10,
+      borderRadius:5,
+    }
   });
 
   export default styles;

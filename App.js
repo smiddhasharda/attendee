@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, ActivityIndicator, Alert,StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Provider } from 'react-redux';
@@ -11,13 +11,18 @@ import RegisterScreen from './src/component/Register/RegisterScreen';
 import ForgetPasswordScreen from './src/component/ForgetPassword/ForgetPasswordScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DrawerNavigator from './src/globalComponent/DrawerNavigatior/DrawerNavigatior';
-import LoginNew from './src/component/Login/LoginNew';
 import Learn from './src/component/Dashboard/Learn';
-import  Task from './src/component/Dashboard/Task';
-import  Exam from './src/component/Dashboard/Exam';
-import RoomDetail from './src/component/Dashboard/RoomDetail';
+import  InvigilatorScreen from './src/component/Invigilator/InvigilatorScreen';
+import PieChart from './src/component/Dashboard/PieChart';
+import LoginNew from './src/component/Login/LoginNew';
+import TabNavigator from './src/globalComponent/TabNavigator';
+import StudentInfo from './src/component/Student/StudentInfo';
+import RoomDetail from './src/component/Room/RoomDetail';
+import TopHeader from './src/globalComponent/Header/TopHeader';
 
 const Stack = createNativeStackNavigator();
+// global.SERVER_URL = `http://localhost:5000`;
+global.SERVER_URL= 'http://3.111.185.105:3502';
 
 const App = () => {
   const [initialRoute, setInitialRoute] = useState('Login');
@@ -38,7 +43,8 @@ const App = () => {
   }, []);
 
   const renderLoading = () => (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <View style={{ flex: 1, backgroundColor:"plum",padding:60 }}>
+      <StatusBar />     
       <ActivityIndicator size="large" color="#0000ff" />
     </View>
   );
@@ -48,13 +54,16 @@ const App = () => {
         <RoleProvider>
           <NavigationContainer>
             <Stack.Navigator initialRouteName={initialRoute}>
-              <Stack.Screen name="Login" component={LoginScreen} />
+              <Stack.Screen name="Login"  options={{ headerShown: false }} component={LoginNew} />
               <Stack.Screen name="Register" component={RegisterScreen} />
               <Stack.Screen name="ForgetPassword" component={ForgetPasswordScreen} />
               <Stack.Screen name="PostLogin" component={DrawerNavigator} options={{ headerShown: false }} />
+              <Stack.Screen name="StudentInfo" component={StudentInfo} />
+              <Stack.Screen name="RoomDetail" component={RoomDetail} />
+              <Stack.Screen name="TopHeader" component={TopHeader} />
                <Stack.Screen name="Learn" component={Learn} />
-               <Stack.Screen name="Task" component={Task} />
-               
+               <Stack.Screen name="InvigilatorScreen" component={InvigilatorScreen} />
+               <Stack.Screen name="PieChart" component={PieChart} />
             </Stack.Navigator>
           </NavigationContainer>
         </RoleProvider>
@@ -63,6 +72,8 @@ const App = () => {
   );
 
   return loading ? renderLoading() : renderRouting();
+ 
+  
 };
 
 export default App;

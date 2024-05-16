@@ -1,32 +1,58 @@
-import React, { useState, useEffect, useCallback } from "react";
-import {
-  View,
-  Text,
-  Button,
-  TextInput,
-  FlatList,
-  StyleSheet,
-  Pressable,
-} from "react-native";
-import { insert, fetch, update } from "../../AuthService/AuthService";
+import React, { useState,useEffect,useCallback } from 'react';
+import { View, Text, FlatList, StyleSheet, Dimensions, ScrollView, Pressable, ActivityIndicator } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import {  view } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import CustomDateTimePicker from '../../globalComponent/DateTimePicker/CustomDateTimePicker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const ExamScreen = () => {
+const ExamScreen = ({ navigation,userAccess }) => {
+  const UserAccess = userAccess?.module?.filter((item)=> item?.FK_ModuleId === 5)?.[0];
+  const [examDates, setExamDates] = useState([]);
+  // const [examDates, setExamDates] = useState([{ EXAM_DT: '06-FEB-24' }, { EXAM_DT: '07-FEB-24' }, { EXAM_DT: '10-FEB-24' }, { EXAM_DT: '10-FEB-24' }, { EXAM_DT: '10-FEB-24' }, { EXAM_DT: '10-FEB-24' }, { EXAM_DT: '10-FEB-24' }])
+
+  const [roomDetails, setRoomDetails] = useState([]);
+  const [examSelectedDate, setExamSelectedDate] = useState('');
+  // const [examSelectedDate, setExamSelectedDate] = useState(examDates[0].EXAM_DT);
+
+  const [loading, setLoading] = useState(false);
+  // Sample data for room details
+  // Table Name [ EXAM_CODE_TBL ] with Distinct
+  const sampleRoomData = [
+    { EXAM_DT: '06-FEB-24', ROOM_NBR: 'RM-202 (BLOCK 4)',EXAM_START_TIME:'09:30:00.000000000 AM' },
+    { EXAM_DT: '06-FEB-24', ROOM_NBR: 'RM-203 (BLOCK 4)',EXAM_START_TIME:'09:30:00.000000000 AM' },
+    { EXAM_DT: '06-FEB-24', ROOM_NBR: 'RM-204 (BLOCK 4)',EXAM_START_TIME:'09:30:00.000000000 AM' },
+    { EXAM_DT: '06-FEB-24', ROOM_NBR: 'RM-205 (BLOCK 4)',EXAM_START_TIME:'09:30:00.000000000 AM' },
+    { EXAM_DT: '07-FEB-24', ROOM_NBR: 'RM-202 (BLOCK 4)',EXAM_START_TIME:'09:30:00.000000000 AM' },
+    { EXAM_DT: '07-FEB-24', ROOM_NBR: 'RM-203 (BLOCK 4)',EXAM_START_TIME:'09:30:00.000000000 AM' },
+    { EXAM_DT: '07-FEB-24', ROOM_NBR: 'RM-204 (BLOCK 4)',EXAM_START_TIME:'09:30:00.000000000 AM' },
+    { EXAM_DT: '10-FEB-24', ROOM_NBR: 'RM-205 (BLOCK 4)',EXAM_START_TIME:'09:30:00.000000000 AM' }
+  ];
+
+  // const fetchRoomDetails = async(date) => {
+  //   setLoading(true);
+  //   await handleGetDateView();
+  // };
+
+  const fetchRoomDetails = async(date) => {
+    setLoading(true);
+    await handleGetDateView();
+
+    // Simulate fetching data from API
+    // setTimeout(() => {
+    //   const filteredRooms = sampleRoomData.filter(room => room.EXAM_DT === date);
+    //   setRoomDetails(filteredRooms);
+    //   setLoading(false);
+    // }, 1000); // Simulate 1 second delay
+  };
+
+
+  const handleDateClick = (date) => {
+    setLoading(true);
+    setExamSelectedDate(date);
+    handleGetRoomView(date);
+  };
+
   const { showToast } = useToast();
-  const [examData, setExamData] = useState({
-    examId: "",
-    examName: "",
-    examDescription: "",
-    examStartFrom: "",
-    examEndTo: "",
-    examType: "",
-    examStatus: 1,
-  });
-  const [examList, setExamList] = useState([]);
-  const [examContainerVisible, setExamContainerVisible] = useState(false);
-
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
 
@@ -38,126 +64,77 @@ const ExamScreen = () => {
     return authToken;
   }, [showToast]);
 
-  const handleAddExam = async () => {
+  const handleGetDateView = async () => {
     try {
       const authToken = await checkAuthToken();
-      const response = await insert(
+      const response = await view(
         {
-          operation: "insert",
-          tblName: "tbl_exam_master",
-          data: {
-            examName: examData.examName,
-            description: examData.examDescription,
-            isActive: examData.examStatus,
-          },
-          conditionString: "",
-          checkAvailability: "",
-          customQuery: "",
+          operation: "custom",
+          tblName: "PS_S_PRD_EX_TME_VW",
+          data: '',
+          conditionString: '',
+          checkAvailability: '',
+          customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW ORDER BY EXAM_DT ASC `,                 
         },
         authToken
       );
 
       if (response) {
-        showToast("Exam Add Successful", "success");
-        await handleClose();
-        handleGetExamList();
+        setExamDates(response?.data);
+        setExamSelectedDate(response?.data?.[0]?.EXAM_DT);
+        handleGetRoomView(response?.data?.[0]?.EXAM_DT);
       }
     } catch (error) {
+      setLoading(false);
       handleAuthErrors(error);
     }
   };
-
-  const handleUpdateExam = async () => {
+  const handleGetRoomView = async (SelectedDate) => {
     try {
       const authToken = await checkAuthToken();
-      const response = await update(
+      const response = await view(
         {
-          operation: "update",
-          tblName: "tbl_exam_master",
-          data: {
-            examName: examData.examName,
-            description: examData.examDescription,
-            isActive: examData.examStatus,
-          },
-          conditionString: `PK_ExamId = ${examData.examId}`,
-          checkAvailability: "",
-          customQuery: "",
+          operation: "custom",
+          tblName: "PS_S_PRD_EX_RME_VW",
+          data: '',
+          conditionString: '',
+          checkAvailability: '',
+          customQuery: `SELECT DISTINCT PS_S_PRD_EX_RME_VW.EXAM_DT, PS_S_PRD_EX_RME_VW.ROOM_NBR, PS_S_PRD_EX_TME_VW.EXAM_START_TIME FROM PS_S_PRD_EX_RME_VW JOIN PS_S_PRD_EX_TME_VW ON PS_S_PRD_EX_RME_VW.EXAM_DT = PS_S_PRD_EX_TME_VW.EXAM_DT WHERE PS_S_PRD_EX_RME_VW.EXAM_DT = '${new Date(SelectedDate).toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-')}'`
         },
         authToken
       );
 
       if (response) {
-        showToast("Exam Update Successful", "success");
-        await handleClose();
-        handleGetExamList();
+        setRoomDetails(response?.data);
+        setLoading(false);
       }
     } catch (error) {
+      setLoading(false);
       handleAuthErrors(error);
     }
   };
+  // const handleGetInigilatorDuty = async () => {
+  //   try {
+  //     const authToken = await checkAuthToken();
+  //     const response = await fetch(
+  //       {
+  //         operation: "fetch",
+  //         tblName: "tbl_invigilator_duty",
+  //         data: "",
+  //         conditionString: "",
+  //         checkAvailability: "",
+  //         customQuery: "",
+  //       },
+  //       authToken
+  //     );
 
-  const handleGetExamList = async () => {
-    try {
-      const authToken = await checkAuthToken();
-      const response = await fetch(
-        {
-          operation: "fetch",
-          tblName: "tbl_exam_master",
-          data: "",
-          conditionString: "",
-          checkAvailability: "",
-          customQuery: "",
-        },
-        authToken
-      );
-
-      if (response) {
-        setExamList(response?.data);
-      }
-    } catch (error) {
-      handleAuthErrors(error);
-    }
-  };
-
-  const handleExamStatus = async (examId, status) => {
-    try {
-      const authToken = await checkAuthToken();
-      const response = await update(
-        {
-          operation: "update",
-          tblName: "tbl_exam_master",
-          data: { isActive: !status },
-          conditionString: `PK_ExamId = ${examId}`,
-          checkAvailability: "",
-          customQuery: "",
-        },
-        authToken
-      );
-
-      if (response) {
-        showToast(
-          `Exam ${status === 0 ? "Active" : "Inactive"} Successful`,
-          "success"
-        );
-        handleGetExamList();
-      }
-    } catch (error) {
-      handleAuthErrors(error);
-    }
-  };
-
-  const handleEditExam = async (selectedExam) => {
-    setExamData({
-      examId: selectedExam.PK_ExamId,
-      examName: selectedExam.examName,
-      examDescription: selectedExam.description,
-      examStatus: selectedExam.isActive,
-      examStartFrom: selectedExam.examStartFrom,
-      examEndTo: selectedExam.examEndTo,
-      examType: selectedExam.examType,
-    });
-    setExamContainerVisible(true);
-  };
+  //     if (response) {
+  //       setInvigilatorData(response.data)
+  //     }
+  //   } catch (error) {
+  //     handleAuthErrors(error);
+  //   }
+  // };
 
   const handleAuthErrors = (error) => {
     switch (error.message) {
@@ -175,162 +152,78 @@ const ExamScreen = () => {
     }
   };
 
-  const handleClose = async () => {
-    setExamContainerVisible(false);
-    setExamData({
-      examId: "",
-      examName: "",
-      examDescription: "",
-      examStartFrom: "",
-      examEndTo: "",
-      examType: "",
-      examStatus: 1,
-    });
-  };
-
   useEffect(() => {
-    handleGetExamList();
+    fetchRoomDetails(examSelectedDate)
   }, []);
+  // const [currentTime, setCurrentTime] = useState(new Date());
+  // useEffect(() => {
+  //   // Update current time every second
+  //   const interval = setInterval(() => {
+  //     setCurrentTime(new Date());
+  //   }, 1000);
 
-  const handelChangeDateFrom = async (date) => {
-    setExamData({ ...examData, examStartFrom: date })
-  };
-
-  const handelChangeDateTo = async (date) => {
-    setExamData({ ...examData, examEndTo: date })
-  };
-
+  //   // Clear interval on component unmount
+  //   return () => clearInterval(interval);
+  // }, []);
+  //  // Format time to HH:MM:SS format
+  //  const formatTime = (time) => {
+  //   const hours = time.getHours().toString().padStart(2, '0');
+  //   const minutes = time.getMinutes().toString().padStart(2, '0');
+  //   const seconds = time.getSeconds().toString().padStart(2, '0');
+  //   return `${hours}:${minutes}:${seconds}`;
+  // };
+  // console.log(new Date()?.toLocaleDateString("en-GB", { day: "numeric", month: "numeric", year: "numeric", }) === new Date('05-APR-24')?.toLocaleDateString("en-GB", { day: "numeric", month: "numeric", year: "numeric", }))
+  
   return (
     <View style={styles.container}>
-      {examContainerVisible ? (
-        <View style={styles.formContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Exam Name"
-            value={examData.examName}
-            onChangeText={(text) =>
-              setExamData({ ...examData, examName: text })
-            }
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Description"
-            value={examData.examDescription}
-            onChangeText={(text) =>
-              setExamData({ ...examData, examDescription: text })
-            }
-          />
-          <Text>Exam Start From </Text>
-          <CustomDateTimePicker date={examData.examStartFrom} handelChangeDate={handelChangeDateFrom}/>
-          <Text>Exam End To </Text>
-          <CustomDateTimePicker date={examData.examEndTo} handelChangeDate={handelChangeDateTo}/>
-            <TextInput
-            style={styles.input}
-            placeholder="Exam Type"
-            value={examData.examType}
-            onChangeText={(text) =>
-              setExamData({ ...examData, examType: text })
-            }
-          />
-          {examData.examId ? (
-            <View style={styles.buttonContainer}>
-              <Button title="Update Exam" onPress={handleUpdateExam} />
-              <Button title="Cancel" onPress={handleClose} />
-            </View>
-          ) : (
-            <View style={styles.buttonContainer}>
-              <Button title="Add New Exam" onPress={handleAddExam} />
-              <Button title="Cancel" onPress={handleClose} />
-            </View>
-          )}
+       {/* <View >
+      <Text style={styles.timeText}>{formatTime(currentTime)}</Text>
+    </View> */}
+      <View style={styles.dates}>
+      <FlatList
+  data={examDates}
+  // numColumns={3}
+  renderItem={({ item }) => {
+    let isActiveItem = item.EXAM_DT === examSelectedDate;
+    return (
+      <Pressable onPress={() => handleDateClick(item.EXAM_DT)}> 
+        <View style={[styles.dateItem, isActiveItem && styles.activebox]}>
+        <Text style={[styles.dateDay, isActiveItem && { color: 'white' }]}> {new Date(item.EXAM_DT).toString().split(' ')[1]} </Text>
+          <Text style={[styles.dateNumber, isActiveItem && { color: 'white' }]}>{new Date(item.EXAM_DT).toString().split(' ')[2]}</Text>
+          <Text style={[styles.dateMonth, isActiveItem && { color: 'white' }]}>{new Date(item.EXAM_DT).toString().split(' ')[3]}</Text>
         </View>
-      ) : (
-        <View>
-          <Text style={styles.header}>Exam List:</Text>
-          <Button title="Add" onPress={() => setExamContainerVisible(true)} />
-          <FlatList
-            data={examList}
-            keyExtractor={(item) => item.PK_ExamId.toString()}
-            ListHeaderComponent={() => (
-              <View style={styles.tableHeader}>
-                <Text style={[styles.tableHeaderText, { flex: 2 }]}>
-                  Exam Name
-                </Text>
-                <Text style={[styles.tableHeaderText, { flex: 3 }]}>
-                  Description
-                </Text>
-                <Text style={[styles.tableHeaderText, { flex: 1 }]}>
-                  Exam Start From
-                </Text>
-                <Text style={[styles.tableHeaderText, { flex: 1 }]}>
-                  Exam End To
-                </Text>
-                <Text style={[styles.tableHeaderText, { flex: 1 }]}>
-                  Exam Type
-                </Text>
-                <Text style={[styles.tableHeaderText, { flex: 1 }]}>
-                  Status
-                </Text>
-                <Text style={[styles.tableHeaderText, { flex: 1 }]}>
-                  Actions
-                </Text>
-              </View>
-            )}
-            renderItem={({ item }) => (
-              <View style={styles.listItem}>
-                <Text style={[styles.listItemText, { flex: 2 }]}>
-                  {item.examName}
-                </Text>
-                <Text style={[styles.listItemText, { flex: 3 }]}>
-                  {item.description}
-                </Text>
-                <Text style={[styles.listItemText, { flex: 1 }]}>
-                  {item.examStartFrom}
-                </Text>
-                <Text style={[styles.listItemText, { flex: 1 }]}>
-                  {item.examEndTo}
-                </Text>
-                <Text style={[styles.listItemText, { flex: 1 }]}>
-                  {item.examType}
-                </Text>
-                <Pressable
-                  onPress={() =>
-                    handleExamStatus(item.PK_ExamId, item?.isActive)
-                  }
-                >
-                  <Text
-                    style={[
-                      styles.listItemText,
-                      { flex: 1 },
-                      item.isActive
-                        ? styles.listItemActiveStatus
-                        : styles.listItemInactiveStatus,
-                    ]}
-                  >
-                    {item.isActive ? "Active" : "Inactive"}
-                  </Text>
-                </Pressable>
+      </Pressable>
+    );
+  }}
+  // ItemSeparatorComponent={() => <View style={{ height: 5 }} />}
+  horizontal={true}
+/>
 
-                <View
-                  style={{
-                    flex: 1,
-                    flexDirection: "row",
-                    justifyContent: "flex-end",
-                    alignItems: "center",
-                  }}
-                >
-                  <Button
-                    title="Edit"
-                    onPress={() => handleEditExam(item)}
-                    style={styles.listItemEditButton}
-                    textStyle={styles.listItemEditText}
-                  />
+      </View>
+      <View style={styles.roomNumber}>
+        {loading ? (
+          <ActivityIndicator size="large" color="#0000ff" />
+        ) : (
+          roomDetails.length > 0 ? (
+            <ScrollView>
+              {roomDetails.map((roomData, index) => (
+                <Pressable onPress={() => UserAccess?.create === 1 ? navigation.navigate("RoomDetail", { room_Nbr: roomData.ROOM_NBR ,exam_Dt: roomData.EXAM_DT , startTime: roomData.EXAM_START_TIME ,navigation,userAccess }) : ''}>
+                <View key={index} style={[styles.box]}>
+                {/* <View key={index} style={[styles.box, styles.activebox]}> */}
+                <Ionicons style={styles.icons} name="book" size={24} color="rgb(8 96 88)" />
+                <View style={styles.boxtext}>
+                  <Text style={[styles.examname]}>{roomData.ROOM_NBR}</Text>
+                  <Text style={[styles.examtime]}>{roomData.EXAM_START_TIME?.split("T")?.[1]?.split(".")?.[0]}</Text>
                 </View>
               </View>
-            )}
-          />
-        </View>
-      )}
+              </Pressable>
+              ))}
+            </ScrollView>
+          ) : (
+            <Text>No rooms available for selected date.</Text>
+          )
+        )}
+      </View>
     </View>
   );
 };
@@ -338,64 +231,88 @@ const ExamScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    // flexDirection: 'row',
+    backgroundColor: "#fff"
+  },
+  dates: {
+    padding: 10
+  },
+  dateItem: {
+    padding: 10,
+    backgroundColor: '#f0f0f0',
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 5,
+    marginRight: 6,
+    alignItems: "center",
+  },
+  dateNumber: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  dateDay: {
+    fontSize: 12,
+    marginBottom: 5,
+  },
+  dateMonth: {
+    fontSize: 12,
+    marginTop: 5
+  },
+  roomNumber: {
+    flex: 1,
     padding: 10,
   },
-  formContainer: {
-    marginBottom: 20,
-  },
-  input: {
-    height: 40,
-    borderColor: "gray",
+  box: {
     borderWidth: 1,
+    borderColor: "#ccc",
+    width: 'auto',
+    // backgroundColor: "#eaeaea",
+    borderRadius: 10,
     marginBottom: 10,
-    paddingHorizontal: 10,
+    padding:10,
+    flexDirection:"row",
   },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+  boxtext:{
+    // alignItems:"center",  
+    flexDirection:"row",
+    marginLeft:10,
+    color:"#000",
+  
+  
   },
-  header: {
-    fontSize: 18,
+  examtime:{
+    alignItems:"flex-start",
+    color:"#a79f9f",
+    marginRight:10,
+    marginLeft:40,
+ 
+  },
+  examname:{
+    fontWeight:"bold",
+    marginRight:30,
+    maxWidth:80,
+    color:"#000"
+
+  },
+  examtime: {
+    alignItems: "flex-start",
+    color: "#a79f9f",
+    marginRight: 10,
+    marginLeft: 40,
+  },
+  examname: {
     fontWeight: "bold",
-    marginBottom: 10,
+    marginRight: 30,
+    maxWidth: 80,
   },
-  tableHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    backgroundColor: "#f0f0f0",
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    marginBottom: 10,
+  activebox: {
+    backgroundColor: "#0cb551",
+    color: "#fff"
   },
-  tableHeaderText: {
-    fontWeight: "bold",
-  },
-  listItem: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-  },
-  listItemText: {
-    flex: 1,
-  },
-  listItemActiveStatus: {
-    color: "green",
-  },
-  listItemInactiveStatus: {
-    color: "red",
-  },
-  listItemEditButton: {
-    backgroundColor: "blue",
-    padding: 5,
-    borderRadius: 5,
-  },
-  listItemEditText: {
-    color: "white",
-  },
+  activetext: {
+    color: "#fff",
+  }
 });
 
 export default ExamScreen;
+

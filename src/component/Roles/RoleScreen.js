@@ -1,19 +1,13 @@
 import React, { useState, useEffect, useCallback } from "react";
-import {
-  View,
-  Text,
-  Button,
-  TextInput,
-  FlatList,
-  StyleSheet,
-  Pressable,
-} from "react-native";
+import { View, Text, TextInput, FlatList, Pressable, } from "react-native";
 import { insert, fetch, update } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CheckBox from "expo-checkbox";
 import styles from "./RoleScreen.style";
-const RoleScreen = () => {
+import { ScrollView } from "react-native-gesture-handler";
+const RoleScreen = ({userAccess}) => {
+  const UserAccess = userAccess?.module?.filter( (item) => item?.FK_ModuleId === 2 );
   const { showToast } = useToast();
   const [roleData, setRoleData] = useState({
     roleId: "",
@@ -26,6 +20,7 @@ const RoleScreen = () => {
   const [roleContainerVisible, setRoleContainerVisible] = useState(false);
   const [moduleList, setModuleList] = useState([]);
   const [tempModulePermission, setTempModulePermission] = useState([]);
+  
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
 
@@ -155,7 +150,7 @@ const RoleScreen = () => {
           data: "",
           conditionString: "",
           checkAvailability: "",
-          customQuery: `select JSON_ARRAYAGG(json_object('PK_RoleId',p.PK_RoleId,'roleName',roleName,'description',p.description,'isActive',p.isActive,'modulePermission',( SELECT CAST( CONCAT('[', GROUP_CONCAT( JSON_OBJECT( 'Id',q.PK_role_module_permissionId,'FK_RoleId', q.FK_RoleId,'FK_ModuleId', q.FK_ModuleId, 'create', q.create, 'read', q.read, 'update', q.update, 'delete', q.delete) ), ']') AS JSON ) FROM tbl_role_module_permission q WHERE q.FK_RoleId = p.PK_RoleId ))) AS RoleMaster from tbl_role_master p`,
+          customQuery: `select JSON_ARRAYAGG(json_object('PK_RoleId',p.PK_RoleId,'roleName',roleName,'description',p.description,'isActive',p.isActive,'modulePermission',( SELECT CAST( CONCAT('[', GROUP_CONCAT( JSON_OBJECT( 'Id',q.PK_role_module_permissionId,'FK_RoleId', q.FK_RoleId,'FK_ModuleId', q.FK_ModuleId, 'create', q.create, 'read', q.read, 'update', q.update, 'delete', q.delete, 'special', q.special) ), ']') AS JSON ) FROM tbl_role_module_permission q WHERE q.FK_RoleId = p.PK_RoleId ))) AS RoleMaster from tbl_role_master p`,
         },
         authToken
       );
@@ -196,7 +191,6 @@ const RoleScreen = () => {
   };
 
   const handleEditRole = async (selectedRole) => {
-    console.log(selectedRole);
     setRoleData({
       roleId: selectedRole.PK_RoleId,
       roleName: selectedRole.roleName,
@@ -229,6 +223,7 @@ const RoleScreen = () => {
           delete: 0,
           read: 0,
           update: 0,
+          special: 0
         }));
         setRoleData({ ...roleData, modulePermissions: ModulePermissionData });
         setTempModulePermission(ModulePermissionData);
@@ -334,6 +329,12 @@ const RoleScreen = () => {
             onValueChange={() => handleUpdatePermissions(item, "delete")}
           />
         </View>
+        <View style={[styles.checkboxContainer, { flex: 1 }]}>
+          <CheckBox
+            value={getModulePermission(item, "special")}
+            onValueChange={() => handleUpdatePermissions(item, "special")}
+          />
+        </View>
       </View>
     );
   };
@@ -344,6 +345,7 @@ const RoleScreen = () => {
   }, []);
 
   return (
+    <ScrollView>
     <View style={styles.container}>
       {roleContainerVisible ? (
         <View style={styles.formContainer}>
@@ -382,6 +384,9 @@ const RoleScreen = () => {
                 <Text style={[styles.tableHeaderText, { flex: 1 }]}>
                   Delete
                 </Text>
+                <Text style={[styles.tableHeaderText, { flex: 1 }]}>
+                  Special
+                </Text>
               </View>
             )}
             renderItem={({ item }) => renderModuleCheckboxes(item)}
@@ -389,78 +394,86 @@ const RoleScreen = () => {
 
           {roleData.roleId ? (
             <View style={styles.buttonContainer}>
-              <Button title="Update Role" onPress={handleUpdateRole} />
-              <Button title="Cancel" onPress={handleClose} />
+               <Pressable onPress={() => handleUpdateRole()}>
+                    <Text>Update Role</Text>
+                  </Pressable>
+                  <Pressable onPress={() => handleClose()}>
+                    <Text>Cancel</Text>
+                  </Pressable>
+              {/* <Button title="Update Role" onPress={handleUpdateRole} />
+              <Button title="Cancel" onPress={handleClose} /> */}
             </View>
           ) : (
-            <View style={styles.buttonContainer}>
-              <Button title="Add New Role" onPress={handleAddRole} />
-              <Button title="Cancel" onPress={handleClose} />
+            <View style={styles.buttonContainer}>          
+              <Pressable style={styles.addbtnWrap} onPress={() => handleAddRole()} >
+                    <Text style={styles.addbtntext} numberOfLines={1}>Add New Role</Text>
+                  </Pressable>
+                  <Pressable onPress={() => handleClose()}>
+                    <Text style={styles.cancelbtn}>Cancel</Text>
+                  </Pressable>
             </View>
           )}
         </View>
-      ) : <View>
+           ) :
+       <View style={styles.roleLists}>
         <Text style={styles.header}>Role List:</Text>
-      <Button title="Add" onPress={() => setRoleContainerVisible(true)} />
+        <View style={styles.addbtnWrap}>
+        {UserAccess?.create === 1 &&
+        <Pressable onPress={() => setRoleContainerVisible(true)}>
+                    <Text style={styles.addbtntext}>Add</Text>
+                  </Pressable> }
+      </View>
       <FlatList
         data={roleList}
         keyExtractor={(item) => item.PK_RoleId.toString()}
-        ListHeaderComponent={() => (
-          <View style={styles.tableHeader}>
-            <Text style={[styles.tableHeaderText, { flex: 2 }]}>Role Name</Text>
-            <Text style={[styles.tableHeaderText, { flex: 3 }]}>
-              Description
-            </Text>
-            <Text style={[styles.tableHeaderText, { flex: 1 }]}>Status</Text>
-            <Text style={[styles.tableHeaderText, { flex: 1 }]}>Actions</Text>
-          </View>
-        )}
-        renderItem={({ item }) => (
-          <View style={styles.listItem}>
-            <Text style={[styles.listItemText, { flex: 2 }]}>
-              {item.roleName}
-            </Text>
-            <Text style={[styles.listItemText, { flex: 3 }]}>
-              {item.description}
-            </Text>
-            <Pressable
-              onPress={() => handleRoleStatus(item.PK_RoleId, item?.isActive)}
-            >
-              <Text
-                style={[
-                  styles.listItemText,
-                  { flex: 1 },
-                  item.isActive
-                    ? styles.listItemActiveStatus
-                    : styles.listItemInactiveStatus,
-                ]}
-              >
-                {item.isActive ? "Active" : "Inactive"}
+          ListHeaderComponent={() => (
+            <View style={styles.tableHeader}>
+              <Text  numberOfLines={1} style={[styles.tableHeaderText, { flex: 2 }]}>Role Name</Text>
+              <Text style={[styles.tableHeaderText, { flex: 3 }]}>
+                Description
               </Text>
-            </Pressable>
-
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                justifyContent: "flex-end",
-                alignItems: "center",
-              }}
-            >
-              <Button
-                title="Edit"
-                onPress={() => handleEditRole(item)}
-                style={styles.listItemEditButton}
-                textStyle={styles.listItemEditText}
-              />
+              <Text style={[styles.tableHeaderText, { flex: 1 }]}>Status</Text>
+              <Text style={[styles.tableHeaderText, { flex: 1 }]}>Actions</Text>
             </View>
-          </View>
-        )}
+          )}
+          renderItem={({ item }) => (
+            <View style={styles.listItem}>
+              <Text style={[styles.listItemText, { flex: 2 }]}>
+                {item.roleName}
+              </Text>
+              <Text style={[styles.listItemText, { flex: 3 }]}>
+                {item.description}
+              </Text>
+              <Pressable
+                onPress={() => UserAccess?.update === 1 ? handleRoleStatus(item.PK_RoleId, item?.isActive) : ''}
+              >
+                <Text
+                  style={[
+                    styles.listItemText,
+                    { flex: 1 },
+                    item.isActive
+                      ? styles.listItemActiveStatus
+                      : styles.listItemInactiveStatus,
+                  ]}
+                >
+                  {item.isActive ? "Active" : "Inactive"}
+                </Text>
+              </Pressable>
+              <View style={{ flex: 1, flexDirection: "row", justifyContent: "flex-end", alignItems: "center", }} >
+                {UserAccess?.update === 1 ?
+                  <Pressable style={styles.listItemEditButton} onPress={() => handleEditRole(item)}>
+                      <Text style={styles.listItemEditText}>Edit</Text>
+                    </Pressable> : ' - '}
+              </View>
+            </View>
+          )}
       />
-
-        </View>}
+        </View>
+        }
     </View>
+    </ScrollView>
   );
 };
 
 export default RoleScreen;
+ 
