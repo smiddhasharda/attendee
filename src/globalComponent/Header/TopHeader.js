@@ -1,9 +1,17 @@
-import React from 'react';
+import React,{useState} from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
+import DropDownPicker from "react-native-dropdown-picker";
 // import Content from '../../globalComponent/MainContain';
 
 function TopHeader() {
+  
+  const [open, setOpen] = useState(false);
+  const [userRoleList, setUserRoleList] = useState([
+    { label: 'OnGoing', value: 'ongoing' },
+    { label: 'Upcoming Exam', value: 'Upcoming' },
+ 
+  ]);
   return (
     <ScrollView>
     <View style={styles.container}>
@@ -11,9 +19,25 @@ function TopHeader() {
           <View style={styles.headertextWrap}>
                   <View style={styles.profileinfo}>
                   <Text style={{color:"#fff" ,fontSize:"16px" ,fontWeight:"bold" }}>Sanaya Dubey</Text>
-                  <Text  style={{color:"#fff",fontSize:"16px"}}>Faculty Role</Text>
+                  <View style={styles.facultyWrap}>
+                  <Text  style={{color:"#fff",fontSize:"18px", marginRight:"10px" ,fontWeight:"bold"}}>Faculty Role</Text>
+                  <View style={styles.dropdownWrap}>             
+                 <DropDownPicker
+                  open={open}
+                  value={''}
+                  items={userRoleList}
+                  setOpen={setOpen}
+                  // setValue={(value) => ''}
+                  style={styles.dropdown}
+                  // dropDownStyle={{ backgroundColor: "#fafafa" }}
+                  // dropDownMaxHeight={100}
+                  dropDownDirection="Bottom"                 
+                  containerStyle={styles.rolePicker}
+                />
+                </View>
+            </View>
                   </View>
-                  <View>
+                  <View style={{top:"0"}}>
                   <Image  style={styles.profileimg}  source= {require("../../local-assets/profile.jpg")} />   
                   </View>
           </View>  
@@ -26,8 +50,7 @@ function TopHeader() {
           </View>
           <View style={styles.maincontain}>
           <Text style={styles.attendacehead}>Attendance</Text>
- 
-          <View style={styles.boxmain}>
+            <View style={styles.boxmain}>
           <View style={styles.boxesWrap}>
             <Text style={styles.boxcount}>02</Text>
             <Text>Exam</Text>
@@ -93,7 +116,7 @@ const styles = StyleSheet.create({
     height:40,
     borderRadius:50,
     top:0,
-    left:"10%",
+    // left:"10%",
   },
   profileinfo:{
     top:0,
@@ -129,5 +152,10 @@ const styles = StyleSheet.create({
   },
   boxcount:{
     fontWeight:"bold",
+  },
+  facultyWrap:{
+    flexDirection:"row",
+    marginRight:"20px",
+    padding:"10px"
   }
 });
