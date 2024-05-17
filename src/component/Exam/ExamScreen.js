@@ -1,9 +1,10 @@
 import React, { useState,useEffect,useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet, Dimensions, ScrollView, Pressable, ActivityIndicator } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons,Feather } from '@expo/vector-icons';
 import {  view } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import DropDownPicker from "react-native-dropdown-picker";
 
 const ExamScreen = ({ navigation,userAccess }) => {
   const UserAccess = userAccess?.module?.filter((item)=> item?.FK_ModuleId === 5)?.[0];
@@ -32,7 +33,12 @@ const ExamScreen = ({ navigation,userAccess }) => {
   //   setLoading(true);
   //   await handleGetDateView();
   // };
-
+  const [open, setOpen] = useState(false);
+  const [userRoleList, setUserRoleList] = useState([
+    { label: 'OnGoing', value: 'ongoing' },
+    { label: 'Upcoming Exam', value: 'Upcoming' },
+ 
+  ]);
   const fetchRoomDetails = async(date) => {
     setLoading(true);
     await handleGetDateView();
@@ -179,6 +185,7 @@ const ExamScreen = ({ navigation,userAccess }) => {
        {/* <View >
       <Text style={styles.timeText}>{formatTime(currentTime)}</Text>
     </View> */}
+    <View style={styles.datesWrap}>
       <View style={styles.dates}>
       <FlatList
   data={examDates}
@@ -200,6 +207,27 @@ const ExamScreen = ({ navigation,userAccess }) => {
 />
 
       </View>
+      <View style={styles.searchicons}>
+
+      <View style={styles.dropdownWrap}>             
+                 <DropDownPicker
+                  open={open}
+                  value={''}
+                  items={userRoleList}
+                  setOpen={setOpen}
+                  // setValue={(value) => ''}
+                  style={styles.dropdown}
+                  dropDownStyle={{ backgroundColor: "#fafafa" }}
+                  dropDownMaxHeight={150}
+                  dropDownDirection="Bottom"                 
+                  containerStyle={styles.rolePicker}
+                />
+            </View>
+
+      <Feather name="search" size={28} color="black" />
+      </View> 
+
+      </View>
       <View style={styles.roomNumber}>
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
@@ -210,7 +238,7 @@ const ExamScreen = ({ navigation,userAccess }) => {
                 <Pressable onPress={() => UserAccess?.create === 1 ? navigation.navigate("RoomDetail", { room_Nbr: roomData.ROOM_NBR ,exam_Dt: roomData.EXAM_DT , startTime: roomData.EXAM_START_TIME ,navigation,userAccess }) : ''}>
                 <View key={index} style={[styles.box]}>
                 {/* <View key={index} style={[styles.box, styles.activebox]}> */}
-                <Ionicons style={styles.icons} name="book" size={24} color="rgb(8 96 88)" />
+                {/* <Ionicons style={styles.icons} name="book" size={24} color="rgb(8 96 88)" /> */}
                 <View style={styles.boxtext}>
                   <Text style={[styles.examname]}>{roomData.ROOM_NBR}</Text>
                   <Text style={[styles.examtime]}>{roomData.EXAM_START_TIME?.split("T")?.[1]?.split(".")?.[0]}</Text>
@@ -234,15 +262,27 @@ const styles = StyleSheet.create({
     // flexDirection: 'row',
     backgroundColor: "#fff"
   },
+  datesWrap:{
+    flexDirection:"row",
+    justifyContent:"space-between",
+  },
+  searchicons:{
+     padding:"10px",
+     alignSelf:"center",
+     flexDirection:"row",
+     marginRight:"10px",
+  },
+
   dates: {
-    padding: 10
+    padding: 10,
+    width:"50%",
   },
   dateItem: {
     padding: 10,
-    backgroundColor: '#f0f0f0',
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 5,
+    // backgroundColor: '#f0f0f0',
+    // borderWidth: 1,
+    // borderColor: '#ddd',
+    // borderRadius: 5,
     marginRight: 6,
     alignItems: "center",
   },
@@ -260,50 +300,43 @@ const styles = StyleSheet.create({
   },
   roomNumber: {
     flex: 1,
-    padding: 10,
+    padding: 20,
   },
   box: {
     borderWidth: 1,
     borderColor: "#ccc",
     width: 'auto',
     // backgroundColor: "#eaeaea",
-    borderRadius: 10,
+    borderRadius: 25,
     marginBottom: 10,
-    padding:10,
-    flexDirection:"row",
+    padding:20,
+    flexDirection:"column",
   },
+  
   boxtext:{
     // alignItems:"center",  
     flexDirection:"row",
     marginLeft:10,
     color:"#000",
-  
-  
+    justifyContent:"space-between",
   },
   examtime:{
     alignItems:"flex-start",
     color:"#a79f9f",
     marginRight:10,
-    marginLeft:40,
+    marginLeft:40, 
+  },
  
-  },
-  examname:{
-    fontWeight:"bold",
-    marginRight:30,
-    maxWidth:80,
-    color:"#000"
-
-  },
   examtime: {
     alignItems: "flex-start",
     color: "#a79f9f",
-    marginRight: 10,
-    marginLeft: 40,
+    // marginRight: 10,
+    // marginLeft: 40,
   },
   examname: {
     fontWeight: "bold",
     marginRight: 30,
-    maxWidth: 80,
+    // maxWidth: 80,
   },
   activebox: {
     backgroundColor: "#0cb551",
@@ -311,7 +344,18 @@ const styles = StyleSheet.create({
   },
   activetext: {
     color: "#fff",
-  }
+  },
+  dropdownWrap: {
+    // flexDirection: 'row',
+    // justifyContent: 'space-between',
+    // marginBottom: 10,
+    // padding:20,
+    marginRight:"10px"
+  },
+  dropdown: {
+    width: '50%',
+    width: '100%',  
+  },
 });
 
 export default ExamScreen;

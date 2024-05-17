@@ -19,6 +19,8 @@ function Learn() {
     roomDrawer: false,
     shiftDrawer: false,
   });
+
+
   const { showToast } = useToast();
   const [examDates, setExamDates] = useState([]);
   const [examSelectedDate, setExamSelectedDate] = useState("");
@@ -155,6 +157,7 @@ function Learn() {
   useEffect(() => {
     handleGetExamDateList();
   }, []);
+
   console.log(examReportData)
   return (
     <ScrollView>
