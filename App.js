@@ -7,8 +7,6 @@ import store from './src/redux/store';
 import { ToastProvider } from './src/globalComponent/ToastContainer/ToastContext';
 import { RoleProvider } from './src/component/Roles/RoleContext';
 import LoginScreen from './src/component/Login/LoginScreen';
-import RegisterScreen from './src/component/Register/RegisterScreen';
-import ForgetPasswordScreen from './src/component/ForgetPassword/ForgetPasswordScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DrawerNavigator from './src/globalComponent/DrawerNavigatior/DrawerNavigatior';
 import Learn from './src/component/Dashboard/Learn';
@@ -55,8 +53,6 @@ const App = () => {
           <NavigationContainer>
             <Stack.Navigator initialRouteName={initialRoute}>
               <Stack.Screen name="Login"  options={{ headerShown: false }} component={LoginNew} />
-              <Stack.Screen name="Register" component={RegisterScreen} />
-              <Stack.Screen name="ForgetPassword" component={ForgetPasswordScreen} />
               <Stack.Screen name="PostLogin" component={DrawerNavigator} options={{ headerShown: false }} />
               <Stack.Screen name="StudentInfo" component={StudentInfo} />
               <Stack.Screen name="RoomDetail" component={RoomDetail} />

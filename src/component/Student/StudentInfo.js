@@ -35,6 +35,8 @@ const StudentInfo = () => {
   const [tempCopyType, setTempCopyType] = useState("");
   const [copyList, setCopyList] = useState([]);
   const [isScanning, setIsScanning] = useState(false);
+  const [loading, setLoading] = useState(false);
+
 
   const sampleStudentData = [
     {
@@ -481,82 +483,87 @@ const StudentInfo = () => {
     }
   };
 
-  // const handleGetStudentAttendece = async (SelectedStudent) => {
-  //   try {
-  //     const authToken = await checkAuthToken();
-  //     const response = await view(
-  //       {
-  //         operation: "fetch",
-  //         tblName: "PS_S_PRD_CT_ATT_VW", 
-  //         data: '',
-  //         conditionString: '',
-  //         checkAvailability: '',
-  //         customQuery: ''
-  //       },
-  //       authToken
-  //     );
-  //     if (response) {
-  //       console.log(response?.data)
-  //       setLoading(false);
-  //     }
-  //   } catch (error) {
-  //     console.log(error)
-  //     setLoading(false);
-  //     handleAuthErrors(error);
-  //   }
-  // };
+  const handleGetStudentInfo = async () => {
+    try {
+      const authToken = await checkAuthToken();
+      const response = await view(
+        {
+          operation: "fetch",
+          tblName: "PS_S_PRD_STDNT_VW",
+          data: '',
+          conditionString: `EMPLID = '${system_Id}'`,
+          checkAvailability: '',
+          customQuery: ''
+        },
+        authToken
+      );
+      if (response) {
+        setStudentDetails(response?.data?.[0]);
+        // setLoading(false);
+      }
+    } catch (error) {
+      setLoading(false);
+      handleAuthErrors(error);
+    }
+  };
+  const handleGetStudentCouseInfo = async () => {
+    try {
+      const authToken = await checkAuthToken();
+      const response = await view(
+        {
+          operation: "custom",
+          tblName: "PS_S_PRD_EX_TME_VW",
+          data: '',
+          conditionString: '',
+          checkAvailability: '',
+          customQuery: `SELECT DISTINCT CATALOG_NBR, DESCR100 FROM PS_S_PRD_EX_TME_VW WHERE CATALOG_NBR = '${catlog_Nbr}'`
+        },
+        authToken
+      );
+      if (response) {
+        setCourseDetails(response?.data?.[0] || []);
+        // setLoading(false);
+      }
+    } catch (error) {
+      setLoading(false);
+      handleAuthErrors(error);
+    }
+  };
+  const handleGetStudentAttendenceInfo = async () => {
+    try {
+      const authToken = await checkAuthToken();
+      const response = await view(
+        {
+          operation: "custom",
+          tblName: "PS_S_PRD_CT_ATT_VW",
+          data: '',
+          conditionString: '',
+          checkAvailability: '',
+          customQuery: `SELECT DISTINCT PS_S_PRD_CT_ATT_VW.PERCENTAGE,PS_S_PRD_TRS_AT_VW.PERCENTCHG FROM PS_S_PRD_CT_ATT_VW JOIN PS_S_PRD_TRS_AT_VW ON PS_S_PRD_TRS_AT_VW.EMPLID = PS_S_PRD_CT_ATT_VW.EMPLID WHERE PS_S_PRD_CT_ATT_VW.EMPLID = '${system_Id}' AND PS_S_PRD_CT_ATT_VW.CATALOG_NBR = '${catlog_Nbr}' `
+        },
+        authToken
+      );
+      if (response) {
+        console.log(response?.data?.[0] || []);
+        setLoading(false);
+      }
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+      handleAuthErrors(error);
+    }
+  };
+  const fetchData = async() => {
+      setLoading(true);
+     await handleGetStudentInfo();
+     await handleGetStudentCouseInfo();
+     await handleGetStudentAttendenceInfo();
+      // await handleGetCopyData();
+}
+  
 
-  // const handleGetStudentInfo = async (SelectedStudent) => {
-  //   try {
-  //     const authToken = await checkAuthToken();
-  //     const response = await view(
-  //       {
-  //         operation: "fetch",
-  //         tblName: "PS_S_PRD_CT_ATT_VW", 
-  //         data: '',
-  //         conditionString: '',
-  //         checkAvailability: '',
-  //         customQuery: ''
-  //       },
-  //       authToken
-  //     );
-  //     if (response) {
-  //       console.log(response?.data)
-  //       setLoading(false);
-  //     }
-  //   } catch (error) {
-  //     console.log(error)
-  //     setLoading(false);
-  //     handleAuthErrors(error);
-  //   }
-  // };
 
   useEffect(() => {
-    const fetchData = async() => {
-      try {
-      //  await handleGetStudentInfo();
-        const filteredStudentData =
-          sampleStudentData.find((student) => student.EMPLID === system_Id) ||
-          {};
-        const filteredCourseData =
-          sampleCourseData.find(
-            (course) => course.CATALOG_NBR === catlog_Nbr
-          ) || {};
-        const filteredAttendanceData =
-          sampleAttendanceData.find(
-            (attendance) =>
-              attendance.EMPLID === system_Id &&
-              attendance.CATALOG_NBR === catlog_Nbr
-          ) || {};
-        setStudentDetails(filteredStudentData);
-        setCourseDetails(filteredCourseData);
-        setAttendanceDetails(filteredAttendanceData);
-        handleGetCopyData();
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
     fetchData();
   }, [system_Id, catlog_Nbr]);
 
@@ -640,9 +647,7 @@ const StudentInfo = () => {
               <View style={styles.infoItem}>
                 <Text style={styles.label}>Status:</Text>
                 <Text style={styles.value}>
-                  {attendanceDetails.PERCENTAGE >= attendanceDetails.PERCENTCHG
-                    ? "Eligible"
-                    : "Debarred"}
+                  {attendanceDetails.PERCENTAGE >= attendanceDetails.PERCENTCHG ? "Eligible" : "Debarred"}
                 </Text>
               </View>
             </View>
