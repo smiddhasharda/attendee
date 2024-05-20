@@ -20,7 +20,7 @@ const RoleComponent = ({ userAccess }) => <RoleScreen userAccess={userAccess} />
 const ModuleComponent = ({ userAccess }) => <ModuleScreen userAccess={userAccess} />;
 const DashboardComponent = ({ userAccess }) => <DashboardScreen userAccess={userAccess} />;
 const UserComponent = ({ userAccess }) => <UserScreen userAccess={userAccess} />;
-const ExamComponent = ({ navigation, userAccess }) => <ExamScreen navigation={navigation} userAccess={userAccess} />;
+const ExamComponent = ({ navigation, userAccess,userData }) => <ExamScreen navigation={navigation} userAccess={userAccess} userData={userData} />;
 const Drawer = createDrawerNavigator();
 
 const CustomDrawerContent = ({ ...props }) => {
@@ -259,7 +259,7 @@ const DrawerNavigator = ({ navigation }) => {
                 case "UserScreen":
                   return <UserComponent {...props} userAccess={userRoleList?.[userRoleIndex]} />;
                 case "ExamScreen":
-                  return <ExamComponent {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} />;
+                  return <ExamComponent {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData}/>;
                default:
                   return null;
               }
