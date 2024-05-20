@@ -56,7 +56,7 @@ const App = () => {
               <Stack.Screen name="PostLogin" component={DrawerNavigator} options={{ headerShown: false }} />
               <Stack.Screen name="StudentInfo" component={StudentInfo} />
               <Stack.Screen name="RoomDetail" component={RoomDetail} />
-              <Stack.Screen name="TopHeader" component={TopHeader} />
+              <Stack.Screen name="TopHeader"  component={TopHeader}  options={{ headerShown: false }} />
                <Stack.Screen name="Learn" component={Learn} />
                <Stack.Screen name="InvigilatorScreen" component={InvigilatorScreen} />
                <Stack.Screen name="PieChart" component={PieChart} />

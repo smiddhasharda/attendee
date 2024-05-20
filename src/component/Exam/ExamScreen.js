@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { view, fetch } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import DropDownPicker from "react-native-dropdown-picker";
 
 const ExamScreen = ({ navigation, userAccess, userData }) => {
   const UserAccess = userAccess?.module?.find((item) => item?.FK_ModuleId === 5);
@@ -133,6 +134,7 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
 
   return (
     <View style={styles.container}>
+    <View style={styles.datesWrap}>
       <View style={styles.dates}>
         <FlatList
           data={examDates}
@@ -151,6 +153,27 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
           horizontal
           keyExtractor={(item) => item.EXAM_DT}
         />
+      </View>
+      <View style={styles.searchicons}>
+
+      <View style={styles.dropdownWrap}>             
+                 <DropDownPicker
+                  open={open}
+                  value={''}
+                  items={userRoleList}
+                  setOpen={setOpen}
+                  // setValue={(value) => ''}
+                  style={styles.dropdown}
+                  dropDownStyle={{ backgroundColor: "#fafafa" }}
+                  dropDownMaxHeight={150}
+                  dropDownDirection="Bottom"                 
+                  containerStyle={styles.rolePicker}
+                />
+            </View>
+
+      <Feather name="search" size={28} color="black" />
+      </View> 
+
       </View>
       <View style={styles.roomNumber}>
         {loading ? (
@@ -187,15 +210,27 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
+  datesWrap:{
+    flexDirection:"row",
+    justifyContent:"space-between",
+  },
+  searchicons:{
+     padding:"10px",
+     alignSelf:"center",
+     flexDirection:"row",
+     marginRight:"10px",
+  },
+
   dates: {
     padding: 10,
+    width:"50%",
   },
   dateItem: {
     padding: 10,
-    backgroundColor: '#f0f0f0',
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 5,
+    // backgroundColor: '#f0f0f0',
+    // borderWidth: 1,
+    // borderColor: '#ddd',
+    // borderRadius: 5,
     marginRight: 6,
     alignItems: "center",
   },
@@ -213,36 +248,55 @@ const styles = StyleSheet.create({
   },
   roomNumber: {
     flex: 1,
-    padding: 10,
+    padding: 20,
   },
   box: {
     borderWidth: 1,
     borderColor: "#ccc",
-    borderRadius: 10,
+    width: 'auto',
+    borderRadius: 25,
     marginBottom: 10,
-    padding: 10,
-    flexDirection: "row",
+    padding:20,
+    flexDirection:"column",
   },
-  boxText: {
-    flexDirection: "row",
-    marginLeft: 10,
-    color: "#000",
+  
+  boxtext:{
+    flexDirection:"row",
+    marginLeft:10,
+    color:"#000",
+    justifyContent:"space-between",
   },
-  examTime: {
-    color: "#a79f9f",
-    marginLeft: 40,
+  examtime:{
+    alignItems:"flex-start",
+    color:"#a79f9f",
+    marginRight:10,
+    marginLeft:40, 
+  },
+ 
+  examtime: {
+    alignItems: "flex-start",
+    color: "#a79f9f"
   },
   examName: {
     fontWeight: "bold",
     marginRight: 30,
-    maxWidth: 80,
-    color: "#000",
   },
   activebox: {
     backgroundColor: "#0cb551",
   },
   activeText: {
     color: "#fff",
+  },
+  dropdownWrap: {
+    // flexDirection: 'row',
+    // justifyContent: 'space-between',
+    // marginBottom: 10,
+    // padding:20,
+    marginRight:"10px"
+  },
+  dropdown: {
+    width: '50%',
+    width: '100%',  
   },
 });
 
