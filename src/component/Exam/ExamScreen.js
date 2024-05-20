@@ -37,7 +37,6 @@ const ExamScreen = ({ navigation,userAccess }) => {
   const [userRoleList, setUserRoleList] = useState([
     { label: 'OnGoing', value: 'ongoing' },
     { label: 'Upcoming Exam', value: 'Upcoming' },
- 
   ]);
   const fetchRoomDetails = async(date) => {
     setLoading(true);
@@ -208,8 +207,7 @@ const ExamScreen = ({ navigation,userAccess }) => {
 
       </View>
       <View style={styles.searchicons}>
-
-      <View style={styles.dropdownWrap}>             
+            <View style={styles.dropdownWrap}>             
                  <DropDownPicker
                   open={open}
                   value={''}
@@ -223,17 +221,15 @@ const ExamScreen = ({ navigation,userAccess }) => {
                   containerStyle={styles.rolePicker}
                 />
             </View>
-
       <Feather name="search" size={28} color="black" />
       </View> 
-
       </View>
       <View style={styles.roomNumber}>
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : (
           roomDetails.length > 0 ? (
-            <ScrollView>
+            <ScrollView style={styles.scrollabar}>
               {roomDetails.map((roomData, index) => (
                 <Pressable onPress={() => UserAccess?.create === 1 ? navigation.navigate("RoomDetail", { room_Nbr: roomData.ROOM_NBR ,exam_Dt: roomData.EXAM_DT , startTime: roomData.EXAM_START_TIME ,navigation,userAccess }) : ''}>
                 <View key={index} style={[styles.box]}>
@@ -311,6 +307,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     padding:20,
     flexDirection:"column",
+ 
   },
   
   boxtext:{
@@ -319,6 +316,7 @@ const styles = StyleSheet.create({
     marginLeft:10,
     color:"#000",
     justifyContent:"space-between",
+
   },
   examtime:{
     alignItems:"flex-start",
@@ -356,6 +354,12 @@ const styles = StyleSheet.create({
     width: '50%',
     width: '100%',  
   },
+  // scrollabar:{
+  //   width:"5px",
+  //   overflow:"auto",
+  //   height:"40px",
+  //   backgroundColor:"#e1e1e1"
+  // }
 });
 
 export default ExamScreen;
