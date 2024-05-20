@@ -13,6 +13,7 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
   const [examSelectedDate, setExamSelectedDate] = useState('');
   const [invigilatorData, setInvigilatorData] = useState();
   const [loading, setLoading] = useState(false);
+
   const { showToast } = useToast();
 
   const checkAuthToken = useCallback(async () => {
@@ -155,8 +156,7 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
         />
       </View>
       <View style={styles.searchicons}>
-
-      <View style={styles.dropdownWrap}>             
+            <View style={styles.dropdownWrap}>             
                  <DropDownPicker
                   open={open}
                   value={''}
@@ -170,17 +170,15 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
                   containerStyle={styles.rolePicker}
                 />
             </View>
-
       <Feather name="search" size={28} color="black" />
       </View> 
-
       </View>
       <View style={styles.roomNumber}>
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : (
           roomDetails.length > 0 ? (
-            <ScrollView>
+            <ScrollView style={styles.scrollabar}>
               {roomDetails.map((roomData, index) => (
                 <Pressable
                   key={index}
@@ -258,6 +256,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     padding:20,
     flexDirection:"column",
+ 
   },
   
   boxtext:{
@@ -265,6 +264,7 @@ const styles = StyleSheet.create({
     marginLeft:10,
     color:"#000",
     justifyContent:"space-between",
+
   },
   examtime:{
     alignItems:"flex-start",
@@ -298,6 +298,12 @@ const styles = StyleSheet.create({
     width: '50%',
     width: '100%',  
   },
+  // scrollabar:{
+  //   width:"5px",
+  //   overflow:"auto",
+  //   height:"40px",
+  //   backgroundColor:"#e1e1e1"
+  // }
 });
 
 export default ExamScreen;
