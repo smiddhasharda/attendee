@@ -122,6 +122,7 @@ function RoomDetail() {
 
   return (
     <View style={styles.container}>
+    
         {isScanning ? <CodeScanner onScannedData={UserAccess?.create === 1 ? handleScannedData : ''} onCancel={handleCancel} /> : 
         <View>
            <View style={styles.searchWrap}>
@@ -190,7 +191,7 @@ const styles = StyleSheet.create({
       borderRadius: 5,
       marginRight: 6,
       alignItems:"center",
-      width: 45,
+      // width: 45,
   
     },
    
@@ -237,28 +238,31 @@ const styles = StyleSheet.create({
     roomNumber: {
     //   flexDirection: "column",
       // flexWrap: "wrap",
-      marginBottom: 10,
+      // marginBottom: 10,
       padding: 10,
+      flex:1,
      
     },
     box: {
       borderWidth: 1,
       borderColor: "#ccc",
-      width: Dimensions.get("window").width / 1 - 20, 
-      backgroundColor: "#eaeaea",
+      // width: Dimensions.get("window").width / 1 - 20, 
+      // backgroundColor: "#eaeaea",
       // height: 55,
       // textAlign: "center",
       // alignItems: "center",
-      borderRadius: 10,
+      borderRadius: 25,
       marginBottom: 10,
       padding:10,
       flexDirection:"row",
+      width:"auto",
   
     },
     boxtext:{
       // alignItems:"center",  
       flexDirection:"row",
       marginLeft:10,
+      color:"#000",
       justifyContent:"space-between",
       alignItems:"center",
    
@@ -273,9 +277,7 @@ const styles = StyleSheet.create({
  
     examname:{
       fontWeight:"bold",
-      marginRight:30,
-      maxWidth:80,
-  
+      marginRight:30, 
     },
     activebox:{
       backgroundColor:"#0cb551",
@@ -301,6 +303,8 @@ const styles = StyleSheet.create({
     },
     searchWrap:{
       padding:10,
+      width:"50%",
+      marginTop:10,
     },
     searchIcon:{
       position:"absolute",
@@ -309,14 +313,15 @@ const styles = StyleSheet.create({
       borderRadius:5,
       backgroundColor:"#1b6913",
       padding:10,
-      top:50,
+      top:55,
       
     },
     magnifying:{
-      padding:10,
+      padding:20,
       width:40,
-      left:"85%",
+      left:"82%",
       position:"absolute",
       zIndex:1,
+      top:"-60px"
     },
   });

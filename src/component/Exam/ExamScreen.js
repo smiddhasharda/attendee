@@ -202,14 +202,13 @@ const ExamScreen = ({ navigation,userAccess,userData }) => {
   // ItemSeparatorComponent={() => <View style={{ height: 5 }} />}
   horizontal={true}
 />
-
       </View>
       <View style={styles.roomNumber}>
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : (
           roomDetails.length > 0 ? (
-            <ScrollView>
+            <ScrollView style={styles.scrollabar}>
               {roomDetails.map((roomData, index) => (
                 <Pressable onPress={() => UserAccess?.create === 1 ? navigation.navigate("RoomDetail", { room_Nbr: roomData.ROOM_NBR ,exam_Dt: roomData.EXAM_DT , startTime: roomData.EXAM_START_TIME ,navigation,userAccess }) : ''}>
                 <View key={index} style={[styles.box]}>
@@ -273,16 +272,15 @@ const styles = StyleSheet.create({
     // backgroundColor: "#eaeaea",
     borderRadius: 10,
     marginBottom: 10,
-    padding:10,
-    flexDirection:"row",
+    padding:20,
+    flexDirection:"column",
   },
   boxtext:{
     // alignItems:"center",  
     flexDirection:"row",
     marginLeft:10,
     color:"#000",
-  
-  
+    justifyContent:"space-between",
   },
   examtime:{
     alignItems:"flex-start",
@@ -315,7 +313,14 @@ const styles = StyleSheet.create({
   },
   activetext: {
     color: "#fff",
-  }
+  },
+  dropdownWrap: {
+    marginRight:"10px"
+  },
+  dropdown: {
+    width: '50%',
+    width: '100%',  
+  },
 });
 
 export default ExamScreen;

@@ -2,7 +2,8 @@ import React,{useState} from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import DropDownPicker from "react-native-dropdown-picker";
-// import Content from '../../globalComponent/MainContain';
+import TabNavigator from '../TabNavigator';
+import Content from '../MainContain/Content'
 
 function TopHeader() {
   
@@ -42,38 +43,40 @@ function TopHeader() {
                   </View>
           </View>  
       </View>     
-          <View style={styles.graphicalrep}>
-            <View>
-                <Text>Graphical View</Text>
-            
-            </View>
-          </View>
-          <View style={styles.maincontain}>
-          <Text style={styles.attendacehead}>Attendance</Text>
-            <View style={styles.boxmain}>
-          <View style={styles.boxesWrap}>
-            <Text style={styles.boxcount}>02</Text>
-            <Text>Exam</Text>
-          </View>
-            <View style={styles.boxesWrap}>
-              <Text style={styles.boxcount}>02</Text>
-              <Text>Report</Text>
-            </View>
-            <View style={styles.boxesWrap}>
-              <Text style={styles.boxcount}>02</Text>
-              <Text>Report</Text>
-            </View>
-            <View style={styles.boxesWrap}>
-              <Text style={styles.boxcount}>02</Text>
-              <Text>Report</Text>
-            </View>
-            <View style={styles.boxesWrap}>
-              <Text style={styles.boxcount}>02</Text>
-              <Text>Report</Text>
-            </View>
-        
-            </View>
-          </View>
+                        <View style={styles.graphicalrep}>
+                          <View>
+                              <Text>Graphical View</Text>
+                          
+                          </View>
+                        </View>
+                        <Content />
+                          {/* <View style={styles.maincontain}>
+                          <Text style={styles.attendacehead}>Attendance</Text>
+                            <View style={styles.boxmain}>
+                          <View style={styles.boxesWrap}>
+                            <Text style={styles.boxcount}>02</Text>
+                            <Text>Exam</Text>
+                          </View>
+                            <View style={styles.boxesWrap}>
+                              <Text style={styles.boxcount}>02</Text>
+                              <Text>Report</Text>
+                            </View>
+                            <View style={styles.boxesWrap}>
+                              <Text style={styles.boxcount}>02</Text>
+                              <Text>Report</Text>
+                            </View>
+                            <View style={styles.boxesWrap}>
+                              <Text style={styles.boxcount}>02</Text>
+                              <Text>Report</Text>
+                            </View>
+                            <View style={styles.boxesWrap}>
+                              <Text style={styles.boxcount}>02</Text>
+                              <Text>Report</Text>
+                            </View>
+                        
+                            </View>
+                          </View> */}
+                         
     </View>
     </ScrollView>
   );
@@ -115,7 +118,8 @@ const styles = StyleSheet.create({
     width:40,
     height:40,
     borderRadius:50,
-    top:0,
+    top:"-26px",
+    position:"relative",
     // left:"10%",
   },
   profileinfo:{
