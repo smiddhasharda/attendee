@@ -21,7 +21,7 @@
     "@reduxjs/toolkit": "^2.2.1",
     "axios": "^1.6.8",
     "expo": "^51.0.7",
-    "expo-camera": "^15.0.8",
+    "expo-camera": "~15.0.9",
     "expo-checkbox": "~3.0.0",
     "expo-document-picker": "~12.0.1",
     "expo-image-picker": "^15.0.5",
