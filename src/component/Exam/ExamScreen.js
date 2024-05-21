@@ -227,7 +227,8 @@ const styles = StyleSheet.create({
 
   dates: {
     padding: 10,
-    width:"50%",
+    // width:"50%",
+    width:'auto',
   },
   dateItem: {
     padding: 10,

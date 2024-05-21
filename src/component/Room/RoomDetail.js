@@ -40,7 +40,14 @@ function RoomDetail() {
     setScannedData(ScannedData);
     setIsScanning(false);
    let studentData = studentDetails?.filter((data)=> data.EMPLID === ScannedData)?.[0] || '';
+   if(studentData){
     navigation.navigate("StudentInfo", { room_Nbr: studentData.ROOM_NBR ,exam_Dt: studentData.EXAM_DT,catlog_Nbr: studentData.CATALOG_NBR ,system_Id:studentData.EMPLID, seat_Nbr: studentData.PTP_SEQ_CHAR ,startTime: startTime,reportId: presentStudentList?.filter((item)=>item.EMPLID === Number(studentData.EMPLID))?.[0]?.PK_Report_Id ,navigation,userAccess });
+   }
+   else{
+    showToast("User Not Belong In This Room !", "error");
+    handleCancel();
+   }
+  
   };
   const handleCancel = () => {
     setIsScanning(false);
@@ -123,7 +130,7 @@ function RoomDetail() {
   return (
     <View style={styles.container}>
     
-        {isScanning ? <CodeScanner onScannedData={UserAccess?.create === 1 ? handleScannedData : ''} onCancel={handleCancel} /> : 
+        {isScanning ? <CodeScanner onScannedData={ handleScannedData} onCancel={handleCancel} /> : 
         <View>
            <View style={styles.searchWrap}>
         <TextInput
@@ -133,9 +140,9 @@ function RoomDetail() {
       </View>
       <View style={[styles.magnifying]}>
         {/* <Ionicons name="search-outline" size={27} color="#fff" style={styles.searchIcon} /> */}
-        <Pressable onPress={startScanning}>
+        {UserAccess?.create === 1 && <Pressable onPress={startScanning}>
           <Ionicons name="qr-code-outline" size={27} color="#fff" style={styles.searchIcon} />
-        </Pressable>
+        </Pressable>}
         {scannedData && (
           <View>
             <Text>Scanned Data: {scannedData}</Text>

@@ -45,11 +45,8 @@ export default function CodeScanner({ onScannedData, onCancel }) {
 
   return (
     <View style={styles.container}>
-      <CameraView style={styles.camera} facing={facing} onBarCodeScanned={handleBarCodeScanned}>
+      <CameraView style={styles.camera} onBarcodeScanned={handleBarCodeScanned}>
         <View style={styles.buttonContainer}>
-          <Pressable style={styles.button} onPress={toggleCameraFacing}>
-            <Text style={styles.text}>Flip Camera</Text>
-          </Pressable>
           <Pressable style={styles.cancelButton} onPress={handleCancel}>
             <Text style={styles.cancelButtonText}>Cancel</Text>
           </Pressable>
