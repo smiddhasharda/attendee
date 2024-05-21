@@ -11,13 +11,7 @@ export default StyleSheet.create({
     paddingBottom: 0,
     borderRadius: 12,
     backgroundColor: "#fff",
-    shadowRadius: 4,
-    shadowOpacity: 0.3,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.3)',
   },
   arrow: {
     top: 10,
@@ -32,12 +26,6 @@ export default StyleSheet.create({
     borderLeftColor: "transparent",
     height: 0,
     width: 0,
-    shadowRadius: 4,
-    shadowOpacity: 0.3,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 6,
-    },
+    boxShadow: '0px 6px 4px rgba(0, 0, 0, 0.3)',
   },
 });

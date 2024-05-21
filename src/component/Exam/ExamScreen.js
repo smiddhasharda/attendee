@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet, ScrollView, Pressable, ActivityIndicator } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, Feather } from '@expo/vector-icons';
 import { view, fetch } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -15,6 +15,13 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
   const [loading, setLoading] = useState(false);
 
   const { showToast } = useToast();
+
+  const [open, setOpen] = useState(false);
+  const [userRoleList, setUserRoleList] = useState([
+    { label: 'OnGoing', value: 'ongoing' },
+    { label: 'Upcoming Exam', value: 'Upcoming' },
+ 
+  ]);
 
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");

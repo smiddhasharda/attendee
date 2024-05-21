@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { View, Text, Pressable, Image } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem, } from "@react-navigation/drawer";
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from "@react-navigation/drawer";
 import RoleScreen from "../../component/Roles/RoleScreen";
 import ModuleScreen from "../../component/Module/ModuleScreen";
 import DashboardScreen from "../../component/Dashboard/DashboardScreen";
@@ -20,13 +20,14 @@ const RoleComponent = ({ userAccess }) => <RoleScreen userAccess={userAccess} />
 const ModuleComponent = ({ userAccess }) => <ModuleScreen userAccess={userAccess} />;
 const DashboardComponent = ({ userAccess }) => <DashboardScreen userAccess={userAccess} />;
 const UserComponent = ({ userAccess }) => <UserScreen userAccess={userAccess} />;
-const ExamComponent = ({ navigation, userAccess,userData }) => <ExamScreen navigation={navigation} userAccess={userAccess} userData={userData} />;
+const ExamComponent = ({ navigation, userAccess, userData }) => <ExamScreen navigation={navigation} userAccess={userAccess} userData={userData} />;
 const Drawer = createDrawerNavigator();
 
 const CustomDrawerContent = ({ ...props }) => {
   const { showToast } = useToast();
   const [file, setFile] = useState("");
   const [open, setOpen] = useState(false);
+
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
 
@@ -131,10 +132,8 @@ const CustomDrawerContent = ({ ...props }) => {
             }
             onImageChange={handleImageChange}
           />
-          {file && (
-            <View
-              style={{ flexDirection: "row", justifyContent: "space-between" }}
-            >
+          <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <Text>{file && (            
               <View style={styles.buttonwrap}>
                 <Pressable onPress={() => handleProfilePic()}>
                   <Text>Save</Text>
@@ -143,9 +142,9 @@ const CustomDrawerContent = ({ ...props }) => {
                   <Text>Cancel</Text>
                 </Pressable>
               </View>
-            </View>
-          )}
-          <Text style={styles.username}> {props?.userData?.name}</Text>
+          )} </Text>
+        </View>
+          <Text style={styles.username}>{props?.userData?.name}</Text>
           <View style={styles.dropdownWrap}>
             <DropDownPicker
               open={open}
@@ -164,7 +163,7 @@ const CustomDrawerContent = ({ ...props }) => {
       </View>
       <DrawerItemList {...props} style={styles.dropdownmain} />
       <View>
-        <Pressable onPress={() =>props.handleLogout()}>
+        <Pressable onPress={() => props.handleLogout()}>
           <Text style={{ margin: 16 }}>Logout</Text>
         </Pressable>
       </View>
@@ -194,13 +193,9 @@ const DrawerNavigator = ({ navigation }) => {
   const fetchUserRolePermission = async () => {
     try {
       const userRoleArray = await AsyncStorage.getItem("userRolePermission");
-      const parsedUserRoleArray = userRoleArray
-        ? JSON.parse(userRoleArray)
-        : [];
+      const parsedUserRoleArray = userRoleArray ? JSON.parse(userRoleArray) : [];
       const userDataArray = await AsyncStorage.getItem("userData");
-      const parsedUserDataArray = userDataArray
-        ? JSON.parse(userDataArray)
-        : [];
+      const parsedUserDataArray = userDataArray ? JSON.parse(userDataArray) : [];
       const RoleList = parsedUserRoleArray?.map((item, index) => ({
         label: item?.rolePermission?.[0]?.roleName,
         value: index,
@@ -213,22 +208,24 @@ const DrawerNavigator = ({ navigation }) => {
       console.error("Error fetching user role permission:", error);
     }
   };
+
   useEffect(() => {
     fetchUserRolePermission();
   }, []);
-  
+
   if (!userRolePermission || userRolePermission.length === 0 || !userRoleList) {
     return (
       <View>
         <Text>
           You do not have access to any modules. Please contact admin first!
         </Text>
-        <Pressable onPress={() =>handleLogout()}>
+        <Pressable onPress={() => handleLogout()}>
           <Text style={{ margin: 16 }}>Logout</Text>
         </Pressable>
       </View>
     );
   }
+
   return (
     <Drawer.Navigator
       initialRouteName="Dashboard"
@@ -245,7 +242,12 @@ const DrawerNavigator = ({ navigation }) => {
       )}
     >
       {userRoleList?.[userRoleIndex]?.module
-        .filter((module) => module?.read === 1 && (module?.moduleMaster[0]?.moduleName !== "StudentInfo" && module?.moduleMaster[0]?.moduleName !== "RoomDetail" ))
+        .filter(
+          (module) =>
+            module?.read === 1 &&
+            module?.moduleMaster[0]?.moduleName !== "StudentInfo" &&
+            module?.moduleMaster[0]?.moduleName !== "RoomDetail"
+        )
         .map((module, index) => (
           <Drawer.Screen key={index} name={module?.moduleMaster[0]?.moduleName}>
             {(props) => {
@@ -259,8 +261,8 @@ const DrawerNavigator = ({ navigation }) => {
                 case "UserScreen":
                   return <UserComponent {...props} userAccess={userRoleList?.[userRoleIndex]} />;
                 case "ExamScreen":
-                  return <ExamComponent {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData}/>;
-               default:
+                  return <ExamComponent {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData} />;
+                default:
                   return null;
               }
             }}
