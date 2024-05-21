@@ -1,16 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, Pressable } from 'react-native';
-import { Camera } from 'expo-camera';
+import { CameraView, useCameraPermissions } from 'expo-camera';
 
 export default function CodeScanner({ onScannedData, onCancel }) {
+  const [facing, setFacing] = useState('back');
+  const [permission, requestPermission] = useCameraPermissions();
   const [hasPermission, setHasPermission] = useState(null);
 
-  useEffect(() => {
-    (async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === 'granted');
-    })();
-  }, []);
+  if (!permission) {
+    // Camera permissions are still loading.
+    return <View />;
+  } 
+
+  if (!permission.granted) {
+    // Camera permissions are not granted yet.
+    return (
+      <View style={styles.container}>
+        <Text style={{ textAlign: 'center' }}>We need your permission to show the camera</Text>
+        <Button onPress={requestPermission} title="grant permission" />
+      </View>
+    );
+  }
+
+  const toggleCameraFacing = () => {
+    setFacing(current => (current === 'back' ? 'front' : 'back'));
+  }
+  // useEffect(() => {
+  //   (async () => {
+  //     const { status } = await Camera.requestCameraPermissionsAsync();
+  //     setHasPermission(status === 'granted');
+  //   })();
+  // }, []);
 
   const handleBarCodeScanned = ({ type, data }) => {
     onScannedData(data);
@@ -21,8 +41,19 @@ export default function CodeScanner({ onScannedData, onCancel }) {
   };
 
   return (
+
     <View style={styles.container}>
-      {hasPermission === false && <Text>No access to camera</Text>}
+        <CameraView style={styles.camera} facing={facing} onBarCodeScanned={handleBarCodeScanned}>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
+          <Text style={styles.text}>Flip Camera</Text>
+        </TouchableOpacity>
+        <Pressable style={styles.cancelButton} onPress={handleCancel}>
+            <Text style={styles.cancelButtonText}>Cancel</Text>
+          </Pressable>
+      </View>
+    </CameraView>
+      {/* {hasPermission === false && <Text>No access to camera</Text>}
       {hasPermission && (
         <View style={styles.cameraContainer}>
           <Camera
@@ -34,7 +65,7 @@ export default function CodeScanner({ onScannedData, onCancel }) {
             <Text style={styles.cancelButtonText}>Cancel</Text>
           </Pressable>
         </View>
-      )}
+      )} */}
     </View>
   );
 }
