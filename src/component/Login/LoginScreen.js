@@ -1,27 +1,23 @@
-import React, { useState, useEffect } from "react";
-import { Image, SafeAreaView, StatusBar, Text, Pressable, View, LayoutAnimation,TextInput } from "react-native";
-import CheckBox from 'expo-checkbox';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, TextInput, Pressable, Image, LayoutAnimation } from 'react-native';
 import LoginStyles from "./LoginScreen.style";
 import useStateWithCallback from "../../helpers/useStateWithCallback";
 import emailValidator from "../../helpers/emailValidator";
 import Tooltip from "../../globalComponent/ToolTip/Tooltip";
-import { login,emailVerify  } from '../../AuthService/AuthService';
+import { login, emailVerify } from '../../AuthService/AuthService';
 import { useToast } from '../../globalComponent/ToastContainer/ToastContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const LoginScreen = ({ style, logoImageStyle, loginTextStyle, loginButtonStyle, logoImageSource = require("../../local-assets/attendlogin.jpg"), emailPlaceholder = "Email", OTPPlaceholder = "OTP", navigation, children }) => {
+const LoginScreen = ({navigation}) => {
   const { showToast } = useToast();
-
   const [loginData, setLoginData] = useState({
-    email:  '',
+    email: '',
     OTP: '',
   });
 
-  // const [isOTPVisible, setOTPVisible] = useState(false);
   const [isEmailTooltipVisible, setEmailTooltipVisible] = useStateWithCallback(false);
   const [isOTPTooltipVisible, setOTPTooltipVisible] = useStateWithCallback(false);
   const [isOTPInputDisabled, setOTPInputDiasbled] = useStateWithCallback(true);
-
 
   const handleEmailChange = (text) => {
     isEmailTooltipVisible && setEmailTooltipVisible(false);
@@ -33,10 +29,6 @@ const LoginScreen = ({ style, logoImageStyle, loginTextStyle, loginButtonStyle, 
     setLoginData({ ...loginData, OTP: text });
   };
 
-  // const handleEyePress = () => {
-  //   setOTPVisible((oldValue) => !oldValue);
-  // };
-
   const handleEmailValidation = () => {
     if (emailValidator(loginData?.email)) {
       setEmailTooltipVisible(false);
@@ -44,9 +36,10 @@ const LoginScreen = ({ style, logoImageStyle, loginTextStyle, loginButtonStyle, 
       return;
     } else {
       LayoutAnimation.spring();
-       setEmailTooltipVisible(true);
+      setEmailTooltipVisible(true);
     }
   };
+
   const handleOTPValidation = () => {
     if (loginData?.OTP) {
       setOTPTooltipVisible(false);
@@ -58,14 +51,15 @@ const LoginScreen = ({ style, logoImageStyle, loginTextStyle, loginButtonStyle, 
     }
   };
 
+ 
   const handleLogin = async () => {
     try {
       await login(
         'tbl_user_master',
         `email_id = '${loginData.email}' AND OTP = '${loginData.OTP}'`
       );
-      const userRoleArray = await AsyncStorage.getItem('userRolePermission') || '';
-      const userRolePermission = userRoleArray && JSON?.parse(userRoleArray) || '';
+      const userRoleArray = await AsyncStorage.getItem('userRolePermission') || [];
+      const userRolePermission = JSON.parse(userRoleArray) || []; 
       navigation.replace('PostLogin', { userRolePermission });
     } catch (error) {
       if (error.message === 'Invalid credentials') {
@@ -79,132 +73,91 @@ const LoginScreen = ({ style, logoImageStyle, loginTextStyle, loginButtonStyle, 
       }
     }
   };
-
+  
   const handleEmailVerify = async () => {
     try {
       const response = await emailVerify(
         'tbl_user_master',
         `email_id = '${loginData.email}' AND isActive = 1`
       );
-      if(response){
-        showToast(`OTP Send Successfully  to ${loginData.email}`, 'success');
+      if (response) {
+        showToast(`OTP Sent Successfully to ${loginData.email}`, 'success');
         setOTPInputDiasbled(false);
-      }      
+      }
     } catch (error) {
       if (error.message === 'Invalid Email Id') {
         showToast('Invalid Email Id', 'error');
       } else {
-        console.error('Login Failed', error);
-        showToast('Login failed, please try again later', 'error');
+        console.error('Email Verification Failed', error);
+        showToast('Email verification failed, please try again later', 'error');
       }
     }
   };
-  
 
-  const renderLogo = () => (
-    <Image
-    resizeMode="contain"
-    source={logoImageSource}
-    style={[LoginStyles.logoImageStyle, logoImageStyle]}
-  />
-  );
-
-  const renderEmailInput = () => {
-    const tooltipContent = () => (
-      <View style={LoginStyles.emailTooltipContainer}>
-        <Text style={LoginStyles.emailTooltipTextStyle}>
-          That
-          <Text style={LoginStyles.emailTooltipRedTextStyle}>email address</Text>
-          doesn't look right
-        </Text>
-      </View>
-    );
-    return (
-      <View style={LoginStyles.emailTextInputContainer}>
-        <>
+  return (
+    <View style={LoginStyles.container}>
+      <Image style={LoginStyles.bgimg1} source={require("../../local-assets/login-shape-bg-1.png")} />
+      <View style={LoginStyles.form}>
+        <View style={LoginStyles.logininfoWrap}>
+          <View style={LoginStyles.loginheadWrap}>
+            <Text style={LoginStyles.loginheading}>Login</Text>
+            <Text style={LoginStyles.loginsubheading}>Login into your Account</Text>
+          </View>
+          <Text style={LoginStyles.label}>Email Id</Text>
           {isEmailTooltipVisible && (
-            <Tooltip>{tooltipContent()}</Tooltip>
+            <Tooltip>
+              <View style={LoginStyles.emailTooltipContainer}>
+                <Text style={LoginStyles.emailTooltipTextStyle}>
+                  That
+                  <Text style={LoginStyles.emailTooltipRedTextStyle}> email address </Text>
+                  doesn't look right
+                </Text>
+              </View>
+            </Tooltip>
           )}
           <TextInput
-            placeholder={emailPlaceholder}
-            style={LoginStyles.textInputValue}
+            placeholder='Enter Your Email ID'
+            style={LoginStyles.input}
             value={loginData.email}
             onChangeText={handleEmailChange}
             autoCapitalize="none"
             onFocus={() => setEmailTooltipVisible(false)}
-            readOnly={!isOTPInputDisabled}
+            editable={isOTPInputDisabled}
           />
-        </>
-      </View>
-    );
-  };
-
-  const renderOTPInput = () => {
-    // const eyeIcon = isOTPVisible
-    //   ? require("../../local-assets/eye.png")
-    //   : require("../../local-assets/eye-off.png");
-
-    const renderTooltipContent = () =>
-      <View style={LoginStyles.passwordTooltipContainer}>
-        <Text style={LoginStyles.passwordTooltipTextStyle}>
-          Incorrect
-          <Text style={LoginStyles.passwordTooltipRedTextStyle}>OTP</Text>
-        </Text>
-      </View>;
-    return (
-        <View style={LoginStyles.passwordTextInputContainer}>
-          {isOTPTooltipVisible && (
-            <Tooltip>{renderTooltipContent()}</Tooltip>
+          {!isOTPInputDisabled && (
+            <View>
+              <Text style={LoginStyles.label}>OTP</Text>
+              {isOTPTooltipVisible && (
+                <Tooltip>
+                  <View style={LoginStyles.passwordTooltipContainer}>
+                    <Text style={LoginStyles.passwordTooltipTextStyle}>
+                      Incorrect
+                      <Text style={LoginStyles.passwordTooltipRedTextStyle}> OTP</Text>
+                    </Text>
+                  </View>
+                </Tooltip>
+              )}
+              <TextInput
+                placeholder='Enter The OTP'
+                value={loginData.OTP}
+                onChangeText={handleOTPChange}
+                style={LoginStyles.input}
+                autoCapitalize="none"
+                onFocus={() => { setOTPTooltipVisible(false); }}
+              />
+            </View>
           )}
-          <TextInput
-            placeholder={OTPPlaceholder}
-            value={loginData.OTP}
-            // secureTextEntry={!isOTPVisible}
-            onChangeText={handleOTPChange}
-            // enableIcon
-            style={LoginStyles.textInputValue}
-            // iconImageSource={eyeIcon}
-            autoCapitalize="none"
-            onFocus={() => {
-              setOTPTooltipVisible(false);
-            }}
-            // onIconPress={handleEyePress}
-          />
+          <Pressable
+            style={[LoginStyles.loginButtonStyle]}
+            onPress={() => { isOTPInputDisabled ? handleEmailValidation() : handleOTPValidation(); }}
+          >
+            <Text style={[LoginStyles.loginTextStyle]}>{isOTPInputDisabled ? "Send OTP" : "Login"}</Text>
+          </Pressable>
         </View>
-      
-    );
-  };
-
-  const renderTextInputContainer = () => (
-    <View style={[LoginStyles.textInputContainer]}>
-      {renderEmailInput()}
-      {!isOTPInputDisabled && renderOTPInput()}
+      </View>
+      <Image style={LoginStyles.bgimages2} source={require("../../local-assets/login-shape-bg-2.png")} />
     </View>
   );
-
-  const renderButton = () => (
-    <View> 
-      <Pressable
-    style={[LoginStyles.loginButtonStyle, loginButtonStyle]}
-    onPress={() => { isOTPInputDisabled ? handleEmailValidation() : handleOTPValidation();}}
-  >
-    <Text style={[LoginStyles.loginTextStyle, loginTextStyle]}>{isOTPInputDisabled ? "Send OTP" : "Login"}</Text>
-  </Pressable>
-   </View>
- 
-  );
-    
-  return (
-    <SafeAreaView style={[LoginStyles.container, style]}>
-      <StatusBar barStyle="dark-content" />
-      {renderLogo()}
-      <SafeAreaView style={[LoginStyles.otpbtn, style]}>
-      {renderTextInputContainer()}
-      {renderButton()}
-      </SafeAreaView>
-      {children}
-    </SafeAreaView>
-  );
-};
+}
 
 export default LoginScreen;
