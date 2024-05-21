@@ -147,7 +147,7 @@ function RoomDetail() {
           <ActivityIndicator size="large" color="#0000ff" />
         ) : (
           studentDetails?.length > 0 ? studentDetails?.map((studentData, index) =>
-            ( <Pressable onPress={() => UserAccess?.create === 1 ?navigation.navigate("StudentInfo", { room_Nbr: studentData.ROOM_NBR ,exam_Dt: studentData.EXAM_DT,catlog_Nbr: studentData.CATALOG_NBR ,system_Id:studentData.EMPLID, seat_Nbr: studentData.PTP_SEQ_CHAR, reportId: presentStudentList?.filter((item)=>item.EMPLID === Number(studentData.EMPLID))?.[0]?.PK_Report_Id, navigation,userAccess }) : ''}>
+            ( <Pressable onPress={() => UserAccess?.create === 1 ? navigation.navigate("StudentInfo", { room_Nbr: studentData.ROOM_NBR ,exam_Dt: studentData.EXAM_DT,catlog_Nbr: studentData.CATALOG_NBR ,system_Id:studentData.EMPLID, seat_Nbr: studentData.PTP_SEQ_CHAR, reportId: presentStudentList?.filter((item)=>item.EMPLID === Number(studentData.EMPLID))?.[0]?.PK_Report_Id, navigation,userAccess }) : ''}>
             <View style={[styles.box,presentStudentList?.find((item)=>item.EMPLID === Number(studentData.EMPLID)) ? styles.activebox :'' ]} key={index}>
               <View style={[styles.boxtext]}>
                 <Image source={user} style={styles.userimage} resizeMode="cover" />
