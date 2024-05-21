@@ -10,61 +10,66 @@ const { width: ScreenWidth, height:ScreenHeight } = Dimensions.get("screen");
 
 const LoginStyles = StyleSheet.create({
   container: {
-    flex:1,
-    backgroundColor: "#E5E4E2",
-    width: `${100}%`,
-    // margin: `auto`,
-    height: `${100}%`,
-    flexDirection:"row",
+    flex: 1,
   },
-  otpbtn:{
-   alignSelf:"center",
-   justifyContent:"center", 
+  form: {
+    backgroundColor: "white",
+    borderRadius: 10,
+    display: "flex",
+    position: "absolute",
+    zIndex: 2,
+    width: "80%",
+    top: "24%",
+    left: "10%",
+    padding: 20,
   },
-  logoImageStyle: {
-    flex:1,
-    width:"100%",
-    resizeMode:"cover",
-    height:"100%",
-    // width: ScreenWidth * 0.5, 
-    // height: ScreenWidth * 0.5,
-    // alignSelf: "center",
-    // marginTop: ScreenHeight * 0.1, 
+  label: {
+    fontSize: 16,
+    marginBottom: 5,
+    fontWeight: "bold"
   },
-  textInputContainer: {
-    // marginTop: 12,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    // width: `${70}%` ,
-    width: ScreenWidth * 0.5,
-    alignSelf:"center",
-    // marginRight:80,
-    // width:900, 
-    
-   
+  input: {
+    height: 40,
+    borderColor: "#ddd",
+    borderWidth: 1,
+    marginBottom: 15,
+    padding: 10,
+    borderRadius: 5,
   },
-  checkboxContainer: {
-    marginTop: 12,
-    marginBottom: 12,
-    display: 'flex',
+  loginheading: {
+    fontWeight: "bold",
+    fontSize: 28,
     alignItems: "center",
-    justifyContent: "center",
-    width: `${100}%`,
   },
-  checkboxValue: {
-    display: 'flex',
+  loginsubheading: {
+    fontSize: 16,
   },
-  checkboxLabel: {
-    color: "red",
-    display: 'flex',
+  loginheadWrap: {
+    width: "100%",
+    padding: 40,
   },
-  passwordTextInputContainer: {
-    marginTop: 16,
-    alignItems: "center",
-    justifyContent: "center",
+  logininfoWrap: {
+    width: "100%",
+    padding: 40,
   },
-
+  bgimg1: {
+    width: "100%",
+    height: "100%",
+    position: "absolute",
+    zIndex: 1,
+    top: "-72%",
+    transform: [{ rotate: '142deg' }],
+    left: "-48%",
+  },
+  bgimages2: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    zIndex: 1,
+    transform: [{ rotate: '142deg' }],
+    right: "-78%",
+    bottom: "0",
+  },
   loginButtonStyle: {
     height: 45,
     width: 150, 
@@ -77,83 +82,11 @@ const LoginStyles = StyleSheet.create({
     marginLeft: 15,
     boxShadow: '0px 0px 10px rgba(0, 0, 0, 0)',
 
-  },
-  
+  },  
   loginTextStyle: {
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
-  },
-  signupStyle: {
-    marginTop: 8,
-    //display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  signupTextStyle: {
-    color: "#acabb0",
-    width: `${90}%`,
-    marginTop: 8,
-    textAlign: 'center',
-    marginRight:10,
-
-  },
-  dividerStyle: {
-    height: 0.5,
-    marginTop: 24,
-    marginBottom: 12,
-    borderRadius: 16,
-    width: ScreenWidth * 0.8,
-    alignSelf: "center",
-    backgroundColor: "#ccc",
-  },
-  socialLoginContainer: {
-    marginTop: 16,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  facebookSocialButtonTextStyle: {
-    color: "#4267B2",
-  },
-  twitterSocialButtonTextStyle: {
-    color: "#56bfe8",
-  },
-  discordSocialButtonTextStyle: {
-    color: "#5865F2",
-  },
-  socialButtonStyle: {
-    marginTop: 16,
-  },
-  eyeIconContainer: {
-    right: 16,
-    top: 14,
-    position: "absolute",
-  },
-  eyeIcon: {
-    width: 24,
-    height: 24,
-    // tintColor: "#555",
-  },
-  
-  shakeText: {
-    color: "red",
-    marginTop: 8,
-    marginLeft: 12,
-    marginRight: "auto",
-  },
-  emailTextInputContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  textInputValue:{
-    flex: 1,
-    height: 40,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    // width: `${40}%`
-    
   },
   emailTooltipContainer: {
     padding: 12,
@@ -168,17 +101,6 @@ const LoginStyles = StyleSheet.create({
     fontWeight: "bold",
     color: "red",
   },
-  emailTooltipContentStyle: {
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  emailTooltipBackgroundStyle: {
-    backgroundColor: "transparent",
-  },
-  passwordTooltipStyle: {
-    marginTop: 30,
-  },
   passwordTooltipContainer: {
     padding: 12,
     alignItems: "center",
@@ -191,37 +113,7 @@ const LoginStyles = StyleSheet.create({
     fontWeight: "bold",
     color: "red",
   },
-  passwordTooltipBackgroundStyle: {
-    backgroundColor: "transparent",
-  },
-  passwordTooltipContentStyle: {
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  // --------------------------------------------------------Media Querry----------------------------------------------------------//
   
-  '@media (max-width: 768px)': {
-    logoImageStyle: {
-      width: '${100}%', 
-      height: ScreenWidth * 0.3, 
-    },
-
-    otpbtn:{
-      with:ScreenWidth * 0.5,
- 
-    },
-
-    textInputContainer:{
-
-    }
-  },
-
-  '@media (min-width: 1024px)': {
-    
-  },
- 
 });
 
 export default LoginStyles;
