@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import DropDownPicker from "react-native-dropdown-picker";
 import TabNavigator from '../TabNavigator';
-import Content from '../MainContain/Content'
+
 
 function TopHeader() {
   
@@ -21,8 +21,8 @@ function TopHeader() {
                   <View style={styles.profileinfo}>
                   <Text style={{color:"#fff" ,fontSize:"16px" ,fontWeight:"bold" }}>Sanaya Dubey</Text>
                   <View style={styles.facultyWrap}>
-                  <Text  style={{color:"#fff",fontSize:"18px", marginRight:"10px" ,fontWeight:"bold"}}>Faculty Role</Text>
-                  <View style={styles.dropdownWrap}>             
+                  <Text  style={{color:"#fff",fontSize:"16px", fontWeight:"bold"}}>Faculty Role</Text>
+                  {/* <View style={styles.dropdownWrap}>             
                  <DropDownPicker
                   open={open}
                   value={''}
@@ -31,11 +31,11 @@ function TopHeader() {
                   // setValue={(value) => ''}
                   style={styles.dropdown}
                   // dropDownStyle={{ backgroundColor: "#fafafa" }}
-                  // dropDownMaxHeight={100}
+                  dropDownMaxHeight={100}
                   dropDownDirection="Bottom"                 
                   containerStyle={styles.rolePicker}
                 />
-                </View>
+                </View> */}
             </View>
                   </View>
                   <View style={{top:"0"}}>
@@ -43,13 +43,13 @@ function TopHeader() {
                   </View>
           </View>  
       </View>     
-                        <View style={styles.graphicalrep}>
+                        {/* <View style={styles.graphicalrep}>
                           <View>
                               <Text>Graphical View</Text>
                           
                           </View>
-                        </View>
-                        <Content />
+                        </View> */}
+                        {/* <Content /> */}
                           {/* <View style={styles.maincontain}>
                           <Text style={styles.attendacehead}>Attendance</Text>
                             <View style={styles.boxmain}>
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     // padding: 40,
     // width:400,
     width:"100%",
-    height:"40%",
+    // height:"40%",
   },
   headertextWrap:{
      padding:10,
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     width:40,
     height:40,
     borderRadius:50,
-    top:"-26px",
+    top:"-14px",
     position:"relative",
     // left:"10%",
   },
