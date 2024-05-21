@@ -8,26 +8,15 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const ExamScreen = ({ navigation,userAccess,userData }) => {
   const UserAccess = userAccess?.module?.filter((item)=> item?.FK_ModuleId === 5)?.[0];
   const [examDates, setExamDates] = useState([]);
-  // const [examDates, setExamDates] = useState([{ EXAM_DT: '06-FEB-24' }, { EXAM_DT: '07-FEB-24' }, { EXAM_DT: '10-FEB-24' }, { EXAM_DT: '10-FEB-24' }, { EXAM_DT: '10-FEB-24' }, { EXAM_DT: '10-FEB-24' }, { EXAM_DT: '10-FEB-24' }])
-
   const [roomDetails, setRoomDetails] = useState([]);
   const [examSelectedDate, setExamSelectedDate] = useState('');
   const [invigilatorData, setInvigilatorData] = useState();
 
-  // const [examSelectedDate, setExamSelectedDate] = useState(examDates[0].EXAM_DT);
   const [loading, setLoading] = useState(false);
 
   const fetchRoomDetails = async(date) => {
     setLoading(true);
     await userAccess?.label === "Admin" ? handleGetDateView() : handleGetInvigilatorDutyDate() ;
-    // await handleGetDateView();
-
-    // Simulate fetching data from API
-    // setTimeout(() => {
-    //   const filteredRooms = sampleRoomData.filter(room => room.EXAM_DT === date);
-    //   setRoomDetails(filteredRooms);
-    //   setLoading(false);
-    // }, 1000); // Simulate 1 second delay
   };
 
 
@@ -108,16 +97,10 @@ const ExamScreen = ({ navigation,userAccess,userData }) => {
   const handleGetRoomView = async (SelectedDate, RoomArray) => {
     try {
       const authToken = await checkAuthToken();
-      
-      // Format the date as 'DD-MMM-YY'
       const formattedDate = new Date(SelectedDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }).toUpperCase().replace(/ /g, '-');
-      
-      // Build the custom query
       const roomCondition = RoomArray && RoomArray.length > 0 ? `AND PS_S_PRD_EX_RME_VW.ROOM_NBR IN (${RoomArray.map(room => `'${room}'`).join(', ')})` : '';
-      
       const customQuery = ` SELECT DISTINCT PS_S_PRD_EX_RME_VW.EXAM_DT, PS_S_PRD_EX_RME_VW.ROOM_NBR, PS_S_PRD_EX_TME_VW.EXAM_START_TIME FROM PS_S_PRD_EX_RME_VW JOIN PS_S_PRD_EX_TME_VW ON PS_S_PRD_EX_RME_VW.EXAM_DT = PS_S_PRD_EX_TME_VW.EXAM_DT WHERE PS_S_PRD_EX_RME_VW.EXAM_DT = '${formattedDate}' ${roomCondition} `;
-  // const customQuery = `SELECT DISTINCT PS_S_PRD_EX_RME_VW.EXAM_DT, PS_S_PRD_EX_RME_VW.ROOM_NBR, PS_S_PRD_EX_TME_VW.EXAM_START_TIME FROM PS_S_PRD_EX_RME_VW JOIN PS_S_PRD_EX_TME_VW ON PS_S_PRD_EX_RME_VW.EXAM_DT = PS_S_PRD_EX_TME_VW.EXAM_DT WHERE PS_S_PRD_EX_RME_VW.EXAM_DT = '03-JUL-23' AND PS_S_PRD_EX_RME_VW.ROOM_NBR IN ('RM 205(Block-1)')`;
-      const response = await view(
+     const response = await view(
         {
           operation: "custom",
           tblName: "PS_S_PRD_EX_RME_VW",
@@ -159,34 +142,11 @@ const ExamScreen = ({ navigation,userAccess,userData }) => {
   useEffect(() => {
     fetchRoomDetails(examSelectedDate)
   }, []);
-  // const [currentTime, setCurrentTime] = useState(new Date());
-  // useEffect(() => {
-  //   // Update current time every second
-  //   const interval = setInterval(() => {
-  //     setCurrentTime(new Date());
-  //   }, 1000);
-
-  //   // Clear interval on component unmount
-  //   return () => clearInterval(interval);
-  // }, []);
-  //  // Format time to HH:MM:SS format
-  //  const formatTime = (time) => {
-  //   const hours = time.getHours().toString().padStart(2, '0');
-  //   const minutes = time.getMinutes().toString().padStart(2, '0');
-  //   const seconds = time.getSeconds().toString().padStart(2, '0');
-  //   return `${hours}:${minutes}:${seconds}`;
-  // };
-  // console.log(new Date()?.toLocaleDateString("en-GB", { day: "numeric", month: "numeric", year: "numeric", }) === new Date('05-APR-24')?.toLocaleDateString("en-GB", { day: "numeric", month: "numeric", year: "numeric", }))
-  
   return (
     <View style={styles.container}>
-       {/* <View >
-      <Text style={styles.timeText}>{formatTime(currentTime)}</Text>
-    </View> */}
       <View style={styles.dates}>
       <FlatList
   data={examDates}
-  // numColumns={3}
   renderItem={({ item }) => {
     let isActiveItem = item.EXAM_DT === examSelectedDate;
     return (
@@ -199,7 +159,6 @@ const ExamScreen = ({ navigation,userAccess,userData }) => {
       </Pressable>
     );
   }}
-  // ItemSeparatorComponent={() => <View style={{ height: 5 }} />}
   horizontal={true}
 />
       </View>
@@ -234,7 +193,6 @@ const ExamScreen = ({ navigation,userAccess,userData }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // flexDirection: 'row',
     backgroundColor: "#fff"
   },
   dates: {
@@ -269,14 +227,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ccc",
     width: 'auto',
-    // backgroundColor: "#eaeaea",
     borderRadius: 10,
     marginBottom: 10,
     padding:20,
     flexDirection:"column",
   },
-  boxtext:{
-    // alignItems:"center",  
+  boxtext:{ 
     flexDirection:"row",
     marginLeft:10,
     color:"#000",
