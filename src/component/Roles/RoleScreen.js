@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, Text, TextInput, FlatList, Pressable, } from "react-native";
+import { View, Text, TextInput, FlatList, Pressable,tableHeader } from "react-native";
 import { insert, fetch, update } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -391,38 +391,27 @@ const RoleScreen = ({userAccess}) => {
             )}
             renderItem={({ item }) => renderModuleCheckboxes(item)}
           />
-
-          {roleData.roleId ? (
-            <View style={styles.buttonContainer}>
-               <Pressable onPress={() => handleUpdateRole()}>
-                    <Text>Update Role</Text>
+        <View style={styles.buttonContainer}>    
+              <Pressable style={styles.addbtnWrap} onPress={() => roleData.roleId ?  handleUpdateRole() : handleAddRole()} >
+                    <Text style={styles.addbtntext } numberOfLines={1}>{roleData.roleId ?  "Update Role" : "Add New Role"}</Text>
                   </Pressable>
-                  <Pressable onPress={() => handleClose()}>
-                    <Text>Cancel</Text>
-                  </Pressable>
-              {/* <Button title="Update Role" onPress={handleUpdateRole} />
-              <Button title="Cancel" onPress={handleClose} /> */}
-            </View>
-          ) : (
-            <View style={styles.buttonContainer}>          
-              <Pressable style={styles.addbtnWrap} onPress={() => handleAddRole()} >
-                    <Text style={styles.addbtntext} numberOfLines={1}>Add New Role</Text>
-                  </Pressable>
-                  <Pressable onPress={() => handleClose()}>
+          <Pressable onPress={() => handleClose()}>
                     <Text style={styles.cancelbtn}>Cancel</Text>
                   </Pressable>
-            </View>
-          )}
+         </View>
+
         </View>
            ) :
        <View style={styles.roleLists}>
         <Text style={styles.header}>Role List:</Text>
-        <View style={styles.addbtnWrap}>
         {UserAccess?.create === 1 &&
+          <View style={styles.addbtnWrap}>
+
         <Pressable onPress={() => setRoleContainerVisible(true)}>
                     <Text style={styles.addbtntext}>Add</Text>
-                  </Pressable> }
-      </View>
+                  </Pressable> 
+                  </View>
+}
       <FlatList
         data={roleList}
         keyExtractor={(item) => item.PK_RoleId.toString()}

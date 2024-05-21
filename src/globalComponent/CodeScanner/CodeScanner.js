@@ -7,17 +7,26 @@ export default function CodeScanner({ onScannedData, onCancel }) {
   const [permission, requestPermission] = useCameraPermissions();
   const [hasPermission, setHasPermission] = useState(null);
 
+  useEffect(() => {
+    (async () => {
+      const { status } = await requestPermission();
+      setHasPermission(status === 'granted');
+    })();
+  }, [requestPermission]);
+
   if (!permission) {
     // Camera permissions are still loading.
     return <View />;
   } 
 
-  if (!permission.granted) {
+  if (!hasPermission) {
     // Camera permissions are not granted yet.
     return (
       <View style={styles.container}>
         <Text style={{ textAlign: 'center' }}>We need your permission to show the camera</Text>
-        <Button onPress={requestPermission} title="grant permission" />
+        <Pressable style={styles.button} onPress={requestPermission} title="grant permission" >
+          <Text style={styles.text}>Grant Permission</Text>
+        </Pressable>
       </View>
     );
   }
@@ -25,12 +34,6 @@ export default function CodeScanner({ onScannedData, onCancel }) {
   const toggleCameraFacing = () => {
     setFacing(current => (current === 'back' ? 'front' : 'back'));
   }
-  // useEffect(() => {
-  //   (async () => {
-  //     const { status } = await Camera.requestCameraPermissionsAsync();
-  //     setHasPermission(status === 'granted');
-  //   })();
-  // }, []);
 
   const handleBarCodeScanned = ({ type, data }) => {
     onScannedData(data);
@@ -41,31 +44,17 @@ export default function CodeScanner({ onScannedData, onCancel }) {
   };
 
   return (
-
     <View style={styles.container}>
-        <CameraView style={styles.camera} facing={facing} onBarCodeScanned={handleBarCodeScanned}>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
-          <Text style={styles.text}>Flip Camera</Text>
-        </TouchableOpacity>
-        <Pressable style={styles.cancelButton} onPress={handleCancel}>
-            <Text style={styles.cancelButtonText}>Cancel</Text>
+      <CameraView style={styles.camera} facing={facing} onBarCodeScanned={handleBarCodeScanned}>
+        <View style={styles.buttonContainer}>
+          <Pressable style={styles.button} onPress={toggleCameraFacing}>
+            <Text style={styles.text}>Flip Camera</Text>
           </Pressable>
-      </View>
-    </CameraView>
-      {/* {hasPermission === false && <Text>No access to camera</Text>}
-      {hasPermission && (
-        <View style={styles.cameraContainer}>
-          <Camera
-            style={styles.camera}
-            type={Camera.Constants.Type.back}
-            onBarCodeScanned={handleBarCodeScanned}
-          />
           <Pressable style={styles.cancelButton} onPress={handleCancel}>
             <Text style={styles.cancelButtonText}>Cancel</Text>
           </Pressable>
         </View>
-      )} */}
+      </CameraView>
     </View>
   );
 }
@@ -74,16 +63,27 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  cameraContainer: {
-    flex: 1,
-  },
   camera: {
     flex: 1,
   },
+  buttonContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    paddingBottom: 20,
+  },
+  button: {
+    backgroundColor: 'white',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  text: {
+    fontSize: 18,
+  },
   cancelButton: {
-    position: 'absolute',
-    bottom: 20,
-    left: 20,
     backgroundColor: 'white',
     paddingVertical: 10,
     paddingHorizontal: 20,

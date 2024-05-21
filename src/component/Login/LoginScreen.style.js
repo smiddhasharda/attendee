@@ -75,13 +75,8 @@ const LoginStyles = StyleSheet.create({
     alignSelf: "center",
     marginTop: 32,
     marginLeft: 15,
-    shadowRadius: 10,
-    // shadowOpacity: 0.8,
-    // shadowColor: "#166080",
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 10,
-    // },
+    boxShadow: '0px 0px 10px rgba(0, 0, 0, 0)',
+
   },
   
   loginTextStyle: {
