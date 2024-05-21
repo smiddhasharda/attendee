@@ -12,8 +12,6 @@ import DrawerNavigator from './src/globalComponent/DrawerNavigatior/DrawerNaviga
 import Learn from './src/component/Dashboard/Learn';
 import  InvigilatorScreen from './src/component/Invigilator/InvigilatorScreen';
 import PieChart from './src/component/Dashboard/PieChart';
-import LoginNew from './src/component/Login/LoginNew';
-import TabNavigator from './src/globalComponent/TabNavigator';
 import StudentInfo from './src/component/Student/StudentInfo';
 import RoomDetail from './src/component/Room/RoomDetail';
 import TopHeader from './src/globalComponent/Header/TopHeader';
@@ -52,7 +50,7 @@ const App = () => {
         <RoleProvider>
           <NavigationContainer>
             <Stack.Navigator initialRouteName={initialRoute}>
-              <Stack.Screen name="Login"  options={{ headerShown: false }} component={LoginNew} />
+              <Stack.Screen name="Login"  options={{ headerShown: false }} component={LoginScreen} />
               <Stack.Screen name="PostLogin" component={DrawerNavigator} options={{ headerShown: false }} />
               <Stack.Screen name="StudentInfo" component={StudentInfo} />
               <Stack.Screen name="RoomDetail" component={RoomDetail} />
