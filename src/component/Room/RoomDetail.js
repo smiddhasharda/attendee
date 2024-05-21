@@ -131,13 +131,14 @@ function RoomDetail() {
     <View style={styles.container}>
     
         {isScanning ? <CodeScanner onScannedData={ handleScannedData} onCancel={handleCancel} /> : 
-        <View>
+        <View >
+        <View style={styles.topdetails}>
            <View style={styles.searchWrap}>
         <TextInput
           style={styles.searchBox}
           placeholder="Search..."
         />
-      </View>
+          </View>
       <View style={[styles.magnifying]}>
         {/* <Ionicons name="search-outline" size={27} color="#fff" style={styles.searchIcon} /> */}
         {UserAccess?.create === 1 && <Pressable onPress={startScanning}>
@@ -149,6 +150,7 @@ function RoomDetail() {
           </View>
         )}
       </View>
+      </View>
       <ScrollView style={styles.roomNumber}>
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
@@ -159,8 +161,8 @@ function RoomDetail() {
               <View style={[styles.boxtext]}>
                 <Image source={user} style={styles.userimage} resizeMode="cover" />
                 <Text style={[styles.examname]}>{studentData.NAME}</Text>
-                <Text style={[styles.examname]}>{studentData.EMPLID}</Text>
-                <Text style={[styles.examname]}>{studentData.PTP_SEQ_CHAR}</Text>
+                <Text style={[styles.employeeid]}>{studentData.EMPLID}</Text>
+                <Text style={[styles.seqnumber]}>{studentData.PTP_SEQ_CHAR}</Text>
               </View>
             </View>
             </Pressable>)) : <Text>There Is No Student Present In this Class !!</Text>
@@ -178,35 +180,14 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor:"#fff" ,
-
+     clearfix:"both"
     },
     heading: {
       fontSize: 20,
       fontWeight: 'bold',
       marginBottom: 10,
     },
-    dates: {
-      flexDirection: 'row',
-      padding:10
-    },
-    
-    dateItem: {
-      padding: 10,
-      backgroundColor: '#f0f0f0',
-      borderWidth: 1,
-      borderColor: '#ddd',
-      borderRadius: 5,
-      marginRight: 6,
-      alignItems:"center",
-      // width: 45,
-  
-    },
-   
-    dateNumber: {
-      fontSize: 16,
-      fontWeight: 'bold',
-   
-    },
+ 
     dateDay: {
       fontSize: 12,
       marginBottom:5,
@@ -224,30 +205,21 @@ const styles = StyleSheet.create({
         marginBottom:10
      
     },
-    ongoing:{
-          fontSize:16,
-          fontWeight:"bold",
-          borderWidth:1,
-          borderColor:"#ccc",
-          padding:10,
-          backgroundColor:"#0cb551",
-          // color:"#fff"
-    },
-    upcoming:{
-      fontSize:16,
-      fontWeight:"bold",
-      borderWidth:1,
-      borderColor:"#ccc",
-      padding:10 ,
-      backgroundColor:"#ccc"
-  
+    topdetails:{
+     padding:10,
+     clearfix:"both",
     },
     roomNumber: {
     //   flexDirection: "column",
       // flexWrap: "wrap",
       // marginBottom: 10,
       padding: 10,
-      flex:1,
+      // flex:1,
+      clearfix:"both",
+      // position:"relative",
+      // overflowX:"visible",
+      
+      // maxHeight:"0%"
      
     },
     box: {
@@ -272,7 +244,7 @@ const styles = StyleSheet.create({
       color:"#000",
       justifyContent:"space-between",
       alignItems:"center",
-   
+  
     
     },
     userimage:{
@@ -282,9 +254,18 @@ const styles = StyleSheet.create({
         marginRight:10
     },
  
-    examname:{
+    employeeid:{
       fontWeight:"bold",
       marginRight:30, 
+    },
+    examname:{
+   fontWeight:"bold",
+      marginRight:30, 
+    },
+    seqnumber:{
+      fontWeight:"bold",
+  
+      color:"#a79f9f",
     },
     activebox:{
       backgroundColor:"#0cb551",
@@ -309,7 +290,7 @@ const styles = StyleSheet.create({
    
     },
     searchWrap:{
-      padding:10,
+      // padding:10,
       width:"50%",
       marginTop:10,
     },
@@ -320,7 +301,7 @@ const styles = StyleSheet.create({
       borderRadius:5,
       backgroundColor:"#1b6913",
       padding:10,
-      top:55,
+      top:44,
       
     },
     magnifying:{
