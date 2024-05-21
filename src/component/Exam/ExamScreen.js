@@ -16,12 +16,12 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
 
   const { showToast } = useToast();
 
-  const [open, setOpen] = useState(false);
-  const [userRoleList, setUserRoleList] = useState([
-    { label: 'OnGoing', value: 'ongoing' },
-    { label: 'Upcoming Exam', value: 'Upcoming' },
+  // const [open, setOpen] = useState(false);
+  // const [userRoleList, setUserRoleList] = useState([
+  //   { label: 'OnGoing', value: 'ongoing' },
+  //   { label: 'Upcoming Exam', value: 'Upcoming' },
  
-  ]);
+  // ]);
 
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
@@ -162,7 +162,7 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
           keyExtractor={(item) => item.EXAM_DT}
         />
       </View>
-      <View style={styles.searchicons}>
+      {/* <View style={styles.searchicons}>
             <View style={styles.dropdownWrap}>             
                  <DropDownPicker
                   open={open}
@@ -178,7 +178,7 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
                 />
             </View>
       <Feather name="search" size={28} color="black" />
-      </View> 
+      </View>  */}
       </View>
       <View style={styles.roomNumber}>
         {loading ? (
@@ -191,11 +191,10 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
                   key={index}
                   onPress={() => UserAccess?.create === 1 ? navigation.navigate("RoomDetail", { room_Nbr: roomData.ROOM_NBR, exam_Dt: roomData.EXAM_DT, startTime: roomData.EXAM_START_TIME,navigation,userAccess }) : null}
                 >
-                  <View style={styles.box}>
-                    <Ionicons style={styles.icons} name="book" size={24} color="rgb(8 96 88)" />
-                    <View style={styles.boxText}>
+                  <View  style={styles.box}>   
+                    <View style={styles.boxTextWrap}>
                       <Text style={styles.examName}>{roomData.ROOM_NBR}</Text>
-                      <Text style={styles.examTime}>{roomData.EXAM_START_TIME?.split("T")?.[1]?.split(".")?.[0]}</Text>
+                      <Text style={styles.examTimedetail}>{roomData.EXAM_START_TIME?.split("T")?.[1]?.split(".")?.[0]}</Text>
                     </View>
                   </View>
                 </Pressable>
@@ -249,7 +248,7 @@ const styles = StyleSheet.create({
   },
   roomNumber: {
     flex: 1,
-    padding: 20,
+    padding: 10,
   },
   box: {
     borderWidth: 1,
@@ -262,23 +261,19 @@ const styles = StyleSheet.create({
  
   },
   
-  boxtext:{
+  boxTextWrap:{
     flexDirection:"row",
     marginLeft:10,
     color:"#000",
     justifyContent:"space-between",
 
   },
-  examtime:{
-    alignItems:"flex-start",
-    color:"#a79f9f",
-    marginRight:10,
-    marginLeft:40, 
-  },
  
-  examtime: {
-    alignItems: "flex-start",
-    color: "#a79f9f"
+  examTimedetail: {
+    textAlign: "right",
+    color:"#a79f9f",
+    // marginRight:10,
+    // marginLeft:40, 
   },
   examName: {
     fontWeight: "bold",
@@ -286,6 +281,7 @@ const styles = StyleSheet.create({
   },
   activebox: {
     backgroundColor: "#0cb551",
+    color: "#fff"
   },
   activeText: {
     color: "#fff",
