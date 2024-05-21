@@ -37,17 +37,20 @@ import {
     tableHeader: {
       flexDirection: "row",
       justifyContent: "space-between",
-      backgroundColor: "#f0f0f0",
+      backgroundColor: "rgb(17, 65, 102)",
       paddingVertical: 10,
       paddingHorizontal: 15,
       marginBottom: 10,
+      borderRadius:"5px",
     },
     tableHeaderText: {
       fontWeight: "bold",
+      color:"#fff",
+      
     },
     listItem: {
       flexDirection: "row",
-      justifyContent: "space-between",
+      // justifyContent: "space-between",
       alignItems: "center",
       borderBottomWidth: 1,
       borderBottomColor: "#ddd",
@@ -79,6 +82,8 @@ import {
     roleLists:{
       backgroundColor:"#fff",
       padding:40,
+      boxShadow: '0px 2px 3.84px rgba(0, 0, 0, 0.25)',
+      borderRadius:10,
     },
     addbtnWrap:{
       width:100,
