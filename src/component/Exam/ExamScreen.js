@@ -184,25 +184,41 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : (
-          roomDetails.length > 0 ? (
-            <ScrollView style={styles.scrollabar}>
-              {roomDetails.map((roomData, index) => (
-                <Pressable
-                  key={index}
-                  onPress={() => UserAccess?.create === 1 ? navigation.navigate("RoomDetail", { room_Nbr: roomData.ROOM_NBR, exam_Dt: roomData.EXAM_DT, startTime: roomData.EXAM_START_TIME,navigation,userAccess }) : null}
-                >
-                  <View  style={styles.box}>   
-                    <View style={styles.boxTextWrap}>
-                      <Text style={styles.examName}>{roomData.ROOM_NBR}</Text>
-                      <Text style={styles.examTimedetail}>{roomData.EXAM_START_TIME?.split("T")?.[1]?.split(".")?.[0]}</Text>
-                    </View>
-                  </View>
-                </Pressable>
-              ))}
-            </ScrollView>
-          ) : (
-            <Text>No rooms available for selected date.</Text>
-          )
+          // roomDetails.length > 0 ? (
+          //   <ScrollView style={styles.scrollabar}>
+          //     {roomDetails.map((roomData, index) => (
+          //       <Pressable
+          //         key={index}
+          //         onPress={() => UserAccess?.create === 1 ? navigation.navigate("RoomDetail", { room_Nbr: roomData.ROOM_NBR, exam_Dt: roomData.EXAM_DT, startTime: roomData.EXAM_START_TIME,navigation,userAccess }) : null}
+          //       >
+          //         <View  style={styles.box}>   
+          //           <View style={styles.boxTextWrap}>
+          //             <Text style={styles.examName}>{roomData.ROOM_NBR}</Text>
+          //             <Text style={styles.examTimedetail}>{roomData.EXAM_START_TIME?.split("T")?.[1]?.split(".")?.[0]}</Text>
+          //           </View>
+          //         </View>
+          //       </Pressable>
+          //     ))}
+          //   </ScrollView>
+          // ) : (
+          //   <Text>No rooms available for selected date.</Text>
+          // )
+
+          <FlatList
+          data={roomDetails}
+          renderItem={({ item, index }) => (
+            <Pressable
+              key={index}
+              onPress={() => UserAccess?.create === 1 ? navigation.navigate("RoomDetail", { room_Nbr: item.ROOM_NBR, exam_Dt: item.EXAM_DT, startTime: item.EXAM_START_TIME, navigation, userAccess }) : null}
+            >
+                <View style={[styles.box,styles.boxTextWrap]}>
+                  <Text style={styles.examName}>{item.ROOM_NBR}</Text>
+                  <Text style={styles.examTime}>{item.EXAM_START_TIME?.split("T")?.[1]?.split(".")?.[0]}</Text>
+                </View>
+            </Pressable>
+          )}
+          keyExtractor={(item, index) => index.toString()}
+        />
         )}
       </View>
     </View>

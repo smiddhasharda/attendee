@@ -7,7 +7,7 @@ import {
   TextInput,
   Pressable,
 } from "react-native";
-import { Ionicons, FontAwesome, AntDesign } from "@expo/vector-icons";
+import { Ionicons, FontAwesome, AntDesign,MaterialCommunityIcons ,MaterialIcons} from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import CodeScanner from "../../globalComponent/CodeScanner/CodeScanner";
@@ -23,11 +23,11 @@ const StudentInfo = () => {
   const { room_Nbr, catlog_Nbr, system_Id, seat_Nbr, exam_Dt, startTime, reportId, navigation, userAccess } = route.params;
   const UserAccess = userAccess?.module?.filter((item)=> item?.FK_ModuleId === 6);
   const [copiesData, setCopiesData] = useState([
-    {
-      id: 0,
-      mainCopy: "",
-      alternateCopies: [],
-    },
+    // {
+    //   id: 0,
+    //   mainCopy: "",
+    //   alternateCopies: [],
+    // },
   ]);
   const [tempCopyNumber, setTempNumber] = useState("");
   const [mainCopyIndex, setMainCopyIndex] = useState("");
@@ -203,13 +203,13 @@ const StudentInfo = () => {
 
   const handleScanBarcode = (scannedCopyNumber, copyType, index, copyIndex) => {
     handleCancel();
-    copyType === "Main"
+    copyType === "AnswerSheet"
       ? handleMainCopyChange(scannedCopyNumber, index)
       : handleAlternateCopyChange(scannedCopyNumber, copyIndex, index);
   };
 
   const handleSaveCopy = (copyType, copyNumber, index, copyIndex) => {
-    copyType === "Main"
+    copyType === "AnswerSheet"
       ? handleMainCopyChange(copyNumber, index)
       : handleAlternateCopyChange(copyNumber, copyIndex, index);
   };
@@ -218,24 +218,25 @@ const StudentInfo = () => {
     const isLastAlternateCopy =
       copyIndex === copiesData[index].alternateCopies.length - 1;
     return (
-      <View style={styles.row} key={copyIndex}>
-        <TextInput
-          style={[styles.cell, styles.input]}
-          placeholder={`Enter ${copyType} Copy ${copyIndex + 1} Number`}
-          // value={tempCopyNumber}
+      <View>
+      <View style={{width:"auto",}} key={copyIndex}>
+      <TextInput
+        style={[styles.input,]}
+        placeholder={`Enter ${copyType + ' ' + copyIndex + 1} Number`}
           onChangeText={(copyNumber) => setTempNumber(copyNumber)}
-        />
-        {tempCopyNumber && (
-          <Pressable
-            style={styles.addButton}
-            onPress={() =>
-              handleSaveCopy(copyType, tempCopyNumber, index, copyIndex)
-            }
-          >
-            <Text style={styles.addButtonText}>Save</Text>
-          </Pressable>
-        )}
-        {copyType === "Alternate" && isLastAlternateCopy && (
+   />
+      </View>
+      {tempCopyNumber && (
+                <Pressable
+                  style={styles.addButton}
+                  onPress={() =>
+                    handleSaveCopy(copyType, tempCopyNumber, index, copyIndex)
+                  }
+                >
+                  <Text tyle={{color:"#fff"}}>Save</Text>
+                </Pressable>
+              )}
+      {copyType === "Alternate" && isLastAlternateCopy && (
           <Pressable
             style={styles.removeButton}
             onPress={() => handleRemoveAlternateCopy(copyIndex, index)}
@@ -652,13 +653,14 @@ const StudentInfo = () => {
               </View>
             </View>
           </View>
-
-          {copiesData.map((copy, index) => (
-            <View key={index} style={styles.studentInfoWrap}>
+          <View style={{flexDirection:"row" ,justifyContent:"space-between"}}>
+              <Text style={styles.addAnsheading}> Add AnswerSheet </Text>
+              {copiesData?.length === 0 &&   <AntDesign style={styles.addicon} name="pluscircleo" size={24} color="black" onPress={handleAddCopy} />}
+              </View>
+          {copiesData?.length > 0 ? (copiesData.map((copy, index) => (
+            <View key={index} >
               <View style={styles.inputContainer}>
-                {copiesData.length > 1 && (
-                  <Pressable
-                    // style={styles.removeButton}
+              <Pressable
                     onPress={() => handleRemoveCopy(index)}
                   >
                     <Text style={styles.addButtonText}>
@@ -670,118 +672,92 @@ const StudentInfo = () => {
                       />
                     </Text>
                   </Pressable>
-                )}
               </View>
+              <View>          
+                       
               <View style={styles.table}>
                 <View style={styles.row}>
-                  <Text style={[styles.cell, styles.header]}>Main Copy</Text>
                   {copy.mainCopy ? (
-                    <View>
-                      <Text style={styles.mainCopyText}>{copy.mainCopy}</Text>
+                    <View style={styles.sheetDetails}>
+                    <View key={index} style={[styles.box]}>
+                    <View style={styles.boxtext}>
+                      <Text style={[styles.examname]}>{copy.mainCopy}</Text>
+                      <View style={styles.iconsWrap}>
                       {!(
                         copy.alternateCopies.length > 0 ||
                         copy.alternateCopies?.includes("")
                       ) && (
-                        <Pressable
-                          style={styles.removeButton}
-                          onPress={() => handleSaveCopy("Main", "", index)}
-                        >
-                          <Text style={styles.addButtonText}>
-                            <AntDesign name="close" size={20} />
-                          </Text>
-                        </Pressable>
+                        <MaterialIcons  name="delete-outline" size={20} color="red" onPress={() => handleSaveCopy("AnswerSheet", "", index)} />
                       )}
+                      </View>
+                    </View>
+                  </View>
                     </View>
                   ) : (
-                    <View style={styles.mainText}>
-                      <Pressable
-                        style={styles.scanButton}
-                        onPress={() => startScanning("Main", index)}
-                      >
-                        <Ionicons name="barcode-sharp" />
-                      </Pressable>
-                      <Text>or</Text>
-                      {renderCopyInput("Main", index)}
+                  <View style={{width:"100%" ,justifyContent:"space-between",flexDirection:"row"}}>
+                   <MaterialCommunityIcons name="barcode-scan" onPress={() => startScanning("AnswerSheet", index)} size={40} color="black" />
+                      <Text>OR</Text>
+                      {renderCopyInput("AnswerSheet", index)}
                     </View>
                   )}
-                </View>
+                   </View>
+
                 {copy.mainCopy && (
                   <View>
                     {copy.alternateCopies.map((alternateCopy, copyIndex) =>
-                      alternateCopy ? (
-                        <View>
-                          <Text style={[styles.cell, styles.header]}>
+                      alternateCopy ? ( 
+                           <View key={index} style={[styles.box]}>
+                           {/* <Text style={[styles.cell, styles.header]}>
                             Alternate Copy {copyIndex + 1}
-                          </Text>
-                          <Text>{alternateCopy}</Text>
-                          {copyIndex === copy.alternateCopies.length - 1 && (
-                            <View>
-                              <Pressable
-                                style={styles.removeButton}
-                                onPress={() =>
-                                  handleSaveCopy(
-                                    "Alternate",
-                                    "",
-                                    index,
-                                    copyIndex
-                                  )
-                                }
-                              >
-                                <Text style={styles.addButtonText}>
-                                  <AntDesign name="close" size={20} />
-                                </Text>
-                              </Pressable>
-                              {copy.alternateCopies.length < 6 && (
+                          </Text> */}
+                            <View style={styles.boxtext}>
+                              <Text style={[styles.examname]}>{alternateCopy}</Text>
+                              <View style={styles.iconsWrap}>
+                              {copyIndex === copy.alternateCopies.length - 1 && (
+                                <View>
+                                <MaterialIcons  name="delete-outline" size={20} color="red" onPress={() => handleSaveCopy( "Alternate", "", index, copyIndex ) }/>                              
+                                {copy.alternateCopies.length < 6 && (
                                 <Pressable
-                                  style={styles.addButton}
-                                  onPress={() => handleAddAlternateCopy(index)}
-                                >
-                                  <Text style={styles.addButtonText}>
-                                    Add Supply Sheet
-                                  </Text>
+                                style={styles.submitButton} 
+                                onPress={() => handleAddAlternateCopy(index)}   
+                              >
+                                <Text style={{color:"#fff"}}>Add SupplySheet</Text>
                                 </Pressable>
                               )}
-                            </View>
-                          )}
+                          </View>
+                          )}                      
+                              </View>
+                            </View>              
+                       
                         </View>
                       ) : (
-                        <View>
-                          {renderCopyInput("Alternate", index, copyIndex)}
-                          <Text>OR</Text>
-                          <Pressable
-                            style={styles.scanButton}
-                            onPress={() =>
-                              startScanning("Alternate", index, copyIndex)
-                            }
-                          >
-                            <Ionicons
-                              name="barcode-sharp"
-                              size={24}
-                              color="black"
-                            />
-                          </Pressable>
+                        <View style={styles.supplysheet}>
+                      <MaterialCommunityIcons name="barcode-scan" onPress={() =>  startScanning("Alternate", index, copyIndex)} size={40} color="black" />
+                      <Text>OR</Text>
+                        {renderCopyInput("Alternate", index, copyIndex)}
                         </View>
                       )
                     )}
                     {copy.alternateCopies.length === 0 && (
-                      <Pressable
-                        style={styles.addButton}
-                        onPress={() => handleAddAlternateCopy(index)}
-                      >
-                        <Text style={styles.addButtonText}>
-                          Add Supply Sheet
-                        </Text>
-                      </Pressable>
+                       <Pressable
+                       style={styles.submitButton} 
+                       onPress={() => handleAddAlternateCopy(index)}   
+                     >
+                       <Text style={{color:"#fff"}}>Add SupplySheet</Text>
+                       </Pressable>
                     )}
                   </View>
                 )}
               </View>
+              </View>
             </View>
-          ))}
+          ))) :    ( <View  style={styles.tablewrap}>
+          <Text style={styles.nodatadisplay}>There is no answersheet added yet!</Text> </View>) }
           <View style={styles.buttonWrap}>
-            <Pressable style={styles.addButton} onPress={handleAddCopy}>
+          {copiesData?.length > 0 && 
+            (<Pressable style={styles.addButton} onPress={handleAddCopy}>
               <Text style={styles.addButtonText}> Add Copy</Text>
-            </Pressable>
+            </Pressable>) }
             <Pressable
               style={styles.submitButton}
               onPress={ reportId ? handleStudentInfoUpdate: handleStudentInfoSubmit }
