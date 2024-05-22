@@ -234,13 +234,13 @@ const ModuleScreen = ({ userAccess }) => {
         ) : (
           <View style={styles.modulists}>
             <Text style={styles.header}>Module List:</Text>
-            <View style={styles.addbtnWrap}>
               {UserAccess?.create === 1 && (
+              <View style={styles.addbtnWrap}>
                 <Pressable onPress={() => setModuleContainerVisible(true)}>
                   <Text style={styles.addbtntext}>Add</Text>
                 </Pressable>
+               </View>
               )}
-            </View>
             <FlatList
               data={moduleList}
               keyExtractor={(item) => item.PK_ModuleId.toString()}
