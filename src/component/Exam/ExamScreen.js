@@ -13,7 +13,6 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
   const [examSelectedDate, setExamSelectedDate] = useState('');
   const [invigilatorData, setInvigilatorData] = useState();
   const [loading, setLoading] = useState(false);
-
   const { showToast } = useToast();
 
   // const [open, setOpen] = useState(false);
@@ -209,7 +208,7 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
           renderItem={({ item, index }) => (
             <Pressable
               key={index}
-              onPress={() => UserAccess?.create === 1 ? navigation.navigate("RoomDetail", { room_Nbr: item.ROOM_NBR, exam_Dt: item.EXAM_DT, startTime: item.EXAM_START_TIME, navigation, userAccess }) : null}
+              onPress={() => UserAccess?.create === 1 ? navigation.navigate("RoomDetail", { room_Nbr: item.ROOM_NBR, exam_Dt: item.EXAM_DT, startTime: item.EXAM_START_TIME, navigation, userAccess},) : null}
             >
                 <View style={[styles.box,styles.boxTextWrap]}>
                   <Text style={styles.examName}>{item.ROOM_NBR}</Text>
