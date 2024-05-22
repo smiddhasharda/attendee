@@ -1,7 +1,11 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { View, Text, Pressable } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from "@react-navigation/drawer";
+import {
+  createDrawerNavigator,
+  DrawerContentScrollView,
+  DrawerItemList,
+} from "@react-navigation/drawer";
 import RoleScreen from "../../component/Roles/RoleScreen";
 import ModuleScreen from "../../component/Module/ModuleScreen";
 import DashboardScreen from "../../component/Dashboard/DashboardScreen";
@@ -15,12 +19,13 @@ import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import styles from "./DrawerNavigator.style";
 
 // Screen components
-
 const RoleComponent = ({ userAccess }) => <RoleScreen userAccess={userAccess} />;
 const ModuleComponent = ({ userAccess }) => <ModuleScreen userAccess={userAccess} />;
 const DashboardComponent = ({ userAccess }) => <DashboardScreen userAccess={userAccess} />;
 const UserComponent = ({ userAccess }) => <UserScreen userAccess={userAccess} />;
-const ExamComponent = ({ navigation, userAccess, userData }) => <ExamScreen navigation={navigation} userAccess={userAccess} userData={userData} />;
+const ExamComponent = ({ navigation, userAccess, userData }) => (
+  <ExamScreen navigation={navigation} userAccess={userAccess} userData={userData} />
+);
 const Drawer = createDrawerNavigator();
 
 const CustomDrawerContent = ({ ...props }) => {
@@ -30,12 +35,10 @@ const CustomDrawerContent = ({ ...props }) => {
 
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
-
     if (!authToken) {
       showToast("Authentication token not available", "error");
       throw new Error("Authentication token not available");
     }
-
     return authToken;
   }, [showToast]);
 
@@ -74,15 +77,11 @@ const CustomDrawerContent = ({ ...props }) => {
   const handleProfilePic = async () => {
     try {
       const authToken = await checkAuthToken();
-
       const formData = new FormData();
       formData.append("tblName", "tbl_user_master");
       formData.append("data", "");
       formData.append("fileParam", "profile_image_url");
-      formData.append(
-        "conditionString",
-        `user_id = ${props.userData?.user_id}`
-      );
+      formData.append("conditionString", `user_id = ${props.userData?.user_id}`);
 
       const { fileName, uri, mimeType } = file?.[0];
       const response1 = await fetch(uri);
@@ -90,7 +89,7 @@ const CustomDrawerContent = ({ ...props }) => {
       const ProfilePics = new File([blob], fileName, { type: mimeType });
       formData.append("profile_pics", ProfilePics);
       const response = await multer(formData, authToken);
-
+    
       if (response) {
         await AsyncStorage.removeItem("userData");
         await handleGetUserData();
@@ -118,10 +117,9 @@ const CustomDrawerContent = ({ ...props }) => {
   };
 
   return (
-    <DrawerContentScrollView {...props}>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <CustomeImagePicker
+    <View style={styles.container}>
+      <View style={styles.header}>
+      <CustomeImagePicker
             imageUri={
               file?.[0]?.uri ||
               (props.userData?.profile_image_url &&
@@ -133,7 +131,7 @@ const CustomDrawerContent = ({ ...props }) => {
             onImageChange={handleImageChange}
           />
           <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <Text>{file && (            
+            {file && (
               <View style={styles.buttonwrap}>
                 <Pressable onPress={() => handleProfilePic()}>
                   <Text>Save</Text>
@@ -142,8 +140,8 @@ const CustomDrawerContent = ({ ...props }) => {
                   <Text>Cancel</Text>
                 </Pressable>
               </View>
-          )} </Text>
-        </View>
+            )}
+          </View>
           <Text style={styles.username}>{props?.userData?.name}</Text>
           <View style={styles.dropdownWrap}>
             <DropDownPicker
@@ -159,7 +157,6 @@ const CustomDrawerContent = ({ ...props }) => {
               containerStyle={styles.rolePicker}
             />
           </View>
-        </View>
       </View>
       <DrawerItemList {...props} style={styles.dropdownmain} />
       <View>
@@ -167,7 +164,7 @@ const CustomDrawerContent = ({ ...props }) => {
           <Text style={{ margin: 16 }}>Logout</Text>
         </Pressable>
       </View>
-    </DrawerContentScrollView>
+    </View>
   );
 };
 
