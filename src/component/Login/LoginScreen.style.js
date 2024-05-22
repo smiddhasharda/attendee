@@ -21,7 +21,7 @@ const LoginStyles = StyleSheet.create({
     width: "80%",
     top: "24%",
     left: "10%",
-    padding: 20,
+    padding: 10,
   },
   label: {
     fontSize: 16,
@@ -50,7 +50,7 @@ const LoginStyles = StyleSheet.create({
   },
   logininfoWrap: {
     width: "100%",
-    padding: 40,
+    padding: 12,
   },
   bgimg1: {
     width: "100%",
