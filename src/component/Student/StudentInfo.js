@@ -720,7 +720,7 @@ const StudentInfo = () => {
                               <View >
                               {copyIndex === copy.alternateCopies.length - 1 && (
                                 <View >
-                                <Entypo name="circle-with-cross"  size={20} color="red"  marginLeft="10px"  onPress={() => handleSaveCopy( "Alternate", "", index, copyIndex ) }/>
+                                <Entypo name="circle-with-cross"  size={20} color="r"  marginLeft="10px"  onPress={() => handleSaveCopy( "Alternate", "", index, copyIndex ) }/>
                           </View>
                           )}        
                               </View>
