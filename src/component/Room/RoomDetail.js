@@ -13,10 +13,12 @@ function RoomDetail() {
   const route = useRoute();
   const { showToast } = useToast();
   const [studentDetails, setStudentDetails] = useState([]);
+  const [tempStudentDetails, setTempStudentDetails] = useState([]);
   const [loading, setLoading] = useState(false);
   const [presentStudentList, setPresentStudentList] = useState();
+  const [searchText, setSearchText] = useState('');
   const { room_Nbr, exam_Dt,startTime,navigation,userAccess } = route.params;
-  const UserAccess = userAccess?.module?.filter((item)=> item?.FK_ModuleId === 7)?.[0];
+  const UserAccess = userAccess?.module?.find((item)=> item?.FK_ModuleId === 7);
 
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
@@ -100,6 +102,7 @@ function RoomDetail() {
 
       if (response) {
        setStudentDetails(response?.data);
+       setTempStudentDetails(response?.data);
         setLoading(false);
       }
     } catch (error) {
@@ -122,6 +125,23 @@ function RoomDetail() {
         showToast("Student Info Operation Failed", "error");
     }
   };
+
+  const handleSearchData = async(studentSearchText) => {
+    setSearchText(studentSearchText);
+    const searchTextLower = studentSearchText.toLowerCase();
+    let FilteredStudentData = studentDetails?.filter((item) => 
+      item?.NAME.toLowerCase().includes(searchTextLower) ||  item?.EMPLID.toLowerCase().includes(searchTextLower) || item?.PTP_SEQ_CHAR.toLowerCase().includes(searchTextLower)
+    );
+    setTempStudentDetails(FilteredStudentData);
+  }
+
+  const clearSearchText = () => {
+    setSearchText('');
+    setTempStudentDetails(studentDetails);
+  };
+
+  
+  
   useEffect(() => {
     fetchStudentDetails(exam_Dt, room_Nbr);
     handleGetReportData();
@@ -129,14 +149,21 @@ function RoomDetail() {
 
   return (
     <View style={styles.container}>
-    
         {isScanning ? <CodeScanner onScannedData={ handleScannedData} onCancel={handleCancel} /> : 
-        <View>
+        <View >
+        <View style={styles.topdetails}>
            <View style={styles.searchWrap}>
-        <TextInput
-          style={styles.searchBox}
-          placeholder="Search..."
-        />
+           <TextInput
+            style={styles.searchBox}
+            placeholder="Search by name, system id and seat number..."
+            onChangeText={handleSearchData}
+            value={searchText}
+          />
+          {searchText.length > 0 && (
+            <Pressable onPress={clearSearchText} style={styles.clearButton}>
+              <Text style={styles.clearButtonText}>Clear Searched Text</Text>
+            </Pressable>
+          )} 
       </View>
       <View style={[styles.magnifying]}>
         {/* <Ionicons name="search-outline" size={27} color="#fff" style={styles.searchIcon} /> */}
@@ -149,21 +176,22 @@ function RoomDetail() {
           </View>
         )}
       </View>
+      </View>
       <ScrollView style={styles.roomNumber}>
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : (
-          studentDetails?.length > 0 ? studentDetails?.map((studentData, index) =>
+          studentDetails?.length > 0 ?tempStudentDetails?.length > 0 ? (tempStudentDetails?.map((studentData, index) =>
             ( <Pressable onPress={() => UserAccess?.create === 1 ? navigation.navigate("StudentInfo", { room_Nbr: studentData.ROOM_NBR ,exam_Dt: studentData.EXAM_DT,catlog_Nbr: studentData.CATALOG_NBR ,system_Id:studentData.EMPLID, seat_Nbr: studentData.PTP_SEQ_CHAR, reportId: presentStudentList?.filter((item)=>item.EMPLID === Number(studentData.EMPLID))?.[0]?.PK_Report_Id, navigation,userAccess }) : ''}>
             <View style={[styles.box,presentStudentList?.find((item)=>item.EMPLID === Number(studentData.EMPLID)) ? styles.activebox :'' ]} key={index}>
               <View style={[styles.boxtext]}>
                 <Image source={user} style={styles.userimage} resizeMode="cover" />
                 <Text style={[styles.examname]}>{studentData.NAME}</Text>
-                <Text style={[styles.examname]}>{studentData.EMPLID}</Text>
-                <Text style={[styles.examname]}>{studentData.PTP_SEQ_CHAR}</Text>
+                <Text style={[styles.employeeid]}>{studentData.EMPLID}</Text>
+                <Text style={[styles.seqnumber]}>{studentData.PTP_SEQ_CHAR}</Text>
               </View>
             </View>
-            </Pressable>)) : <Text>There Is No Student Present In this Class !!</Text>
+            </Pressable>))) : <Text>There Is No Student Present In this Class you Searched !!</Text> : <Text>There Is No Student Present In this Class !!</Text>
         )}
     </ScrollView>
           </View>}
@@ -178,35 +206,14 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor:"#fff" ,
-
+     clearfix:"both"
     },
     heading: {
       fontSize: 20,
       fontWeight: 'bold',
       marginBottom: 10,
     },
-    dates: {
-      flexDirection: 'row',
-      padding:10
-    },
-    
-    dateItem: {
-      padding: 10,
-      backgroundColor: '#f0f0f0',
-      borderWidth: 1,
-      borderColor: '#ddd',
-      borderRadius: 5,
-      marginRight: 6,
-      alignItems:"center",
-      // width: 45,
-  
-    },
-   
-    dateNumber: {
-      fontSize: 16,
-      fontWeight: 'bold',
-   
-    },
+ 
     dateDay: {
       fontSize: 12,
       marginBottom:5,
@@ -224,30 +231,21 @@ const styles = StyleSheet.create({
         marginBottom:10
      
     },
-    ongoing:{
-          fontSize:16,
-          fontWeight:"bold",
-          borderWidth:1,
-          borderColor:"#ccc",
-          padding:10,
-          backgroundColor:"#0cb551",
-          // color:"#fff"
-    },
-    upcoming:{
-      fontSize:16,
-      fontWeight:"bold",
-      borderWidth:1,
-      borderColor:"#ccc",
-      padding:10 ,
-      backgroundColor:"#ccc"
-  
+    topdetails:{
+     padding:10,
+     clearfix:"both",
     },
     roomNumber: {
     //   flexDirection: "column",
       // flexWrap: "wrap",
       // marginBottom: 10,
       padding: 10,
-      flex:1,
+      // flex:1,
+      clearfix:"both",
+      // position:"relative",
+      // overflowX:"visible",
+      
+      // maxHeight:"0%"
      
     },
     box: {
@@ -272,7 +270,7 @@ const styles = StyleSheet.create({
       color:"#000",
       justifyContent:"space-between",
       alignItems:"center",
-   
+  
     
     },
     userimage:{
@@ -282,9 +280,18 @@ const styles = StyleSheet.create({
         marginRight:10
     },
  
-    examname:{
+    employeeid:{
       fontWeight:"bold",
       marginRight:30, 
+    },
+    examname:{
+   fontWeight:"bold",
+      marginRight:30, 
+    },
+    seqnumber:{
+      fontWeight:"bold",
+  
+      color:"#a79f9f",
     },
     activebox:{
       backgroundColor:"#0cb551",
@@ -309,7 +316,7 @@ const styles = StyleSheet.create({
    
     },
     searchWrap:{
-      padding:10,
+      // padding:10,
       width:"50%",
       marginTop:10,
     },
@@ -320,7 +327,7 @@ const styles = StyleSheet.create({
       borderRadius:5,
       backgroundColor:"#1b6913",
       padding:10,
-      top:55,
+      top:44,
       
     },
     magnifying:{
