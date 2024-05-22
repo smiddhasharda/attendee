@@ -49,10 +49,15 @@ const App = () => {
       <ToastProvider>
         <RoleProvider>
           <NavigationContainer>
-            <Stack.Navigator initialRouteName={initialRoute}>
+            <Stack.Navigator initialRouteName={initialRoute}  >
               <Stack.Screen name="Login"  options={{ headerShown: false }} component={LoginScreen} />
               <Stack.Screen name="PostLogin" component={DrawerNavigator} options={{ headerShown: false }} />
-              <Stack.Screen name="StudentInfo" component={StudentInfo} />
+              <Stack.Screen name="StudentInfo" component={StudentInfo}   options={{ 
+    headerStyle: {
+      backgroundColor: 'rgb(17, 65, 102)',
+    },
+    headerTintColor: '#fff',
+  }}  />
               <Stack.Screen name="RoomDetail" component={RoomDetail} />
               <Stack.Screen name="TopHeader"  component={TopHeader}  options={{ headerShown: false }} />
                <Stack.Screen name="Learn" component={Learn} />
