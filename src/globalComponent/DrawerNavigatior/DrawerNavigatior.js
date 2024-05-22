@@ -173,6 +173,12 @@ const DrawerNavigator = ({ navigation }) => {
   const [userRoleList, setUserRoleList] = useState([]);
   const [userRoleIndex, setUserRoleIndex] = useState(0);
   const [userData, setUserData] = useState("");
+  const TopHeaderCommonConfig = { 
+    headerStyle: {
+      backgroundColor: 'rgb(17, 65, 102)',
+    },
+    headerTintColor: '#fff',
+  }
 
   const handleRoleSelect = (value) => {
     setUserRoleIndex(value);
@@ -237,6 +243,7 @@ const DrawerNavigator = ({ navigation }) => {
           handleLogout={handleLogout}
         />
       )}
+      screenOptions={TopHeaderCommonConfig}
     >
       {userRoleList?.[userRoleIndex]?.module
         .filter(
