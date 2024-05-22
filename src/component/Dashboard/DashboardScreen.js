@@ -1,12 +1,7 @@
-import React, { useState } from 'react';
-import { View, Text, Button, TextInput, FlatList, StyleSheet, Pressable ,ScrollView,Image,} from 'react-native';
+import React from 'react';
+import { View, Text, TextInput, StyleSheet ,ScrollView,} from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; 
-import loginBackground from '../../local-assets/attendlogin.jpg';
-import classe from '../../local-assets/classes.jpg';
 import { useNavigation } from '@react-navigation/native'; 
-import PieChart from './PieChart';
-import DropDownPicker from "react-native-dropdown-picker";
-import TopHeader from '../../globalComponent/Header/TopHeader';
 const DashboardScreen = () => {
 const { navigate } = useNavigation(); 
   const handleLearnPress = () => {
@@ -24,11 +19,9 @@ const { navigate } = useNavigation();
           <TextInput
             style={styles.searchBox}
             placeholder="Search..."          
-          />
-          
+          />          
             <View style={styles.subtext}>
               <Text  style={styles.taskheading}>Exam Details</Text>
-              {/* <Text  onPress={handleLearnPress} style={styles.viewAll}>View All</Text> */}
             </View>
             <ScrollView vertical>        
             <View style={[styles.boxcontainer,]}>            
@@ -53,249 +46,8 @@ const { navigate } = useNavigation();
                   {/* <Text>Chapter 3</Text> */}
                   </View>
               </View> 
-              <View style={styles.box}>
-              <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-              <View  style={styles.boxtext}>
-                  <Text onPress={handleTaskPress}>Profile</Text>
-                  {/* <Text>Chapter 2</Text> */}
-                  </View>
-              </View>     
-              <View style={styles.box}>
-              <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-              <View  style={styles.boxtext}>
-                  <Text onPress={handleTaskPress}>Profile</Text>
-                  {/* <Text>Chapter 2</Text> */}
-                  </View>
-              </View>  
-              <View style={styles.box}>
-              <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-              <View  style={styles.boxtext}>
-                  <Text onPress={handleTaskPress}>Profile</Text>
-                  {/* <Text>Chapter 2</Text> */}
-                  </View>
-              </View>         
-              <View style={styles.box}>
-              <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-              <View  style={styles.boxtext}>
-                  <Text onPress={handleTaskPress}>Profile</Text>
-                  {/* <Text>Chapter 2</Text> */}
-                  </View>
-              </View>  
-              <View style={styles.box}>
-              <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-              <View  style={styles.boxtext}>
-                  <Text onPress={handleTaskPress}>Profile</Text>
-                  {/* <Text>Chapter 2</Text> */}
-                  </View>
-              </View>  
-              <View style={styles.box}>
-              <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-              <View  style={styles.boxtext}>
-                  <Text onPress={handleTaskPress}>Profile</Text>
-                  {/* <Text>Chapter 2</Text> */}
-                  </View>
-              </View>  
-              <View style={styles.box}>
-              <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-              <View  style={styles.boxtext}>
-                  <Text onPress={handleTaskPress}>Profile</Text>
-                  {/* <Text>Chapter 2</Text> */}
-                  </View>
-              </View>  
-              <View style={styles.box}>
-              <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-              <View  style={styles.boxtext}>
-                  <Text onPress={handleTaskPress}>Profile</Text>
-                  {/* <Text>Chapter 2</Text> */}
-                  </View>
-              </View>  
-              <View style={styles.box}>
-              <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-              <View  style={styles.boxtext}>
-                  <Text onPress={handleTaskPress}>Profile</Text>
-               
-                  </View>
-              </View>  
-              <View style={styles.box}>
-              <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-              <View  style={styles.boxtext}>
-                  <Text onPress={handleTaskPress}>Profile</Text>
-               
-                  </View>
-              </View>  
-              <View style={styles.box}>
-              <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-              <View  style={styles.boxtext}>
-                  <Text onPress={handleTaskPress}>Profile</Text>
-               
-                  </View>
-              </View>  
-              <View style={styles.box}>
-              <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-              <View  style={styles.boxtext}>
-                  <Text onPress={handleTaskPress}>Profile</Text>
-               
-                  </View>
-              </View>  
-              <View style={styles.box}>
-              <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-              <View  style={styles.boxtext}>
-                  <Text onPress={handleTaskPress}>Profile</Text>
-                 
-                  </View>
-              </View> 
-            </View>
-            <View style={[styles.boxcontainer,]}>            
-                <View style={[styles.box, styles.activebox]} >
-                <Ionicons style={styles.icons} name="book" size={24} color="rgb(8 96 88)"  />
-                <View  style={[styles.boxtext,]}>
-                  <Text style={styles.activeboxtext} onPress={handleLearnPress}>Exam</Text>
-                  {/* <Text>Chapter 1</Text> */}
-                </View>
-              </View>
-              <View style={styles.box}>
-              <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-              <View  style={styles.boxtext}>
-                  <Text onPress={handleTaskPress}>Report</Text>
-                  {/* <Text>Chapter 2</Text> */}
-                  </View>
-              </View>
-              <View style={styles.box}>
-              <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-                   <View  style={styles.boxtext}>
-                  <Text>Setting</Text>
-                  {/* <Text>Chapter 3</Text> */}
-                  </View>
-              </View> 
-              <View style={styles.box}>
-              <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-              <View  style={styles.boxtext}>
-                  <Text onPress={handleTaskPress}>Profile</Text>
-                  {/* <Text>Chapter 2</Text> */}
-                  </View>
-              </View>     
-              <View style={styles.box}>
-              <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-              <View  style={styles.boxtext}>
-                  <Text onPress={handleTaskPress}>Profile</Text>
-                  {/* <Text>Chapter 2</Text> */}
-                  </View>
-              </View>  
-              <View style={styles.box}>
-              <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-              <View  style={styles.boxtext}>
-                  <Text onPress={handleTaskPress}>Profile</Text>
-                  {/* <Text>Chapter 2</Text> */}
-                  </View>
-              </View>         
-              <View style={styles.box}>
-              <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-              <View  style={styles.boxtext}>
-                  <Text onPress={handleTaskPress}>Profile</Text>
-                  {/* <Text>Chapter 2</Text> */}
-                  </View>
-              </View>  
-              <View style={styles.box}>
-              <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-              <View  style={styles.boxtext}>
-                  <Text onPress={handleTaskPress}>Profile</Text>
-                  {/* <Text>Chapter 2</Text> */}
-                  </View>
-              </View>  
-              <View style={styles.box}>
-              <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-              <View  style={styles.boxtext}>
-                  <Text onPress={handleTaskPress}>Profile</Text>
-                  {/* <Text>Chapter 2</Text> */}
-                  </View>
-              </View>  
-              <View style={styles.box}>
-              <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-              <View  style={styles.boxtext}>
-                  <Text onPress={handleTaskPress}>Profile</Text>
-                  {/* <Text>Chapter 2</Text> */}
-                  </View>
-              </View>  
-              <View style={styles.box}>
-              <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-              <View  style={styles.boxtext}>
-                  <Text onPress={handleTaskPress}>Profile</Text>
-                  {/* <Text>Chapter 2</Text> */}
-                  </View>
-              </View>  
-              <View style={styles.box}>
-              <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-              <View  style={styles.boxtext}>
-                  <Text onPress={handleTaskPress}>Profile</Text>
-               
-                  </View>
-              </View>  
-              <View style={styles.box}>
-              <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-              <View  style={styles.boxtext}>
-                  <Text onPress={handleTaskPress}>Profile</Text>
-               
-                  </View>
-              </View>  
-              <View style={styles.box}>
-              <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-              <View  style={styles.boxtext}>
-                  <Text onPress={handleTaskPress}>Profile</Text>
-               
-                  </View>
-              </View>  
-              <View style={styles.box}>
-              <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-              <View  style={styles.boxtext}>
-                  <Text onPress={handleTaskPress}>Profile</Text>
-               
-                  </View>
-              </View>  
-              <View style={styles.box}>
-              <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-              <View  style={styles.boxtext}>
-                  <Text onPress={handleTaskPress}>Profile</Text>
-                 
-                  </View>
-              </View> 
             </View>
             </ScrollView>
-            {/* <View style={styles.subtext}>
-              <Text style={styles.taskheading}>Up Coming Exam</Text>
-              <Text onPress={handleTaskPress} style={styles.viewAll}>View All</Text>
-            </View>         */}
-            {/* <View style={styles.boxcontainer}>            
-                <View style={styles.taskbox}>
-                <Ionicons name="book" size={24} color="rgb(8 96 88)"  />
-                <View  style={styles.boxtext}>
-                  <Text>19 Jan 2024</Text>
-                </View>
-              </View>
-          
-              <View style={styles.taskbox}>
-              <Ionicons name="book" size={24} color="rgb(8 96 88)" />
-              <View  style={styles.boxtext}>
-              <Text>20 Jan 2024</Text>
-                  </View>
-              </View>
-            
-            </View> */}
-            {/* <View style={styles.subtext}>
-              <Text style={styles.taskheading}>Past Exam</Text>
-              <Text style={styles.viewAll}>View All</Text>
-            </View>         */}
-            {/* <View style={styles.boxcontainer}>            
-                <View style={styles.taskbox}>               
-                <Image source ={classe} style={styles.imagebg} />       
-              </View>
-              <View style={styles.taskbox}>               
-                <Image source ={classe} style={styles.imagebg} />       
-              </View>              
-            </View>      */}
-           
-            {/* <View  style={styles.piechart}>        
-               <PieChart />     
-            </View>    */}             
     </View>
   
   );
@@ -303,7 +55,6 @@ const { navigate } = useNavigation();
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
     padding: 16,
     backgroundColor: '#fff',
    
@@ -385,12 +136,6 @@ const styles = StyleSheet.create({
   boxtable:{
     padding:5,
   },
- 
-  // dropdown: {
-  //   width: 150,
-  //   height: 50,
-  //   transform: [{ scaleX: 1.5 }, { scaleY: 1.5 }], 
-  // },
 });
 
 export default DashboardScreen;
