@@ -239,7 +239,7 @@ const styles = StyleSheet.create({
     },
     roomNumber: {
     //   flexDirection: "column",
-      // flexWrap: "wrap",
+      flexWrap: "nowrap",
       // marginBottom: 10,
       padding: 10,
       // flex:1,
@@ -335,14 +335,14 @@ const styles = StyleSheet.create({
     },
     magnifying:{
       // padding:20,
-      right:0,
+      right:40,
       // width:85,
       // left:"82%",
       // position:"absolute",
       position:"fixed",
       zIndex:1,
-      // top:"-60px"
+      top:"90%"
       // top:0,
-      bottom:"0",
+      // bottom:"90%",
     },
   });
