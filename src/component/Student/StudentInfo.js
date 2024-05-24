@@ -537,13 +537,13 @@ const StudentInfo = () => {
       const authToken = await checkAuthToken();
       const response = await view(
         {
-          operation: "fetch",
+          operation: "custom",
           tblName: "PS_S_PRD_CT_ATT_VW",
           data: '',
           conditionString: '',
           checkAvailability: '',
           // customQuery: `SELECT DISTINCT PS_S_PRD_CT_ATT_VW.PERCENTAGE,PS_S_PRD_TRS_AT_VW.PERCENTCHG FROM PS_S_PRD_CT_ATT_VW JOIN PS_S_PRD_TRS_AT_VW ON PS_S_PRD_TRS_AT_VW.EMPLID = PS_S_PRD_CT_ATT_VW.EMPLID WHERE PS_S_PRD_CT_ATT_VW.EMPLID = '${system_Id}' AND PS_S_PRD_CT_ATT_VW.CATALOG_NBR = '${catlog_Nbr}' `
-          customQuery: `SELECT PS_S_PRD_CT_ATT_VW.PERCENTAGE,PS_S_PRD_TRS_AT_VW.PERCENTCHG FROM PS_S_PRD_CT_ATT_VW JOIN PS_S_PRD_TRS_AT_VW ON PS_S_PRD_TRS_AT_VW.EMPLID = PS_S_PRD_CT_ATT_VW.EMPLID  `
+          customQuery: `SELECT count(*) From PS_S_PRD_PHOTO_VW`
         },
         authToken
       );

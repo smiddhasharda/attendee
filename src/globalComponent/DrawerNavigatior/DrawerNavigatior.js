@@ -131,7 +131,7 @@ const CustomDrawerContent = ({ ...props }) => {
             onImageChange={handleImageChange}
           />
           <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-            {file && (
+            <>{file && (
               <View style={styles.buttonwrap}>
                 <Pressable onPress={() => handleProfilePic()}>
                   <Text>Save</Text>
@@ -140,7 +140,7 @@ const CustomDrawerContent = ({ ...props }) => {
                   <Text>Cancel</Text>
                 </Pressable>
               </View>
-            )}
+            )}</>
           </View>
           <Text style={styles.username}>{props?.userData?.name}</Text>
           <View style={styles.dropdownWrap}>
