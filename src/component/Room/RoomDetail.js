@@ -232,8 +232,10 @@ const styles = StyleSheet.create({
      
     },
     topdetails:{
-     padding:10,
-     clearfix:"both",
+     padding:8,
+    //  clearfix:"both",
+     flexDirection:"row",
+     justifyContent:"space-between",
     },
     roomNumber: {
     //   flexDirection: "column",
@@ -316,26 +318,31 @@ const styles = StyleSheet.create({
    
     },
     searchWrap:{
-      // padding:10,
-      width:"50%",
-      marginTop:10,
+      padding: 10,
+      width:"100%",
+      // width:'auto',
     },
     searchIcon:{
-      position:"absolute",
+      // position:"absolute",
       // bottom:0,
-      left:4,
+      // left:4,
       borderRadius:5,
       backgroundColor:"#1b6913",
       padding:10,
-      top:44,
+      // top:44,
+      alignItems:"center"
       
     },
     magnifying:{
-      padding:20,
-      width:40,
-      left:"82%",
-      position:"absolute",
+      // padding:20,
+      right:0,
+      // width:85,
+      // left:"82%",
+      // position:"absolute",
+      position:"fixed",
       zIndex:1,
-      top:"-60px"
+      // top:"-60px"
+      // top:0,
+      bottom:"0",
     },
   });
