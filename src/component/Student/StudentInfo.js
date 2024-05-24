@@ -21,7 +21,7 @@ const StudentInfo = () => {
   const [courseDetails, setCourseDetails] = useState({});
   const [attendanceDetails, setAttendanceDetails] = useState({});
   const { room_Nbr, catlog_Nbr, system_Id, seat_Nbr, exam_Dt, startTime, reportId, navigation, userAccess } = route.params;
-  const UserAccess = userAccess?.module?.filter((item)=> item?.FK_ModuleId === 6);
+  const UserAccess = userAccess?.module?.find((item)=> item?.FK_ModuleId === 6);
   const [copiesData, setCopiesData] = useState([
     // {
     //   id: 0,
@@ -537,17 +537,18 @@ const StudentInfo = () => {
       const authToken = await checkAuthToken();
       const response = await view(
         {
-          operation: "custom",
+          operation: "fetch",
           tblName: "PS_S_PRD_CT_ATT_VW",
           data: '',
           conditionString: '',
           checkAvailability: '',
-          customQuery: `SELECT DISTINCT PS_S_PRD_CT_ATT_VW.PERCENTAGE,PS_S_PRD_TRS_AT_VW.PERCENTCHG FROM PS_S_PRD_CT_ATT_VW JOIN PS_S_PRD_TRS_AT_VW ON PS_S_PRD_TRS_AT_VW.EMPLID = PS_S_PRD_CT_ATT_VW.EMPLID WHERE PS_S_PRD_CT_ATT_VW.EMPLID = '${system_Id}' AND PS_S_PRD_CT_ATT_VW.CATALOG_NBR = '${catlog_Nbr}' `
+          // customQuery: `SELECT DISTINCT PS_S_PRD_CT_ATT_VW.PERCENTAGE,PS_S_PRD_TRS_AT_VW.PERCENTCHG FROM PS_S_PRD_CT_ATT_VW JOIN PS_S_PRD_TRS_AT_VW ON PS_S_PRD_TRS_AT_VW.EMPLID = PS_S_PRD_CT_ATT_VW.EMPLID WHERE PS_S_PRD_CT_ATT_VW.EMPLID = '${system_Id}' AND PS_S_PRD_CT_ATT_VW.CATALOG_NBR = '${catlog_Nbr}' `
+          customQuery: `SELECT PS_S_PRD_CT_ATT_VW.PERCENTAGE,PS_S_PRD_TRS_AT_VW.PERCENTCHG FROM PS_S_PRD_CT_ATT_VW JOIN PS_S_PRD_TRS_AT_VW ON PS_S_PRD_TRS_AT_VW.EMPLID = PS_S_PRD_CT_ATT_VW.EMPLID  `
         },
         authToken
       );
       if (response) {
-        console.log(response?.data?.[0] || []);
+        console.log(response?.data || []);
         setLoading(false);
       }
     } catch (error) {

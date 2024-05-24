@@ -7,7 +7,7 @@ import CheckBox from "expo-checkbox";
 import styles from "./RoleScreen.style";
 import { ScrollView } from "react-native-gesture-handler";
 const RoleScreen = ({userAccess}) => {
-  const UserAccess = userAccess?.module?.filter( (item) => item?.FK_ModuleId === 2 );
+  const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 2 );
   const { showToast } = useToast();
   const [roleData, setRoleData] = useState({
     roleId: "",

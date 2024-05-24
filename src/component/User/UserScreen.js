@@ -10,7 +10,7 @@ import Tooltip from "../../globalComponent/ToolTip/Tooltip";
 import CheckBox from "expo-checkbox";
 import { ScrollView } from "react-native-gesture-handler";
 const UserScreen = ({userAccess}) => { 
-  const UserAccess = userAccess?.module?.filter( (item) => item?.FK_ModuleId === 4 );
+  const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 4 );
   const { showToast } = useToast();
   const [userData, setUserData] = useState({
     userId: '',
@@ -543,7 +543,6 @@ const UserScreen = ({userAccess}) => {
     </ScrollView>
     )
   }
-
   useEffect(() => {
     handleGetUserList();
     handleGetRoleList();
