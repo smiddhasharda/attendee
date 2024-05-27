@@ -1,47 +1,43 @@
 // ToastContainer.style.js
-
 import { StyleSheet, Platform } from 'react-native';
-// import WebToastStyles from './WebToast.module.css';
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
+    position: 'absolute',
+    top: 50, // Adjust this value to position the toast further down or up
+    width: '100%',
     alignItems: 'center',
-    backgroundColor: "#f5f5f5",
-    borderRadius: 10,
-    ...Platform.select({
-      ios: {
-        boxShadow: '0px 2px 3.84px rgba(0, 0, 0, 0.25)',
-        elevation: 5, 
-      },
-      android: {
-        elevation: 5,
-      },
-    }),
+    zIndex: 1000, // Ensure it's above other elements
   },
   toastContainer: {
     padding: 16,
     borderRadius: 8,
-    flexDirection: 'row',
+    flexDirection: 'column',
     alignItems: 'center',
+    marginVertical: 5,
+    backgroundColor: "#f5f5f5",
     ...Platform.select({
       ios: {
-        boxShadow: '0px 2px 3.84px rgba(0, 0, 0, 0.25)',
-        elevation: 5,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
       },
       android: {
         elevation: 5,
       },
-      // web: { // Include web-specific styles
-      //   ...WebToastStyles['web-toast'],
-      //   ...WebToastStyles['toast-text'],
-      // },
     }),
   },
   toastText: {
     color: 'white',
     fontSize: 16,
+    marginBottom: 8,
+  },
+  progressBar: {
+    height: 4,
+    backgroundColor: 'white',
+    alignSelf: 'stretch',
+    borderRadius: 2,
   },
 });
 

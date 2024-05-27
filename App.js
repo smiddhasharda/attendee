@@ -15,6 +15,7 @@ import PieChart from "./src/component/Dashboard/PieChart";
 import StudentInfo from "./src/component/Student/StudentInfo";
 import RoomDetail from "./src/component/Room/RoomDetail";
 import TopHeader from "./src/globalComponent/Header/TopHeader";
+import ToastContainer from './src/globalComponent/ToastContainer/ToastContainer'; 
 
 const Stack = createNativeStackNavigator();
 // global.SERVER_URL = `http://localhost:5000`;
@@ -52,6 +53,7 @@ const App = () => {
   const renderRouting = () => (
     <Provider store={store}>
       <ToastProvider>
+        <ToastContainer/>
         <RoleProvider>
           <NavigationContainer>
             <Stack.Navigator initialRouteName={initialRoute}>
