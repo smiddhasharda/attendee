@@ -137,7 +137,7 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
 
   useEffect(() => {
     fetchRoomDetails(examSelectedDate);
-  }, []);
+  }, [UserAccess]);
 
   return (
     <View style={styles.container}>
