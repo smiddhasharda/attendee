@@ -10,19 +10,19 @@ const windowWidth = Dimensions.get("window").width;
 
  const InvigilatorScreen = ({userAccess}) => {
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 4 );
-  const { showToast } = useToast();
+  const { addToast } = useToast();
   const [invigilatorData, setInvigilatorData] = useState([]);
   const [isBulkuploadInvigilater, setIsBulkuploadInvigilater] = useState(false);
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
 
     if (!authToken) {
-      showToast("Authentication token not available", "error");
+      addToast("Authentication token not available", "error");
       throw new Error("Authentication token not available");
     }
 
     return authToken;
-  }, [showToast]);
+  }, [addToast]);
 
   const handleGetInigilatorDuty = async () => {
     try {
@@ -52,16 +52,16 @@ const windowWidth = Dimensions.get("window").width;
   const handleAuthErrors = (error) => {
     switch (error.message) {
       case "Invalid credentials":
-        showToast("Invalid authentication credentials", "error");
+        addToast("Invalid authentication credentials", "error");
         break;
       case "Data already exists":
-        showToast("Module with the same name already exists", "error");
+        addToast("Module with the same name already exists", "error");
         break;
       case "No response received from the server":
-        showToast("No response received from the server", "error");
+        addToast("No response received from the server", "error");
         break;
       default:
-        showToast("Module Operation Failed", "error");
+        addToast("Module Operation Failed", "error");
     }
   };
 

@@ -8,28 +8,28 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetch, view } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 
-function RoomDetail() {
+function RoomDetail({navigation}) {
   const [isScanning, setIsScanning] = useState(false);
   const route = useRoute();
-  const { showToast } = useToast();
+  const { addToast } = useToast();
   const [studentDetails, setStudentDetails] = useState([]);
   const [tempStudentDetails, setTempStudentDetails] = useState([]);
   const [loading, setLoading] = useState(false);
   const [presentStudentList, setPresentStudentList] = useState();
   const [searchText, setSearchText] = useState('');
-  const { room_Nbr, exam_Dt,startTime,navigation,userAccess } = route.params;
+  const { room_Nbr, exam_Dt,startTime,userAccess } = route.params;
   const UserAccess = userAccess?.module?.find((item)=> item?.FK_ModuleId === 7);
 
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
 
     if (!authToken) {
-      showToast("Authentication token not available", "error");
+      addToast("Authentication token not available", "error");
       throw new Error("Authentication token not available");
     }
 
     return authToken;
-  }, [showToast]);
+  }, [addToast]);
 
   const fetchStudentDetails = (date, room) => {
     setLoading(true);
@@ -43,10 +43,10 @@ function RoomDetail() {
     setIsScanning(false);
    let studentData = studentDetails?.filter((data)=> data.EMPLID === ScannedData)?.[0] || '';
    if(studentData){
-    navigation.navigate("StudentInfo", { room_Nbr: studentData.ROOM_NBR ,exam_Dt: studentData.EXAM_DT,catlog_Nbr: studentData.CATALOG_NBR ,system_Id:studentData.EMPLID, seat_Nbr: studentData.PTP_SEQ_CHAR ,startTime: startTime,reportId: presentStudentList?.filter((item)=>item.EMPLID === Number(studentData.EMPLID))?.[0]?.PK_Report_Id ,navigation,userAccess });
+    navigation.navigate("StudentInfo", { room_Nbr: studentData.ROOM_NBR ,exam_Dt: studentData.EXAM_DT,catlog_Nbr: studentData.CATALOG_NBR ,system_Id:studentData.EMPLID, seat_Nbr: studentData.PTP_SEQ_CHAR ,startTime: startTime,current_Term:studentData.STRM,reportId: presentStudentList?.filter((item)=>item.EMPLID === Number(studentData.EMPLID))?.[0]?.PK_Report_Id ,userAccess });
    }
    else{
-    showToast("User Not Belong In This Room !", "error");
+    addToast("User Not Belong In This Room !", "error");
     handleCancel();
    }
   
@@ -98,8 +98,6 @@ function RoomDetail() {
         authToken
       );
 
-
-
       if (response) {
        setStudentDetails(response?.data);
        setTempStudentDetails(response?.data);
@@ -113,16 +111,16 @@ function RoomDetail() {
   const handleAuthErrors = (error) => {
     switch (error.message) {
       case "Invalid credentials":
-        showToast("Invalid authentication credentials", "error");
+        addToast("Invalid authentication credentials", "error");
         break;
       case "Data already exists":
-        showToast("Student Info with the same name already exists", "error");
+        addToast("Student Info with the same name already exists", "error");
         break;
       case "No response received from the server":
-        showToast("No response received from the server", "error");
+        addToast("No response received from the server", "error");
         break;
       default:
-        showToast("Student Info Operation Failed", "error");
+        addToast("Student Info Operation Failed", "error");
     }
   };
 
@@ -177,24 +175,36 @@ function RoomDetail() {
         )}
       </View>
       </View>
-      <ScrollView style={styles.roomNumber}>
-        {loading ? (
-          <ActivityIndicator size="large" color="#0000ff" />
-        ) : (
-          studentDetails?.length > 0 ?tempStudentDetails?.length > 0 ? (tempStudentDetails?.map((studentData, index) =>
-            ( <Pressable onPress={() => UserAccess?.create === 1 ? navigation.navigate("StudentInfo", { room_Nbr: studentData.ROOM_NBR ,exam_Dt: studentData.EXAM_DT,catlog_Nbr: studentData.CATALOG_NBR ,system_Id:studentData.EMPLID, seat_Nbr: studentData.PTP_SEQ_CHAR, reportId: presentStudentList?.filter((item)=>item.EMPLID === Number(studentData.EMPLID))?.[0]?.PK_Report_Id, navigation,userAccess }) : ''}>
-            <View style={[styles.box,presentStudentList?.find((item)=>item.EMPLID === Number(studentData.EMPLID)) ? styles.activebox :'' ]} key={index}>
-              <View style={[styles.boxtext]}>
-                <Image source={user} style={styles.userimage} resizeMode="cover" />
-                <Text style={[styles.examname]}>{studentData.NAME}</Text>
-                <Text style={[styles.employeeid]}>{studentData.EMPLID}</Text>
-                <Text style={[styles.seqnumber]}>{studentData.PTP_SEQ_CHAR}</Text>
-              </View>
+    <ScrollView style={styles.roomNumber}>
+  {loading ? (
+    <ActivityIndicator size="large" color="#0000ff" />
+  ) : (
+    studentDetails?.length > 0 ? tempStudentDetails?.length > 0 ? (
+      tempStudentDetails.map((studentData, index) => (
+        <Pressable 
+          key={studentData.EMPLID}  // Use a unique identifier from studentData, such as EMPLID
+          onPress={() => UserAccess?.create === 1 ? navigation.navigate("StudentInfo", { room_Nbr: studentData.ROOM_NBR, exam_Dt: studentData.EXAM_DT, catlog_Nbr: studentData.CATALOG_NBR, system_Id: studentData.EMPLID, seat_Nbr: studentData.PTP_SEQ_CHAR, current_Term: studentData.STRM, reportId: presentStudentList?.filter((item) => item.EMPLID === Number(studentData.EMPLID))?.[0]?.PK_Report_Id, userAccess }) : ''}
+        >
+          <View style={[styles.box, presentStudentList?.find((item) => item.EMPLID === Number(studentData.EMPLID)) ? styles.activebox : '']} key={studentData.EMPLID}>
+            <View style={styles.boxtext}>
+              <Image source={user} style={styles.userimage} resizeMode="cover" />
+              <Text style={styles.examname}>{studentData.NAME}</Text>
+              <Text style={styles.employeeid}>{studentData.EMPLID}</Text>
+              <Text style={styles.seqnumber}>{studentData.PTP_SEQ_CHAR}</Text>
             </View>
-            </Pressable>))) : <Text>There Is No Student Present In this Class you Searched !!</Text> : <Text>There Is No Student Present In this Class !!</Text>
-        )}
-    </ScrollView>
-          </View>}
+          </View>
+        </Pressable>
+      ))
+    ) : (
+      <Text>There Is No Student Present In this Class you Searched !!</Text>
+    ) : (
+      <Text>There Is No Student Present In this Class !!</Text>
+    )
+  )}
+</ScrollView>
+
+          </View>
+          }
   </View>
   );
 }

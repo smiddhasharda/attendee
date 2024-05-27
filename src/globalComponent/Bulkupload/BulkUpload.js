@@ -84,22 +84,22 @@ const BulkUpload = (props) => {
     return XLSX.utils.sheet_to_json(worksheet, { header: 1 });
   };
 
-  const { showToast } = useToast();
+  const { addToast } = useToast();
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
 
     if (!authToken) {
-      showToast("Authentication token not available", "error");
+      addToast("Authentication token not available", "error");
       throw new Error("Authentication token not available");
     }
 
     return authToken;
-  }, [showToast]);
+  }, [addToast]);
 
   const handleBulkInvigiltor = async () => {
     try {
       if (!selectedFile) {
-        showToast('Please select a file to upload.',"error");
+        addToast('Please select a file to upload.',"error");
         return;
       } else {
         const authToken = await checkAuthToken();
@@ -120,7 +120,7 @@ const BulkUpload = (props) => {
   
         if (response) {
           setSelectedFile(null);
-          showToast(response.message, "success");
+          addToast(response.message, "success");
         }
       }    
     } catch (error) {
@@ -131,16 +131,16 @@ const BulkUpload = (props) => {
   const handleAuthErrors = (error) => {
     switch (error.message) {
       case "Invalid credentials":
-        showToast("Invalid authentication credentials", "error");
+        addToast("Invalid authentication credentials", "error");
         break;
       case "Data already exists":
-        showToast("Data with the same name already exists", "error");
+        addToast("Data with the same name already exists", "error");
         break;
       case "No response received from the server":
-        showToast("No response received from the server", "error");
+        addToast("No response received from the server", "error");
         break;
       default:
-        showToast("Bulkupload Operation Failed", "error");
+        addToast("Bulkupload Operation Failed", "error");
     }
   };
 
