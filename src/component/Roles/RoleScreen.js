@@ -8,7 +8,7 @@ import styles from "./RoleScreen.style";
 import { ScrollView } from "react-native-gesture-handler";
 const RoleScreen = ({userAccess}) => {
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 2 );
-  const { showToast } = useToast();
+  const { addToast } = useToast();
   const [roleData, setRoleData] = useState({
     roleId: "",
     roleName: "",
@@ -25,12 +25,12 @@ const RoleScreen = ({userAccess}) => {
     const authToken = await AsyncStorage.getItem("authToken");
 
     if (!authToken) {
-      showToast("Authentication token not available", "error");
+      addToast("Authentication token not available", "error");
       throw new Error("Authentication token not available");
     }
 
     return authToken;
-  }, [showToast]);
+  }, [addToast]);
 
   const handleAddRole = async () => {
     try {
@@ -72,12 +72,12 @@ const RoleScreen = ({userAccess}) => {
             authToken
           );
 
-          showToast("Role Add Successful", "success");
+          addToast("Role Add Successful", "success");
           await handleClose();
           handleGetRoleList();
         }
         else {
-          showToast("Role Add Successful", "success");
+          addToast("Role Add Successful", "success");
           await handleClose();
           handleGetRoleList();
         }
@@ -130,7 +130,7 @@ const RoleScreen = ({userAccess}) => {
             authToken
           );
 
-          showToast("Role Update Successful", "success");
+          addToast("Role Update Successful", "success");
           await handleClose();
           handleGetRoleList();
         }
@@ -179,7 +179,7 @@ const RoleScreen = ({userAccess}) => {
       );
 
       if (response) {
-        showToast(
+        addToast(
           `Role ${status === 0 ? "Active" : "Inactive"} Successful`,
           "success"
         );
@@ -236,16 +236,16 @@ const RoleScreen = ({userAccess}) => {
   const handleAuthErrors = (error) => {
     switch (error.message) {
       case "Invalid credentials":
-        showToast("Invalid authentication credentials", "error");
+        addToast("Invalid authentication credentials", "error");
         break;
       case "Data already exists":
-        showToast("Role with the same name already exists", "error");
+        addToast("Role with the same name already exists", "error");
         break;
       case "No response received from the server":
-        showToast("No response received from the server", "error");
+        addToast("No response received from the server", "error");
         break;
       default:
-        showToast("Role Operation Failed", "error");
+        addToast("Role Operation Failed", "error");
     }
   };
 

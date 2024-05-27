@@ -1,30 +1,38 @@
 // ToastContainer.js
-import React, { useEffect } from 'react';
-import { View, Text, Platform } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Animated } from 'react-native';
 import ToastContainerStyle from './ToastContainer.style';
-// import WebToastStyles from './WebToast.module.css';
-import { useToast } from './ToastContext';
-
-// // Web-specific toast component
-// const WebToast = ({ message, type }) => (
-//   <div className={`${WebToastStyles['web-toast']} ${type === 'success' ? WebToastStyles.success : WebToastStyles.error}`}>
-//     <p className={WebToastStyles['toast-text']}>{message}</p>
-//   </div>
-// );
+import { useToast } from './ToastUtils';
 
 // React Native toast component
-const NativeToast = ({ message, type }) => (
-  <View
-    style={[
-      ToastContainerStyle.toastContainer,
-      { backgroundColor: type === 'success' ? '#4CAF50' : '#FF5252' },
-    ]}
-  >
-    <Text style={ToastContainerStyle.toastText}>{message}</Text>
-  </View>
-);
+const NativeToast = ({ message, type }) => {
+  const [progress, setProgress] = useState(new Animated.Value(1));
 
-const ToastContainer = (props) => {
+  useEffect(() => {
+    Animated.timing(progress, {
+      toValue: 0,
+      duration: 10000, // 10 seconds
+      useNativeDriver: false,
+    }).start();
+  }, [progress]);
+
+  return (
+    <View
+      style={[
+        ToastContainerStyle.toastContainer,
+        { backgroundColor: type === 'success' ? '#4CAF50' : '#FF5252' },
+      ]}
+    >
+      <Text style={ToastContainerStyle.toastText}>{message}</Text>
+      <Animated.View style={[ToastContainerStyle.progressBar, { width: progress.interpolate({
+        inputRange: [0, 1],
+        outputRange: ['0%', '100%'],
+      }) }]} />
+    </View>
+  );
+};
+
+const ToastContainer = () => {
   const { toasts } = useToast();
 
   useEffect(() => {
@@ -33,16 +41,11 @@ const ToastContainer = (props) => {
 
   return (
     <View style={ToastContainerStyle.container}>
-        <React.Fragment key="toast-key">
-        {/* {Platform.OS === 'web' ? (a
-          // <WebToast message={props.message} type={props.type} />
-        ) : ( */}
-          <NativeToast message={props.message} type={props.type} />
-        {/* )} */}
-      </React.Fragment>
+      {toasts.map((toast) => (
+        <NativeToast key={toast.id} message={toast.message} type={toast.type} />
+      ))}
     </View>
   );
-
 };
 
 export default ToastContainer;

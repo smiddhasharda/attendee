@@ -9,7 +9,7 @@ import { useToast } from '../../globalComponent/ToastContainer/ToastContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginScreen = ({navigation}) => {
-  const { showToast } = useToast();
+  const { addToast } = useToast();
   const [loginData, setLoginData] = useState({
     email: '',
     OTP: '',
@@ -63,13 +63,13 @@ const LoginScreen = ({navigation}) => {
       navigation.replace('PostLogin', { userRolePermission });
     } catch (error) {
       if (error.message === 'Invalid credentials') {
-        showToast('Invalid email or OTP', 'error');
+        addToast('Invalid email or OTP', 'error');
       } else if (error.message === 'Token has expired') {
-        showToast('Token has expired, please log in again', 'error');
+        addToast('Token has expired, please log in again', 'error');
         navigation.replace('Login');
       } else {
         console.error('Login Failed', error);
-        showToast('Login failed, please try again later', 'error');
+        addToast('Login failed, please try again later', 'error');
       }
     }
   };
@@ -81,15 +81,15 @@ const LoginScreen = ({navigation}) => {
         `email_id = '${loginData.email}' AND isActive = 1`
       );
       if (response) {
-        showToast(`OTP Sent Successfully to ${loginData.email}`, 'success');
+        addToast(`OTP Sent Successfully to ${loginData.email}`, 'success');
         setOTPInputDiasbled(false);
       }
     } catch (error) {
       if (error.message === 'Invalid Email Id') {
-        showToast('Invalid Email Id', 'error');
+        addToast('Invalid Email Id', 'error');
       } else {
         console.error('Email Verification Failed', error);
-        showToast('Email verification failed, please try again later', 'error');
+        addToast('Email verification failed, please try again later', 'error');
       }
     }
   };

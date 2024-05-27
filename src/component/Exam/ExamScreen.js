@@ -13,7 +13,7 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
   const [examSelectedDate, setExamSelectedDate] = useState('');
   const [invigilatorData, setInvigilatorData] = useState();
   const [loading, setLoading] = useState(false);
-  const { showToast } = useToast();
+  const { addToast } = useToast();
 
   // const [open, setOpen] = useState(false);
   // const [userRoleList, setUserRoleList] = useState([
@@ -25,11 +25,11 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
     if (!authToken) {
-      showToast("Authentication token not available", "error");
+      addToast("Authentication token not available", "error");
       throw new Error("Authentication token not available");
     }
     return authToken;
-  }, [showToast]);
+  }, [addToast]);
 
   const handleGetDateView = async () => {
     try {
@@ -116,7 +116,7 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
 
   const handleAuthErrors = (error) => {
     const errorMessages = { "Invalid credentials": "Invalid authentication credentials", "Data already exists": "Module with the same name already exists", "No response received from the server": "No response received from the server", };
-    showToast(errorMessages[error.message] || "Module Operation Failed", "error");
+    addToast(errorMessages[error.message] || "Module Operation Failed", "error");
   };
 
   const fetchRoomDetails = async (date) => {
@@ -208,7 +208,7 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
           renderItem={({ item, index }) => (
             <Pressable
               key={index}
-              onPress={() => UserAccess?.create === 1 ? navigation.navigate("RoomDetail", { room_Nbr: item.ROOM_NBR, exam_Dt: item.EXAM_DT, startTime: item.EXAM_START_TIME, navigation, userAccess},) : null}
+              onPress={() => UserAccess?.create === 1 ? navigation.navigate("RoomDetail", { room_Nbr: item.ROOM_NBR, exam_Dt: item.EXAM_DT, startTime: item.EXAM_START_TIME, userAccess},) : null}
             >
                 <View style={[styles.box,styles.boxTextWrap]}>
                   <Text style={styles.examName}>{item.ROOM_NBR}</Text>

@@ -1,12 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TextInput,
-  Pressable,
-} from "react-native";
+import { View, Text, StyleSheet, ScrollView, TextInput, Pressable, } from "react-native";
 import { Ionicons, FontAwesome, AntDesign,MaterialCommunityIcons ,MaterialIcons,Entypo} from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
@@ -14,20 +7,15 @@ import CodeScanner from "../../globalComponent/CodeScanner/CodeScanner";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { insert, fetch, update,remove,view } from "../../AuthService/AuthService";
 
-const StudentInfo = () => {
+const StudentInfo = ({navigation}) => {
   const route = useRoute();
-  const { showToast } = useToast();
+  const { addToast  } = useToast();
   const [studentDetails, setStudentDetails] = useState({});
   const [courseDetails, setCourseDetails] = useState({});
   const [attendanceDetails, setAttendanceDetails] = useState({});
-  const { room_Nbr, catlog_Nbr, system_Id, seat_Nbr, exam_Dt, startTime, reportId, navigation, userAccess } = route.params;
+  const { room_Nbr, catlog_Nbr, system_Id, seat_Nbr, exam_Dt, startTime, reportId, userAccess,current_Term } = route.params;
   const UserAccess = userAccess?.module?.find((item)=> item?.FK_ModuleId === 6);
   const [copiesData, setCopiesData] = useState([
-    // {
-    //   id: 0,
-    //   mainCopy: "",
-    //   alternateCopies: [],
-    // },
   ]);
   const [tempCopyNumber, setTempNumber] = useState("");
   const [mainCopyIndex, setMainCopyIndex] = useState("");
@@ -152,12 +140,12 @@ const StudentInfo = () => {
     const authToken = await AsyncStorage.getItem("authToken");
 
     if (!authToken) {
-      showToast("Authentication token not available", "error");
+      addToast ("Authentication token not available", "error");
       throw new Error("Authentication token not available");
     }
 
     return authToken;
-  }, [showToast]);
+  }, [addToast ]);
 
   const handleMainCopyChange = (copyNumber, index) => {
     const updatedCopies = [...copiesData];
@@ -286,10 +274,10 @@ const StudentInfo = () => {
             EXAM_START_TIME: startTime,
             CATALOG_NBR: catlog_Nbr,
             PTP_SEQ_CHAR: seat_Nbr,
-            Status:
-              attendanceDetails.PERCENTAGE >= attendanceDetails.PERCENTCHG
+            Status:attendanceDetails?.length > 0 ?
+              (attendanceDetails.PERCENTAGE >= attendanceDetails.PERCENTCHG
                 ? "Eligible"
-                : "Debarred",
+                : "Debarred") : "Not Defined",
             SU_PAPER_ID: courseDetails.SU_PAPER_ID,
             DESCR100: courseDetails.DESCR100,
           },
@@ -301,12 +289,6 @@ const StudentInfo = () => {
       );
 
       if (response) {
-        // const studentCopyWithId = copiesData?.map(
-        //   (items) => ({
-        //     FK_ReportId: response?.data?.insertId,
-        //     ...items,
-        //   })
-        // );
         const studentCopyWithId = copiesData.map((item) => {
           let newItem = {
             FK_ReportId: response?.data?.insertId,
@@ -330,12 +312,11 @@ const StudentInfo = () => {
           authToken
         );
         if (NewResponse) {
-          showToast("Student Details Add Successful", "success");
+          addToast ("Student Details Add Successful", "success");
           navigation.navigate("RoomDetail", {
             room_Nbr: room_Nbr,
             exam_Dt: exam_Dt,
             startTime: startTime,
-            navigation,
           });
         }
       }
@@ -405,9 +386,10 @@ const StudentInfo = () => {
             CATALOG_NBR: catlog_Nbr,
             PTP_SEQ_CHAR: seat_Nbr,
             Status:
-              attendanceDetails.PERCENTAGE >= attendanceDetails.PERCENTCHG
+            attendanceDetails?.length > 0 ?
+              (attendanceDetails.PERCENTAGE >= attendanceDetails.PERCENTCHG
                 ? "Eligible"
-                : "Debarred",
+                : "Debarred") : "Not Defined",
             SU_PAPER_ID: courseDetails.SU_PAPER_ID,
             DESCR100: courseDetails.DESCR100,
           },
@@ -454,12 +436,11 @@ const StudentInfo = () => {
             authToken
           );
           if (NewResponse) {
-            showToast("Student Details Update Successful", "success");
+            addToast ("Student Details Update Successful", "success");
             navigation.navigate("RoomDetail", {
               room_Nbr: room_Nbr,
               exam_Dt: exam_Dt,
               startTime: startTime,
-              navigation,
             });
           }
         }
@@ -473,16 +454,16 @@ const StudentInfo = () => {
   const handleAuthErrors = (error) => {
     switch (error.message) {
       case "Invalid credentials":
-        showToast("Invalid authentication credentials", "error");
+        addToast ("Invalid authentication credentials", "error");
         break;
       case "Data already exists":
-        showToast("Student Info with the same name already exists", "error");
+        addToast ("Student Info with the same name already exists", "error");
         break;
       case "No response received from the server":
-        showToast("No response received from the server", "error");
+        addToast ("No response received from the server", "error");
         break;
       default:
-        showToast("Student Info Operation Failed", "error");
+        addToast ("Student Info Operation Failed", "error");
     }
   };
 
@@ -502,7 +483,7 @@ const StudentInfo = () => {
       );
       if (response) {
         setStudentDetails(response?.data?.[0]);
-        // setLoading(false);
+        setLoading(false);
       }
     } catch (error) {
       setLoading(false);
@@ -542,14 +523,15 @@ const StudentInfo = () => {
           data: '',
           conditionString: '',
           checkAvailability: '',
-          // customQuery: `SELECT DISTINCT PS_S_PRD_CT_ATT_VW.PERCENTAGE,PS_S_PRD_TRS_AT_VW.PERCENTCHG FROM PS_S_PRD_CT_ATT_VW JOIN PS_S_PRD_TRS_AT_VW ON PS_S_PRD_TRS_AT_VW.EMPLID = PS_S_PRD_CT_ATT_VW.EMPLID WHERE PS_S_PRD_CT_ATT_VW.EMPLID = '${system_Id}' AND PS_S_PRD_CT_ATT_VW.CATALOG_NBR = '${catlog_Nbr}' `
-          customQuery: `SELECT count(*) From PS_S_PRD_PHOTO_VW`
+          customQuery: `SELECT DISTINCT PS_S_PRD_CT_ATT_VW.PERCENTAGE,PS_S_PRD_TRS_AT_VW.PERCENTCHG FROM PS_S_PRD_CT_ATT_VW JOIN PS_S_PRD_TRS_AT_VW ON PS_S_PRD_TRS_AT_VW.EMPLID = PS_S_PRD_CT_ATT_VW.EMPLID WHERE PS_S_PRD_CT_ATT_VW.EMPLID = '${system_Id}' AND PS_S_PRD_CT_ATT_VW.CATALOG_NBR = '${catlog_Nbr}' AND PS_S_PRD_CT_ATT_VW.STRM = '${current_Term}'`
+        // customQuery: `Select * from PS_S_PRD_CT_ATT_VW where EMPLID Like '%20232037%' `
         },
         authToken
       );
       if (response) {
         console.log(response?.data || []);
-        setLoading(false);
+        setAttendanceDetails(response?.data?.[0] || []);
+        // setLoading(false);
       }
     } catch (error) {
       console.log(error);
@@ -562,10 +544,9 @@ const StudentInfo = () => {
      await handleGetStudentInfo();
      await handleGetStudentCouseInfo();
      await handleGetStudentAttendenceInfo();
-      // await handleGetCopyData();
+      await handleGetCopyData();
 }
   
-
 
   useEffect(() => {
     fetchData();
@@ -574,12 +555,7 @@ const StudentInfo = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {isScanning ? (
-        <CodeScanner
-          onScannedData={(data) =>
-            handleScanBarcode( data, tempCopyType, mainCopyIndex, alternateCopyIndex )
-          }
-          onCancel={handleCancel}
-        />
+        <CodeScanner onScannedData={(data) => handleScanBarcode( data, tempCopyType, mainCopyIndex, alternateCopyIndex ) } onCancel={handleCancel} />
       ) : (
         <View>
           <View style={styles.studentInfoWrap}>
@@ -587,9 +563,7 @@ const StudentInfo = () => {
             <View style={styles.infoContainer}>
               <View style={styles.infoItem}>
                 <Text style={styles.label}>Name:</Text>
-                <Text style={styles.value}>
-                  {studentDetails.NAME_FORMAL || ""}
-                </Text>
+                <Text style={styles.value}> {studentDetails.NAME_FORMAL || ""} </Text>
               </View>
               <View style={styles.infoItem}>
                 <Text style={styles.label}>Roll No:</Text>
@@ -651,7 +625,7 @@ const StudentInfo = () => {
               <View style={styles.infoItem}>
                 <Text style={styles.label}>Status:</Text>
                 <Text style={styles.value}>
-                  {attendanceDetails.PERCENTAGE >= attendanceDetails.PERCENTCHG ? "Eligible" : "Debarred"}
+                  {attendanceDetails?.length > 0 ? (attendanceDetails.PERCENTAGE >= attendanceDetails.PERCENTCHG ? "Eligible" : "Debarred") : "Not Defined"}
                 </Text>
               </View>
             </View>
@@ -675,7 +649,6 @@ const StudentInfo = () => {
               <View>          
                    
               <View style={[styles.tablewrap,styles.table]}>
-                {/* <View style={styles.row}> */}
                 <View>
                   {copy.mainCopy ? (
                     <View style={styles.sheetDetails}>
@@ -759,8 +732,8 @@ const StudentInfo = () => {
               </View>
               </View>
             </View>
-          ))) :    ( <View  style={styles.tablewrap}>
-          <Text style={styles.nodatadisplay}>There is no answersheet added yet!</Text> </View>) }
+          ))) :    (
+          <Text style={[styles.tablewrap,styles.nodatadisplay]}>There is no answersheet added yet!</Text>) }
           <View style={styles.buttonWrap}>
           {copiesData?.length > 0 && 
             (<Pressable style={styles.addButton} onPress={handleAddCopy}>
@@ -770,7 +743,10 @@ const StudentInfo = () => {
               style={styles.submitButton}
               onPress={ reportId ? handleStudentInfoUpdate: handleStudentInfoSubmit }
             >
-              <Text style={styles.addButtonText}> Submit</Text>
+              <Text style={styles.addButtonText}> {reportId ? "Update" : "Submit"}</Text>
+            </Pressable>
+            <Pressable style={styles.submitButton} onPress={() => navigation.goBack()} > 
+            <Text style={styles.addButtonText}>Cancel</Text>
             </Pressable>
           </View>
         </View>
@@ -794,7 +770,7 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   infoHeader: {
-    fontSize: 18,
+    fontSize: 18, 
     fontWeight: "bold",
     marginHorizontal: 20,
     marginVertical: 10,
@@ -816,18 +792,17 @@ const styles = StyleSheet.create({
   },
   table: {
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#DDDDDD", 
     borderRadius: 10,
     overflow: "hidden",
-    backgroundColor: "#f9f9f9",
+    backgroundColor: "#F9F9F9",
     marginBottom: 20,
     padding: 10,
   },
-  tablewrap:{
-    backgroundColor:"#fff",
-    padding:"20px",
-    borderRadius:"10px",
-
+  tablewrap: {
+    backgroundColor: "#FFFFFF",
+    padding: 20,
+    borderRadius: 10,
   },
   row: {
     flexDirection: "row",
@@ -837,11 +812,11 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 10,
     paddingHorizontal: 8,
-    color: "#333",
+    color: "#333333", 
   },
   header: {
     fontWeight: "bold",
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "#F0F0F0",
   },
   inputContainer: {
     flexDirection: "row",
@@ -852,13 +827,10 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 8,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#DDDDDD", 
     borderRadius: 5,
     marginRight: 10,
-    backgroundColor: "#fff",
-  },
-  orText: {
-    marginRight: 4,
+    backgroundColor: "#FFFFFF",
   },
   addButton: {
     padding: 10,
@@ -871,14 +843,14 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   addButtonText: {
-    color: "#fff",
+    color: "#FFFFFF",
     fontWeight: "bold",
   },
   removeButton: {
     alignSelf: "flex-end",
     padding: 5,
     borderRadius: 5,
-    backgroundColor: "#e60e1c",
+    backgroundColor: "#E60E1C",
     marginBottom: 20,
     justifyContent: "center",
     alignItems: "center",
@@ -903,7 +875,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   submitButton: {
-    backgroundColor: "#0c7c62",
+    backgroundColor: "#0C7C62",
     paddingVertical: 5,
     paddingHorizontal: 20,
     borderRadius: 5,
@@ -912,50 +884,48 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   mainCopyText: {
-    color: "#000",
-    boxShadow: '0px 2px 3.84px rgba(0, 0, 0, 0.25)',
+    color: "#000000",
+    elevation: 5,
     fontWeight: "bold",
   },
-  addAnsheading:{
-    fontSize:"24px",
-    fontWeight:"bold",
-    padding:10,
+  addAnsheading: {
+    fontSize: 24, 
+    fontWeight: "bold",
+    padding: 10,
   },
-  nodatadisplay:{
-    fontSize:"18px",
-    alignItems:"center",
-    textAlign:"center",
+  nodatadisplay: {
+    fontSize: 18,
+    alignItems: "center",
+    textAlign: "center",
   },
   box: {
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: "#CCCCCC", 
     width: 'auto',
-    backgroundColor: "#eaeaea",
+    backgroundColor: "#EAEAEA",
     borderRadius: 25,
     marginBottom: 10,
-    marginTop:10,
-    padding:10,
-    flexDirection:"column",
- 
+    marginTop: 10,
+    padding: 10,
+    flexDirection: "column",
   },
-  boxtext:{
-    // alignItems:"center",  
-    flexDirection:"row",
-    marginLeft:10,
-    color:"#000",
-    justifyContent:"space-between",
-
+  boxtext: {
+    flexDirection: "row",
+    marginLeft: 10,
+    color: "#000000",
+    justifyContent: "space-between",
   },
-  iconsWrap:{
-    flexDirection:"row",
-    justifyContent:"space-between",
+  iconsWrap: {
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
-  addicon:{
-    marginRight:"10px",
-    marginTop:"18px"
-    },
-    supplysheet:{
-      flexDirection:"row",
-      justifyContent:"space-between",
-    }
+  addicon: {
+    marginRight: 10,
+    marginTop: 18,
+  },
+  supplysheet: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  }
 });
+
