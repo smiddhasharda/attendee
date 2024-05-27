@@ -120,6 +120,7 @@ const CustomDrawerContent = ({ ...props }) => {
 
   return (
     <View style={styles.container}>
+      <SafeAreaView>
       <View style={styles.header}>
       <CustomeImagePicker
             imageUri={
@@ -163,6 +164,7 @@ const CustomDrawerContent = ({ ...props }) => {
             />
           </View>
       </View>
+      </SafeAreaView>
       <DrawerItemList {...props} style={styles.dropdownmain} />
       <View>
         <Pressable onPress={() => props.handleLogout()}>
@@ -249,7 +251,7 @@ const DrawerNavigator = ({ navigation }) => {
         <>
 
 <SafeAreaView>
-<View style={{
+{/* <View style={{
   height:200,
   width:"100%",
   justifyContent:"center",
@@ -266,7 +268,7 @@ const DrawerNavigator = ({ navigation }) => {
 
          }}/>  
          <Text >Medha Yadav </Text>
-</View>
+</View> */}
         {/* <DrawerItemList {...props} /> */}
       </SafeAreaView>
         <CustomDrawerContent
