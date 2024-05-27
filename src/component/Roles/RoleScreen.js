@@ -342,7 +342,7 @@ const RoleScreen = ({userAccess}) => {
   useEffect(() => {
     handleGetRoleList();
     handleGetModuleList();
-  }, []);
+  }, [UserAccess]);
 
   return (
     <ScrollView>

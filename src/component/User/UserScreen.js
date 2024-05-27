@@ -546,7 +546,7 @@ const UserScreen = ({userAccess}) => {
   useEffect(() => {
     handleGetUserList();
     handleGetRoleList();
-  }, []);
+  }, [UserAccess]);
     return (
    
       <View style={styles.container}>
