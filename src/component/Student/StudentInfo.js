@@ -242,6 +242,7 @@ const StudentInfo = ({navigation}) => {
 
   const handleCancel = () => {
     setIsScanning(false);
+    navigation.setOptions({ headerShown: true});
     setTempCopyType("");
     setMainCopyIndex("");
     setAlternateCopyIndex("");
@@ -249,6 +250,7 @@ const StudentInfo = ({navigation}) => {
 
   const startScanning = (copyType, index, copyIndex) => {
     setIsScanning(true);
+    navigation.setOptions({ headerShown: false});
     setTempCopyType(copyType);
     setMainCopyIndex(index);
     setAlternateCopyIndex(copyIndex);
@@ -313,11 +315,12 @@ const StudentInfo = ({navigation}) => {
         );
         if (NewResponse) {
           addToast ("Student Details Add Successful", "success");
-          navigation.navigate("RoomDetail", {
-            room_Nbr: room_Nbr,
-            exam_Dt: exam_Dt,
-            startTime: startTime,
-          });
+          // navigation.navigate("RoomDetail", {
+          //   room_Nbr: room_Nbr,
+          //   exam_Dt: exam_Dt,
+          //   startTime: startTime,
+          // });
+          navigation.goBack()
         }
       }
     } catch (error) {
@@ -437,11 +440,12 @@ const StudentInfo = ({navigation}) => {
           );
           if (NewResponse) {
             addToast ("Student Details Update Successful", "success");
-            navigation.navigate("RoomDetail", {
-              room_Nbr: room_Nbr,
-              exam_Dt: exam_Dt,
-              startTime: startTime,
-            });
+            // navigation.navigate("RoomDetail", {
+            //   room_Nbr: room_Nbr,
+            //   exam_Dt: exam_Dt,
+            //   startTime: startTime,
+            // });
+            navigation.goBack()
           }
         }
         }
@@ -635,8 +639,7 @@ const StudentInfo = ({navigation}) => {
               {copiesData?.length === 0 &&   <AntDesign style={styles.addicon} name="pluscircleo" size={24} color="black" onPress={handleAddCopy} />}
               </View>
           {copiesData?.length > 0 ? (copiesData.map((copy, index) => (
-            <View key={index} >
-            
+            <View key={index} >            
               <View style={styles.inputContainer}>
               <Pressable
                     onPress={() => handleRemoveCopy(index)}
@@ -731,14 +734,14 @@ const StudentInfo = ({navigation}) => {
                 )}
               </View>
               </View>
+              {(copy.mainCopy.length > 0 && index === copiesData.length - 1 ) &&
+            (<Pressable style={styles.addButton} onPress={handleAddCopy}>
+              <Text style={styles.addButtonText}> Add Copy</Text>
+            </Pressable>) }
             </View>
           ))) :    (
           <Text style={[styles.tablewrap,styles.nodatadisplay]}>There is no answersheet added yet!</Text>) }
           <View style={styles.buttonWrap}>
-          {copiesData?.length > 0 && 
-            (<Pressable style={styles.addButton} onPress={handleAddCopy}>
-              <Text style={styles.addButtonText}> Add Copy</Text>
-            </Pressable>) }
             <Pressable
               style={styles.submitButton}
               onPress={ reportId ? handleStudentInfoUpdate: handleStudentInfoSubmit }
