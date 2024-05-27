@@ -214,34 +214,19 @@ const styles = StyleSheet.create({
       marginBottom: 10,
     },
  
-    dateDay: {
-      fontSize: 12,
-      marginBottom:5,
-    },
-    dateMonth: {
-      fontSize: 12,
-      marginTop:5
-    },
-    examstatus:{
-        flexDirection:"row",
-        justifyContent:"space-between",
-        padding:12,
-        borderBottomWidth: 1,
-        borderBottomColor:"#ccc",
-        marginBottom:10
-     
-    },
+  
     topdetails:{
-     padding:8,
+    //  padding:8,
     //  clearfix:"both",
      flexDirection:"row",
      justifyContent:"space-between",
+ 
     },
     roomNumber: {
     //   flexDirection: "column",
-      flexWrap: "nowrap",
+      // flexWrap: "nowrap",
       // marginBottom: 10,
-      padding: 10,
+      padding: 4,
       // flex:1,
       clearfix:"both",
       // position:"relative",
@@ -261,7 +246,7 @@ const styles = StyleSheet.create({
       borderRadius: 25,
       marginBottom: 10,
       padding:10,
-      flexDirection:"row",
+      flexDirection:"column",
       width:"auto",
   
     },
@@ -283,12 +268,14 @@ const styles = StyleSheet.create({
     },
  
     employeeid:{
+      color:"#a79f9f",
       fontWeight:"bold",
       marginRight:30, 
     },
     examname:{
-   fontWeight:"bold",
+     fontWeight:"bold",
       marginRight:30, 
+      color:"#a79f9f"
     },
     seqnumber:{
       fontWeight:"bold",

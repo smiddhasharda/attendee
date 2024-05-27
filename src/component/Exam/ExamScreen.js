@@ -232,7 +232,8 @@ const styles = StyleSheet.create({
   datesWrap:{
     flexDirection:"row",
     justifyContent:"space-between",
-
+    alignItems:"center",
+     marginBottom:25,
   },
   searchicons:{
      padding:"10px",
@@ -246,14 +247,20 @@ const styles = StyleSheet.create({
     // width:"50%",
     width:'auto',
     backgroundColor:"#e1e1e1",
-    borderWidth:1,
+    // borderWidth:1,
     // borderRadius:25,
     borderColor:"#ccc",
+    borderTopWidth:1,
+    borderBottomWidth:1,
+
   },
   dateItem: {
     padding: 10,
-    marginRight: 6,
+    // marginRight: 6,
     alignItems: "center",
+    //  width:65,
+    //  height:40,
+    //  justifyContent:"center"
   },
   dateNumber: {
     fontSize: 16,
@@ -279,16 +286,20 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ccc",
     width: 'auto',
+    // width:"95%",
     borderRadius: 25,
     marginBottom: 10,
     padding:20,
     flexDirection:"column",
+    // margin:"8px 0",
+    // marginHorizontal:0,// margin from left 
+    // marginVertical:0,// marginright
  
   },
   
   boxTextWrap:{
     flexDirection:"row",
-    marginLeft:10,
+    // marginLeft:10,
     color:"#000",
     justifyContent:"space-between",
 
@@ -306,7 +317,8 @@ const styles = StyleSheet.create({
   },
   activebox: {
     backgroundColor: "#0cb551",
-    color: "#fff"
+    color: "#fff",
+    
   },
   activeText: {
     color: "#fff",
