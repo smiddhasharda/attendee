@@ -14,7 +14,7 @@ import styles from "./ModuleScreen.style";
 import { ScrollView } from "react-native-gesture-handler";
 
 const ModuleScreen = ({ userAccess }) => {
-  const UserAccess = userAccess?.module?.filter( (item) => item?.FK_ModuleId === 3 );
+  const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 3 );
   const { showToast } = useToast();
   const [moduleData, setModuleData] = useState({
     moduleId: "",

@@ -120,6 +120,7 @@ const CustomDrawerContent = ({ ...props }) => {
 
   return (
     <View style={styles.container}>
+      <SafeAreaView>
       <View style={styles.header}>
       <CustomeImagePicker
             imageUri={
@@ -133,7 +134,7 @@ const CustomDrawerContent = ({ ...props }) => {
             onImageChange={handleImageChange}
           />
           <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-            {file && (
+            <>{file && (
               <View style={styles.buttonwrap}>
                 <Pressable onPress={() => handleProfilePic()}>
                   <Text>Save</Text>
@@ -142,7 +143,7 @@ const CustomDrawerContent = ({ ...props }) => {
                   <Text>Cancel</Text>
                 </Pressable>
               </View>
-            )}
+            )}</>
           </View>
           <Text style={styles.username}>{props?.userData?.name}</Text>
           <View style={styles.dropdownWrap}>
@@ -163,6 +164,7 @@ const CustomDrawerContent = ({ ...props }) => {
             />
           </View>
       </View>
+      </SafeAreaView>
       <DrawerItemList {...props} style={styles.dropdownmain} />
       <View>
         <Pressable onPress={() => props.handleLogout()}>
@@ -249,7 +251,7 @@ const DrawerNavigator = ({ navigation }) => {
         <>
 
 <SafeAreaView>
-<View style={{
+{/* <View style={{
   height:200,
   width:"100%",
   justifyContent:"center",
@@ -266,7 +268,7 @@ const DrawerNavigator = ({ navigation }) => {
 
          }}/>  
          <Text >Medha Yadav </Text>
-</View>
+</View> */}
         {/* <DrawerItemList {...props} /> */}
       </SafeAreaView>
         <CustomDrawerContent
