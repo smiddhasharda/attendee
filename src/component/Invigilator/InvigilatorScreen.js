@@ -67,7 +67,7 @@ const windowWidth = Dimensions.get("window").width;
 
   useEffect(() => {
     handleGetInigilatorDuty();
-  }, []);
+  }, [UserAccess]);
 
    return (
 

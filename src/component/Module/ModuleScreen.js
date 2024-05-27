@@ -183,7 +183,7 @@ const ModuleScreen = ({ userAccess }) => {
 
   useEffect(() => {
     handleGetModuleList();
-  }, []);
+  }, [UserAccess]);
 
   return (
     <ScrollView>

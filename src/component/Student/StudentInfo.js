@@ -569,7 +569,7 @@ const StudentInfo = () => {
 
   useEffect(() => {
     fetchData();
-  }, [system_Id, catlog_Nbr]);
+  }, [UserAccess]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
