@@ -8,6 +8,7 @@ const styles = StyleSheet.create({
   header: {
     alignItems: "center",
     paddingVertical: 20,
+    backgroundColor: 'rgb(17, 65, 102)' ,
     // borderBottomWidth: 1,
     // borderBottomColor: "#ccc",
   },
@@ -20,6 +21,7 @@ const styles = StyleSheet.create({
   username: {
     fontSize: 18,
     fontWeight: "bold",
+    color:"#fff",
   },
   rolePicker: {
     marginTop: 10,

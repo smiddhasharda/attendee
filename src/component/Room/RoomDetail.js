@@ -145,7 +145,7 @@ function RoomDetail() {
   useEffect(() => {
     fetchStudentDetails(exam_Dt, room_Nbr);
     handleGetReportData();
-  }, []);
+  }, [UserAccess]);
 
   return (
     <View style={styles.container}>
