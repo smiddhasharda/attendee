@@ -21,7 +21,7 @@ const LoginStyles = StyleSheet.create({
     width: "80%",
     top: "24%",
     left: "10%",
-    padding: 20,
+    padding: 10,
   },
   label: {
     fontSize: 16,
@@ -50,7 +50,7 @@ const LoginStyles = StyleSheet.create({
   },
   logininfoWrap: {
     width: "100%",
-    padding: 40,
+    padding: 12,
   },
   bgimg1: {
     width: "100%",
@@ -72,14 +72,15 @@ const LoginStyles = StyleSheet.create({
   },
   loginButtonStyle: {
     height: 45,
-    width: 150, 
+    width: 180, 
     backgroundColor: "#fea500",
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
-    marginTop: 32,
-    marginLeft: 15,
+    marginTop: 8,
+    marginLeft:0,
+    // marginLeft: 14,
     boxShadow: '0px 0px 10px rgba(0, 0, 0, 0)',
 
   },  

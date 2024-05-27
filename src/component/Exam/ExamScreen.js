@@ -232,6 +232,7 @@ const styles = StyleSheet.create({
   datesWrap:{
     flexDirection:"row",
     justifyContent:"space-between",
+
   },
   searchicons:{
      padding:"10px",
@@ -241,9 +242,13 @@ const styles = StyleSheet.create({
   },
 
   dates: {
-    padding: 10,
+    // padding: 10,
     // width:"50%",
     width:'auto',
+    backgroundColor:"#e1e1e1",
+    borderWidth:1,
+    // borderRadius:25,
+    borderColor:"#ccc",
   },
   dateItem: {
     padding: 10,
@@ -264,7 +269,11 @@ const styles = StyleSheet.create({
   },
   roomNumber: {
     flex: 1,
-    padding: 10,
+    // marginTop:4,
+    // marginHorizontal:0,
+    // marginVertical:0,
+    padding: 4,
+
   },
   box: {
     borderWidth: 1,

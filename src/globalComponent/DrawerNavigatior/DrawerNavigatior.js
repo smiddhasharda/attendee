@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable ,Image} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   createDrawerNavigator,
@@ -17,7 +17,9 @@ import CustomeImagePicker from "../CustomeImagePicker/CustomeImagePicker";
 import { multer, fetch as FetchData } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import styles from "./DrawerNavigator.style";
-
+import { Button } from "react-native-web";
+import { Ionicons } from '@expo/vector-icons'; 
+import { SafeAreaView } from "react-native-safe-area-context";
 // Screen components
 const RoleComponent = ({ userAccess }) => <RoleScreen userAccess={userAccess} />;
 const ModuleComponent = ({ userAccess }) => <ModuleScreen userAccess={userAccess} />;
@@ -131,7 +133,7 @@ const CustomDrawerContent = ({ ...props }) => {
             onImageChange={handleImageChange}
           />
           <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-            {file && (
+            <>{file && (
               <View style={styles.buttonwrap}>
                 <Pressable onPress={() => handleProfilePic()}>
                   <Text>Save</Text>
@@ -140,7 +142,7 @@ const CustomDrawerContent = ({ ...props }) => {
                   <Text>Cancel</Text>
                 </Pressable>
               </View>
-            )}
+            )}</>
           </View>
           <Text style={styles.username}>{props?.userData?.name}</Text>
           <View style={styles.dropdownWrap}>
@@ -151,10 +153,13 @@ const CustomDrawerContent = ({ ...props }) => {
               setOpen={setOpen}
               setValue={(value) => props?.handleRoleSelect(value)}
               style={styles.dropdown}
-              dropDownStyle={{ backgroundColor: "#fafafa" }}
+              dropDownStyle={{ backgroundColor: "#fafafa"}}
               dropDownMaxHeight={150}
               dropDownDirection="TOP"
               containerStyle={styles.rolePicker}
+              listItemContainerStyle={{ height: 40}} 
+              listItemLabelStyle={{ fontSize: 14 }}
+            
             />
           </View>
       </View>
@@ -177,6 +182,14 @@ const DrawerNavigator = ({ navigation }) => {
     headerStyle: {
       backgroundColor: 'rgb(17, 65, 102)',
     },
+    headerLeftContainerStyle: {
+      paddingLeft: 0,
+      marginLeft: -10, 
+    },
+    headerTitleContainerStyle: {
+      paddingLeft: 0, 
+      marginLeft: -10,
+    }, 
     headerTintColor: '#fff',
   }
 
@@ -233,6 +246,29 @@ const DrawerNavigator = ({ navigation }) => {
     <Drawer.Navigator
       initialRouteName="Dashboard"
       drawerContent={(props) => (
+        <>
+
+<SafeAreaView>
+<View style={{
+  height:200,
+  width:"100%",
+  justifyContent:"center",
+  alignItems:"center",
+  backgroundColor: 'rgb(17, 65, 102)',
+}}>
+
+<Image   source= {require("../../local-assets/profile.jpg")}  style={{
+           height:100,
+           width:100,
+           borderRadius:50,
+           aliSelf:"center",
+           alignItem:"center"
+
+         }}/>  
+         <Text >Medha Yadav </Text>
+</View>
+        {/* <DrawerItemList {...props} /> */}
+      </SafeAreaView>
         <CustomDrawerContent
           {...props}
           handleRoleSelect={handleRoleSelect}
@@ -242,6 +278,8 @@ const DrawerNavigator = ({ navigation }) => {
           fetchUserRolePermission={fetchUserRolePermission}
           handleLogout={handleLogout}
         />
+        
+               </>
       )}
       screenOptions={TopHeaderCommonConfig}
     >
@@ -257,11 +295,12 @@ const DrawerNavigator = ({ navigation }) => {
             {(props) => {
               switch (module?.moduleMaster[0]?.moduleName) {
                 case "RoleScreen":
-                  return <RoleComponent {...props} userAccess={userRoleList?.[userRoleIndex]} />;
+                  return <RoleComponent {...props} userAccess={userRoleList?.[userRoleIndex]} 
+                  />;
                 case "ModuleScreen":
                   return <ModuleComponent {...props} userAccess={userRoleList?.[userRoleIndex]} />;
                 case "Dashboard":
-                  return <DashboardComponent {...props} userAccess={userRoleList?.[userRoleIndex]} />;
+                  return <DashboardComponent {...props} userAccess={userRoleList?.[userRoleIndex]}   />;
                 case "UserScreen":
                   return <UserComponent {...props} userAccess={userRoleList?.[userRoleIndex]} />;
                 case "ExamScreen":

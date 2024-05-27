@@ -7,7 +7,7 @@ import {
   TextInput,
   Pressable,
 } from "react-native";
-import { Ionicons, FontAwesome, AntDesign,MaterialCommunityIcons ,MaterialIcons} from "@expo/vector-icons";
+import { Ionicons, FontAwesome, AntDesign,MaterialCommunityIcons ,MaterialIcons,Entypo} from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import CodeScanner from "../../globalComponent/CodeScanner/CodeScanner";
@@ -21,7 +21,7 @@ const StudentInfo = () => {
   const [courseDetails, setCourseDetails] = useState({});
   const [attendanceDetails, setAttendanceDetails] = useState({});
   const { room_Nbr, catlog_Nbr, system_Id, seat_Nbr, exam_Dt, startTime, reportId, navigation, userAccess } = route.params;
-  const UserAccess = userAccess?.module?.filter((item)=> item?.FK_ModuleId === 6);
+  const UserAccess = userAccess?.module?.find((item)=> item?.FK_ModuleId === 6);
   const [copiesData, setCopiesData] = useState([
     // {
     //   id: 0,
@@ -218,7 +218,7 @@ const StudentInfo = () => {
     const isLastAlternateCopy =
       copyIndex === copiesData[index].alternateCopies.length - 1;
     return (
-      <View>
+      <View style={{flexDirection:"row",  justifyContent:"space-between"}}>
       <View style={{width:"auto",}} key={copyIndex}>
       <TextInput
         style={[styles.input,]}
@@ -242,7 +242,9 @@ const StudentInfo = () => {
             onPress={() => handleRemoveAlternateCopy(copyIndex, index)}
           >
             <Text style={styles.addButtonText}>
-              <FontAwesome name="trash-o" size={24} alignItems="center" />
+              <Entypo name="circle-with-cross" size={20} alignItems="center" />
+      
+       
             </Text>
           </Pressable>
         )}
@@ -540,12 +542,13 @@ const StudentInfo = () => {
           data: '',
           conditionString: '',
           checkAvailability: '',
-          customQuery: `SELECT DISTINCT PS_S_PRD_CT_ATT_VW.PERCENTAGE,PS_S_PRD_TRS_AT_VW.PERCENTCHG FROM PS_S_PRD_CT_ATT_VW JOIN PS_S_PRD_TRS_AT_VW ON PS_S_PRD_TRS_AT_VW.EMPLID = PS_S_PRD_CT_ATT_VW.EMPLID WHERE PS_S_PRD_CT_ATT_VW.EMPLID = '${system_Id}' AND PS_S_PRD_CT_ATT_VW.CATALOG_NBR = '${catlog_Nbr}' `
+          // customQuery: `SELECT DISTINCT PS_S_PRD_CT_ATT_VW.PERCENTAGE,PS_S_PRD_TRS_AT_VW.PERCENTCHG FROM PS_S_PRD_CT_ATT_VW JOIN PS_S_PRD_TRS_AT_VW ON PS_S_PRD_TRS_AT_VW.EMPLID = PS_S_PRD_CT_ATT_VW.EMPLID WHERE PS_S_PRD_CT_ATT_VW.EMPLID = '${system_Id}' AND PS_S_PRD_CT_ATT_VW.CATALOG_NBR = '${catlog_Nbr}' `
+          customQuery: `SELECT count(*) From PS_S_PRD_PHOTO_VW`
         },
         authToken
       );
       if (response) {
-        console.log(response?.data?.[0] || []);
+        console.log(response?.data || []);
         setLoading(false);
       }
     } catch (error) {
@@ -659,35 +662,34 @@ const StudentInfo = () => {
               </View>
           {copiesData?.length > 0 ? (copiesData.map((copy, index) => (
             <View key={index} >
+            
               <View style={styles.inputContainer}>
               <Pressable
                     onPress={() => handleRemoveCopy(index)}
                   >
-                    <Text style={styles.addButtonText}>
-                      <FontAwesome
-                        name="trash-o"
-                        size={24}
-                        alignItems="center"
-                        color="#e60e1c"
-                      />
+                    <Text style={styles.addButtonText}>           
+                    <AntDesign  name="delete" size={24} alignItems="flex-end" color="red" />
                     </Text>
                   </Pressable>
               </View>
               <View>          
-                       
-              <View style={styles.table}>
-                <View style={styles.row}>
+                   
+              <View style={[styles.tablewrap,styles.table]}>
+                {/* <View style={styles.row}> */}
+                <View>
                   {copy.mainCopy ? (
                     <View style={styles.sheetDetails}>
                     <View key={index} style={[styles.box]}>
                     <View style={styles.boxtext}>
+                    <Text style={[ styles.header]}>Answersheet Number</Text>
                       <Text style={[styles.examname]}>{copy.mainCopy}</Text>
                       <View style={styles.iconsWrap}>
                       {!(
                         copy.alternateCopies.length > 0 ||
                         copy.alternateCopies?.includes("")
                       ) && (
-                        <MaterialIcons  name="delete-outline" size={20} color="red" onPress={() => handleSaveCopy("AnswerSheet", "", index)} />
+                        <Entypo name="circle-with-cross" size={20} color="red" onPress={() => handleSaveCopy("AnswerSheet", "", index)} />  
+                        
                       )}
                       </View>
                     </View>
@@ -695,43 +697,49 @@ const StudentInfo = () => {
                     </View>
                   ) : (
                   <View style={{width:"100%" ,justifyContent:"space-between",flexDirection:"row"}}>
+                  <Text style={{fontWeight:"bold"}}>Answersheet</Text>
                    <MaterialCommunityIcons name="barcode-scan" onPress={() => startScanning("AnswerSheet", index)} size={40} color="black" />
                       <Text>OR</Text>
                       {renderCopyInput("AnswerSheet", index)}
                     </View>
                   )}
                    </View>
+                  
 
                 {copy.mainCopy && (
                   <View>
                     {copy.alternateCopies.map((alternateCopy, copyIndex) =>
                       alternateCopy ? ( 
+                        <View>
                            <View key={index} style={[styles.box]}>
-                           {/* <Text style={[styles.cell, styles.header]}>
+                           <View style={{flexDirection:"row",justifyContent:"space-between"}}>
+                           <Text style={[ styles.header]}>
                             Alternate Copy {copyIndex + 1}
-                          </Text> */}
+                          </Text>
                             <View style={styles.boxtext}>
                               <Text style={[styles.examname]}>{alternateCopy}</Text>
-                              <View style={styles.iconsWrap}>
+                              <View >
                               {copyIndex === copy.alternateCopies.length - 1 && (
-                                <View>
-                                <MaterialIcons  name="delete-outline" size={20} color="red" onPress={() => handleSaveCopy( "Alternate", "", index, copyIndex ) }/>                              
-                                {copy.alternateCopies.length < 6 && (
+                                <View >
+                                <Entypo name="circle-with-cross"  size={20} color="r"  marginLeft="10px"  onPress={() => handleSaveCopy( "Alternate", "", index, copyIndex ) }/>
+                          </View>
+                          )}        
+                              </View>
+                            </View>   
+                            </View>        
+                        </View>
+                        {(copyIndex === copy.alternateCopies.length - 1 && copy.alternateCopies.length < 6) && (
                                 <Pressable
                                 style={styles.submitButton} 
                                 onPress={() => handleAddAlternateCopy(index)}   
                               >
                                 <Text style={{color:"#fff"}}>Add SupplySheet</Text>
                                 </Pressable>
-                              )}
-                          </View>
-                          )}                      
+                              )}  
                               </View>
-                            </View>              
-                       
-                        </View>
                       ) : (
                         <View style={styles.supplysheet}>
+                        <Text style={{fontWeight:"bold"}}>Supply </Text>
                       <MaterialCommunityIcons name="barcode-scan" onPress={() =>  startScanning("Alternate", index, copyIndex)} size={40} color="black" />
                       <Text>OR</Text>
                         {renderCopyInput("Alternate", index, copyIndex)}
@@ -814,6 +822,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#f9f9f9",
     marginBottom: 20,
     padding: 10,
+  },
+  tablewrap:{
+    backgroundColor:"#fff",
+    padding:"20px",
+    borderRadius:"10px",
+
   },
   row: {
     flexDirection: "row",
@@ -902,4 +916,46 @@ const styles = StyleSheet.create({
     boxShadow: '0px 2px 3.84px rgba(0, 0, 0, 0.25)',
     fontWeight: "bold",
   },
+  addAnsheading:{
+    fontSize:"24px",
+    fontWeight:"bold",
+    padding:10,
+  },
+  nodatadisplay:{
+    fontSize:"18px",
+    alignItems:"center",
+    textAlign:"center",
+  },
+  box: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    width: 'auto',
+    backgroundColor: "#eaeaea",
+    borderRadius: 25,
+    marginBottom: 10,
+    marginTop:10,
+    padding:10,
+    flexDirection:"column",
+ 
+  },
+  boxtext:{
+    // alignItems:"center",  
+    flexDirection:"row",
+    marginLeft:10,
+    color:"#000",
+    justifyContent:"space-between",
+
+  },
+  iconsWrap:{
+    flexDirection:"row",
+    justifyContent:"space-between",
+  },
+  addicon:{
+    marginRight:"10px",
+    marginTop:"18px"
+    },
+    supplysheet:{
+      flexDirection:"row",
+      justifyContent:"space-between",
+    }
 });

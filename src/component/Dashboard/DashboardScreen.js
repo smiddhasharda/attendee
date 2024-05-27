@@ -10,8 +10,7 @@ const { navigate } = useNavigation();
   const handleTaskPress = () => {
     navigate('InvigilatorScreen');
   };
-
-
+  
   return (
 
     <View style={styles.container}>
@@ -26,30 +25,29 @@ const { navigate } = useNavigation();
             <ScrollView vertical>        
             <View style={[styles.boxcontainer,]}>            
                 <View style={[styles.box, styles.activebox]} >
-                <Ionicons style={styles.icons} name="book" size={24} color="rgb(8 96 88)"  />
+                <Ionicons style={styles.icons} name="book" size={24} color="rgb(8 96 88)"   />
                 <View  style={[styles.boxtext,]}>
                   <Text style={styles.activeboxtext} onPress={handleLearnPress}>Exam</Text>
                   {/* <Text>Chapter 1</Text> */}
                 </View>
               </View>
               <View style={styles.box}>
-              <Ionicons name="book" size={24} color="rgb(8 96 88)" />
+              <Ionicons  style={styles.icons} name="book" size={24} color="rgb(8 96 88)" />
               <View  style={styles.boxtext}>
                   <Text onPress={handleTaskPress}>Report</Text>
                   {/* <Text>Chapter 2</Text> */}
                   </View>
               </View>
               <View style={styles.box}>
-              <Ionicons name="book" onPress={()=> navigate('TopHeader')} size={24} color="rgb(8 96 88)" />
+              <Ionicons   style={styles.icons} name="book" onPress={()=> navigate('TopHeader')} size={24} color="rgb(8 96 88)" />
                    <View  style={styles.boxtext}>
                   <Text>Setting</Text>
                   {/* <Text>Chapter 3</Text> */}
                   </View>
-              </View> 
+              </View>   
             </View>
             </ScrollView>
-    </View>
-  
+    </View> 
   );
 };
 
@@ -57,6 +55,7 @@ const styles = StyleSheet.create({
   container: {
     padding: 16,
     backgroundColor: '#fff',
+    minHeight:"100%"
    
   },
   activebox:{
@@ -84,7 +83,9 @@ const styles = StyleSheet.create({
     fontSize:16,
     marginTop:10,
   },
-
+  icons:{
+  color:"#fff",
+  },
   searchBox: {
     height: 40,
     borderWidth: 1,
@@ -95,7 +96,6 @@ const styles = StyleSheet.create({
  
   },
   boxcontainer:{
- 
     flexDirection:"row",
     justifyContent:"space-between",
     flexWrap:"wrap"
@@ -105,14 +105,18 @@ const styles = StyleSheet.create({
   box:{
     borderWidth:1,
     borderColor:"#ccc",
-    width:"20%",
-    backgroundColor:"#eaeaea",
-    height:60,
+    // width:"20%",
+    width:"30%",
+   backgroundColor:"rgb(3 120 110)",
+    // height:60,
+    // height:"40%",
+    padding:10,
     textAlign:"center",
     alignItems:"center",
     borderRadius:5,
     marginBottom:10,
-    marginRight:5
+    marginRight:5,
+    alignSelf:"center",
    
   },
   taskbox:{
