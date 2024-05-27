@@ -13,7 +13,7 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
   const [examSelectedDate, setExamSelectedDate] = useState('');
   const [invigilatorData, setInvigilatorData] = useState();
   const [loading, setLoading] = useState(false);
-  const { showToast } = useToast();
+  const { addToast } = useToast();
 
   // const [open, setOpen] = useState(false);
   // const [userRoleList, setUserRoleList] = useState([
@@ -25,11 +25,11 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
     if (!authToken) {
-      showToast("Authentication token not available", "error");
+      addToast("Authentication token not available", "error");
       throw new Error("Authentication token not available");
     }
     return authToken;
-  }, [showToast]);
+  }, [addToast]);
 
   const handleGetDateView = async () => {
     try {
@@ -116,7 +116,7 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
 
   const handleAuthErrors = (error) => {
     const errorMessages = { "Invalid credentials": "Invalid authentication credentials", "Data already exists": "Module with the same name already exists", "No response received from the server": "No response received from the server", };
-    showToast(errorMessages[error.message] || "Module Operation Failed", "error");
+    addToast(errorMessages[error.message] || "Module Operation Failed", "error");
   };
 
   const fetchRoomDetails = async (date) => {
@@ -208,7 +208,7 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
           renderItem={({ item, index }) => (
             <Pressable
               key={index}
-              onPress={() => UserAccess?.create === 1 ? navigation.navigate("RoomDetail", { room_Nbr: item.ROOM_NBR, exam_Dt: item.EXAM_DT, startTime: item.EXAM_START_TIME, navigation, userAccess},) : null}
+              onPress={() => UserAccess?.create === 1 ? navigation.navigate("RoomDetail", { room_Nbr: item.ROOM_NBR, exam_Dt: item.EXAM_DT, startTime: item.EXAM_START_TIME, userAccess},) : null}
             >
                 <View style={[styles.box,styles.boxTextWrap]}>
                   <Text style={styles.examName}>{item.ROOM_NBR}</Text>
@@ -232,7 +232,8 @@ const styles = StyleSheet.create({
   datesWrap:{
     flexDirection:"row",
     justifyContent:"space-between",
-
+    alignItems:"center",
+     marginBottom:25,
   },
   searchicons:{
      padding:"10px",
@@ -246,14 +247,20 @@ const styles = StyleSheet.create({
     // width:"50%",
     width:'auto',
     backgroundColor:"#e1e1e1",
-    borderWidth:1,
+    // borderWidth:1,
     // borderRadius:25,
     borderColor:"#ccc",
+    borderTopWidth:1,
+    borderBottomWidth:1,
+
   },
   dateItem: {
     padding: 10,
-    marginRight: 6,
+    // marginRight: 6,
     alignItems: "center",
+    //  width:65,
+    //  height:40,
+    //  justifyContent:"center"
   },
   dateNumber: {
     fontSize: 16,
@@ -279,16 +286,20 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ccc",
     width: 'auto',
+    // width:"95%",
     borderRadius: 25,
     marginBottom: 10,
     padding:20,
     flexDirection:"column",
+    // margin:"8px 0",
+    // marginHorizontal:0,// margin from left 
+    // marginVertical:0,// marginright
  
   },
   
   boxTextWrap:{
     flexDirection:"row",
-    marginLeft:10,
+    // marginLeft:10,
     color:"#000",
     justifyContent:"space-between",
 
@@ -306,7 +317,8 @@ const styles = StyleSheet.create({
   },
   activebox: {
     backgroundColor: "#0cb551",
-    color: "#fff"
+    color: "#fff",
+    
   },
   activeText: {
     color: "#fff",

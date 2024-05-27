@@ -41,7 +41,7 @@ import {
       paddingVertical: 10,
       paddingHorizontal: 15,
       marginBottom: 10,
-      borderRadius:"5px",
+      borderRadius:5,
     },
     tableHeaderText: {
       fontWeight: "bold",

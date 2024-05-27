@@ -15,7 +15,7 @@ import { ScrollView } from "react-native-gesture-handler";
 
 const ModuleScreen = ({ userAccess }) => {
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 3 );
-  const { showToast } = useToast();
+  const { addToast } = useToast();
   const [moduleData, setModuleData] = useState({
     moduleId: "",
     moduleName: "",
@@ -30,12 +30,12 @@ const ModuleScreen = ({ userAccess }) => {
     const authToken = await AsyncStorage.getItem("authToken");
 
     if (!authToken) {
-      showToast("Authentication token not available", "error");
+      addToast("Authentication token not available", "error");
       throw new Error("Authentication token not available");
     }
 
     return authToken;
-  }, [showToast]);
+  }, [addToast]);
 
   const handleAddModule = async () => {
     try {
@@ -57,7 +57,7 @@ const ModuleScreen = ({ userAccess }) => {
       );
 
       if (response) {
-        showToast("Module Add Successful", "success");
+        addToast("Module Add Successful", "success");
         await handleClose();
         handleGetModuleList();
       }
@@ -86,7 +86,7 @@ const ModuleScreen = ({ userAccess }) => {
       );
 
       if (response) {
-        showToast("Module Update Successful", "success");
+        addToast("Module Update Successful", "success");
         await handleClose();
         handleGetModuleList();
       }
@@ -134,7 +134,7 @@ const ModuleScreen = ({ userAccess }) => {
       );
 
       if (response) {
-        showToast(
+        addToast(
           `Module ${status === 0 ? "Active" : "Inactive"} Successful`,
           "success"
         );
@@ -158,16 +158,16 @@ const ModuleScreen = ({ userAccess }) => {
   const handleAuthErrors = (error) => {
     switch (error.message) {
       case "Invalid credentials":
-        showToast("Invalid authentication credentials", "error");
+        addToast("Invalid authentication credentials", "error");
         break;
       case "Data already exists":
-        showToast("Module with the same name already exists", "error");
+        addToast("Module with the same name already exists", "error");
         break;
       case "No response received from the server":
-        showToast("No response received from the server", "error");
+        addToast("No response received from the server", "error");
         break;
       default:
-        showToast("Module Operation Failed", "error");
+        addToast("Module Operation Failed", "error");
     }
   };
 

@@ -46,7 +46,7 @@ const LoginStyles = StyleSheet.create({
   },
   loginheadWrap: {
     width: "100%",
-    padding: 40,
+    padding: 12,
   },
   logininfoWrap: {
     width: "100%",

@@ -11,7 +11,7 @@ import CheckBox from "expo-checkbox";
 import { ScrollView } from "react-native-gesture-handler";
 const UserScreen = ({userAccess}) => { 
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 4 );
-  const { showToast } = useToast();
+  const { addToast } = useToast();
   const [userData, setUserData] = useState({
     userId: '',
     name: '',
@@ -34,12 +34,12 @@ const UserScreen = ({userAccess}) => {
     const authToken = await AsyncStorage.getItem("authToken");
 
     if (!authToken) {
-      showToast("Authentication token not available", "error");
+      addToast("Authentication token not available", "error");
       throw new Error("Authentication token not available");
     }
 
     return authToken;
-  }, [showToast]);
+  }, [addToast]);
 
   const handleAddUser = async () => {
     try {
@@ -89,12 +89,12 @@ const UserScreen = ({userAccess}) => {
             authToken
           );
 
-          showToast("User Add Successful", "success");
+          addToast("User Add Successful", "success");
           await handleClose();
           handleGetUserList();
         }
         else {
-          showToast("User Add Successful", "success");
+          addToast("User Add Successful", "success");
           await handleClose();
           handleGetUserList();
         }
@@ -156,12 +156,12 @@ const UserScreen = ({userAccess}) => {
             authToken
           );
 
-          showToast("User Update Successful", "success");
+          addToast("User Update Successful", "success");
           await handleClose();
           handleGetUserList();
         }
         else {
-          showToast("User Update Successful", "success");
+          addToast("User Update Successful", "success");
           await handleClose();
           handleGetUserList();
         }
@@ -210,7 +210,7 @@ const UserScreen = ({userAccess}) => {
       );
 
       if (response) {
-        showToast(
+        addToast(
           `User ${status === 0 ? "Active" : "Inactive"} Successful`,
           "success"
         );
@@ -238,16 +238,16 @@ const UserScreen = ({userAccess}) => {
   const handleAuthErrors = (error) => {
     switch (error.message) {
       case "Invalid credentials":
-        showToast("Invalid authentication credentials", "error");
+        addToast("Invalid authentication credentials", "error");
         break;
       case "Data already exists":
-        showToast("User with the same name already exists", "error");
+        addToast("User with the same name already exists", "error");
         break;
       case "No response received from the server":
-        showToast("No response received from the server", "error");
+        addToast("No response received from the server", "error");
         break;
       default:
-        showToast("User Operation Failed", "error");
+        addToast("User Operation Failed", "error");
     }
   };
 
