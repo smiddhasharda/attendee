@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, Text, StyleSheet, ScrollView, TextInput, Pressable, } from "react-native";
+import { View, Text, StyleSheet, ScrollView, TextInput, Pressable,ActivityIndicator } from "react-native";
 import { Ionicons, FontAwesome, AntDesign,MaterialCommunityIcons ,MaterialIcons,Entypo} from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
@@ -24,117 +24,6 @@ const StudentInfo = ({navigation}) => {
   const [copyList, setCopyList] = useState([]);
   const [isScanning, setIsScanning] = useState(false);
   const [loading, setLoading] = useState(false);
-
-
-  const sampleStudentData = [
-    {
-      NAME_FORMAL: "Dev Saxena",
-      EMPLID: "2023408405",
-      ADM_APPL_NBR: "00021604",
-      STRM: "1501",
-      DESCR: "School of Dental Sciences",
-      DESCR2: "Bachelor of Dental Science",
-      DESCR3: "Mechanical",
-    },
-    {
-      NAME_FORMAL: "Medha Yadav",
-      EMPLID: "2023408406",
-      ADM_APPL_NBR: "00021604",
-      STRM: "1501",
-      DESCR: "School of Dental Sciences",
-      DESCR2: "Bachelor of Dental Science",
-      DESCR3: "Mechanical",
-    },
-    {
-      NAME_FORMAL: "Rohit Mehra",
-      EMPLID: "2023408407",
-      ADM_APPL_NBR: "00021604",
-      STRM: "1501",
-      DESCR: "School of Dental Sciences",
-      DESCR2: "Bachelor of Dental Science",
-      DESCR3: "Mechanical",
-    },
-    {
-      NAME_FORMAL: "Saurabh Middha",
-      EMPLID: "2023408408",
-      ADM_APPL_NBR: "00021604",
-      STRM: "1501",
-      DESCR: "School of Dental Sciences",
-      DESCR2: "Bachelor of Dental Science",
-      DESCR3: "Mechanical",
-    },
-    {
-      NAME_FORMAL: "Aman Bhadoriya",
-      EMPLID: "2023408409",
-      ADM_APPL_NBR: "00021604",
-      STRM: "1501",
-      DESCR: "School of Dental Sciences",
-      DESCR2: "Bachelor of Dental Science",
-      DESCR3: "Mechanical",
-    },
-    {
-      NAME_FORMAL: "Abhishak patel",
-      EMPLID: "2023408410",
-      ADM_APPL_NBR: "00021604",
-      STRM: "1501",
-      DESCR: "School of Dental Sciences",
-      DESCR2: "Bachelor of Dental Science",
-      DESCR3: "Mechanical",
-    },
-  ];
-
-  const sampleCourseData = [
-    { SU_PAPER_ID: "1000021", CATALOG_NBR: "BPO353", DESCR100: "Enzymology" },
-    { SU_PAPER_ID: "1000021", CATALOG_NBR: "BPO353", DESCR100: "Enzymology" },
-    { SU_PAPER_ID: "1000021", CATALOG_NBR: "BPO353", DESCR100: "Enzymology" },
-    { SU_PAPER_ID: "1000021", CATALOG_NBR: "BPO353", DESCR100: "Enzymology" },
-    { SU_PAPER_ID: "1000021", CATALOG_NBR: "BPO353", DESCR100: "Enzymology" },
-  ];
-
-  const sampleAttendanceData = [
-    {
-      EMPLID: "2023408405",
-      STRM: "2301",
-      PERCENTCHG: "65",
-      CATALOG_NBR: "BPO353",
-      PERCENTAGE: "85.71",
-    },
-    {
-      EMPLID: "2023408406",
-      STRM: "2301",
-      PERCENTCHG: "65",
-      CATALOG_NBR: "BPO353",
-      PERCENTAGE: "85.71",
-    },
-    {
-      EMPLID: "2023408407",
-      STRM: "2301",
-      PERCENTCHG: "65",
-      CATALOG_NBR: "BPO353",
-      PERCENTAGE: "85.71",
-    },
-    {
-      EMPLID: "2023408408",
-      STRM: "2301",
-      PERCENTCHG: "65",
-      CATALOG_NBR: "BPO353",
-      PERCENTAGE: "85.71",
-    },
-    {
-      EMPLID: "2023408409",
-      STRM: "2301",
-      PERCENTCHG: "65",
-      CATALOG_NBR: "BPO353",
-      PERCENTAGE: "85.71",
-    },
-    {
-      EMPLID: "2023408410",
-      STRM: "2301",
-      PERCENTCHG: "65",
-      CATALOG_NBR: "BPO353",
-      PERCENTAGE: "85.71",
-    },
-  ];
 
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
@@ -206,7 +95,7 @@ const StudentInfo = ({navigation}) => {
     const isLastAlternateCopy =
       copyIndex === copiesData[index].alternateCopies.length - 1;
     return (
-      <View style={{flexDirection:"row",  justifyContent:"space-between"}}>
+      <View style={{flexDirection:"row", justifyContent:"space-between"}} key={copyIndex}>
       <View style={{width:"auto",}} key={copyIndex}>
       <TextInput
         style={[styles.input,]}
@@ -214,16 +103,14 @@ const StudentInfo = ({navigation}) => {
           onChangeText={(copyNumber) => setTempNumber(copyNumber)}
    />
       </View>
+      {/* <> */}
       {tempCopyNumber && (
-                <Pressable
-                  style={styles.addButton}
-                  onPress={() =>
-                    handleSaveCopy(copyType, tempCopyNumber, index, copyIndex)
-                  }
-                >
+                <Pressable style={styles.addButton} onPress={() => handleSaveCopy(copyType, tempCopyNumber, index, copyIndex) } >
                   <Text tyle={{color:"#fff"}}>Save</Text>
                 </Pressable>
               )}
+              {/* </>
+              <> */}
       {copyType === "Alternate" && isLastAlternateCopy && (
           <Pressable
             style={styles.removeButton}
@@ -236,12 +123,14 @@ const StudentInfo = ({navigation}) => {
             </Text>
           </Pressable>
         )}
+        {/* </> */}
       </View>
     );
   };
 
   const handleCancel = () => {
     setIsScanning(false);
+    navigation.setOptions({ headerShown: true});
     setTempCopyType("");
     setMainCopyIndex("");
     setAlternateCopyIndex("");
@@ -249,6 +138,7 @@ const StudentInfo = ({navigation}) => {
 
   const startScanning = (copyType, index, copyIndex) => {
     setIsScanning(true);
+    navigation.setOptions({ headerShown: false});
     setTempCopyType(copyType);
     setMainCopyIndex(index);
     setAlternateCopyIndex(copyIndex);
@@ -317,6 +207,7 @@ const StudentInfo = ({navigation}) => {
             room_Nbr: room_Nbr,
             exam_Dt: exam_Dt,
             startTime: startTime,
+            navigation:navigation
           });
         }
       }
@@ -441,12 +332,12 @@ const StudentInfo = ({navigation}) => {
               room_Nbr: room_Nbr,
               exam_Dt: exam_Dt,
               startTime: startTime,
+              navigation:navigation
             });
           }
         }
         }
     } catch (error) {
-      console.log(error)
       handleAuthErrors(error);
     }
   };
@@ -528,13 +419,11 @@ const StudentInfo = ({navigation}) => {
         },
         authToken
       );
-      if (response) {
-        console.log(response?.data || []);
+      if (response) {        
         setAttendanceDetails(response?.data?.[0] || []);
-        // setLoading(false);
+        setLoading(false);
       }
     } catch (error) {
-      console.log(error);
       setLoading(false);
       handleAuthErrors(error);
     }
@@ -544,7 +433,7 @@ const StudentInfo = ({navigation}) => {
      await handleGetStudentInfo();
      await handleGetStudentCouseInfo();
      await handleGetStudentAttendenceInfo();
-      await handleGetCopyData();
+     await reportId ? handleGetCopyData() : '';
 }
   
 
@@ -553,6 +442,9 @@ const StudentInfo = ({navigation}) => {
   }, [UserAccess]);
 
   return (
+    loading ? (
+      <ActivityIndicator size="large" color="#0000ff" />
+    ) : (
     <ScrollView contentContainerStyle={styles.container}>
       {isScanning ? (
         <CodeScanner onScannedData={(data) => handleScanBarcode( data, tempCopyType, mainCopyIndex, alternateCopyIndex ) } onCancel={handleCancel} />
@@ -635,9 +527,8 @@ const StudentInfo = ({navigation}) => {
               {copiesData?.length === 0 &&   <AntDesign style={styles.addicon} name="pluscircleo" size={24} color="black" onPress={handleAddCopy} />}
               </View>
           {copiesData?.length > 0 ? (copiesData.map((copy, index) => (
-            <View key={index} >
-            
-              <View style={styles.inputContainer}>
+            <View key={copy.id || index}> 
+            <View style={styles.inputContainer}>
               <Pressable
                     onPress={() => handleRemoveCopy(index)}
                   >
@@ -651,9 +542,7 @@ const StudentInfo = ({navigation}) => {
               <View style={[styles.tablewrap,styles.table]}>
                 <View>
                   {copy.mainCopy ? (
-                    <View style={styles.sheetDetails}>
-                    <View key={index} style={[styles.box]}>
-                    <View style={styles.boxtext}>
+                    <View key={index} style={[styles.sheetDetails,styles.box,styles.boxtext]}>
                     <Text style={[ styles.header]}>Answersheet Number</Text>
                       <Text style={[styles.examname]}>{copy.mainCopy}</Text>
                       <View style={styles.iconsWrap}>
@@ -666,8 +555,6 @@ const StudentInfo = ({navigation}) => {
                       )}
                       </View>
                     </View>
-                  </View>
-                    </View>
                   ) : (
                   <View style={{width:"100%" ,justifyContent:"space-between",flexDirection:"row"}}>
                   <Text style={{fontWeight:"bold"}}>Answersheet</Text>
@@ -678,8 +565,8 @@ const StudentInfo = ({navigation}) => {
                   )}
                    </View>
                   
-
-                {copy.mainCopy && (
+                 {/* <> */}
+                  {copy.mainCopy && (
                   <View>
                     {copy.alternateCopies.map((alternateCopy, copyIndex) =>
                       alternateCopy ? ( 
@@ -729,16 +616,17 @@ const StudentInfo = ({navigation}) => {
                     )}
                   </View>
                 )}
+                {/* </> */}
               </View>
               </View>
+              {(copy.mainCopy.length > 0 && index === copiesData.length - 1 ) &&
+            (<Pressable style={styles.addButton} onPress={handleAddCopy}>
+              <Text style={styles.addButtonText}> Add Copy</Text>
+            </Pressable>) }
             </View>
           ))) :    (
           <Text style={[styles.tablewrap,styles.nodatadisplay]}>There is no answersheet added yet!</Text>) }
           <View style={styles.buttonWrap}>
-          {copiesData?.length > 0 && 
-            (<Pressable style={styles.addButton} onPress={handleAddCopy}>
-              <Text style={styles.addButtonText}> Add Copy</Text>
-            </Pressable>) }
             <Pressable
               style={styles.submitButton}
               onPress={ reportId ? handleStudentInfoUpdate: handleStudentInfoSubmit }
@@ -751,7 +639,7 @@ const StudentInfo = ({navigation}) => {
           </View>
         </View>
       )}
-    </ScrollView>
+    </ScrollView>)
   );
 };
 
