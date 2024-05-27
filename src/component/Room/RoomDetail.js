@@ -1,6 +1,6 @@
 import React, { useState, useEffect,useCallback  } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TextInput, ActivityIndicator, Dimensions, Pressable } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'
+import { Ionicons,FontAwesome } from '@expo/vector-icons'
 import user from '../../local-assets/userimg.jpg'
 import { useRoute } from '@react-navigation/native';
 import CodeScanner from '../../globalComponent/CodeScanner/CodeScanner'; // Make sure to import CodeScanner properly
@@ -195,7 +195,8 @@ function RoomDetail({navigation}) {
             
             </View> */}
               <View  style={styles.info}>
-              <Image source={user} style={styles.userimage}  />
+              {/* <Image source={user}  /> */}
+              <FontAwesome name="user-circle" size={36}  color="black" style={styles.userimage} />
             <View style={styles.stuWrap}>
               <Text style={styles.examname }>{studentData.NAME}</Text>
               <Text style={styles.employeeid}>{studentData.EMPLID}</Text>
@@ -236,9 +237,16 @@ const styles = StyleSheet.create({
     //   width:"10%",
     //  },
 
-    //  seqWrap:{
-    //    width:"10%",
-    //  } ,
+     seqWrap:{
+       backgroundColor:"#ccc",
+       borderRadius:22,
+       width:35,
+       height:35,
+       lineHeight:35,
+       textAlign:"center",
+       display:"block"
+ 
+     } ,
      info:{
        display:"flex",
        flexDirection:"row",
@@ -306,10 +314,10 @@ const styles = StyleSheet.create({
       flexDirection:"column",
     },
     userimage:{
-        width:40,
-        height:40,
+        // width:75,
+        // height:75,
         borderRadius:50,
-        // marginRight:10
+        marginRight:10
     },
  
     employeeid:{
@@ -324,8 +332,7 @@ const styles = StyleSheet.create({
     },
     seqnumber:{
       fontWeight:"400",
-  
-      color:"#a79f9f",
+      color:"#000",
     },
     activebox:{
       backgroundColor:"#0cb551",
