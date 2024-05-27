@@ -12,6 +12,33 @@ const styles = StyleSheet.create({
     // borderBottomWidth: 1,
     // borderBottomColor: "#ccc",
   },
+  buttonwrap:{
+  flexDirection:"row",
+  justifyContent:"space-between",
+  },
+  saveButton: {
+    padding: 6,
+    borderRadius: 5,
+    backgroundColor: "#129912",
+    marginBottom: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 10,
+    marginTop: 6,
+  },
+  cancelButton: {
+    padding: 6,
+    borderRadius: 5,
+    backgroundColor: "rgb(237 52 52)",
+    marginBottom: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 10,
+    marginTop: 6,
+  },
+  btntext:{
+  color:"#fff",
+  },
   profileImage: {
     width: 100,
     height: 100,
@@ -21,6 +48,7 @@ const styles = StyleSheet.create({
   username: {
     fontSize: 18,
     fontWeight: "bold",
+    color:"#fff",
   },
   rolePicker: {
     marginTop: 10,

@@ -69,7 +69,7 @@ import {
     listItemEditButton: {
       backgroundColor: "blue",
       padding: 5,
-      borderRadius: 5,
+      borderRadius: "5px",
     },
     listItemEditText: {
       color: "white",
@@ -83,7 +83,7 @@ import {
       backgroundColor:"#fff",
       padding:40,
       boxShadow: '0px 2px 3.84px rgba(0, 0, 0, 0.25)',
-      borderRadius:10,
+      borderRadius:"10px",
     },
     addbtnWrap:{
       width:100,
@@ -91,7 +91,7 @@ import {
       marginBottom:10,
       backgroundColor:"blue",
       padding:10,
-      borderRadius:5,
+      borderRadius:"5px",
       
     },
     addbtntext:{
@@ -103,7 +103,7 @@ import {
       marginBottom:10,
       backgroundColor:"grey",
       padding:10,
-      borderRadius:5,
+      borderRadius:"5px",
     }
   });
 
