@@ -25,26 +25,27 @@ const { navigate } = useNavigation();
             <ScrollView vertical>        
             <View style={[styles.boxcontainer,]}>            
                 <View style={[styles.box, styles.activebox]} >
-                <Ionicons style={styles.icons} name="book" size={24} color="rgb(8 96 88)"   />
+                <Ionicons style={styles.icons} name="book" size={24} color="#fff"   />
                 <View  style={[styles.boxtext,]}>
                   <Text style={styles.activeboxtext} onPress={handleLearnPress}>Exam</Text>
                   {/* <Text>Chapter 1</Text> */}
                 </View>
               </View>
               <View style={styles.box}>
-              <Ionicons  style={styles.icons} name="book" size={24} color="rgb(8 96 88)" />
+              <Ionicons  style={styles.icons} name="book" size={24} color="rgb(71 75 78)" />
               <View  style={styles.boxtext}>
                   <Text onPress={handleTaskPress}>Report</Text>
                   {/* <Text>Chapter 2</Text> */}
                   </View>
               </View>
               <View style={styles.box}>
-              <Ionicons   style={styles.icons} name="book" onPress={()=> navigate('TopHeader')} size={24} color="rgb(8 96 88)" />
+              <Ionicons   style={styles.icons} name="book" onPress={()=> navigate('TopHeader')} size={24} color="rgb(71 75 78)" />
                    <View  style={styles.boxtext}>
                   <Text>Setting</Text>
                   {/* <Text>Chapter 3</Text> */}
                   </View>
-              </View>   
+              </View>  
+               
             </View>
             </ScrollView>
     </View> 
@@ -59,7 +60,8 @@ const styles = StyleSheet.create({
    
   },
   activebox:{
-   backgroundColor:"green",
+  //  backgroundColor:"green",
+  backgroundColor:"rgb(58 195 87)"
 
   },
   activeboxtext:{
@@ -83,9 +85,9 @@ const styles = StyleSheet.create({
     fontSize:16,
     marginTop:10,
   },
-  icons:{
-  color:"#fff",
-  },
+  // icons:{
+  // color:"#fff",
+  // },
   searchBox: {
     height: 40,
     borderWidth: 1,
@@ -107,7 +109,7 @@ const styles = StyleSheet.create({
     borderColor:"#ccc",
     // width:"20%",
     width:"30%",
-   backgroundColor:"rgb(3 120 110)",
+   backgroundColor:"rgb(201 209 208)",
     // height:60,
     // height:"40%",
     padding:10,

@@ -153,11 +153,11 @@ const sidebaricons=[
           <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
             <>{file && (
               <View style={styles.buttonwrap}>
-                <Pressable onPress={() => handleProfilePic()}>
-                  <Text>Save</Text>
+                <Pressable onPress={() => handleProfilePic()} style={styles.saveButton}>
+                  <Text style={styles.btntext}>Save</Text>
                 </Pressable>
-                <Pressable onPress={() => setFile("")}>
-                  <Text>Cancel</Text>
+                <Pressable onPress={() => setFile("")} style={styles.cancelButton}>
+                  <Text style={styles.btntext}>Cancel</Text>
                 </Pressable>
               </View>
             )}</>
@@ -314,10 +314,10 @@ const DrawerNavigator = ({ navigation }) => {
         )
         .map((module, index) => (
           <Drawer.Screen  options={{
-    drawerIcon: ({ color, size }) => (
+    drawerIcon: ({ color, size, focused }) => (
       <Ionicons 
         style={styles.icons} 
-        name="book" 
+        name={focused ? 'home' : 'book'}
         size={size} 
         color={color} 
       />
