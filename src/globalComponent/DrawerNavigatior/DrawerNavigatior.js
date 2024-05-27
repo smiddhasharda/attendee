@@ -6,6 +6,7 @@ import {
   DrawerContentScrollView,
   DrawerItemList,
 } from "@react-navigation/drawer";
+
 import RoleScreen from "../../component/Roles/RoleScreen";
 import ModuleScreen from "../../component/Module/ModuleScreen";
 import DashboardScreen from "../../component/Dashboard/DashboardScreen";
@@ -17,7 +18,6 @@ import CustomeImagePicker from "../CustomeImagePicker/CustomeImagePicker";
 import { multer, fetch as FetchData } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import styles from "./DrawerNavigator.style";
-import { Button } from "react-native-web";
 import { Ionicons } from '@expo/vector-icons'; 
 import { SafeAreaView } from "react-native-safe-area-context";
 // Screen components
@@ -117,7 +117,24 @@ const CustomDrawerContent = ({ ...props }) => {
         showToast("Module Operation Failed", "error");
     }
   };
-
+const sidebaricons=[
+    {
+      name:"home", 
+      size:"20",
+      color:"rgb(8 96 88)",
+    },
+    {
+      name:"settings", 
+      size:"20",
+      color:"rgb(8 96 88)",
+    },
+    {
+      name:"person", 
+      size:"20",
+      color:"rgb(8 96 88)",
+    }
+  
+]
   return (
     <View style={styles.container}>
       <SafeAreaView>
@@ -165,12 +182,15 @@ const CustomDrawerContent = ({ ...props }) => {
           </View>
       </View>
       </SafeAreaView>
+      <DrawerContentScrollView {...props}>
+
       <DrawerItemList {...props} style={styles.dropdownmain} />
       <View>
         <Pressable onPress={() => props.handleLogout()}>
           <Text style={{ margin: 16 }}>Logout</Text>
         </Pressable>
       </View>
+      </DrawerContentScrollView>
     </View>
   );
 };
@@ -293,7 +313,16 @@ const DrawerNavigator = ({ navigation }) => {
             module?.moduleMaster[0]?.moduleName !== "RoomDetail"
         )
         .map((module, index) => (
-          <Drawer.Screen key={index} name={module?.moduleMaster[0]?.moduleName}>
+          <Drawer.Screen  options={{
+    drawerIcon: ({ color, size }) => (
+      <Ionicons 
+        style={styles.icons} 
+        name="book" 
+        size={size} 
+        color={color} 
+      />
+    )
+  }}  key={index} name={module?.moduleMaster[0]?.moduleName}>
             {(props) => {
               switch (module?.moduleMaster[0]?.moduleName) {
                 case "RoleScreen":

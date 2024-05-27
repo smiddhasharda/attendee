@@ -21,6 +21,7 @@ const styles = StyleSheet.create({
   username: {
     fontSize: 18,
     fontWeight: "bold",
+    color:"#fff",
   },
   rolePicker: {
     marginTop: 10,
