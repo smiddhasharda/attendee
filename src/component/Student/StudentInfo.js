@@ -95,7 +95,7 @@ const StudentInfo = ({navigation}) => {
     const isLastAlternateCopy =
       copyIndex === copiesData[index].alternateCopies.length - 1;
     return (
-      <View style={{flexDirection:"row", justifyContent:"space-between"}} key={copyIndex}>
+      <View style= {styles.answerSheetWrap} key={copyIndex}>
       <View style={{width:"auto",}} key={copyIndex}>
       <TextInput
         style={[styles.input,]}
@@ -106,7 +106,7 @@ const StudentInfo = ({navigation}) => {
       {/* <> */}
       {tempCopyNumber && (
                 <Pressable style={styles.addButton} onPress={() => handleSaveCopy(copyType, tempCopyNumber, index, copyIndex) } >
-                  <Text tyle={{color:"#fff"}}>Save</Text>
+                  <Text style={{color:"#fff"}}>Save</Text>
                 </Pressable>
               )}
               {/* </>
@@ -458,14 +458,26 @@ const StudentInfo = ({navigation}) => {
                 <Text style={styles.value}> {studentDetails.NAME_FORMAL || ""} </Text>
               </View>
               <View style={styles.infoItem}>
+                <Text style={styles.label}>System Id:</Text>
+                <Text style={styles.value}>{studentDetails.EMPLID || ""}</Text>
+              </View>
+              <View style={styles.infoItem}>
                 <Text style={styles.label}>Roll No:</Text>
                 <Text style={styles.value}>
                   {studentDetails.ADM_APPL_NBR || ""}
                 </Text>
               </View>
               <View style={styles.infoItem}>
-                <Text style={styles.label}>System Id:</Text>
-                <Text style={styles.value}>{studentDetails.EMPLID || ""}</Text>
+                <Text style={styles.label}>School:</Text>
+                <Text style={styles.value}>{studentDetails.DESCR || ""}</Text>
+              </View>
+              <View style={styles.infoItem}>
+                <Text style={styles.label}>Program :</Text>
+                <Text style={styles.value}>{studentDetails.DESCR2 || ""}</Text>
+              </View>
+              <View style={styles.infoItem}>
+                <Text style={styles.label}>Branch :</Text>
+                <Text style={styles.value}>{studentDetails.DESCR3 || ""}</Text>
               </View>
               <View style={styles.infoItem}>
                 <Text style={styles.label}>Semester:</Text>
@@ -473,18 +485,9 @@ const StudentInfo = ({navigation}) => {
                   {studentDetails.STRM?.split("")?.[3] || ""}
                 </Text>
               </View>
-              <View style={styles.infoItem}>
-                <Text style={styles.label}>School Name:</Text>
-                <Text style={styles.value}>{studentDetails.DESCR || ""}</Text>
-              </View>
-              <View style={styles.infoItem}>
-                <Text style={styles.label}>Program Name:</Text>
-                <Text style={styles.value}>{studentDetails.DESCR2 || ""}</Text>
-              </View>
-              <View style={styles.infoItem}>
-                <Text style={styles.label}>Branch Name:</Text>
-                <Text style={styles.value}>{studentDetails.DESCR3 || ""}</Text>
-              </View>
+         
+           
+           
             </View>
           </View>
           <View style={styles.studentInfoWrap}>
@@ -522,7 +525,8 @@ const StudentInfo = ({navigation}) => {
               </View>
             </View>
           </View>
-          <View style={{flexDirection:"row" ,justifyContent:"space-between"}}>
+          <View>
+               <View style={{flexDirection:"row" ,}}>
               <Text style={styles.addAnsheading}> Add AnswerSheet </Text>
               {copiesData?.length === 0 &&   <AntDesign style={styles.addicon} name="pluscircleo" size={24} color="black" onPress={handleAddCopy} />}
               </View>
@@ -539,8 +543,8 @@ const StudentInfo = ({navigation}) => {
               </View>
               <View>          
                    
-              <View style={[styles.tablewrap,styles.table]}>
-                <View>
+              <View style={[styles.tablewrap, ]}>
+                <View >
                   {copy.mainCopy ? (
                     <View key={index} style={[styles.sheetDetails,styles.box,styles.boxtext]}>
                     <Text style={[ styles.header]}>Answersheet Number</Text>
@@ -556,7 +560,7 @@ const StudentInfo = ({navigation}) => {
                       </View>
                     </View>
                   ) : (
-                  <View style={{width:"100%" ,justifyContent:"space-between",flexDirection:"row"}}>
+                  <View style={[styles.sheetDetails,styles.box,styles.boxtext]}>
                   <Text style={{fontWeight:"bold"}}>Answersheet</Text>
                    <MaterialCommunityIcons name="barcode-scan" onPress={() => startScanning("AnswerSheet", index)} size={40} color="black" />
                       <Text>OR</Text>
@@ -576,12 +580,12 @@ const StudentInfo = ({navigation}) => {
                            <Text style={[ styles.header]}>
                             Alternate Copy {copyIndex + 1}
                           </Text>
-                            <View style={styles.boxtext}>
+                            <View style={styles.boxtext} >
                               <Text style={[styles.examname]}>{alternateCopy}</Text>
                               <View >
                               {copyIndex === copy.alternateCopies.length - 1 && (
                                 <View >
-                                <Entypo name="circle-with-cross"  size={20} color="r"  marginLeft="10px"  onPress={() => handleSaveCopy( "Alternate", "", index, copyIndex ) }/>
+                                <Entypo name="circle-with-cross"  size={20} color="red"  marginLeft="10px"  onPress={() => handleSaveCopy( "Alternate", "", index, copyIndex ) }/>
                           </View>
                           )}        
                               </View>
@@ -637,6 +641,7 @@ const StudentInfo = ({navigation}) => {
             <Text style={styles.addButtonText}>Cancel</Text>
             </Pressable>
           </View>
+          </View>
         </View>
       )}
     </ScrollView>)
@@ -652,45 +657,66 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   studentInfoWrap: {
-    backgroundColor: "#EAEAEA",
+    // backgroundColor: "#EAEAEA",
     marginBottom: 20,
     borderRadius: 8,
     padding: 5,
+  
   },
   infoHeader: {
-    fontSize: 18, 
+    // fontSize: 18, 
+    // fontWeight: "bold",
+    // marginHorizontal: 20,
+    // marginVertical: 10,
+    fontSize: 20,
     fontWeight: "bold",
-    marginHorizontal: 20,
-    marginVertical: 10,
+    marginBottom: 10,
   },
   infoContainer: {
-    paddingHorizontal: 20,
-    paddingBottom: 10,
+    // paddingHorizontal: 20,
+    // paddingBottom: 10,
+    backgroundColor: "#FFFFFF",
+    padding: 10,
+    borderRadius: 8,
   },
   infoItem: {
+    // flexDirection: "row",
+    // marginBottom: 10,
     flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 10,
   },
   label: {
-    flex: 1,
+    // flex: 1,
+    // fontWeight: "bold",
     fontWeight: "bold",
+    color: "#333",
+    width:"40%",
   },
   value: {
-    flex: 2,
+    // flex: 2,
+    color: "#555",
+    width:"60%",
   },
-  table: {
-    borderWidth: 1,
-    borderColor: "#DDDDDD", 
-    borderRadius: 10,
-    overflow: "hidden",
-    backgroundColor: "#F9F9F9",
-    marginBottom: 20,
-    padding: 10,
-  },
+  // table: {
+  //   // borderWidth: 1,
+  //   // borderColor: "#DDDDDD", 
+  //   borderRadius: 10,
+  //   overflow: "hidden",
+  //   backgroundColor: "#F9F9F9",
+  //   marginBottom: 20,
+  //   padding: 10,
+  // },
   tablewrap: {
     backgroundColor: "#FFFFFF",
-    padding: 20,
-    borderRadius: 10,
+    // padding: 20,
+    // borderRadius: 10,
+    padding: 5,
+    // borderWidth: 1,
+    // borderColor: "#000",
+    borderRadius: 8,
+    marginBottom: 10,
+    backgroundColor: "#FFF",
   },
   row: {
     flexDirection: "row",
@@ -707,43 +733,67 @@ const styles = StyleSheet.create({
     backgroundColor: "#F0F0F0",
   },
   inputContainer: {
+    // flexDirection: "row",
+    // alignItems: "center",
+    // paddingHorizontal: 10,
     flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 10,
   },
   input: {
     flex: 1,
-    padding: 8,
+    // padding: 5,
+    // margin:5,
+    // borderWidth: 1,
+    // borderColor: "#DDDDDD", 
+    // borderRadius: 5,
+    // // marginRight: 10,
+    // backgroundColor: "#FFFFFF",
     borderWidth: 1,
-    borderColor: "#DDDDDD", 
-    borderRadius: 5,
+    borderColor: "#ccc",
+    borderRadius: 4,
+    padding: 8,
     marginRight: 10,
-    backgroundColor: "#FFFFFF",
+    width: 150,
   },
   addButton: {
-    padding: 10,
-    borderRadius: 7,
+    // padding: 10,
+    // borderRadius: 7,
+    // backgroundColor: "#129912",
+    // marginBottom: 10,
+    // justifyContent: "center",
+    // alignItems: "center",
+    // marginRight: 10,
+    // marginTop: 6,
     backgroundColor: "#129912",
-    marginBottom: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 10,
-    marginTop: 6,
+    padding: 10,
+    borderRadius: 5,
+    // justifyContent: "center",
+    // alignItems: "center",
   },
   addButtonText: {
     color: "#FFFFFF",
     fontWeight: "bold",
+    alignItems:"center",
+    textAlign:"center"
   },
   removeButton: {
-    alignSelf: "flex-end",
-    padding: 5,
+    // alignSelf: "flex-end",
+    // padding: 5,
+    // borderRadius: 5,
+    // backgroundColor: "#E60E1C",
+    // marginBottom: 20,
+    // justifyContent: "center",
+    // alignItems: "center",
+    // marginRight: 10,
+    // marginTop: 12,
+    padding: 10,
     borderRadius: 5,
-    backgroundColor: "#E60E1C",
-    marginBottom: 20,
     justifyContent: "center",
     alignItems: "center",
-    marginRight: 10,
-    marginTop: 12,
+  },
+  answersheet:{
+
   },
   mainText: {
     flexDirection: "row",
@@ -759,17 +809,26 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   buttonWrap: {
+    // flexDirection: "row",
+    // justifyContent: "space-between",
     flexDirection: "row",
     justifyContent: "space-between",
+    marginTop: 20,
   },
   submitButton: {
     backgroundColor: "#0C7C62",
-    paddingVertical: 5,
-    paddingHorizontal: 20,
+    padding: 10,
     borderRadius: 5,
     justifyContent: "center",
     alignItems: "center",
-    marginVertical: 10,
+    marginTop: 10,
+    // backgroundColor: "#0C7C62",
+    // paddingVertical: 5,
+    // paddingHorizontal: 20,
+    // borderRadius: 5,
+    // justifyContent: "center",
+    // alignItems: "center",
+    // marginVertical: 10,
   },
   mainCopyText: {
     color: "#000000",
@@ -777,43 +836,72 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   addAnsheading: {
-    fontSize: 24, 
+    fontSize: 18, 
     fontWeight: "bold",
     padding: 10,
   },
   nodatadisplay: {
-    fontSize: 18,
-    alignItems: "center",
+    // fontSize: 18,
+    // alignItems: "center",
+    // textAlign: "center",
     textAlign: "center",
+    fontSize: 16,
+    color: "#666",
   },
   box: {
-    borderWidth: 1,
-    borderColor: "#CCCCCC", 
-    width: 'auto',
-    backgroundColor: "#EAEAEA",
-    borderRadius: 25,
-    marginBottom: 10,
-    marginTop: 10,
+    // borderWidth: 1,
+    // borderColor: "#CCCCCC", 
+    // width: 'auto',
+    // backgroundColor: "#EAEAEA",
+    // borderRadius: 25,
+    // marginBottom: 10,
+    // marginTop: 10,
+    // padding: 10,
+    // flexDirection: "column",
     padding: 10,
-    flexDirection: "column",
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    marginBottom: 10,
+    backgroundColor: "#f9f9f9",
   },
   boxtext: {
     flexDirection: "row",
-    marginLeft: 10,
+    // marginLeft: 10,
     color: "#000000",
     justifyContent: "space-between",
   },
   iconsWrap: {
+    // flexDirection: "row",
+    // justifyContent: "space-between",
     flexDirection: "row",
-    justifyContent: "space-between",
+    alignItems: "center",
   },
   addicon: {
     marginRight: 10,
-    marginTop: 18,
+    marginTop: 10,
+    marginBottom:10,
+    // marginLeft: 10,
+    // marginTop: 5,
   },
   supplysheet: {
+    // flexDirection: "row",
+    // justifyContent: "space-between",
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  sheetDetails: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  answerSheetWrap:{
+    flexDirection:"row",
+    justifyContent:"space-between",
+    width:"auto",
   }
 });
 
