@@ -28,6 +28,11 @@ const App = () => {
     headerStyle: {
       backgroundColor: "rgb(17, 65, 102)",
     },
+    headerTitleContainerStyle: {
+      // paddingLeft: 0, 
+      marginLeft: 0,
+      marginRight:0,
+    },
     headerTintColor: "#fff",
   };
   useEffect(() => {
@@ -46,12 +51,12 @@ const App = () => {
 
   const renderLoading = () => (
     <View style={{ flex: 1, backgroundColor: "plum", padding: 60 }}>
-      <StatusBar />
       <ActivityIndicator size="large" color="#0000ff" />
     </View>
   );
   const renderRouting = () => (
     <Provider store={store}>
+      <StatusBar   barStyle="light-content" backgroundColor="#6a51ae"  />
       <ToastProvider>
         <ToastContainer/>
         <RoleProvider>
@@ -76,7 +81,7 @@ const App = () => {
                 name="RoomDetail"
                 component={RoomDetail}
                 options={({ route }) => ({
-                  title: `Room Number :- ${route.params.room_Nbr}`,
+                  title: `Room Details: ${route.params.room_Nbr}`,
                   ...TopHeaderCommonConfig,
                 })}
               />
@@ -107,7 +112,7 @@ const App = () => {
     </Provider>
   );
 
-  return loading ? renderLoading() : renderRouting();
+  return loading ? renderLoading() : renderRouting();w
 };
 
 export default App;

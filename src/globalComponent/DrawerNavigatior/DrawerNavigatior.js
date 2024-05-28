@@ -18,9 +18,11 @@ import CustomeImagePicker from "../CustomeImagePicker/CustomeImagePicker";
 import { multer, fetch as FetchData } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import styles from "./DrawerNavigator.style";
-import { Ionicons } from '@expo/vector-icons'; 
+import { Ionicons,Feather } from '@expo/vector-icons'; 
 import { SafeAreaView } from "react-native-safe-area-context";
+
 import InvigilatorScreen from "../../component/Invigilator/InvigilatorScreen";
+
 // Screen components
 const RoleComponent = ({ userAccess }) => <RoleScreen userAccess={userAccess} />;
 const ModuleComponent = ({ userAccess }) => <ModuleScreen userAccess={userAccess} />;
@@ -141,17 +143,19 @@ const sidebaricons=[
     <View style={styles.container}>
       <SafeAreaView>
       <View style={styles.header}>
-      <CustomeImagePicker
-            imageUri={
-              file?.[0]?.uri ||
-              (props.userData?.profile_image_url &&
-                (global.SERVER_URL +
-                  "/userImg/" +
-                  props.userData?.profile_image_url ||
-                  ""))
-            }
-            onImageChange={handleImageChange}
+          <CustomeImagePicker
+                imageUri={
+                  file?.[0]?.uri ||
+                  (props.userData?.profile_image_url &&
+                    (global.SERVER_URL +
+                      "/userImg/" +
+                      props.userData?.profile_image_url ||
+                      ""))
+                }
+                onImageChange={handleImageChange}
+                
           />
+  
           <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
             <>{file && (
               <View style={styles.buttonwrap}>
@@ -206,12 +210,13 @@ const DrawerNavigator = ({ navigation }) => {
       backgroundColor: 'rgb(17, 65, 102)',
     },
     headerLeftContainerStyle: {
-      paddingLeft: 0,
-      marginLeft: -10, 
+      // paddingLeft: 0,
+      // marginLeft: -10, 
     },
     headerTitleContainerStyle: {
-      paddingLeft: 0, 
-      marginLeft: -10,
+      // paddingLeft: 0, 
+      marginLeft: 0,
+      marginRight:0,
     }, 
     headerTintColor: '#fff',
   }
