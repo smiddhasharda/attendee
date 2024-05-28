@@ -1,6 +1,6 @@
 import React, { useState, useEffect,useCallback  } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TextInput, ActivityIndicator, Dimensions, Pressable } from 'react-native';
-import { Ionicons,FontAwesome } from '@expo/vector-icons'
+import { Ionicons,FontAwesome, Entypo } from '@expo/vector-icons'
 import user from '../../local-assets/userimg.jpg'
 import { useRoute } from '@react-navigation/native';
 import CodeScanner from '../../globalComponent/CodeScanner/CodeScanner'; // Make sure to import CodeScanner properly
@@ -152,74 +152,76 @@ function RoomDetail({navigation}) {
   return (
     <View style={styles.container}>
         {isScanning ? <CodeScanner onScannedData={ handleScannedData} onCancel={handleCancel} /> : 
-        <View >
-        <View style={styles.topdetails}>
+        <View>
+          <View style={styles.topdetails}>
            <View style={styles.searchWrap}>
            <TextInput
             style={styles.searchBox}
-            placeholder="Search by name, system id and seat number..."
+            placeholder="Search By Name, System Id Or Seat Number..."
             onChangeText={handleSearchData}
             value={searchText}
+            onIconPress={clearSearchText}
           />
-          {searchText.length > 0 && (
-            <Pressable onPress={clearSearchText} style={styles.clearButton}>
-              <Text style={styles.clearButtonText}>Clear Searched Text</Text>
-            </Pressable>
-          )} 
-      </View>
-      <View style={[styles.magnifying]}>
-        {/* <Ionicons name="search-outline" size={27} color="#fff" style={styles.searchIcon} /> */}
-        {UserAccess?.create === 1 && <Pressable onPress={startScanning}>
-          <Ionicons name="qr-code-outline" size={27} color="#fff" style={styles.searchIcon} />
-        </Pressable>}
-        {scannedData && (
-          <View>
-            <Text>Scanned Data: {scannedData}</Text>
-          </View>
-        )}
-      </View>
-      </View>
-    <ScrollView style={styles.roomNumber}>
-  {loading ? (
-    <ActivityIndicator size="large" color="#0000ff" />
-  ) : (
-    studentDetails?.length > 0 ? tempStudentDetails?.length > 0 ? (
-      tempStudentDetails.map((studentData, index) => (
-        <Pressable 
-          key={studentData.EMPLID}  // Use a unique identifier from studentData, such as EMPLID
-          onPress={() => UserAccess?.create === 1 ? navigation.navigate("StudentInfo", { room_Nbr: studentData.ROOM_NBR, exam_Dt: studentData.EXAM_DT, catlog_Nbr: studentData.CATALOG_NBR, system_Id: studentData.EMPLID, seat_Nbr: studentData.PTP_SEQ_CHAR, current_Term: studentData.STRM, reportId: presentStudentList?.filter((item) => item.EMPLID === Number(studentData.EMPLID))?.[0]?.PK_Report_Id, userAccess }) : ''}
-        >
-          <View style={[styles.box, presentStudentList?.find((item) => item.EMPLID === Number(studentData.EMPLID)) ? styles.activebox : '']} key={studentData.EMPLID}>
-            <View style={styles.boxtext}>
-              {/* <View style={styles.imgWrap}>
-            
-            </View> */}
-              <View  style={styles.info}>
-              {/* <Image source={user}  /> */}
-              <FontAwesome name="user-circle" size={36}  color="black" style={styles.userimage} />
-            <View style={styles.stuWrap}>
-              <Text style={styles.examname }>{studentData.NAME}</Text>
-              <Text style={styles.employeeid}>{studentData.EMPLID}</Text>
-              </View>
-              </View>
-              <View style={styles.seqWrap}>
-              <Text style={styles.seqnumber}>{studentData.PTP_SEQ_CHAR}</Text>
-              </View>
-            </View>
-          </View>
-        </Pressable>
-      ))
-    ) : (
-      <Text>There Is No Student Present In this Class you Searched !!</Text>
-    ) : (
-      <Text>There Is No Student Present In this Class !!</Text>
-    )
-  )}
-</ScrollView>
 
+          {searchText.length > 0 && (
+            <Pressable onPress={clearSearchText} style={styles.crossIcon} >
+              <Entypo name="circle-with-cross" size={20} alignItems="center" />
+            </Pressable>
+          )}
+          
           </View>
+          </View>
+          <ScrollView style={styles.roomNumber}>
+        {loading ? (
+          <ActivityIndicator size="large" color="#0000ff" />
+        ) : (
+          studentDetails?.length > 0 ? tempStudentDetails?.length > 0 ? (
+            tempStudentDetails.map((studentData, index) => (
+              <Pressable 
+                key={studentData.EMPLID}  // Use a unique identifier from studentData, such as EMPLID
+                onPress={() => UserAccess?.create === 1 ? navigation.navigate("StudentInfo", { room_Nbr: studentData.ROOM_NBR, exam_Dt: studentData.EXAM_DT, catlog_Nbr: studentData.CATALOG_NBR, system_Id: studentData.EMPLID, seat_Nbr: studentData.PTP_SEQ_CHAR, current_Term: studentData.STRM, reportId: presentStudentList?.filter((item) => item.EMPLID === Number(studentData.EMPLID))?.[0]?.PK_Report_Id, userAccess }) : ''}
+              >
+                <View style={[styles.box, presentStudentList?.find((item) => item.EMPLID === Number(studentData.EMPLID)) ? styles.activebox : '']} key={studentData.EMPLID}>
+                  <View style={styles.boxtext}>
+                    {/* <View style={styles.imgWrap}>
+                  
+                  </View> */}
+                    <View  style={styles.info}>
+                    {/* <Image source={user}  /> */}
+                    <FontAwesome name="user-circle" size={36}  color="black" style={styles.userimage} />
+                  <View style={styles.stuWrap}>
+                    <Text style={styles.examname }>{studentData.NAME}</Text>
+                    <Text style={styles.employeeid}>{studentData.EMPLID}</Text>
+                    </View>
+                    </View>
+                    <View style={styles.seqWrap}>
+                    <Text style={styles.seqnumber}>{studentData.PTP_SEQ_CHAR}</Text>
+                    </View>
+                  </View>
+                </View>
+              </Pressable>
+            ))
+          ) : (
+            <Text>There is no student available in this room you searched for!</Text>
+          ) : (
+            <Text>There are no records found!</Text>
+          )
+        )}
+          </ScrollView>
+        </View>
           }
-  </View>
+           <View style={[styles.magnifying]}>
+              {/* <Ionicons name="search-outline" size={27} color="#fff" style={styles.searchIcon} /> */}
+              {UserAccess?.create === 1 && <Pressable onPress={startScanning}>
+                <Ionicons name="qr-code-outline" size={27} color="#fff" style={styles.magIcon} />
+              </Pressable>}
+              {scannedData && (
+                <View>
+                  <Text>Scanned Data: {scannedData}</Text>
+                </View>
+              )}
+            </View>
+    </View>
   );
 }
 
@@ -230,7 +232,8 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor:"#fff" ,
-     clearfix:"both"
+     clearfix:"both",
+     position: "relative"
     },
    
     // imgWrap:{
@@ -260,7 +263,6 @@ const styles = StyleSheet.create({
       marginBottom: 10,
     },
  
-  
     topdetails:{
     //  padding:8,
     //  clearfix:"both",
@@ -277,7 +279,6 @@ const styles = StyleSheet.create({
       clearfix:"both",
       // position:"relative",
       // overflowX:"visible",
-      
       // maxHeight:"0%"
      
     },
@@ -285,17 +286,9 @@ const styles = StyleSheet.create({
       borderWidth: 1,
       borderColor: "#ccc",
       // width: Dimensions.get("window").width / 1 - 20, 
-      // backgroundColor: "#eaeaea",
-      // height: 55,
-      // textAlign: "center",
-      // alignItems: "center",
-      borderRadius: 25,
+      borderRadius: 6,
       marginBottom: 10,
-      padding:10,
-      // flexDirection:"column",
-      // width:"auto",
-   
-  
+      padding:12,
     },
     boxtext:{
       // alignItems:"center",  
@@ -313,6 +306,16 @@ const styles = StyleSheet.create({
     stuWrap:{
       flexDirection:"column",
     },
+    crossIcon:{
+      position: "absolute",
+      right: 20,
+      top: 28
+    },
+    // searchGlassIcon:{
+    //   position: "absolute",
+    //   right: 40,
+    //   top: 28
+    // },
     userimage:{
         // width:75,
         // height:75,
@@ -325,6 +328,7 @@ const styles = StyleSheet.create({
     },
     employeeid:{
       color:"#a79f9f",
+      fontSize: 12,
       fontWeight:"400"
     },
     seqnumber:{
@@ -350,36 +354,27 @@ const styles = StyleSheet.create({
       borderColor: '#ccc',
       borderRadius: 8,
       padding:10,
-      marginBottom: 16,
+      marginBottom: 8,
+      marginTop: 10
    
     },
     searchWrap:{
       padding: 10,
       width:"100%",
+      position: "relative"
       // width:'auto',
     },
-    searchIcon:{
-      // position:"absolute",
-      // bottom:0,
-      // left:4,
+    magIcon:{
       borderRadius:5,
-      backgroundColor:"#1b6913",
+      backgroundColor:"#114166",
       padding:10,
-      // top:44,
       alignItems:"center"
-      
     },
     magnifying:{
-      // padding:20,
-      right:40,
-      // width:85,
-      // left:"82%",
-      // position:"absolute",
-      position:"fixed",
-      zIndex:1,
-      top:"90%"
-      // top:0,
-      // bottom:"90%",
+      right:10,
+      position:"absolute",
+      zIndex:9999,
+      bottom:10
     },
   
   });
