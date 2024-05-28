@@ -1,8 +1,8 @@
 import React from 'react';
-import { Pressable, Image, Text, View,Platform } from 'react-native';
+import { Pressable, Image, Text, View,Platform ,StyleSheet} from 'react-native';
 import { Camera } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
-
+import { Ionicons,Feather } from '@expo/vector-icons'; 
 const CustomeImagePicker = ({...props }) => {
   const takePicture = async () => {
     const { status } = await Camera.requestCameraPermissionsAsync();
@@ -37,7 +37,9 @@ const CustomeImagePicker = ({...props }) => {
   let cameraRef;
 
   return (
-   ( <Pressable onPress={pickImage}>
+  //  ( <Pressable onPress={pickImage}>
+   <View style={styles.container}>
+    
     {props.imageUri ? (
              <Image source={{ uri: props.imageUri }} style={{ width: 100, height: 100, borderRadius: 50 }} />
            ) : (
@@ -45,8 +47,23 @@ const CustomeImagePicker = ({...props }) => {
               <Text style={{ color: 'gray' }}>Placeholder</Text>
             </View>
            )}
-    </Pressable>)
+           <Feather name="camera" size={24} style={styles.cameraicon}  />
+           </View>
+    // </Pressable>)
   );
 };
 
 export default CustomeImagePicker;
+const styles = StyleSheet.create({
+
+  cameraicon:{
+    position:"absolute",
+    right:0,
+    bottom:11,
+    color:"#e10505",
+ 
+   },
+   container:{
+     position:"relative",
+   }
+})
