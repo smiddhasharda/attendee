@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
     flexDirection:"row",
     justifyContent:"space-between",
     alignItems:"center",
-     marginBottom:25,
+     marginBottom:15,
   },
   searchicons:{
      padding:"10px",
@@ -246,17 +246,22 @@ const styles = StyleSheet.create({
     // padding: 10,
     // width:"50%",
     width:'auto',
-    backgroundColor:"#e1e1e1",
-    // borderWidth:1,
-    // borderRadius:25,
-    borderColor:"#ccc",
-    borderTopWidth:1,
-    borderBottomWidth:1,
-
+    // backgroundColor:"#e1e1e1",
+    // // borderWidth:1,
+    // // borderRadius:25,
+    // borderColor:"#ccc",
+    // borderTopWidth:1,
+    // borderBottomWidth:1,
+    backgroundColor: "#ffffff",
+    borderBottomWidth: 1,
+    borderBottomColor: "#dddedf",
+    borderTopWidth: 0,
+    marginTop: 0,
   },
   dateItem: {
     padding: 10,
     // marginRight: 6,
+    minWidth: 60,
     alignItems: "center",
     //  width:65,
     //  height:40,
@@ -268,11 +273,11 @@ const styles = StyleSheet.create({
   },
   dateDay: {
     fontSize: 12,
-    marginBottom: 5,
+    marginBottom: 3,
   },
   dateMonth: {
     fontSize: 12,
-    marginTop: 5,
+    marginTop: 3,
   },
   roomNumber: {
     flex: 1,
@@ -286,15 +291,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ccc",
     width: 'auto',
-    // width:"95%",
-    borderRadius: 25,
-    marginBottom: 10,
-    padding:20,
+    borderRadius: 6,
+    marginBottom: 8,
+    minHeight: 62,
+    padding:12,
     flexDirection:"column",
-    // margin:"8px 0",
-    // marginHorizontal:0,// margin from left 
-    // marginVertical:0,// marginright
- 
+    alignItems: "center"
   },
   
   boxTextWrap:{
