@@ -160,14 +160,16 @@ function RoomDetail({navigation}) {
             placeholder="Search By Name, System Id Or Seat Number..."
             onChangeText={handleSearchData}
             value={searchText}
+            onIconPress={clearSearchText}
           />
+
           {searchText.length > 0 && (
-            <Pressable onPress={clearSearchText} style={styles.clearButton}>
-              <Text style={styles.clearButtonText}>Clear Searched Text</Text>
+            <Pressable onPress={clearSearchText} style={styles.crossIcon} >
+              <Entypo name="circle-with-cross" size={20} alignItems="center" />
             </Pressable>
-          )} 
-          <Entypo name="magnifying-glass" size={24} color="#000" style={styles.searchGlassIcon} />
-            </View>
+          )}
+          
+          </View>
           </View>
           <ScrollView style={styles.roomNumber}>
         {loading ? (
@@ -200,9 +202,9 @@ function RoomDetail({navigation}) {
               </Pressable>
             ))
           ) : (
-            <Text>There Is No Student Present In this Class you Searched !!</Text>
+            <Text>There is no student available in this room you searched for!</Text>
           ) : (
-            <Text>There Is No Student Present In this Class !!</Text>
+            <Text>There are no records found!</Text>
           )
         )}
           </ScrollView>
@@ -304,11 +306,16 @@ const styles = StyleSheet.create({
     stuWrap:{
       flexDirection:"column",
     },
-    searchGlassIcon:{
+    crossIcon:{
       position: "absolute",
       right: 20,
       top: 28
     },
+    // searchGlassIcon:{
+    //   position: "absolute",
+    //   right: 40,
+    //   top: 28
+    // },
     userimage:{
         // width:75,
         // height:75,
@@ -354,6 +361,7 @@ const styles = StyleSheet.create({
     searchWrap:{
       padding: 10,
       width:"100%",
+      position: "relative"
       // width:'auto',
     },
     magIcon:{
