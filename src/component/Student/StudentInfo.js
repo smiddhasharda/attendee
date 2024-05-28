@@ -98,15 +98,19 @@ const StudentInfo = ({navigation}) => {
       <View style= {styles.answerSheetWrap} key={copyIndex}>
       <View style={{width:"auto",}} key={copyIndex}>
       <TextInput
-        style={[styles.input,]}
+        style={[styles.input ]}
         placeholder={`Enter ${copyType + ' ' + copyIndex + 1} Number`}
           onChangeText={(copyNumber) => setTempNumber(copyNumber)}
+               
    />
+       {/* <MaterialIcons name="done" size={24} color="green" style={styles.righticon}/> */}
       </View>
       {/* <> */}
       {tempCopyNumber && (
-                <Pressable style={styles.addButton} onPress={() => handleSaveCopy(copyType, tempCopyNumber, index, copyIndex) } >
-                  <Text style={{color:"#fff"}}>Save</Text>
+        
+                <Pressable  onPress={() => handleSaveCopy(copyType, tempCopyNumber, index, copyIndex) } >
+                  {/* <Text style={{color:"#fff"}}>Save</Text> */}
+                  <MaterialIcons name="done" size={24} color="green" />
                 </Pressable>
               )}
               {/* </>
@@ -526,8 +530,8 @@ const StudentInfo = ({navigation}) => {
             </View>
           </View>
           <View>
-               <View style={{flexDirection:"row" ,}}>
-              <Text style={styles.addAnsheading}> Add AnswerSheet </Text>
+               <View style={{flexDirection:"row" , justifyContent:"space-between"}}>
+              <Text style={styles.addAnsheading}> AnswerSheet </Text>
               {copiesData?.length === 0 &&   <AntDesign style={styles.addicon} name="pluscircleo" size={24} color="black" onPress={handleAddCopy} />}
               </View>
           {copiesData?.length > 0 ? (copiesData.map((copy, index) => (
@@ -902,6 +906,11 @@ const styles = StyleSheet.create({
     flexDirection:"row",
     justifyContent:"space-between",
     width:"auto",
+  },
+  righticon:{
+    position:"absolute",
+    right:10,
+    alignItems:"center"
   }
 });
 
