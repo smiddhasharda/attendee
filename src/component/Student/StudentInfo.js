@@ -95,7 +95,7 @@ const StudentInfo = ({navigation}) => {
     const isLastAlternateCopy =
       copyIndex === copiesData[index].alternateCopies.length - 1;
     return (
-      <View style={{flexDirection:"row", justifyContent:"space-between"}} key={copyIndex}>
+      <View style= {styles.answerSheetWrap} key={copyIndex}>
       <View style={{width:"auto",}} key={copyIndex}>
       <TextInput
         style={[styles.input,]}
@@ -458,14 +458,26 @@ const StudentInfo = ({navigation}) => {
                 <Text style={styles.value}> {studentDetails.NAME_FORMAL || ""} </Text>
               </View>
               <View style={styles.infoItem}>
+                <Text style={styles.label}>System Id:</Text>
+                <Text style={styles.value}>{studentDetails.EMPLID || ""}</Text>
+              </View>
+              <View style={styles.infoItem}>
                 <Text style={styles.label}>Roll No:</Text>
                 <Text style={styles.value}>
                   {studentDetails.ADM_APPL_NBR || ""}
                 </Text>
               </View>
               <View style={styles.infoItem}>
-                <Text style={styles.label}>System Id:</Text>
-                <Text style={styles.value}>{studentDetails.EMPLID || ""}</Text>
+                <Text style={styles.label}>School:</Text>
+                <Text style={styles.value}>{studentDetails.DESCR || ""}</Text>
+              </View>
+              <View style={styles.infoItem}>
+                <Text style={styles.label}>Program :</Text>
+                <Text style={styles.value}>{studentDetails.DESCR2 || ""}</Text>
+              </View>
+              <View style={styles.infoItem}>
+                <Text style={styles.label}>Branch :</Text>
+                <Text style={styles.value}>{studentDetails.DESCR3 || ""}</Text>
               </View>
               <View style={styles.infoItem}>
                 <Text style={styles.label}>Semester:</Text>
@@ -473,18 +485,9 @@ const StudentInfo = ({navigation}) => {
                   {studentDetails.STRM?.split("")?.[3] || ""}
                 </Text>
               </View>
-              <View style={styles.infoItem}>
-                <Text style={styles.label}>School Name:</Text>
-                <Text style={styles.value}>{studentDetails.DESCR || ""}</Text>
-              </View>
-              <View style={styles.infoItem}>
-                <Text style={styles.label}>Program Name:</Text>
-                <Text style={styles.value}>{studentDetails.DESCR2 || ""}</Text>
-              </View>
-              <View style={styles.infoItem}>
-                <Text style={styles.label}>Branch Name:</Text>
-                <Text style={styles.value}>{studentDetails.DESCR3 || ""}</Text>
-              </View>
+         
+           
+           
             </View>
           </View>
           <View style={styles.studentInfoWrap}>
@@ -522,7 +525,8 @@ const StudentInfo = ({navigation}) => {
               </View>
             </View>
           </View>
-          <View style={{flexDirection:"row" ,}}>
+          <View>
+               <View style={{flexDirection:"row" ,}}>
               <Text style={styles.addAnsheading}> Add AnswerSheet </Text>
               {copiesData?.length === 0 &&   <AntDesign style={styles.addicon} name="pluscircleo" size={24} color="black" onPress={handleAddCopy} />}
               </View>
@@ -539,8 +543,8 @@ const StudentInfo = ({navigation}) => {
               </View>
               <View>          
                    
-              <View style={[styles.tablewrap,]}>
-                <View>
+              <View style={[styles.tablewrap, ]}>
+                <View >
                   {copy.mainCopy ? (
                     <View key={index} style={[styles.sheetDetails,styles.box,styles.boxtext]}>
                     <Text style={[ styles.header]}>Answersheet Number</Text>
@@ -576,12 +580,12 @@ const StudentInfo = ({navigation}) => {
                            <Text style={[ styles.header]}>
                             Alternate Copy {copyIndex + 1}
                           </Text>
-                            <View style={styles.boxtext}>
+                            <View style={styles.boxtext} >
                               <Text style={[styles.examname]}>{alternateCopy}</Text>
                               <View >
                               {copyIndex === copy.alternateCopies.length - 1 && (
                                 <View >
-                                <Entypo name="circle-with-cross"  size={20} color="r"  marginLeft="10px"  onPress={() => handleSaveCopy( "Alternate", "", index, copyIndex ) }/>
+                                <Entypo name="circle-with-cross"  size={20} color="red"  marginLeft="10px"  onPress={() => handleSaveCopy( "Alternate", "", index, copyIndex ) }/>
                           </View>
                           )}        
                               </View>
@@ -637,6 +641,7 @@ const StudentInfo = ({navigation}) => {
             <Text style={styles.addButtonText}>Cancel</Text>
             </Pressable>
           </View>
+          </View>
         </View>
       )}
     </ScrollView>)
@@ -652,10 +657,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   studentInfoWrap: {
-    backgroundColor: "#EAEAEA",
+    // backgroundColor: "#EAEAEA",
     marginBottom: 20,
     borderRadius: 8,
     padding: 5,
+  
   },
   infoHeader: {
     // fontSize: 18, 
@@ -685,10 +691,12 @@ const styles = StyleSheet.create({
     // fontWeight: "bold",
     fontWeight: "bold",
     color: "#333",
+    width:"40%",
   },
   value: {
     // flex: 2,
     color: "#555",
+    width:"60%",
   },
   // table: {
   //   // borderWidth: 1,
@@ -766,6 +774,8 @@ const styles = StyleSheet.create({
   addButtonText: {
     color: "#FFFFFF",
     fontWeight: "bold",
+    alignItems:"center",
+    textAlign:"center"
   },
   removeButton: {
     // alignSelf: "flex-end",
@@ -888,5 +898,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 10,
   },
+  answerSheetWrap:{
+    flexDirection:"row",
+    justifyContent:"space-between",
+    width:"auto",
+  }
 });
 

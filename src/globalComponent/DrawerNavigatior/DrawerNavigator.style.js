@@ -9,15 +9,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 20,
     backgroundColor: 'rgb(17, 65, 102)' ,
+
     // borderBottomWidth: 1,
     // borderBottomColor: "#ccc",
   },
+
   buttonwrap:{
   flexDirection:"row",
-  justifyContent:"space-between",
+  // justifyContent:"space-between",
+  padding:4,
+  marginTop:8
   },
   saveButton: {
-    padding: 6,
+    padding: 4,
     borderRadius: 5,
     backgroundColor: "#129912",
     marginBottom: 10,
@@ -25,16 +29,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginRight: 10,
     marginTop: 6,
+    minWidth:60
   },
   cancelButton: {
-    padding: 6,
+    padding: 4,
     borderRadius: 5,
     backgroundColor: "rgb(237 52 52)",
     marginBottom: 10,
     justifyContent: "center",
     alignItems: "center",
-    marginRight: 10,
+    // marginRight: 10,
     marginTop: 6,
+    minWidth:60,
   },
   btntext:{
   color:"#fff",
