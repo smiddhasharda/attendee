@@ -101,12 +101,11 @@ const styles = StyleSheet.create({
     flexDirection:"row",
     justifyContent:"space-between",
     flexWrap:"wrap"
-  
   },
 
   box:{
     borderWidth:1,
-    borderColor:"#ccc",
+    borderColor:"transparent",
     // width:"20%",
     width:"30%",
    backgroundColor:"rgb(201 209 208)",
