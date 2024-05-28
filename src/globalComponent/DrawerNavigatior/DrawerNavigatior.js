@@ -20,7 +20,9 @@ import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import styles from "./DrawerNavigator.style";
 import { Ionicons,Feather } from '@expo/vector-icons'; 
 import { SafeAreaView } from "react-native-safe-area-context";
-import style from "react-native-datepicker/style";
+
+import InvigilatorScreen from "../../component/Invigilator/InvigilatorScreen";
+
 // Screen components
 const RoleComponent = ({ userAccess }) => <RoleScreen userAccess={userAccess} />;
 const ModuleComponent = ({ userAccess }) => <ModuleScreen userAccess={userAccess} />;
@@ -136,6 +138,7 @@ const sidebaricons=[
     }
   
 ]
+
   return (
     <View style={styles.container}>
       <SafeAreaView>
@@ -180,7 +183,6 @@ const sidebaricons=[
               containerStyle={styles.rolePicker}
               listItemContainerStyle={{ height: 40}} 
               listItemLabelStyle={{ fontSize: 14 }}
-            
             />
           </View>
       </View>
@@ -340,7 +342,9 @@ const DrawerNavigator = ({ navigation }) => {
                   return <UserComponent {...props} userAccess={userRoleList?.[userRoleIndex]} />;
                 case "ExamScreen":
                   return <ExamComponent {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData} />;
-                default:
+                case "InvigilatorScreen":
+                  return <InvigilatorScreen {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData} />;  
+                  default:
                   return null;
               }
             }}
