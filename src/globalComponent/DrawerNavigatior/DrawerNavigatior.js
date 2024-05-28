@@ -205,12 +205,13 @@ const DrawerNavigator = ({ navigation }) => {
       backgroundColor: 'rgb(17, 65, 102)',
     },
     headerLeftContainerStyle: {
-      paddingLeft: 0,
-      marginLeft: -10, 
+      // paddingLeft: 0,
+      // marginLeft: -10, 
     },
     headerTitleContainerStyle: {
-      paddingLeft: 0, 
-      marginLeft: -10,
+      // paddingLeft: 0, 
+      marginLeft: 0,
+      marginRight:0,
     }, 
     headerTintColor: '#fff',
   }
