@@ -1,12 +1,13 @@
 import React, { useState, useEffect,useCallback  } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TextInput, ActivityIndicator, Dimensions, Pressable } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'
+import { Ionicons,FontAwesome } from '@expo/vector-icons'
 import user from '../../local-assets/userimg.jpg'
 import { useRoute } from '@react-navigation/native';
 import CodeScanner from '../../globalComponent/CodeScanner/CodeScanner'; // Make sure to import CodeScanner properly
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetch, view } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
+import style from 'react-native-datepicker/style';
 
 function RoomDetail({navigation}) {
   const [isScanning, setIsScanning] = useState(false);
@@ -41,6 +42,7 @@ function RoomDetail({navigation}) {
   const handleScannedData = (ScannedData) => {
     setScannedData(ScannedData);
     setIsScanning(false);
+    navigation.setOptions({ headerShown: true});
    let studentData = studentDetails?.filter((data)=> data.EMPLID === ScannedData)?.[0] || '';
    if(studentData){
     navigation.navigate("StudentInfo", { room_Nbr: studentData.ROOM_NBR ,exam_Dt: studentData.EXAM_DT,catlog_Nbr: studentData.CATALOG_NBR ,system_Id:studentData.EMPLID, seat_Nbr: studentData.PTP_SEQ_CHAR ,startTime: startTime,current_Term:studentData.STRM,reportId: presentStudentList?.filter((item)=>item.EMPLID === Number(studentData.EMPLID))?.[0]?.PK_Report_Id ,userAccess });
@@ -53,10 +55,12 @@ function RoomDetail({navigation}) {
   };
   const handleCancel = () => {
     setIsScanning(false);
+    navigation.setOptions({ headerShown: true});
   };
 
   const startScanning = () => {
     setIsScanning(true);
+    navigation.setOptions({ headerShown: false});
     setScannedData(null); // Reset scanned data when starting a new scan
   };
  const handleGetReportData = async () => {
@@ -187,10 +191,20 @@ function RoomDetail({navigation}) {
         >
           <View style={[styles.box, presentStudentList?.find((item) => item.EMPLID === Number(studentData.EMPLID)) ? styles.activebox : '']} key={studentData.EMPLID}>
             <View style={styles.boxtext}>
-              <Image source={user} style={styles.userimage} resizeMode="cover" />
-              <Text style={styles.examname}>{studentData.NAME}</Text>
+              {/* <View style={styles.imgWrap}>
+            
+            </View> */}
+              <View  style={styles.info}>
+              {/* <Image source={user}  /> */}
+              <FontAwesome name="user-circle" size={36}  color="black" style={styles.userimage} />
+            <View style={styles.stuWrap}>
+              <Text style={styles.examname }>{studentData.NAME}</Text>
               <Text style={styles.employeeid}>{studentData.EMPLID}</Text>
+              </View>
+              </View>
+              <View style={styles.seqWrap}>
               <Text style={styles.seqnumber}>{studentData.PTP_SEQ_CHAR}</Text>
+              </View>
             </View>
           </View>
         </Pressable>
@@ -218,6 +232,28 @@ const styles = StyleSheet.create({
       backgroundColor:"#fff" ,
      clearfix:"both"
     },
+   
+    // imgWrap:{
+    //   width:"10%",
+    //  },
+
+     seqWrap:{
+       backgroundColor:"#ccc",
+       borderRadius:22,
+       width:35,
+       height:35,
+       lineHeight:35,
+       textAlign:"center",
+       display:"block"
+ 
+     } ,
+     info:{
+       display:"flex",
+       flexDirection:"row",
+       alignItems:"center",
+       minWeight:"98%",
+  
+     },
     heading: {
       fontSize: 20,
       fontWeight: 'bold',
@@ -256,41 +292,47 @@ const styles = StyleSheet.create({
       borderRadius: 25,
       marginBottom: 10,
       padding:10,
-      flexDirection:"column",
-      width:"auto",
+      // flexDirection:"column",
+      // width:"auto",
+   
   
     },
     boxtext:{
       // alignItems:"center",  
+      display:"flex",
       flexDirection:"row",
-      marginLeft:10,
+      // marginLeft:10,
       color:"#000",
       justifyContent:"space-between",
+      // alignItems:"center",
+
+      width:"98%",
       alignItems:"center",
-  
     
     },
+    stuWrap:{
+      flexDirection:"column",
+    },
     userimage:{
-        width:40,
-        height:40,
+        // width:75,
+        // height:75,
         borderRadius:50,
         marginRight:10
     },
  
     employeeid:{
       color:"#a79f9f",
-      fontWeight:"bold",
-      marginRight:30, 
+      fontWeight:"400",
+      // marginRight:30, 
     },
     examname:{
-     fontWeight:"bold",
-      marginRight:30, 
+     fontWeight:"600",
+      // marginRight:30, 
       color:"#a79f9f"
     },
     seqnumber:{
-      fontWeight:"bold",
-  
-      color:"#a79f9f",
+      fontWeight:"400",
+      color:"#000",
     },
     activebox:{
       backgroundColor:"#0cb551",
@@ -342,4 +384,5 @@ const styles = StyleSheet.create({
       // top:0,
       // bottom:"90%",
     },
+  
   });

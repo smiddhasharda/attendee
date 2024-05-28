@@ -27,6 +27,9 @@ export default function CodeScanner({ onScannedData, onCancel }) {
         <Pressable style={styles.button} onPress={requestPermission} title="grant permission" >
           <Text style={styles.text}>Grant Permission</Text>
         </Pressable>
+        <Pressable style={styles.cancelButton} onPress={handleCancel}>
+            <Text style={styles.cancelButtonText}>Cancel</Text>
+          </Pressable>
       </View>
     );
   }

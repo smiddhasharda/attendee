@@ -103,6 +103,7 @@ const LoginScreen = ({navigation}) => {
             <Text style={LoginStyles.loginheading}>Login</Text>
             <Text style={LoginStyles.loginsubheading}>Login into your Account</Text>
           </View>
+          <View style={{marginTop:14}}>
           <Text style={LoginStyles.label}>Email Id</Text>
           {isEmailTooltipVisible && (
             <Tooltip>
@@ -115,6 +116,7 @@ const LoginScreen = ({navigation}) => {
               </View>
             </Tooltip>
           )}
+   
           <TextInput
             placeholder='Enter Your Email ID'
             style={LoginStyles.input}
@@ -153,6 +155,7 @@ const LoginScreen = ({navigation}) => {
           >
             <Text style={[LoginStyles.loginTextStyle]}>{isOTPInputDisabled ? "Send OTP" : "Login"}</Text>
           </Pressable>
+          </View>
         </View>
       </View>
       <Image style={LoginStyles.bgimages2} source={require("../../local-assets/login-shape-bg-2.png")} />
