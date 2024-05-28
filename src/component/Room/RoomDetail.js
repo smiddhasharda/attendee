@@ -242,10 +242,10 @@ const styles = StyleSheet.create({
        borderRadius:22,
        width:35,
        height:35,
-       lineHeight:35,
-       textAlign:"center",
-       display:"block"
- 
+       display: "flex",
+       alignItems: "center",
+       justifyContent: "center",
+       backgroundColor: "#0CB551",
      } ,
      info:{
        display:"flex",
@@ -319,20 +319,17 @@ const styles = StyleSheet.create({
         borderRadius:50,
         marginRight:10
     },
- 
+    examname:{
+      color:"#000000",
+      fontWeight:"600"
+    },
     employeeid:{
       color:"#a79f9f",
-      fontWeight:"400",
-      // marginRight:30, 
-    },
-    examname:{
-     fontWeight:"600",
-      // marginRight:30, 
-      color:"#a79f9f"
+      fontWeight:"400"
     },
     seqnumber:{
       fontWeight:"400",
-      color:"#000",
+      color:"#fff",
     },
     activebox:{
       backgroundColor:"#0cb551",

@@ -76,7 +76,7 @@ const App = () => {
                 name="RoomDetail"
                 component={RoomDetail}
                 options={({ route }) => ({
-                  title: `Room Number :- ${route.params.room_Nbr}`,
+                  title: `Room Details: ${route.params.room_Nbr}`,
                   ...TopHeaderCommonConfig,
                 })}
               />
