@@ -141,43 +141,43 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
 
   return (
     <View style={styles.container}>
-    <View style={styles.datesWrap}>
-      <View style={styles.dates}>
-        <FlatList
-          data={examDates}
-          renderItem={({ item }) => {
-            const isActiveItem = item.EXAM_DT === examSelectedDate;
-            return (
-              <Pressable onPress={() => handleDateClick(item.EXAM_DT)}>
-                <View style={[styles.dateItem, isActiveItem && styles.activebox]}>
-                  <Text style={[styles.dateDay, isActiveItem && styles.activeText]}>{new Date(item.EXAM_DT).toString().split(' ')[0]}</Text>
-                  <Text style={[styles.dateNumber, isActiveItem && styles.activeText]}>{new Date(item.EXAM_DT).getDate()}</Text>
-                  <Text style={[styles.dateMonth, isActiveItem && styles.activeText]}>{new Date(item.EXAM_DT).toString().split(' ')[1]}</Text>
-                </View>
-              </Pressable>
-            );
-          }}
-          horizontal
-          keyExtractor={(item) => item.EXAM_DT}
-        />
-      </View>
-      {/* <View style={styles.searchicons}>
-            <View style={styles.dropdownWrap}>             
-                 <DropDownPicker
-                  open={open}
-                  value={''}
-                  items={userRoleList}
-                  setOpen={setOpen}
-                  // setValue={(value) => ''}
-                  style={styles.dropdown}
-                  dropDownStyle={{ backgroundColor: "#fafafa" }}
-                  dropDownMaxHeight={150}
-                  dropDownDirection="Bottom"                 
-                  containerStyle={styles.rolePicker}
-                />
-            </View>
-      <Feather name="search" size={28} color="black" />
-      </View>  */}
+      <View style={styles.datesWrap}>
+        <View style={styles.dates}>
+          <FlatList
+            data={examDates}
+            renderItem={({ item }) => {
+              const isActiveItem = item.EXAM_DT === examSelectedDate;
+              return (
+                <Pressable onPress={() => handleDateClick(item.EXAM_DT)}>
+                  <View style={[styles.dateItem, isActiveItem && styles.activebox]}>
+                    <Text style={[styles.dateDay, isActiveItem && styles.activeText]}>{new Date(item.EXAM_DT).toString().split(' ')[0]}</Text>
+                    <Text style={[styles.dateNumber, isActiveItem && styles.activeText]}>{new Date(item.EXAM_DT).getDate()}</Text>
+                    <Text style={[styles.dateMonth, isActiveItem && styles.activeText]}>{new Date(item.EXAM_DT).toString().split(' ')[1]}</Text>
+                  </View>
+                </Pressable>
+              );
+            }}
+            horizontal
+            keyExtractor={(item) => item.EXAM_DT}
+          />
+        </View>
+        {/* <View style={styles.searchicons}>
+              <View style={styles.dropdownWrap}>             
+                  <DropDownPicker
+                    open={open}
+                    value={''}
+                    items={userRoleList}
+                    setOpen={setOpen}
+                    // setValue={(value) => ''}
+                    style={styles.dropdown}
+                    dropDownStyle={{ backgroundColor: "#fafafa" }}
+                    dropDownMaxHeight={150}
+                    dropDownDirection="Bottom"                 
+                    containerStyle={styles.rolePicker}
+                  />
+              </View>
+        <Feather name="search" size={28} color="black" />
+        </View>  */}
       </View>
       <View style={styles.roomNumber}>
         {loading ? (
@@ -203,7 +203,8 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
           //   <Text>No rooms available for selected date.</Text>
           // )
 
-          <FlatList
+          <FlatList 
+          style={styles.roomsListWrap}
           data={roomDetails}
           renderItem={({ item, index }) => (
             <Pressable
@@ -241,7 +242,6 @@ const styles = StyleSheet.create({
      flexDirection:"row",
      marginRight:"10px",
   },
-
   dates: {
     // padding: 10,
     // width:"50%",
@@ -284,19 +284,22 @@ const styles = StyleSheet.create({
     // marginTop:4,
     // marginHorizontal:0,
     // marginVertical:0,
-    padding: 4,
-
+  },
+  roomsListWrap:{
+    overflow: "auto",
+    padding: 8
   },
   box: {
     borderWidth: 1,
     borderColor: "#ccc",
     width: 'auto',
     borderRadius: 6,
-    marginBottom: 8,
+    marginBottom: 12,
     minHeight: 62,
     padding:12,
     flexDirection:"column",
-    alignItems: "center"
+    alignItems: "center",
+    clear: "both"
   },
   
   boxTextWrap:{
