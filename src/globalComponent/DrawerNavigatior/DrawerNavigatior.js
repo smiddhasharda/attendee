@@ -153,7 +153,7 @@ const sidebaricons=[
                       ""))
                 }
                 onImageChange={handleImageChange}
-                
+                CameraAccess = {true}
           />
   
           <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
