@@ -1,8 +1,8 @@
  import React,{useEffect,useCallback, useState} from 'react';
- import { View, Text, StyleSheet, Dimensions,ScrollView,FlatList,Pressable } from 'react-native';
+ import { View, Text, StyleSheet, Dimensions,ScrollView,FlatList,Pressable,TextInput } from 'react-native';
  import Bulkpload from '../../globalComponent/Bulkupload/BulkUpload';
-
- import {  fetch } from "../../AuthService/AuthService";
+ import DropDownPicker from "react-native-dropdown-picker";
+ import { insert, update, fetch } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -11,8 +11,22 @@ const windowWidth = Dimensions.get("window").width;
  const InvigilatorScreen = ({userAccess}) => {
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 4 );
   const { addToast } = useToast();
-  const [invigilatorData, setInvigilatorData] = useState([]);
+  const [invigilatorList, setInvigilatorList] = useState([]);
   const [isBulkuploadInvigilater, setIsBulkuploadInvigilater] = useState(false);
+  const [invigilatorContainerVisible, setInvigilatorContainerVisible] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [invigilatorData, setInvigilatorData] = useState({
+    PK_InvigilatorDutyId: "",
+    employeeId: "",
+    invigilatorName: "",
+    date:"",
+    shift:"",
+    room:"",
+    duty_status:"primary",
+    isActive: 1,
+  });
+  const StatusList = [{label: "primary" ,value :"primary" },{label:"secondary",value :"secondary"}]
+
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
 
@@ -40,7 +54,71 @@ const windowWidth = Dimensions.get("window").width;
       );
 
       if (response) {
-        setInvigilatorData(response.data)
+        setInvigilatorList(response.data)
+      }
+    } catch (error) {
+      handleAuthErrors(error);
+    }
+  };
+
+  const handleAddButton = async() =>{
+    setInvigilatorContainerVisible(true);
+  }
+  
+  const handleAddInvigilator = async () => {
+    try {
+      const authToken = await checkAuthToken();
+      const response = await insert(
+        {
+          operation: "insert",
+          tblName: "tbl_invigilator_duty",
+          data: { employeeId: invigilatorData.employeeId,
+          invigilatorName: invigilatorData.invigilatorName,
+          date:invigilatorData.date,
+          shift:invigilatorData.shift,
+          room:invigilatorData.room,
+          duty_status:invigilatorData.duty_status,},
+          conditionString: "",
+          checkAvailability: "",
+          customQuery: "",
+        },
+        authToken
+      );
+
+      if (response) {
+        addToast("Invigilator Add Successful", "success");
+        await handleClose();
+        handleGetInigilatorDuty();
+      }
+    } catch (error) {
+      handleAuthErrors(error);
+    }
+  };
+
+  const handleUpdateInvigilator = async () => {
+    try {
+      const authToken = await checkAuthToken();
+      const response = await update(
+        {
+          operation: "update",
+          tblName: "tbl_invigilator_duty",
+          data: {
+            date:invigilatorData.date,
+            shift:invigilatorData.shift,
+            room:invigilatorData.room,
+            duty_status:invigilatorData.duty_status,
+          },
+          conditionString: `PK_InvigilatorDutyId = ${invigilatorData.PK_InvigilatorDutyId}`,
+          checkAvailability: "",
+          customQuery: "",
+        },
+        authToken
+      );
+
+      if (response) {
+        addToast("Invigilator Update Successful", "success");
+        await handleClose();
+        handleGetInigilatorDuty();
       }
     } catch (error) {
       handleAuthErrors(error);
@@ -48,6 +126,46 @@ const windowWidth = Dimensions.get("window").width;
   };
 
 
+  // const handleModuleStatus = async (moduleId, status) => {
+  //   try {
+  //     const authToken = await checkAuthToken();
+  //     const response = await update(
+  //       {
+  //         operation: "update",
+  //         tblName: "tbl_module_master",
+  //         data: { isActive: !status },
+  //         conditionString: `PK_ModuleId = ${moduleId}`,
+  //         checkAvailability: "",
+  //         customQuery: "",
+  //       },
+  //       authToken
+  //     );
+
+  //     if (response) {
+  //       addToast(
+  //         `Module ${status === 0 ? "Active" : "Inactive"} Successful`,
+  //         "success"
+  //       );
+  //       handleGetModuleList();
+  //     }
+  //   } catch (error) {
+  //     handleAuthErrors(error);
+  //   }
+  // };
+
+  const handleEditInvigilator = async (selectedData) => {
+    setInvigilatorData({
+      PK_InvigilatorDutyId: selectedData.PK_InvigilatorDutyId,
+    employeeId: selectedData.employeeId,
+    invigilatorName: selectedData.invigilatorName,
+    date:selectedData.date,
+    shift:selectedData.shift,
+    room:selectedData.room,
+    duty_status:selectedData.duty_status,
+    isActive: selectedData.isActive,
+    });
+    setInvigilatorContainerVisible(true);
+  };
 
   const handleAuthErrors = (error) => {
     switch (error.message) {
@@ -65,6 +183,21 @@ const windowWidth = Dimensions.get("window").width;
     }
   };
 
+  const handleClose = async () => {
+    setInvigilatorContainerVisible(false);
+    setIsBulkuploadInvigilater(false);
+    setInvigilatorData({
+      PK_InvigilatorDutyId: "",
+    employeeId: "",
+    invigilatorName: "",
+    date:"",
+    shift:"",
+    room:"",
+    duty_status:"primary",
+    isActive: 1,
+    });
+  };
+
   useEffect(() => {
     handleGetInigilatorDuty();
   }, [UserAccess]);
@@ -72,41 +205,113 @@ const windowWidth = Dimensions.get("window").width;
    return (
 
     <View style={styles.container}>
-   {isBulkuploadInvigilater ?  <Bulkpload handleClose={() => setIsBulkuploadInvigilater(false)} /> : 
-    <View style={styles.userListWrap}>
-      <Text style={styles.header}>Invigilator Duty List :</Text>      
-        <View style={styles.addWrap}>
-        {UserAccess?.create === 1 &&    
-        <Pressable onPress={() => setUserContainerVisible(true)}>
-                  <Text>Add</Text>
-                </Pressable> }
-        </View>
-      <FlatList 
-       data={invigilatorData}
-       keyExtractor={(item) => item.PK_InvigilatorDutyId.toString()}
-          ListHeaderComponent={() => (
-            <View style={styles.tableHeader}>
-              <Text style={[styles.tableHeaderText, { flex: 2 }]}>Duty Id</Text>
-              <Text style={[styles.tableHeaderText, { flex: 3 }]}>Employee Id</Text>
-              <Text style={[styles.tableHeaderText, { flex: 1 }]}>Invigilator Name</Text>
-              <Text style={[styles.tableHeaderText, { flex: 1 }]}>Room</Text>
-              <Text style={[styles.tableHeaderText, { flex: 1 }]}>Date</Text>
-              <Text style={[styles.tableHeaderText, { flex: 1 }]}>Shift</Text>
-              <Text style={[styles.tableHeaderText, { flex: 1 }]}>Duty Status</Text>
+   {isBulkuploadInvigilater ?  <Bulkpload handleClose={() => {setIsBulkuploadInvigilater(false),setInvigilatorContainerVisible(false)}} /> : 
+   (invigilatorContainerVisible ? (
+    <View style={styles.formContainer}>
+    <TextInput
+      style={styles.input}
+      placeholder="Employee Id"
+      value={invigilatorData.employeeId}
+      onChangeText={(text) =>
+        setInvigilatorData({ ...invigilatorData, employeeId: text })
+      }
+    />
+     <TextInput
+      style={styles.input}
+      placeholder="Employee Name"
+      value={invigilatorData.invigilatorName}
+      onChangeText={(text) =>
+        setInvigilatorData({ ...invigilatorData, invigilatorName: text })
+      }
+    />
+      <TextInput
+      style={styles.input}
+      placeholder="Date"
+      value={invigilatorData.date}
+      onChangeText={(text) =>
+        setInvigilatorData({ ...invigilatorData, date: text })
+      }
+    />
+      <TextInput
+      style={styles.input}
+      placeholder="Room"
+      value={invigilatorData.room}
+      onChangeText={(text) =>
+        setInvigilatorData({ ...invigilatorData, room: text })
+      }
+    />
+    <TextInput
+      style={styles.input}
+      placeholder="Shift"
+      value={invigilatorData.shift}
+      onChangeText={(text) =>
+        setInvigilatorData({ ...invigilatorData, shift: text })
+      }
+    />
+     <DropDownPicker
+              open={open}
+              value={invigilatorData.duty_status}
+              items={StatusList}
+              setOpen={setOpen}
+              setValue={(callback) => setInvigilatorData((prevState) => ({
+                ...prevState,
+                duty_status: callback(invigilatorData.duty_status)
+              }))}
+                      style={styles.dropdown}
+              dropDownStyle={{ backgroundColor: "#fafafa"}}
+              dropDownMaxHeight={150}
+              dropDownDirection="TOP"
+              containerStyle={styles.rolePicker}
+              listItemContainerStyle={{ height: 40}} 
+              listItemLabelStyle={{ fontSize: 14 }}
+            />
+          <View style={styles.buttonContainer}>
+              <Pressable onPress={() => invigilatorData.PK_InvigilatorDutyId ? handleUpdateInvigilator() : handleAddInvigilator()}>
+                <Text>{invigilatorData.PK_InvigilatorDutyId ? "Update Invigilator Duty" : "Add New Invigilator Duty"}</Text>
+              </Pressable>
+              <Pressable onPress={() => handleClose()}>
+                <Text style={styles.cancelbtn}>Cancel</Text>
+              </Pressable>
             </View>
-    )} renderItem={({ item }) => (          
-      <View style={styles.listItem}>
-        <Text style={[styles.listItemText, { flex: 1 }]}>{item.PK_InvigilatorDutyId}</Text>
-        <Text style={[styles.listItemText, { flex: 1 }]}>{item.employeeId}</Text>
-        <Text style={[styles.listItemText, { flex: 1 }]}>{item.invigilatorName}</Text>
-        <Text style={[styles.listItemText, { flex: 1 }]}>{item.room}</Text>
-        <Text style={[styles.listItemText, { flex: 1 }]}>{item.date}</Text>
-        <Text style={[styles.listItemText, { flex: 1 }]}>{item.shift}</Text>
-        <Text style={[styles.listItemText, { flex: 1 }]}>{item.duty_status}</Text>    
+  </View>
+   ): (
+    <View style={styles.userListWrap}>
+    <Text style={styles.header}>Invigilator Duty List :</Text>      
+      <View style={styles.addWrap}>
+      {UserAccess?.create === 1 &&    
+      <Pressable onPress={() => handleAddButton()}>
+                <Text>Add</Text>
+              </Pressable> }
       </View>
-      )}
-       />
+    <FlatList 
+     data={invigilatorList}
+     keyExtractor={(item) => item.PK_InvigilatorDutyId.toString()}
+        ListHeaderComponent={() => (
+          <View style={styles.tableHeader}>
+            <Text style={[styles.tableHeaderText, { flex: 2 }]}>Duty Id</Text>
+            <Text style={[styles.tableHeaderText, { flex: 3 }]}>Employee Id</Text>
+            <Text style={[styles.tableHeaderText, { flex: 1 }]}>Invigilator Name</Text>
+            <Text style={[styles.tableHeaderText, { flex: 1 }]}>Room</Text>
+            <Text style={[styles.tableHeaderText, { flex: 1 }]}>Date</Text>
+            <Text style={[styles.tableHeaderText, { flex: 1 }]}>Shift</Text>
+            <Text style={[styles.tableHeaderText, { flex: 1 }]}>Duty Status</Text>
+            <Text style={[styles.tableHeaderText, { flex: 1 }]}>Actions </Text>
+          </View>
+  )} renderItem={({ item }) => (          
+    <View style={styles.listItem}>
+      <Text style={[styles.listItemText, { flex: 1 }]}>{item.PK_InvigilatorDutyId}</Text>
+      <Text style={[styles.listItemText, { flex: 1 }]}>{item.employeeId}</Text>
+      <Text style={[styles.listItemText, { flex: 1 }]}>{item.invigilatorName}</Text>
+      <Text style={[styles.listItemText, { flex: 1 }]}>{item.room}</Text>
+      <Text style={[styles.listItemText, { flex: 1 }]}>{item.date}</Text>
+      <Text style={[styles.listItemText, { flex: 1 }]}>{item.shift}</Text>
+      <Text style={[styles.listItemText, { flex: 1 }]}>{item.duty_status}</Text>    
+      {UserAccess?.update === 1 ? <Pressable   style={styles.listItemEditButton} onPress={() => handleEditInvigilator(item)}> <Text style={styles.listItemEditText}>Edit</Text> </Pressable> : ' - '}  
     </View>
+    )}
+     />
+  </View>
+   ))
     }
     </View>   
    );
