@@ -47,7 +47,9 @@ const CustomeImagePicker = ({...props }) => {
               <Text style={{ color: 'gray' }}>Placeholder</Text>
             </View>
            )}
+           {props.CameraAccess &&   <Pressable onPress={pickImage}>
            <Feather name="camera" size={24} style={styles.cameraicon}  />
+           </Pressable>}          
            </View>
     // </Pressable>)
   );
