@@ -121,7 +121,7 @@ const StudentInfo = ({navigation}) => {
             onPress={() => handleRemoveAlternateCopy(copyIndex, index)}
           >
             <Text style={styles.addButtonText}>
-              <Entypo name="circle-with-cross" size={20} alignItems="center" />
+              <Entypo name="circle-with-cross" color="red" size={20} alignItems="center" />
       
        
             </Text>
@@ -532,7 +532,7 @@ const StudentInfo = ({navigation}) => {
           <View>
                <View style={{flexDirection:"row" , justifyContent:"space-between"}}>
               <Text style={styles.addAnsheading}> AnswerSheet </Text>
-              {copiesData?.length === 0 &&   <AntDesign style={styles.addicon} name="pluscircleo" size={24} color="black" onPress={handleAddCopy} />}
+              {copiesData?.length  < 6 &&   <AntDesign style={styles.addicon} name="pluscircleo" size={24} color="black" onPress={handleAddCopy} />}
               </View>
           {copiesData?.length > 0 ? (copiesData.map((copy, index) => (
             <View key={copy.id || index}> 
@@ -546,12 +546,11 @@ const StudentInfo = ({navigation}) => {
                   </Pressable>
               </View>
               <View>          
-                   
               <View style={[styles.tablewrap, ]}>
                 <View >
                   {copy.mainCopy ? (
                     <View key={index} style={[styles.sheetDetails,styles.box,styles.boxtext]}>
-                    <Text style={[ styles.header]}>Answersheet Number</Text>
+                    <Text style={[ styles.header]}>Answersheet Number {index + 1}</Text>
                       <Text style={[styles.examname]}>{copy.mainCopy}</Text>
                       <View style={styles.iconsWrap}>
                       {!(
@@ -559,13 +558,12 @@ const StudentInfo = ({navigation}) => {
                         copy.alternateCopies?.includes("")
                       ) && (
                         <Entypo name="circle-with-cross" size={20} color="red" onPress={() => handleSaveCopy("AnswerSheet", "", index)} />  
-                        
                       )}
                       </View>
                     </View>
                   ) : (
                   <View style={[styles.sheetDetails,styles.box,styles.boxtext]}>
-                  <Text style={{fontWeight:"bold"}}>Answersheet</Text>
+                  <Text style={{fontWeight:"bold"}}>Answersheet {index + 1}</Text>
                    <MaterialCommunityIcons name="barcode-scan" onPress={() => startScanning("AnswerSheet", index)} size={40} color="black" />
                       <Text>OR</Text>
                       {renderCopyInput("AnswerSheet", index)}
@@ -627,10 +625,10 @@ const StudentInfo = ({navigation}) => {
                 {/* </> */}
               </View>
               </View>
-              {(copy.mainCopy.length > 0 && index === copiesData.length - 1 ) &&
+              {/* {(copy.mainCopy.length > 0 && index === copiesData.length - 1 ) &&
             (<Pressable style={styles.addButton} onPress={handleAddCopy}>
               <Text style={styles.addButtonText}> Add Copy</Text>
-            </Pressable>) }
+            </Pressable>) } */}
             </View>
           ))) :    (
           <Text style={[styles.tablewrap,styles.nodatadisplay]}>There is no answersheet added yet!</Text>) }
