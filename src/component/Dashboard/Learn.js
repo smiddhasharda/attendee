@@ -1,16 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  FlatList,
-  Pressable,
-} from "react-native";
+import { View, Text, StyleSheet, Dimensions, FlatList, Pressable, Image } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import DropDownPicker from "react-native-dropdown-picker";
 import PieChart from "./PieChart";
-import { fetch } from "../../AuthService/AuthService";
+import { fetch,view } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -30,6 +23,7 @@ function Learn() {
   const [examShiftList, setExamShiftList] = useState([]);
   const [examReportData, setExamReportData] = useState([]);
 
+  const [sampleData , setSampleData] = useState();
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
 
@@ -135,6 +129,30 @@ function Learn() {
     }
   };
 
+  const handleGetTestView = async () => {
+    try {
+      const authToken = await checkAuthToken();
+      const response = await view(
+        {
+          operation: "custom",
+          tblName: "PS_S_PRD_PHOTO_VW",
+          data: '',
+          conditionString: '',
+          checkAvailability: '',
+          customQuery: `SELECT * from PS_S_PRD_PHOTO_VW`,
+        },
+        authToken
+      );
+
+      if (response) {
+        setSampleData(response.data);
+      }
+    } catch (error) {
+      setLoading(false);
+      handleAuthErrors(error);
+    }
+  };
+
   const handleDateClick = (date) => {
     setExamSelectedDate(date);
     handleGetExamRoomList(date);
@@ -154,15 +172,28 @@ function Learn() {
     setExamSelectedShift(data);
     handleGetExamReport(examSelectedDate, examSelectedRoom?.label, data?.label);
   };
+
+  const binaryToBase64 = (binary) => {
+    return btoa(
+      new Uint8Array(binary)
+        .reduce((data, byte) => data + String.fromCharCode(byte), '')
+    );
+  };
+  const binaryData = sampleData?.[0]?.EMPLOYEE_PHOTO;
+  const base64Image = binaryToBase64(binaryData);
+
+  console.log("base64Image : ",binaryData)
+
+
   useEffect(() => {
     handleGetExamDateList();
+    handleGetTestView();
   }, []);
-
-  console.log(examReportData)
   return (
     <ScrollView>
       <View style={styles.container}>
         <Text style={styles.heading}>Student Report</Text>
+        <Image source={{ uri: `data:image/png;base64,${base64Image}` }} style={{ width: 100, height: 100, borderRadius: 50 }} />
         <View style={styles.container}>
           <View style={styles.dates}>
             <FlatList

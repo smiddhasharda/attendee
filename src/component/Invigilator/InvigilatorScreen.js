@@ -205,112 +205,113 @@ const windowWidth = Dimensions.get("window").width;
    return (
 
     <View style={styles.container}>
-   {isBulkuploadInvigilater ?  <Bulkpload handleClose={() => {setIsBulkuploadInvigilater(false),setInvigilatorContainerVisible(false)}} /> : 
-   (invigilatorContainerVisible ? (
-    <View style={styles.formContainer}>
-    <TextInput
-      style={styles.input}
-      placeholder="Employee Id"
-      value={invigilatorData.employeeId}
-      onChangeText={(text) =>
-        setInvigilatorData({ ...invigilatorData, employeeId: text })
-      }
-    />
-     <TextInput
-      style={styles.input}
-      placeholder="Employee Name"
-      value={invigilatorData.invigilatorName}
-      onChangeText={(text) =>
-        setInvigilatorData({ ...invigilatorData, invigilatorName: text })
-      }
-    />
-      <TextInput
-      style={styles.input}
-      placeholder="Date"
-      value={invigilatorData.date}
-      onChangeText={(text) =>
-        setInvigilatorData({ ...invigilatorData, date: text })
-      }
-    />
-      <TextInput
-      style={styles.input}
-      placeholder="Room"
-      value={invigilatorData.room}
-      onChangeText={(text) =>
-        setInvigilatorData({ ...invigilatorData, room: text })
-      }
-    />
-    <TextInput
-      style={styles.input}
-      placeholder="Shift"
-      value={invigilatorData.shift}
-      onChangeText={(text) =>
-        setInvigilatorData({ ...invigilatorData, shift: text })
-      }
-    />
-     <DropDownPicker
-              open={open}
-              value={invigilatorData.duty_status}
-              items={StatusList}
-              setOpen={setOpen}
-              setValue={(callback) => setInvigilatorData((prevState) => ({
-                ...prevState,
-                duty_status: callback(invigilatorData.duty_status)
-              }))}
-                      style={styles.dropdown}
-              dropDownStyle={{ backgroundColor: "#fafafa"}}
-              dropDownMaxHeight={150}
-              dropDownDirection="TOP"
-              containerStyle={styles.rolePicker}
-              listItemContainerStyle={{ height: 40}} 
-              listItemLabelStyle={{ fontSize: 14 }}
-            />
+      {isBulkuploadInvigilater ?  <Bulkpload handleClose={() => {setIsBulkuploadInvigilater(false),setInvigilatorContainerVisible(false)}} /> : 
+        (invigilatorContainerVisible ? (
+        <View style={styles.formContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Employee Id"
+            value={invigilatorData.employeeId}
+            onChangeText={(text) =>
+              setInvigilatorData({ ...invigilatorData, employeeId: text })
+            }
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Employee Name"
+            value={invigilatorData.invigilatorName}
+            onChangeText={(text) =>
+              setInvigilatorData({ ...invigilatorData, invigilatorName: text })
+            }
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Date"
+            value={invigilatorData.date}
+            onChangeText={(text) =>
+              setInvigilatorData({ ...invigilatorData, date: text })
+            }
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Room"
+            value={invigilatorData.room}
+            onChangeText={(text) =>
+              setInvigilatorData({ ...invigilatorData, room: text })
+            }
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Shift"
+            value={invigilatorData.shift}
+            onChangeText={(text) =>
+              setInvigilatorData({ ...invigilatorData, shift: text })
+            }
+          />
+          <DropDownPicker
+            open={open}
+            value={invigilatorData.duty_status}
+            items={StatusList}
+            setOpen={setOpen}
+            setValue={(callback) => setInvigilatorData((prevState) => ({
+              ...prevState,
+              duty_status: callback(invigilatorData.duty_status)
+            }))}
+                    style={styles.dropdown}
+            dropDownStyle={{ backgroundColor: "#fafafa"}}
+            dropDownMaxHeight={150}
+            dropDownDirection="TOP"
+            containerStyle={styles.rolePicker}
+            listItemContainerStyle={{ height: 40}} 
+            listItemLabelStyle={{ fontSize: 14 }}
+          />
           <View style={styles.buttonContainer}>
-              <Pressable onPress={() => invigilatorData.PK_InvigilatorDutyId ? handleUpdateInvigilator() : handleAddInvigilator()}>
-                <Text>{invigilatorData.PK_InvigilatorDutyId ? "Update Invigilator Duty" : "Add New Invigilator Duty"}</Text>
-              </Pressable>
-              <Pressable onPress={() => handleClose()}>
-                <Text style={styles.cancelbtn}>Cancel</Text>
-              </Pressable>
-            </View>
-  </View>
+            <Pressable onPress={() => invigilatorData.PK_InvigilatorDutyId ? handleUpdateInvigilator() : handleAddInvigilator()}>
+              <Text>{invigilatorData.PK_InvigilatorDutyId ? "Update Invigilator Duty" : "Add New Invigilator Duty"}</Text>
+            </Pressable>
+            <Pressable onPress={() => handleClose()}>
+              <Text style={styles.cancelbtn}>Cancel</Text>
+            </Pressable>
+          </View>
+        </View>
    ): (
     <View style={styles.userListWrap}>
-    <Text style={styles.header}>Invigilator Duty List :</Text>      
+      <Text style={styles.header}>Invigilator Duty List :</Text>      
       <View style={styles.addWrap}>
-      {UserAccess?.create === 1 &&    
-      <Pressable onPress={() => handleAddButton()}>
-                <Text>Add</Text>
-              </Pressable> }
+        {UserAccess?.create === 1 &&    
+          <Pressable onPress={() => handleAddButton()}>
+            <Text>Add</Text>
+          </Pressable>
+        }
       </View>
-    <FlatList 
-     data={invigilatorList}
-     keyExtractor={(item) => item.PK_InvigilatorDutyId.toString()}
-        ListHeaderComponent={() => (
-          <View style={styles.tableHeader}>
-            <Text style={[styles.tableHeaderText, { flex: 2 }]}>Duty Id</Text>
-            <Text style={[styles.tableHeaderText, { flex: 3 }]}>Employee Id</Text>
-            <Text style={[styles.tableHeaderText, { flex: 1 }]}>Invigilator Name</Text>
-            <Text style={[styles.tableHeaderText, { flex: 1 }]}>Room</Text>
-            <Text style={[styles.tableHeaderText, { flex: 1 }]}>Date</Text>
-            <Text style={[styles.tableHeaderText, { flex: 1 }]}>Shift</Text>
-            <Text style={[styles.tableHeaderText, { flex: 1 }]}>Duty Status</Text>
-            <Text style={[styles.tableHeaderText, { flex: 1 }]}>Actions </Text>
-          </View>
-  )} renderItem={({ item }) => (          
-    <View style={styles.listItem}>
-      <Text style={[styles.listItemText, { flex: 1 }]}>{item.PK_InvigilatorDutyId}</Text>
-      <Text style={[styles.listItemText, { flex: 1 }]}>{item.employeeId}</Text>
-      <Text style={[styles.listItemText, { flex: 1 }]}>{item.invigilatorName}</Text>
-      <Text style={[styles.listItemText, { flex: 1 }]}>{item.room}</Text>
-      <Text style={[styles.listItemText, { flex: 1 }]}>{item.date}</Text>
-      <Text style={[styles.listItemText, { flex: 1 }]}>{item.shift}</Text>
-      <Text style={[styles.listItemText, { flex: 1 }]}>{item.duty_status}</Text>    
-      {UserAccess?.update === 1 ? <Pressable   style={styles.listItemEditButton} onPress={() => handleEditInvigilator(item)}> <Text style={styles.listItemEditText}>Edit</Text> </Pressable> : ' - '}  
+      <FlatList 
+        data={invigilatorList}
+        keyExtractor={(item) => item.PK_InvigilatorDutyId.toString()}
+            ListHeaderComponent={() => (
+              <View style={styles.tableHeader}>
+                <Text style={[styles.tableHeaderText, { flex: 2 }]}>Duty Id</Text>
+                <Text style={[styles.tableHeaderText, { flex: 3 }]}>Employee Id</Text>
+                <Text style={[styles.tableHeaderText, { flex: 1 }]}>Invigilator Name</Text>
+                <Text style={[styles.tableHeaderText, { flex: 1 }]}>Room</Text>
+                <Text style={[styles.tableHeaderText, { flex: 1 }]}>Date</Text>
+                <Text style={[styles.tableHeaderText, { flex: 1 }]}>Shift</Text>
+                <Text style={[styles.tableHeaderText, { flex: 1 }]}>Duty Status</Text>
+                <Text style={[styles.tableHeaderText, { flex: 1 }]}>Actions </Text>
+              </View>
+      )} renderItem={({ item }) => (          
+        <View style={styles.listItem}>
+          <Text style={[styles.listItemText, { flex: 1 }]}>{item.PK_InvigilatorDutyId}</Text>
+          <Text style={[styles.listItemText, { flex: 1 }]}>{item.employeeId}</Text>
+          <Text style={[styles.listItemText, { flex: 1 }]}>{item.invigilatorName}</Text>
+          <Text style={[styles.listItemText, { flex: 1 }]}>{item.room}</Text>
+          <Text style={[styles.listItemText, { flex: 1 }]}>{item.date}</Text>
+          <Text style={[styles.listItemText, { flex: 1 }]}>{item.shift}</Text>
+          <Text style={[styles.listItemText, { flex: 1 }]}>{item.duty_status}</Text>    
+          {UserAccess?.update === 1 ? <Pressable style={styles.listItemEditButton} onPress={() => handleEditInvigilator(item)}> <Text style={styles.listItemEditText}>Edit</Text> </Pressable> : ' - '}  
+        </View>
+        )}
+      />
     </View>
-    )}
-     />
-  </View>
    ))
     }
     </View>   

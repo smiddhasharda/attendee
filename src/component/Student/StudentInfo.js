@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, Text, StyleSheet, ScrollView, TextInput, Pressable,ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, ScrollView, TextInput, Pressable,ActivityIndicator ,} from "react-native";
 import { Ionicons, FontAwesome, AntDesign,MaterialCommunityIcons ,MaterialIcons,Entypo} from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import CodeScanner from "../../globalComponent/CodeScanner/CodeScanner";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { insert, fetch, update,remove,view } from "../../AuthService/AuthService";
+import style from "react-native-datepicker/style";
 
 const StudentInfo = ({navigation}) => {
   const route = useRoute();
@@ -110,7 +111,7 @@ const StudentInfo = ({navigation}) => {
         
                 <Pressable  onPress={() => handleSaveCopy(copyType, tempCopyNumber, index, copyIndex) } >
                   {/* <Text style={{color:"#fff"}}>Save</Text> */}
-                  <MaterialIcons name="done" size={24} color="green" />
+                  <MaterialIcons name="done" size={20} color="green" style={styles.saveicon} />
                 </Pressable>
               )}
               {/* </>
@@ -121,9 +122,7 @@ const StudentInfo = ({navigation}) => {
             onPress={() => handleRemoveAlternateCopy(copyIndex, index)}
           >
             <Text style={styles.addButtonText}>
-              <Entypo name="circle-with-cross" color="red" size={20} alignItems="center" />
-      
-       
+              <Entypo name="squared-cross" color="red" size={20} alignItems="center" /> 
             </Text>
           </Pressable>
         )}
@@ -529,6 +528,8 @@ const StudentInfo = ({navigation}) => {
               </View>
             </View>
           </View>
+
+          {/* -------------------------------------------------Amswersheet main code---------------------------------------------- */}
           <View>
                <View style={{flexDirection:"row" , justifyContent:"space-between"}}>
               <Text style={styles.addAnsheading}> AnswerSheet </Text>
@@ -599,7 +600,7 @@ const StudentInfo = ({navigation}) => {
                                 style={styles.submitButton} 
                                 onPress={() => handleAddAlternateCopy(index)}   
                               >
-                                <Text style={{color:"#fff"}}>Add SupplySheet</Text>
+                                <Text style={{color:"#fff" ,textAlign:"center" ,alignItems:"center"}}>Add SupplySheet</Text>
                                 </Pressable>
                               )}  
                               </View>
@@ -644,6 +645,105 @@ const StudentInfo = ({navigation}) => {
             </Pressable>
           </View>
           </View>
+
+          {/* --------------------------------------------------AnsweSheet duplicate code-------------------------------------------- */}
+        <View>
+              <View style={{flexDirection:"row" , justifyContent:"space-between"}}>
+                  <Text style={styles.addAnsheading}> AnswerSheet </Text>
+                <AntDesign style={styles.addicon} name="pluscircleo" size={24} color="black" />
+              </View>
+              <View style={styles.cpoiesmainblock}>  
+                    <Text style={{fontWeight:"bold"}}>Main Copy</Text>
+                        <View style={styles.copiesdataWrap}>
+                          <View style={styles.mainWrap}>
+              
+                          <View style={{flexDirection:"column"}}>
+                            <Text >Main Copy 1</Text>
+                            <Text style={{float:"right" ,fontWeight:"600"}}>879467588</Text>
+                            </View>
+                            <MaterialCommunityIcons name="barcode-scan" size={40} color="black" />
+                            <View style= {styles.answerSheetWrap} >
+                            <View style={{width:"auto",}}>
+                            <TextInput
+                              style={[styles.input ]}
+                              placeholder={`Enter Copy Number`}
+                                onChangeText={(copyNumber) => setTempNumber(copyNumber)}
+                                    
+                        />
+                        
+                            {/* <MaterialIcons name="done" size={24} color="green" style={styles.righticon}/> */}
+                            </View> 
+                            
+                              <Pressable >
+                                {/* <Text style={{color:"#fff"}}>Save</Text> */}
+                                <MaterialIcons name="done" size={20} color="green" style={styles.saveicon} />
+                              </Pressable>          
+                            {/* </>
+                            <> */}
+
+                        <Pressable
+                          style={styles.removeButton}                  
+                        >
+                          <Text style={styles.addButtonText}>
+                            {/* <Entypo name="squared-cross" color="red" size={20} alignItems="center" /> */}
+                        
+                            <MaterialIcons name="delete" size={24} color="red" />
+                    
+                          </Text>
+                        </Pressable>               
+
+                      {/* </> */}
+                          </View>
+            
+                          </View>  
+                        </View>                  
+                        <View style={styles.buttoncontainer}>
+                        <Pressable style={styles.addsuplybtn}>
+                            <Text style={{color:"#fff", textAlign:"center",}}>Add SupplySheet</Text>
+                          </Pressable>
+                          </View>
+                          <View style={styles.supplyblockWrap}>
+                            <Text style={{fontWeight:"bold",padding:10}}>Supply Copy</Text>
+                            <ScrollView >
+                          <View style={styles.tr}>
+                          <View style={styles.theadcopy}>
+                          <Text style={styles.thead}>Copy No</Text>
+                        </View>
+                            <View style={styles.theadscan}>
+                            <Text style={[styles.thead, ]}>Scan</Text>
+                            </View>
+                            <Text style={styles.thead}>Actions</Text>                                  
+                          </View>      
+                            <View  style={styles.tr}>
+                            <View style={styles.tdcopyno}>
+                              <Text style={styles.td}>1.1</Text>
+                              </View>
+                              <View style={styles.tdscan}>
+                              <Text style={[styles.td, styles.tablescan]}> 
+                              <MaterialCommunityIcons name="barcode-scan" size={40} color="black" /> 
+                                  <Text>OR</Text>
+                                  <TextInput
+                                    style={[styles.input ]}
+                                    placeholder={`Enter Copy Number`}
+                                                              
+                              /></Text>
+                              </View>
+                              <Text style={[styles.td,styles.tableActionBtn]}> <MaterialIcons name="done" size={20} color="green" style={styles.saveicon} />     <MaterialIcons name="delete" size={24} color="red" /></Text>
+                            
+                            </View>    
+                  </ScrollView>
+                          </View>
+                          <View style={styles.buttonWrap}>
+                                <Pressable
+                                  style={styles.submitButton}>
+                                  <Text style={styles.addButtonText}> Submit</Text>
+                                </Pressable>
+                                <Pressable style={styles.submitButton} > 
+                                <Text style={styles.addButtonText}>Cancel</Text>
+                                </Pressable>
+                           </View>
+              </View>
+        </View>
         </View>
       )}
     </ScrollView>)
@@ -794,9 +894,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  answersheet:{
-
-  },
+ 
   mainText: {
     flexDirection: "row",
     alignItems: "center",
@@ -814,8 +912,8 @@ const styles = StyleSheet.create({
     // flexDirection: "row",
     // justifyContent: "space-between",
     flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 20,
+     marginTop: 20,
+     marginRight:10,
   },
   submitButton: {
     backgroundColor: "#0C7C62",
@@ -904,11 +1002,92 @@ const styles = StyleSheet.create({
     flexDirection:"row",
     justifyContent:"space-between",
     width:"auto",
+    alignItems:"center",
   },
-  righticon:{
-    position:"absolute",
-    right:10,
-    alignItems:"center"
+ 
+  saveicon:{
+  position:"relative",
+  top:0,
+  },
+  
+
+  copiesdataWrap:{
+    marginTop:10,
+    backgroundColor:"rgb(240 243 245)",
+    borderWidth:1,
+    padding:20,
+    borderColor:"#ccc", 
+  
+  },
+  mainWrap:{
+    flexDirection:"row",
+    justifyContent:"space-between",
+    alignItems:"center",
+    marginBottom:10,
+
+  },
+  addsuplybtn:{
+    backgroundColor: "#0C7C62",
+    padding: 10,
+    borderRadius: 5,
+    // justifyContent: "center",
+    // alignItems: "center",
+    marginTop: 10,
+    width:150,
+    textAlign:"center"
+  },
+  supplyblockWrap:{
+    // backgroundColor:"#fff",
+    // padding:20,
+  },
+  tr: {
+    flexDirection: 'row',
+    marginBottom: 4,
+  },
+  thead: {
+    flex: 1,
+    fontWeight: 'bold',
+    padding: 8,
+    backgroundColor: '#f0f0f0',
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  td: {
+    flex: 1,
+    padding: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  cpoiesmainblock:{
+    backgroundColor:"#fff",
+    borderRadius:14,
+    padding:10,
+    width:"auto",
+    marginTop:10,
+  },
+  tablescan:{
+    alignItems:"center",
+    display:"flex",
+    justifyContent:"space-between",
+    // flexDirection:"row",
+    // justifyContent:"space-between",
+  },
+  tableActionBtn:{
+    display:"flex",
+ 
+  },
+  theadcopy:{
+    width:"20%",
+ 
+  },
+  tdcopyno:{
+  width:"20%"
+  },
+  theadscan:{
+    width:"60%",
+  },
+  tdscan:{
+    width:"60%",
   }
 });
 
