@@ -97,6 +97,7 @@ const StudentInfo = ({navigation}) => {
       copyIndex === copiesData[index].alternateCopies.length - 1;
     return (
       <View style= {styles.answerSheetWrap} key={copyIndex}>
+   
       <View style={{width:"auto",}} key={copyIndex}>
       <TextInput
         style={[styles.input ]}
@@ -111,7 +112,7 @@ const StudentInfo = ({navigation}) => {
         
                 <Pressable  onPress={() => handleSaveCopy(copyType, tempCopyNumber, index, copyIndex) } >
                   {/* <Text style={{color:"#fff"}}>Save</Text> */}
-                  <MaterialIcons name="done" size={20} color="green" style={styles.saveicon} />
+                  <MaterialIcons name="done" size={16} color="green" style={styles.saveicon} />
                 </Pressable>
               )}
               {/* </>
@@ -453,6 +454,14 @@ const StudentInfo = ({navigation}) => {
         <CodeScanner onScannedData={(data) => handleScanBarcode( data, tempCopyType, mainCopyIndex, alternateCopyIndex ) } onCancel={handleCancel} />
       ) : (
         <View>
+        <View style={styles.studentInfoWrap}>
+        <View style={styles.infoContainer}> 
+        <Text>User Image</Text>
+        <Image source={require("../../local-assets/login-shape-bg-1.png")} />
+        </View>
+    
+
+        </View>
           <View style={styles.studentInfoWrap}>
             <Text style={styles.infoHeader}>Student Info:</Text>
             <View style={styles.infoContainer}>
@@ -548,9 +557,22 @@ const StudentInfo = ({navigation}) => {
               </View>
               <View>          
               <View style={[styles.tablewrap, ]}>
+           <View style={styles.mainCopyheading}>
+              <Text style={{fontWeight:"bold", padding:5}} >Main Copy</Text>
+              <View style={styles.inputContainer}>
+              <Pressable
+                    onPress={() => handleRemoveCopy(index)}
+                  >
+                    <Text style={styles.crossiconWrap}>           
+                    {/* <AntDesign  name="delete" size={24} alignItems="flex-end" color="red" /> */}
+                    <Entypo name="cross" size={24} color="#fff" />
+                    </Text>
+                  </Pressable>
+              </View>
+              </View>
                 <View >
                   {copy.mainCopy ? (
-                    <View key={index} style={[styles.sheetDetails,styles.box,styles.boxtext]}>
+                    <View key={index} style={[styles.sheetDetails,styles.box,styles.boxtext]}>              
                     <Text style={[ styles.header]}>Answersheet Number {index + 1}</Text>
                       <Text style={[styles.examname]}>{copy.mainCopy}</Text>
                       <View style={styles.iconsWrap}>
@@ -653,15 +675,12 @@ const StudentInfo = ({navigation}) => {
                 <AntDesign style={styles.addicon} name="pluscircleo" size={24} color="black" />
               </View>
               <View style={styles.cpoiesmainblock}>  
-                    <Text style={{fontWeight:"bold"}}>Main Copy</Text>
-                        <View style={styles.copiesdataWrap}>
+                    {/* <Text style={{fontWeight:"bold"}}>Main Copy</Text> */}
+                        {/* <View style={styles.copiesdataWrap}>
                           <View style={styles.mainWrap}>
-              
-                          <View style={{flexDirection:"column"}}>
-                            <Text >Main Copy 1</Text>
-                            <Text style={{float:"right" ,fontWeight:"600"}}>879467588</Text>
-                            </View>
+                            <Text style={{float:"right" ,fontWeight:"600"}}>879467588</Text>                    
                             <MaterialCommunityIcons name="barcode-scan" size={40} color="black" />
+                            <Text>OR</Text>
                             <View style= {styles.answerSheetWrap} >
                             <View style={{width:"auto",}}>
                             <TextInput
@@ -671,37 +690,23 @@ const StudentInfo = ({navigation}) => {
                                     
                         />
                         
-                            {/* <MaterialIcons name="done" size={24} color="green" style={styles.righticon}/> */}
+                             
                             </View> 
-                            
-                              <Pressable >
-                                {/* <Text style={{color:"#fff"}}>Save</Text> */}
+                            <View style={styles.iconsWrap}>     
                                 <MaterialIcons name="done" size={20} color="green" style={styles.saveicon} />
-                              </Pressable>          
-                            {/* </>
-                            <> */}
-
-                        <Pressable
-                          style={styles.removeButton}                  
-                        >
-                          <Text style={styles.addButtonText}>
-                            {/* <Entypo name="squared-cross" color="red" size={20} alignItems="center" /> */}
-                        
-                            <MaterialIcons name="delete" size={24} color="red" />
-                    
-                          </Text>
-                        </Pressable>               
-
-                      {/* </> */}
+                                 <MaterialIcons name="delete" size={20} color="red" /> 
+                            </View>   
                           </View>
             
                           </View>  
-                        </View>                  
+                        </View>                   */}
                         <View style={styles.buttoncontainer}>
                         <Pressable style={styles.addsuplybtn}>
                             <Text style={{color:"#fff", textAlign:"center",}}>Add SupplySheet</Text>
                           </Pressable>
                           </View>
+
+                          {/* Supplycopy taable Block */}
                           <View style={styles.supplyblockWrap}>
                             <Text style={{fontWeight:"bold",padding:10}}>Supply Copy</Text>
                             <ScrollView >
@@ -712,7 +717,7 @@ const StudentInfo = ({navigation}) => {
                             <View style={styles.theadscan}>
                             <Text style={[styles.thead, ]}>Scan</Text>
                             </View>
-                            <Text style={styles.thead}>Actions</Text>                                  
+                            <Text style={[styles.thead,{flexWrap:"wrap"}]}>Actions</Text>                                  
                           </View>      
                             <View  style={styles.tr}>
                             <View style={styles.tdcopyno}>
@@ -723,12 +728,16 @@ const StudentInfo = ({navigation}) => {
                               <MaterialCommunityIcons name="barcode-scan" size={40} color="black" /> 
                                   <Text>OR</Text>
                                   <TextInput
-                                    style={[styles.input ]}
-                                    placeholder={`Enter Copy Number`}
-                                                              
-                              /></Text>
+                              style={[styles.input ]}
+                              placeholder={`Enter Copy Number`}
+                              
+                          />
+                              </Text>
                               </View>
-                              <Text style={[styles.td,styles.tableActionBtn]}> <MaterialIcons name="done" size={20} color="green" style={styles.saveicon} />     <MaterialIcons name="delete" size={24} color="red" /></Text>
+                              <Text style={[styles.td,styles.tableActionBtn]}>
+                               <MaterialIcons name="done" size={20} color="green" style={styles.saveicon} />    
+                                <MaterialIcons name="delete" size={24} color="red" />
+                              </Text>
                             
                             </View>    
                   </ScrollView>
@@ -856,7 +865,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     padding: 8,
     marginRight: 10,
-    width: 150,
+    width:150 
   },
   addButton: {
     // padding: 10,
@@ -922,6 +931,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginTop: 10,
+    marginRight:10,
+    Width:100,
     // backgroundColor: "#0C7C62",
     // paddingVertical: 5,
     // paddingHorizontal: 20,
@@ -1008,15 +1019,22 @@ const styles = StyleSheet.create({
   saveicon:{
   position:"relative",
   top:0,
+  right:8,
   },
-  
+
+  mainCopyheading:{
+    flexDirection:"row",
+    justifyContent:"space-between",
+    marginBottom:10,
+  },
 
   copiesdataWrap:{
     marginTop:10,
     backgroundColor:"rgb(240 243 245)",
     borderWidth:1,
-    padding:20,
+    padding:8,
     borderColor:"#ccc", 
+    borderRadius:8,
   
   },
   mainWrap:{
@@ -1024,6 +1042,11 @@ const styles = StyleSheet.create({
     justifyContent:"space-between",
     alignItems:"center",
     marginBottom:10,
+
+  },
+  crossiconWrap:{
+   backgroundColor:"red",
+   borderRadius:5,
 
   },
   addsuplybtn:{
@@ -1074,10 +1097,12 @@ const styles = StyleSheet.create({
   },
   tableActionBtn:{
     display:"flex",
+
  
   },
   theadcopy:{
     width:"20%",
+    flexWrap:"wrap",
  
   },
   tdcopyno:{

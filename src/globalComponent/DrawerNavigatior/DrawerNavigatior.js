@@ -178,10 +178,11 @@ const sidebaricons=[
               setValue={(value) => props?.handleRoleSelect(value)}
               style={styles.dropdown}
               dropDownStyle={{ backgroundColor: "#fafafa"}}
+              dropDownContainerStyle={styles.dropdownContainer} 
               dropDownMaxHeight={150}
               dropDownDirection="TOP"
               containerStyle={styles.rolePicker}
-              listItemContainerStyle={{ height: 40}} 
+              listItemContainerStyle={{ height: 30}} 
               listItemLabelStyle={{ fontSize: 14 }}
             />
           </View>
