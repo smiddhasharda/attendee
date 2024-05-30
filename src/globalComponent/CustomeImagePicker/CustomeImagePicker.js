@@ -47,8 +47,9 @@ const CustomeImagePicker = ({...props }) => {
               <Text style={{ color: 'gray' }}>Placeholder</Text>
             </View>
            )}
-           {props.CameraAccess &&   <Pressable onPress={pickImage}>
-           <Feather name="camera" size={24} style={styles.cameraicon}  />
+           {props.CameraAccess &&   
+           <Pressable onPress={pickImage} style={styles.cameraiconWrap}>
+              <Feather name="camera" style={styles.cameraicon}  />
            </Pressable>}          
            </View>
     // </Pressable>)
@@ -59,11 +60,17 @@ export default CustomeImagePicker;
 const styles = StyleSheet.create({
 
   cameraicon:{
+    color:"#fff",
+    fontSize: 18,
+    padding: 5
+   },
+   cameraiconWrap:{
+    backgroundColor:"green",
+    padding:5,
     position:"absolute",
-    right:0,
-    bottom:11,
-    color:"#e10505",
- 
+    borderRadius:20,
+    right:-5,
+    bottom:3,
    },
    container:{
      position:"relative",
