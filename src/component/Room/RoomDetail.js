@@ -202,9 +202,9 @@ function RoomDetail({navigation}) {
               </Pressable>
             ))
           ) : (
-            <Text>There is no student available in this room you searched for!</Text>
+              <Text style={styles.centerText}>There is no student available in this room you searched for!</Text>
           ) : (
-            <Text>There are no records found!</Text>
+              <Text style={styles.centerText}>There are no records found!</Text>
           )
         )}
           </ScrollView>
@@ -274,7 +274,7 @@ const styles = StyleSheet.create({
     //   flexDirection: "column",
       // flexWrap: "nowrap",
       // marginBottom: 10,
-      padding: 4,
+      padding: 12,
       // flex:1,
       clearfix:"both",
       // position:"relative",
@@ -287,7 +287,7 @@ const styles = StyleSheet.create({
       borderColor: "#ccc",
       // width: Dimensions.get("window").width / 1 - 20, 
       borderRadius: 6,
-      marginBottom: 10,
+      marginBottom: 15,
       padding:12,
     },
     boxtext:{
@@ -356,7 +356,6 @@ const styles = StyleSheet.create({
       padding:10,
       marginBottom: 8,
       marginTop: 10
-   
     },
     searchWrap:{
       padding: 10,
@@ -376,5 +375,10 @@ const styles = StyleSheet.create({
       zIndex:9999,
       bottom:10
     },
-  
+    centerText:{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      textAlign: "center"
+    }
   });

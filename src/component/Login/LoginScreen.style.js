@@ -22,6 +22,7 @@ const LoginStyles = StyleSheet.create({
     top: "24%",
     left: "10%",
     padding: 25,
+    height: 400
   },
   label: {
     fontSize: 16,
@@ -57,18 +58,18 @@ const LoginStyles = StyleSheet.create({
     height: "100%",
     position: "absolute",
     zIndex: 1,
-    top: "-72%",
-    transform: [{ rotate: '142deg' }],
-    left: "-48%",
+    top: "-60%",
+    transform: [{ rotate: '132deg' }],
+    left: "-70%",
   },
   bgimages2: {
     position: "absolute",
     width: "100%",
     height: "100%",
     zIndex: 1,
-    transform: [{ rotate: '142deg' }],
+    transform: [{ rotate: '450deg' }],
     right: "-78%",
-    bottom: "0",
+    bottom: -250,
   },
   loginButtonStyle: {
     height: 45,
