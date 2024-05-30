@@ -7,7 +7,7 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: "center",
-    paddingVertical: 20,
+    padding: 20,
     backgroundColor: 'rgb(17, 65, 102)' ,
 
     // borderBottomWidth: 1,
@@ -55,6 +55,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     color:"#fff",
+    marginTop:8
   },
   rolePicker: {
     marginTop: 10,
@@ -70,6 +71,16 @@ const styles = StyleSheet.create({
   drawerItemText: {
     fontSize: 16,
   }, 
+  dropdown:{
+  width:110,
+  minHeight:30,
+  },
+  dropdownContainer:{
+    width:110,
+    padding: [10, 5],
+    height: "auto"
+  },
+ 
 });
 
 export default styles;
