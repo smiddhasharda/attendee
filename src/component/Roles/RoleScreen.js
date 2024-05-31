@@ -417,12 +417,12 @@ const RoleScreen = ({userAccess}) => {
         keyExtractor={(item) => item.PK_RoleId.toString()}
           ListHeaderComponent={() => (
             <View style={styles.tableHeader}>
-              <Text  numberOfLines={1} style={[styles.tableHeaderText, { flex: 2 }]}>Role Name</Text>
-              <Text style={[styles.tableHeaderText, { flex: 3 }]}>
+              <Text  numberOfLines={1} style={[styles.tableHeaderText, ]}>Role Name</Text>
+              <Text style={[styles.tableHeaderText,]}>
                 Description
               </Text>
-              <Text style={[styles.tableHeaderText, { flex: 1 }]}>Status</Text>
-              <Text style={[styles.tableHeaderText, { flex: 1 }]}>Actions</Text>
+              <Text style={[styles.tableHeaderText, ]}>Status</Text>
+              <Text style={[styles.tableHeaderText,]}>Actions</Text>
             </View>
           )}
           renderItem={({ item }) => (

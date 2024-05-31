@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, Text, StyleSheet, ScrollView, TextInput, Pressable,ActivityIndicator ,} from "react-native";
-import { Ionicons, FontAwesome, AntDesign,MaterialCommunityIcons ,MaterialIcons,Entypo} from "@expo/vector-icons";
+import { View, Text, StyleSheet, ScrollView, TextInput, Pressable,ActivityIndicator ,Image} from "react-native";
+import { Ionicons, FontAwesome, AntDesign,MaterialCommunityIcons ,MaterialIcons,Entypo,FontAwesome6} from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import CodeScanner from "../../globalComponent/CodeScanner/CodeScanner";
@@ -454,16 +454,18 @@ const StudentInfo = ({navigation}) => {
         <CodeScanner onScannedData={(data) => handleScanBarcode( data, tempCopyType, mainCopyIndex, alternateCopyIndex ) } onCancel={handleCancel} />
       ) : (
         <View>
-        <View style={styles.studentInfoWrap}>
+        <View style={styles.studentInfoWrap} >
+        <Text style={styles.infoHeader}>Student Info:</Text>
         <View style={styles.infoContainer}> 
-        <Text>User Image</Text>
-        <Image source={require("../../local-assets/login-shape-bg-1.png")} />
+         <View style={styles.userDetailWrap}>
+           <Image  style={styles.userimage} source={require("../../local-assets/userimg.jpg")} />
+           <FontAwesome6 name="signature" size={44} color="black" />
+         </View>
         </View>
-    
 
         </View>
           <View style={styles.studentInfoWrap}>
-            <Text style={styles.infoHeader}>Student Info:</Text>
+            <Text style={styles.infoHeader}>Basic Info:</Text>
             <View style={styles.infoContainer}>
               <View style={styles.infoItem}>
                 <Text style={styles.label}>Name:</Text>
@@ -497,10 +499,7 @@ const StudentInfo = ({navigation}) => {
                   {studentDetails.STRM?.split("")?.[3] || ""}
                 </Text>
               </View>
-         
-           
-           
-            </View>
+              </View>
           </View>
           <View style={styles.studentInfoWrap}>
             <Text style={styles.infoHeader}>Course Info:</Text>
@@ -1028,6 +1027,13 @@ const styles = StyleSheet.create({
     marginBottom:10,
   },
 
+  userimage:{
+    width:90,
+    height:90,
+  },
+  userDetailWrap:{
+   alignItems:"center",
+  },
   copiesdataWrap:{
     marginTop:10,
     backgroundColor:"rgb(240 243 245)",
