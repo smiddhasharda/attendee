@@ -371,20 +371,20 @@ const RoleScreen = ({userAccess}) => {
             keyExtractor={(item) => item?.PK_ModuleId?.toString()}
             ListHeaderComponent={() => (
               <View style={styles.tableHeader}>
-                <Text style={[styles.tableHeaderText, { flex: 2 }]}>
+                <Text style={[styles.tableHeaderText, ]}>
                   Module Name
                 </Text>
-                <Text style={[styles.tableHeaderText, { flex: 1 }]}>
+                <Text style={[styles.tableHeaderText, ]}>
                   Create
                 </Text>
-                <Text style={[styles.tableHeaderText, { flex: 1 }]}>Read</Text>
-                <Text style={[styles.tableHeaderText, { flex: 1 }]}>
+                <Text style={[styles.tableHeaderText, ]}>Read</Text>
+                <Text style={[styles.tableHeaderText,]}>
                   Update
                 </Text>
-                <Text style={[styles.tableHeaderText, { flex: 1 }]}>
+                <Text style={[styles.tableHeaderText, ]}>
                   Delete
                 </Text>
-                <Text style={[styles.tableHeaderText, { flex: 1 }]}>
+                <Text style={[styles.tableHeaderText,]}>
                   Special
                 </Text>
               </View>
@@ -427,10 +427,10 @@ const RoleScreen = ({userAccess}) => {
           )}
           renderItem={({ item }) => (
             <View style={styles.listItem}>
-              <Text style={[styles.listItemText, { flex: 2 }]}>
+              <Text style={[styles.listItemText, ]}>
                 {item.roleName}
               </Text>
-              <Text style={[styles.listItemText, { flex: 3 }]}>
+              <Text style={[styles.listItemText, ]}>
                 {item.description}
               </Text>
               <Pressable
@@ -439,7 +439,6 @@ const RoleScreen = ({userAccess}) => {
                 <Text
                   style={[
                     styles.listItemText,
-                    { flex: 1 },
                     item.isActive
                       ? styles.listItemActiveStatus
                       : styles.listItemInactiveStatus,
