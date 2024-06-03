@@ -14,7 +14,8 @@ import {
     formContainer: {
       marginBottom: 20,
       backgroundColor:"#fff",
-      padding:40,
+      padding:10,
+      width:"auto",
     },
     input: {
       height: 40,
@@ -48,11 +49,14 @@ import {
     tableHeaderText: {
       fontSize: 16, 
       fontWeight: 'bold', 
-      paddingHorizontal: 5,
+      // paddingHorizontal: 5,
       color:"#fff",
       textAlign:"center",
       alignItems:"center",
-      flexWrap:"wrap",
+
+    
+
+ 
     },
     listItem: {
       // flexDirection: "row",
@@ -93,7 +97,7 @@ import {
     },
     roleLists:{
       backgroundColor:"#fff",
-      padding:40,
+      padding:30,
       boxShadow: '0px 2px 3.84px rgba(0, 0, 0, 0.25)',
       borderRadius:10,
     },
@@ -116,10 +120,11 @@ import {
     cancelbtn:{
       width:100,
       marginBottom:10,
-      backgroundColor:"rgb(203 206 209)",
+      backgroundColor:"rgb(237, 52, 52)",
       padding:10,
       borderRadius:5,
       textAlign:"center",
+      color:"#fff"
     }
   });
 

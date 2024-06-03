@@ -5,7 +5,7 @@
  import { insert, update, fetch } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { Ionicons,AntDesign,Feather} from "@expo/vector-icons";
 const windowWidth = Dimensions.get("window").width;
 
  const InvigilatorScreen = ({userAccess}) => {
@@ -289,25 +289,25 @@ const windowWidth = Dimensions.get("window").width;
         keyExtractor={(item) => item.PK_InvigilatorDutyId.toString()}
             ListHeaderComponent={() => (
               <View style={styles.tableHeader}>
-                <Text style={[styles.tableHeaderText, { flex: 2 }]}>Duty Id</Text>
-                <Text style={[styles.tableHeaderText, { flex: 3 }]}>Employee Id</Text>
-                <Text style={[styles.tableHeaderText, { flex: 1 }]}>Invigilator Name</Text>
-                <Text style={[styles.tableHeaderText, { flex: 1 }]}>Room</Text>
-                <Text style={[styles.tableHeaderText, { flex: 1 }]}>Date</Text>
-                <Text style={[styles.tableHeaderText, { flex: 1 }]}>Shift</Text>
-                <Text style={[styles.tableHeaderText, { flex: 1 }]}>Duty Status</Text>
-                <Text style={[styles.tableHeaderText, { flex: 1 }]}>Actions </Text>
+                <Text style={[styles.tableHeaderText,]}>Duty Id</Text>
+                <Text style={[styles.tableHeaderText, ]}>Employee Id</Text>
+                <Text style={[styles.tableHeaderText,]}>Invigilator Name</Text>
+                <Text style={[styles.tableHeaderText, ]}>Room</Text>
+                <Text style={[styles.tableHeaderText,]}>Date</Text>
+                <Text style={[styles.tableHeaderText,]}>Shift</Text>
+                <Text style={[styles.tableHeaderText, ]}>Duty Status</Text>
+                <Text style={[styles.tableHeaderText,]}>Actions </Text>
               </View>
       )} renderItem={({ item }) => (          
         <View style={styles.listItem}>
-          <Text style={[styles.listItemText, { flex: 1 }]}>{item.PK_InvigilatorDutyId}</Text>
-          <Text style={[styles.listItemText, { flex: 1 }]}>{item.employeeId}</Text>
-          <Text style={[styles.listItemText, { flex: 1 }]}>{item.invigilatorName}</Text>
-          <Text style={[styles.listItemText, { flex: 1 }]}>{item.room}</Text>
-          <Text style={[styles.listItemText, { flex: 1 }]}>{item.date}</Text>
-          <Text style={[styles.listItemText, { flex: 1 }]}>{item.shift}</Text>
-          <Text style={[styles.listItemText, { flex: 1 }]}>{item.duty_status}</Text>    
-          {UserAccess?.update === 1 ? <Pressable style={styles.listItemEditButton} onPress={() => handleEditInvigilator(item)}> <Text style={styles.listItemEditText}>Edit</Text> </Pressable> : ' - '}  
+          <Text style={[styles.listItemText, ]}>{item.PK_InvigilatorDutyId}</Text>
+          <Text style={[styles.listItemText, ]}>{item.employeeId}</Text>
+          <Text style={[styles.listItemText, ]}>{item.invigilatorName}</Text>
+          <Text style={[styles.listItemText, ]}>{item.room}</Text>
+          <Text style={[styles.listItemText, ]}>{item.date}</Text>
+          <Text style={[styles.listItemText,]}>{item.shift}</Text>
+          <Text style={[styles.listItemText, ]}>{item.duty_status}</Text>    
+          {UserAccess?.update === 1 ? <Pressable style={styles.listItemEditButton} onPress={() => handleEditInvigilator(item)}> <Text style={styles.listItemEditText}><Feather name="edit" size={16} color="white" /></Text> </Pressable> : ' - '}  
         </View>
         )}
       />
@@ -355,13 +355,19 @@ const windowWidth = Dimensions.get("window").width;
   tableHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: '#f0f0f0',
+    backgroundColor: 'rgb(17, 65, 102)',
     paddingVertical: 10,
     paddingHorizontal: 15,
     marginBottom: 10,
+    borderRadius:5,
   },
   tableHeaderText: {
-    fontWeight: 'bold',
+    fontSize: 16, 
+      fontWeight: 'bold', 
+      // paddingHorizontal: 5,
+      color:"#fff",
+      textAlign:"center",
+      alignItems:"center",
   },
   listItem: {
     flexDirection: 'row',
