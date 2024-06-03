@@ -120,24 +120,6 @@ const CustomDrawerContent = ({ ...props }) => {
         addToast("Module Operation Failed", "error");
     }
   };
-const sidebaricons=[
-    {
-      name:"home", 
-      size:"20",
-      color:"rgb(8 96 88)",
-    },
-    {
-      name:"settings", 
-      size:"20",
-      color:"rgb(8 96 88)",
-    },
-    {
-      name:"person", 
-      size:"20",
-      color:"rgb(8 96 88)",
-    }
-  
-]
 
   return (
     <View style={styles.container}>
@@ -191,8 +173,14 @@ const sidebaricons=[
       <DrawerContentScrollView {...props}>
 
       <DrawerItemList {...props} style={styles.dropdownmain} />
-      <View>
+      <View>     
         <Pressable onPress={() => props.handleLogout()}>
+        <Ionicons 
+        style={styles.icons} 
+        name='log-out'
+        size={24} 
+        color="rgb(0, 122, 255)"
+      />
           <Text style={{ margin: 16 }}>Logout</Text>
         </Pressable>
       </View>
@@ -253,6 +241,21 @@ const DrawerNavigator = ({ navigation }) => {
       console.error("Error fetching user role permission:", error);
     }
   };
+
+  const getIconName = (moduleName, focused) => {
+    const icons = {
+      Dashboard: focused ? 'home' : 'home-outline',
+      RoleScreen: focused ? 'skull' : 'skull-outline',
+      ModuleScreen: focused ? 'bookmark' : 'bookmark-outline',
+      UserScreen: focused ? 'person' : 'person-outline',
+      ExamScreen: focused ? 'book' : 'book-outline',
+      InvigilatorScreen: focused ? 'people' : 'people-outline',
+
+      // Add more mappings as needed
+    };
+    return icons[moduleName] || 'help'; // Default icon if no match is found
+  };
+  
 
   useEffect(() => {
     fetchUserRolePermission();
@@ -320,14 +323,40 @@ const DrawerNavigator = ({ navigation }) => {
             module?.moduleMaster[0]?.moduleName !== "RoomDetail"
         )
         .map((module, index) => (
-          <Drawer.Screen  options={{
-    drawerIcon: ({ color, size, focused }) => (
-      <Ionicons 
-        style={styles.icons} 
-        name={focused ? 'home' : 'book'}
-        size={size} 
-        color={color} 
-      />
+    //       <Drawer.Screen  options={{
+    // drawerIcon: ({ color, size, focused }) => (
+    //   <Ionicons 
+    //     style={styles.icons} 
+    //     name={focused ? 'home' : 'book'}
+    //     size={size} 
+    //     color={color} 
+    //   />
+    <Drawer.Screen
+    options={{
+      title: (() => {
+        switch (module?.moduleMaster[0]?.moduleName) {
+          case "RoleScreen":
+            return "User Role";
+          case "ModuleScreen":
+            return "Manage Module";
+          case "UserScreen":
+            return "Manage User";
+          case "ExamScreen":
+            return "Exam";
+            case "InvigilatorScreen":
+              return "Invigilator Permission";
+          // Add more cases as needed
+          default:
+            return module?.moduleMaster[0]?.moduleName;
+        }
+      })(),
+      drawerIcon: ({ color, size, focused }) => (
+        <Ionicons
+          style={styles.icons}
+          name={getIconName(module.moduleMaster[0].moduleName, focused)}
+          size={size}
+          color={color}
+        />
     )
   }}  key={index} name={module?.moduleMaster[0]?.moduleName}>
             {(props) => {
