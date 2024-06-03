@@ -5,6 +5,7 @@ import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CheckBox from "expo-checkbox";
 import styles from "./RoleScreen.style";
+import { Ionicons,AntDesign,Feather} from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
 const RoleScreen = ({userAccess}) => {
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 2 );
@@ -305,7 +306,7 @@ const RoleScreen = ({userAccess}) => {
         <Text style={[styles.listItemText, { flex: 2 }]}>
           {item?.moduleName}
         </Text>
-        <View style={[styles.checkboxContainer, { flex: 1 }]}>
+        <View style={[styles.checkboxContainer, { flex: 1 } ]}>
           <CheckBox
             value={getModulePermission(item, "create")}
             onValueChange={() => handleUpdatePermissions(item, "create")}
@@ -371,20 +372,20 @@ const RoleScreen = ({userAccess}) => {
             keyExtractor={(item) => item?.PK_ModuleId?.toString()}
             ListHeaderComponent={() => (
               <View style={styles.tableHeader}>
-                <Text style={[styles.tableHeaderText, ]}>
+                <Text style={[styles.tableHeaderText, {flex:2} ,{textAlign:"left"}]}>
                   Module Name
                 </Text>
-                <Text style={[styles.tableHeaderText, ]}>
+                <Text style={[styles.tableHeaderText,{flex:1} ]}>
                   Create
                 </Text>
-                <Text style={[styles.tableHeaderText, ]}>Read</Text>
-                <Text style={[styles.tableHeaderText,]}>
+                <Text style={[styles.tableHeaderText, {flex:1} ]}>Read</Text>
+                <Text style={[styles.tableHeaderText, {flex:1}]}>
                   Update
                 </Text>
-                <Text style={[styles.tableHeaderText, ]}>
+                <Text style={[styles.tableHeaderText,{flex:1} ]}>
                   Delete
                 </Text>
-                <Text style={[styles.tableHeaderText,]}>
+                <Text style={[styles.tableHeaderText, {flex:1}]}>
                   Special
                 </Text>
               </View>
@@ -405,10 +406,11 @@ const RoleScreen = ({userAccess}) => {
        <View style={styles.roleLists}>
         <Text style={styles.header}>Role List:</Text>
         {UserAccess?.create === 1 &&
-          <View style={styles.addbtnWrap}>
+          <View style={{alignItems:"flex-end"}}>
 
         <Pressable onPress={() => setRoleContainerVisible(true)}>
-                    <Text style={styles.addbtntext}>Add</Text>
+                    {/* <Text style={styles.addbtntext}>Add</Text> */}
+                    <Ionicons  style={styles.icons} name="add-circle-outline" size={35} color="black" />
                   </Pressable> 
                   </View>
 }
@@ -450,7 +452,7 @@ const RoleScreen = ({userAccess}) => {
               <View style={{ flex: 1, flexDirection: "row", justifyContent: "flex-end", alignItems: "center", }} >
                 {UserAccess?.update === 1 ?
                   <Pressable style={styles.listItemEditButton} onPress={() => handleEditRole(item)}>
-                      <Text style={styles.listItemEditText}>Edit</Text>
+                      <Text style={styles.listItemEditText}><Feather name="edit" size={16} color="white" /></Text>
                     </Pressable> : ' - '}
               </View>
             </View>

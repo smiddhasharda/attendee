@@ -26,6 +26,7 @@ import {
     buttonContainer: {
       flexDirection: "row",
       justifyContent: "space-between",
+      marginTop:10,
       
     },
     header: {
@@ -43,15 +44,15 @@ import {
       paddingHorizontal: 15,
       marginBottom: 10,
       borderRadius:5,
-
-  
     },
     tableHeaderText: {
-      fontSize: 16, // Font size
-      fontWeight: 'bold', // Bold font
+      fontSize: 16, 
+      fontWeight: 'bold', 
       paddingHorizontal: 5,
       color:"#fff",
-      
+      textAlign:"center",
+      alignItems:"center",
+      flexWrap:"wrap",
     },
     listItem: {
       // flexDirection: "row",
@@ -78,8 +79,8 @@ import {
       color: "red",
     },
     listItemEditButton: {
-      backgroundColor: "blue",
-      padding: 5,
+      backgroundColor: "#0C7C62",
+      padding: 4,
       borderRadius: 5,
     },
     listItemEditText: {
@@ -100,11 +101,14 @@ import {
       width:100,
       alignSelf:"flex-end",
       marginBottom:10,
-      backgroundColor:"blue",
+      backgroundColor:"#0C7C62",
       padding:10,
       borderRadius:5,
       
     },
+   
+  
+
     addbtntext:{
      color:"#fff",
      textAlign:"center",
@@ -112,9 +116,10 @@ import {
     cancelbtn:{
       width:100,
       marginBottom:10,
-      backgroundColor:"grey",
+      backgroundColor:"rgb(203 206 209)",
       padding:10,
       borderRadius:5,
+      textAlign:"center",
     }
   });
 
