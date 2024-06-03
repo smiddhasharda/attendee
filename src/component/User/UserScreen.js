@@ -9,6 +9,8 @@ import useStateWithCallback from "../../helpers/useStateWithCallback";
 import Tooltip from "../../globalComponent/ToolTip/Tooltip";
 import CheckBox from "expo-checkbox";
 import { ScrollView } from "react-native-gesture-handler";
+import { Ionicons,AntDesign,Feather} from "@expo/vector-icons";
+
 const UserScreen = ({userAccess}) => { 
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 4 );
   const { addToast } = useToast();
@@ -483,10 +485,10 @@ const UserScreen = ({userAccess}) => {
   const renderRoleCheckboxes = (item) => {
     return (
       <View style={styles.listItem} key={item?.PK_ModuleId}>
-        <Text style={[styles.listItemText, { flex: 2 }]}>
+        <Text style={[styles.listItemText,]}>
           {item?.roleName}
         </Text>
-        <View style={[styles.checkboxContainer, { flex: 1 }]}>
+        <View style={[styles.checkboxContainer, ]}>
           <CheckBox
             value={getRolePermission(item,'isActive')}
             onValueChange={() =>handleUpdatePermissions(item,'isActive') }
@@ -528,11 +530,11 @@ const UserScreen = ({userAccess}) => {
           data={roleList}
           keyExtractor={(item) => item?.PK_RoleId?.toString()}
           ListHeaderComponent={() => (
-            <View style={styles.tableHeader}>
-              <Text style={[styles.tableHeaderText, { flex: 2 }]}>
+            <View style={[styles.tableHeader ,]}>
+              <Text style={[styles.tableHeaderText, ]}>
                 Role Name
               </Text>
-              <Text style={[styles.tableHeaderText, { flex: 1 }]}>
+              <Text style={[styles.tableHeaderText,]}>
                 Access
               </Text>
             </View>
@@ -548,7 +550,7 @@ const UserScreen = ({userAccess}) => {
     handleGetRoleList();
   }, [UserAccess]);
     return (
-   
+      <ScrollView>
       <View style={styles.container}>
       {userContainerVisible ? (
         <View style={styles.formContainer}>
@@ -560,20 +562,20 @@ const UserScreen = ({userAccess}) => {
           <View style={styles.adddetails}>
           {userData.userId ? (
             <View style={styles.buttonContainer}>
-              <Pressable onPress={() => handleUpdateUser()}>
-                    <Text>Update User</Text>
+              <Pressable  style={styles.addbtnWrap} onPress={() => handleUpdateUser()}>
+                    <Text  numberOfLines={1} style={styles.addbtntext }  >Update User</Text>
                   </Pressable>
                   <Pressable onPress={() => handleClose()}>
-                    <Text>Cancel</Text>
+                    <Text  style={styles.cancelbtn}>Cancel</Text>
                   </Pressable>
             </View>
           ) : (
             <View style={styles.buttonContainer}>
-              <Pressable onPress={() => handleAddUser()}>
-                    <Text>Add New User</Text>
+              <Pressable style={styles.addbtnWrap} onPress={() => handleAddUser()}>
+                    <Text  numberOfLines={1} style={styles.addbtntext } >Add New User</Text>
                   </Pressable>
                   <Pressable onPress={() => handleClose()}>
-                    <Text>Cancel</Text>
+                    <Text style={styles.cancelbtn}>Cancel</Text>
                   </Pressable>
             </View>
           )}
@@ -582,10 +584,12 @@ const UserScreen = ({userAccess}) => {
       ) : 
       <View style={styles.userListWrap}>
         <Text style={styles.header}>User List:</Text>      
-          <View style={styles.addWrap}>
+          <View style={{alignItems:"flex-end"}}>
           {UserAccess?.create === 1 &&    
           <Pressable onPress={() => setUserContainerVisible(true)}>
-                    <Text>Add</Text>
+                    <Text> 
+                      <Ionicons name="add-circle-outline" size={35} color="black" />
+                    </Text>
                   </Pressable> }
           </View>
         <FlatList 
@@ -593,23 +597,23 @@ const UserScreen = ({userAccess}) => {
           keyExtractor={(item) => item.user_id.toString()}
           ListHeaderComponent={() => (
             <View style={styles.tableHeader}>
-              <Text style={[styles.tableHeaderText, { flex: 2 }]}>User Name</Text>
-              <Text style={[styles.tableHeaderText, { flex: 3 }]}>Contact Number</Text>
-              <Text style={[styles.tableHeaderText, { flex: 1 }]}>Status</Text>
-              <Text style={[styles.tableHeaderText, { flex: 1 }]}>Actions</Text>
+              <Text style={[styles.tableHeaderText, ]}>User Name</Text>
+              <Text style={[styles.tableHeaderText, ]}>Contact No</Text>
+              <Text style={[styles.tableHeaderText, ]}>Status</Text>
+              <Text style={[styles.tableHeaderText,]}>Actions</Text>
             </View>
           )}
           renderItem={({ item }) => (
             <View style={styles.listItem}>
-              <Text style={[styles.listItemText, { flex: 2 }]}>{item.name}</Text>
-              <Text style={[styles.listItemText, { flex: 3 }]}>{item.contact_number}</Text>
+              <Text style={[styles.listItemText, ]}>{item.name}</Text>
+              <Text style={[styles.listItemText, ]}>{item.contact_number}</Text>
                 <Pressable onPress={() =>UserAccess?.update === 1 ? handleUserStatus(item.user_id, item?.isActive) : ''}>
               <Text style={[styles.listItemText, { flex: 1 }, item.isActive ? styles.listItemActiveStatus : styles.listItemInactiveStatus]}>{item.isActive ? "Active" : "Inactive"}</Text>
               </Pressable>          
               <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
               {UserAccess?.update === 1 ? 
               <Pressable style={styles.listItemEditButton} onPress={() => handleEditUser(item)}>
-                    <Text style={styles.listItemEditText} >Edit</Text>
+                    <Text style={styles.listItemEditText} ><Feather name="edit" size={16} color="white" /></Text>
                   </Pressable> : ' - '}
               </View>
             </View>
@@ -617,7 +621,8 @@ const UserScreen = ({userAccess}) => {
          />
       </View>
       }
-      </View>      
+      </View>   
+      </ScrollView>   
       );
 }
 
@@ -654,24 +659,26 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   tableHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    backgroundColor: '#f0f0f0',
+    flexDirection: "row",
+    justifyContent:"space-between",
+    backgroundColor: "rgb(17, 65, 102)",
     paddingVertical: 10,
     paddingHorizontal: 15,
     marginBottom: 10,
+    borderRadius:5,
   },
   tableHeaderText: {
     fontWeight: 'bold',
+    color:"#fff",
+    textAlign:"center",
+    alignItems:"center",
   },
   listItem: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-    paddingVertical: 10,
-    paddingHorizontal: 15,
+    borderBottomColor: '#ccc',
+    alignItems: 'center',   
   },
   listItemText: {
     flex: 1,
@@ -683,7 +690,7 @@ const styles = StyleSheet.create({
     color: 'red',
   },
   listItemEditButton: {
-    backgroundColor: 'blue',
+    backgroundColor: "#0C7C62",
     padding: 5,
     borderRadius: 5,
   },
@@ -783,6 +790,28 @@ const styles = StyleSheet.create({
    alignSelf:"flex-end",
    marginBottom:10,
   },
+  addbtnWrap:{
+    width:100,
+    alignSelf:"flex-end",
+    marginBottom:10,
+    backgroundColor:"#0C7C62",
+    padding:10,
+    borderRadius:5,
+    
+  },
+  addbtntext:{
+    color:"#fff",
+    textAlign:"center",
+   },
+   cancelbtn:{
+    width:100,
+    marginBottom:10,
+    backgroundColor:"rgb(237, 52, 52)",
+    padding:10,
+    borderRadius:5,
+    textAlign:"center",
+    color:"#fff"
+  }
 });
 
 export default UserScreen;
