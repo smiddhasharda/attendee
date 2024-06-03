@@ -77,7 +77,7 @@ const transporter = nodemailer.createTransport({
   try {
     // Create a promise-based pool
     const pool = await mysql.createPool(dbConfig);
-      // await oracledb.initOracleClient({ libDir: process.env.OCI_HOME });
+      await oracledb.initOracleClient({ libDir: process.env.OCI_HOME });
 
     // Set group_concat_max_len
     await pool.query('SET SESSION group_concat_max_len = 4294967295');
@@ -88,7 +88,7 @@ const transporter = nodemailer.createTransport({
     connection.release();
 
 //  Oracle Connection
-    // const viewPool = await oracledb.getConnection(viewConfig);
+    const viewPool = await oracledb.getConnection(viewConfig);
     console.log("Successfully Connected to to Oracle database : ", process.env.VIEW_DATABASE);
 
     // Middleware to authenticate JWT token
