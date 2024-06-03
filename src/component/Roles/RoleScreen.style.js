@@ -34,6 +34,7 @@ import {
       marginBottom:10,
       marginBottom: 10,
     },
+    
     tableHeader: {
       flexDirection: "row",
       justifyContent: "space-between",
@@ -42,26 +43,36 @@ import {
       paddingHorizontal: 15,
       marginBottom: 10,
       borderRadius:5,
+
+  
     },
     tableHeaderText: {
-      fontWeight: "bold",
+      fontSize: 16, // Font size
+      fontWeight: 'bold', // Bold font
+      paddingHorizontal: 5,
       color:"#fff",
       
     },
     listItem: {
-      flexDirection: "row",
-      // justifyContent: "space-between",
-      alignItems: "center",
-      borderBottomWidth: 1,
-      borderBottomColor: "#ddd",
-      paddingVertical: 10,
-      paddingHorizontal: 15,
+      // flexDirection: "row",
+      // // justifyContent: "space-between",
+      // alignItems: "center",
+      // borderBottomWidth: 1,
+      // borderBottomColor: "#ddd",
+      // paddingVertical: 10,
+      // paddingHorizontal: 15,
+     flexDirection: 'row',
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    alignItems: 'center',
     },
     listItemText: {
       flex: 1,
     },
     listItemActiveStatus: {
       color: "green",
+      textAlign: 'center',
     },
     listItemInactiveStatus: {
       color: "red",
