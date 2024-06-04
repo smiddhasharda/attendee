@@ -203,7 +203,6 @@ const windowWidth = Dimensions.get("window").width;
   }, [UserAccess]);
 
    return (
-
     <View style={styles.container}>
       {isBulkuploadInvigilater ?  <Bulkpload handleClose={() => {setIsBulkuploadInvigilater(false),setInvigilatorContainerVisible(false)}} /> : 
         (invigilatorContainerVisible ? (
@@ -279,8 +278,8 @@ const windowWidth = Dimensions.get("window").width;
       <Text style={styles.header}>Invigilator Duty List :</Text>      
       <View style={styles.addWrap}>
         {UserAccess?.create === 1 &&    
-          <Pressable onPress={() => handleAddButton()}>
-            <Text>Add</Text>
+          <Pressable style={styles.addbtnWrap} onPress={() => handleAddButton()}>
+            <Text style={styles.addbtntext}>Add</Text>
           </Pressable>
         }
       </View>
@@ -307,7 +306,9 @@ const windowWidth = Dimensions.get("window").width;
           <Text style={[styles.listItemText, ]}>{item.date}</Text>
           <Text style={[styles.listItemText,]}>{item.shift}</Text>
           <Text style={[styles.listItemText, ]}>{item.duty_status}</Text>    
-          {UserAccess?.update === 1 ? <Pressable style={styles.listItemEditButton} onPress={() => handleEditInvigilator(item)}> <Text style={styles.listItemEditText}><Feather name="edit" size={16} color="white" /></Text> </Pressable> : ' - '}  
+          {UserAccess?.update === 1 ? <Pressable style={styles.listItemEditButton} onPress={() => handleEditInvigilator(item)}>
+           <Text style={styles.listItemEditText}><Feather name="edit" size={16} color="white" /></Text>
+            </Pressable> : ' - '}  
         </View>
         )}
       />
@@ -377,6 +378,7 @@ const windowWidth = Dimensions.get("window").width;
     borderBottomColor: '#ddd',
     paddingVertical: 10,
     paddingHorizontal: 15,
+    textAlign:"center",
   },
   listItemText: {
     flex: 1,
@@ -388,7 +390,7 @@ const windowWidth = Dimensions.get("window").width;
     color: 'red',
   },
   listItemEditButton: {
-    backgroundColor: 'blue',
+    backgroundColor: '#0C7C62',
     padding: 5,
     borderRadius: 5,
   },
@@ -487,6 +489,15 @@ const windowWidth = Dimensions.get("window").width;
    width:100,
    alignSelf:"flex-end",
    marginBottom:10,
+  },
+  addbtnWrap:{
+    width:100,
+    alignSelf:"flex-end",
+    marginBottom:10,
+    backgroundColor:"#0C7C62",
+    padding:10,
+    borderRadius:5,
+    
   },
 });
   

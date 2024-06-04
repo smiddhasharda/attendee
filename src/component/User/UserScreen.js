@@ -523,7 +523,6 @@ const UserScreen = ({userAccess}) => {
 
   const renderRoleList = () =>{
     return(
-      <ScrollView>
         <View>
         <Text style={styles.header}> Role List : </Text>
         <FlatList
@@ -542,7 +541,6 @@ const UserScreen = ({userAccess}) => {
           renderItem={({ item }) => renderRoleCheckboxes(item)}
         />
         </View>
-    </ScrollView>
     )
   }
   useEffect(() => {
@@ -550,7 +548,6 @@ const UserScreen = ({userAccess}) => {
     handleGetRoleList();
   }, [UserAccess]);
     return (
-      <ScrollView>
       <View style={styles.container}>
       {userContainerVisible ? (
         <View style={styles.formContainer}>
@@ -621,8 +618,7 @@ const UserScreen = ({userAccess}) => {
          />
       </View>
       }
-      </View>   
-      </ScrollView>   
+      </View>     
       );
 }
 

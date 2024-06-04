@@ -975,21 +975,19 @@ const StudentInfo = ({ navigation }) => {
                                         </View>
                                         <View style={styles.tdscan}>
                                         <Text style={[ styles.td, styles.tablescan, ]} >
-                                          {alternateCopy ? ( <View style={styles.boxtext}> <Text style={[styles.examname]}> {alternateCopy} </Text> </View>
+                                          {alternateCopy ? ( <Text style={[styles.boxtext,styles.examname]}> {alternateCopy} </Text> 
                                           ) : (
-                                            <View>
+                                            <Text>
                                               <MaterialCommunityIcons name="barcode-scan" onPress={() => startScanning( "Alternate", index, copyIndex ) } size={40} color="black" />
                                               <Text>OR</Text>
                                               {renderCopyInput( "Alternate", index, copyIndex )}
-                                              </View>
+                                              </Text>
                                           )}
                                           </Text>
 
                                         </View>
                                         <Text style={[ styles.td, styles.tableActionBtn, ]} >
-                                            <View>
                                               <MaterialIcons name="delete" size={24} color="red"  onPress={() =>   handleRemoveAlternateCopy(copyIndex, index) }/>
-                                            </View>
                                         </Text>
                                       </View>
                                     )
