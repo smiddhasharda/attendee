@@ -373,19 +373,19 @@ const RoleScreen = ({userAccess}) => {
             ListHeaderComponent={() => (
               <View style={styles.tableHeader}>
                 <Text style={[styles.tableHeaderText, {flex:2} ,{textAlign:"left"}]}>
-                  Module Name
+                  Module  
                 </Text>
-                <Text style={[styles.tableHeaderText,{flex:1} ]}>
+                <Text style={[styles.tableHeaderText,{flex:1} ,{textAlign:"center",}]}>
                   Create
                 </Text>
-                <Text style={[styles.tableHeaderText, {flex:1} ]}>Read</Text>
-                <Text style={[styles.tableHeaderText, {flex:1}]}>
+                <Text style={[styles.tableHeaderText, {flex:1} ,{textAlign:"center"}]}>Read</Text>
+                <Text style={[styles.tableHeaderText, {flex:1},{textAlign:"center"}]}>
                   Update
                 </Text>
-                <Text style={[styles.tableHeaderText,{flex:1} ]}>
+                <Text style={[styles.tableHeaderText,{flex:1},{textAlign:"center"} ]}>
                   Delete
                 </Text>
-                <Text style={[styles.tableHeaderText, {flex:1}]}>
+                <Text style={[styles.tableHeaderText, {flex:1},{textAlign:"center"}]}>
                   Special
                 </Text>
               </View>
@@ -432,7 +432,7 @@ const RoleScreen = ({userAccess}) => {
               <Text style={[styles.listItemText, ]}>
                 {item.roleName}
               </Text>
-              <Text style={[styles.listItemText, ]}>
+              <Text style={[styles.listItemText,]}>
                 {item.description}
               </Text>
               <Pressable

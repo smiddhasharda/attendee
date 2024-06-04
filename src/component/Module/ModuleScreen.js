@@ -12,7 +12,7 @@ import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import styles from "./ModuleScreen.style";
 import { ScrollView } from "react-native-gesture-handler";
-
+import { Ionicons,AntDesign,Feather} from "@expo/vector-icons";
 const ModuleScreen = ({ userAccess }) => {
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 3 );
   const { addToast } = useToast();
@@ -210,7 +210,7 @@ const ModuleScreen = ({ userAccess }) => {
             {moduleData.moduleId ? (
               <View style={styles.buttonContainer}>
                 <Pressable onPress={() => handleUpdateModule()}>
-                  <Text>Update Module</Text>
+                  <Text style={styles.updatebtn}>Update Module</Text>
                 </Pressable>
                 <Pressable onPress={() => handleClose()}>
                   <Text style={styles.cancelbtn}>Cancel</Text>
@@ -221,10 +221,10 @@ const ModuleScreen = ({ userAccess }) => {
             ) : (
               <View style={styles.buttonContainer}>
                 <Pressable onPress={() => handleAddModule()}>
-                  <Text>Add New Module</Text>
+                  <Text numberOfLines={1} style={styles.updatebtn}>Add New Module</Text>
                 </Pressable>
                 <Pressable onPress={() => handleClose()}>
-                  <Text>Cancel</Text>
+                  <Text style={styles.cancelbtn}>Cancel</Text>
                 </Pressable>
                 {/* <Button title="Add New Module" onPress={handleAddModule} />
               <Button title="Cancel" onPress={handleClose} /> */}
@@ -235,9 +235,9 @@ const ModuleScreen = ({ userAccess }) => {
           <View style={styles.modulists}>
             <Text style={styles.header}>Module List:</Text>
               {UserAccess?.create === 1 && (
-              <View style={styles.addbtnWrap}>
+              <View style={{alignItems:"flex-end"}}>
                 <Pressable onPress={() => setModuleContainerVisible(true)}>
-                  <Text style={styles.addbtntext}>Add</Text>
+                  <Text ><Ionicons   name="add-circle-outline" size={35} color="black" /></Text>
                 </Pressable>
                </View>
               )}
@@ -246,26 +246,26 @@ const ModuleScreen = ({ userAccess }) => {
               keyExtractor={(item) => item.PK_ModuleId.toString()}
               ListHeaderComponent={() => (
                 <View style={styles.tableHeader}>
-                  <Text style={[styles.tableHeaderText, { flex: 2 }]}>
-                    Module Name
+                  <Text  numberOfLines={1} style={[styles.tableHeaderText,]}>
+                    Module 
                   </Text>
-                  <Text style={[styles.tableHeaderText, { flex: 3 }]}>
+                  <Text style={[styles.tableHeaderText, ]}>
                     Description
                   </Text>
-                  <Text style={[styles.tableHeaderText, { flex: 1 }]}>
+                  <Text style={[styles.tableHeaderText, ]}>
                     Status
                   </Text>
-                  <Text style={[styles.tableHeaderText, { flex: 1 }]}>
+                  <Text style={[styles.tableHeaderText, ]}>
                     Actions
                   </Text>
                 </View>
               )}
               renderItem={({ item }) => (
                 <View style={styles.listItem}>
-                  <Text style={[styles.listItemText, { flex: 2 }]}>
+                  <Text numberOfLines={1}  style={[styles.listItemText, ]}>
                     {item.moduleName}
                   </Text>
-                  <Text style={[styles.listItemText, { flex: 3 }]}>
+                  <Text style={[styles.listItemText, ]}>
                     {item.description}
                   </Text>
                   <Pressable onPress={() => UserAccess?.update === 1 ? handleModuleStatus(item.PK_ModuleId, item?.isActive) : '' }
@@ -291,7 +291,7 @@ const ModuleScreen = ({ userAccess }) => {
                     }}
                   >
                     {UserAccess?.update === 1 ?    <Pressable   style={styles.listItemEditButton} onPress={() => handleEditModule(item)}>
-                      <Text style={styles.listItemEditText}>Edit</Text>
+                      <Text style={styles.listItemEditText}><Feather name="edit" size={16} color="white" /></Text>
                     </Pressable> : ' - '}                  
                   </View>
                 </View>
