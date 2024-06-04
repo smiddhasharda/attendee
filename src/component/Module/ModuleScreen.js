@@ -4,15 +4,13 @@ import {
   Text,
   TextInput,
   FlatList,
-  StyleSheet,
   Pressable,
 } from "react-native";
 import { insert, fetch, update } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import styles from "./ModuleScreen.style";
-import { ScrollView } from "react-native-gesture-handler";
-import { Ionicons,AntDesign,Feather} from "@expo/vector-icons";
+import { Ionicons,Feather} from "@expo/vector-icons";
 const ModuleScreen = ({ userAccess }) => {
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 3 );
   const { addToast } = useToast();
@@ -186,7 +184,6 @@ const ModuleScreen = ({ userAccess }) => {
   }, [UserAccess]);
 
   return (
-    <ScrollView>
       <View style={styles.container}>
         {moduleContainerVisible ? (
           <View style={styles.formContainer}>
@@ -215,8 +212,6 @@ const ModuleScreen = ({ userAccess }) => {
                 <Pressable onPress={() => handleClose()}>
                   <Text style={styles.cancelbtn}>Cancel</Text>
                 </Pressable>
-                {/* <Button title="Update Module" onPress={handleUpdateModule} />
-              <Button title="Cancel" onPress={handleClose} /> */}
               </View>
             ) : (
               <View style={styles.buttonContainer}>
@@ -226,8 +221,6 @@ const ModuleScreen = ({ userAccess }) => {
                 <Pressable onPress={() => handleClose()}>
                   <Text style={styles.cancelbtn}>Cancel</Text>
                 </Pressable>
-                {/* <Button title="Add New Module" onPress={handleAddModule} />
-              <Button title="Cancel" onPress={handleClose} /> */}
               </View>
             )}
           </View>
@@ -300,7 +293,6 @@ const ModuleScreen = ({ userAccess }) => {
           </View>
         )}
       </View>
-    </ScrollView>
   );
 };
 

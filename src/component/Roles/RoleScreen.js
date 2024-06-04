@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, Text, TextInput, FlatList, Pressable,tableHeader } from "react-native";
+import { View, Text, TextInput, FlatList, Pressable } from "react-native";
 import { insert, fetch, update } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CheckBox from "expo-checkbox";
 import styles from "./RoleScreen.style";
-import { Ionicons,AntDesign,Feather} from "@expo/vector-icons";
-import { ScrollView } from "react-native-gesture-handler";
+import { Ionicons,Feather} from "@expo/vector-icons";
 const RoleScreen = ({userAccess}) => {
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 2 );
   const { addToast } = useToast();
@@ -346,7 +345,6 @@ const RoleScreen = ({userAccess}) => {
   }, [UserAccess]);
 
   return (
-    <ScrollView>
     <View style={styles.container}>
       {roleContainerVisible ? (
         <View style={styles.formContainer}>
@@ -409,7 +407,6 @@ const RoleScreen = ({userAccess}) => {
           <View style={{alignItems:"flex-end"}}>
 
         <Pressable onPress={() => setRoleContainerVisible(true)}>
-                    {/* <Text style={styles.addbtntext}>Add</Text> */}
                     <Ionicons  style={styles.icons} name="add-circle-outline" size={35} color="black" />
                   </Pressable> 
                   </View>
@@ -461,7 +458,6 @@ const RoleScreen = ({userAccess}) => {
         </View>
         }
     </View>
-    </ScrollView>
   );
 };
 
