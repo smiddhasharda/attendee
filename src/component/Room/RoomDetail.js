@@ -173,20 +173,35 @@ function RoomDetail({navigation}) {
         
           </View>
           <ScrollView style={styles.roomNumber}>
-          <View style={[styles.countWrap,]}>
-          <View style={[{flexDirection:"row",}]} >
-             <View style={[styles.countbg1]}>
-             <Text style={styles.count}>10</Text>
-             </View>
-               <Text style={[styles.cotext,]}>Present</Text>
+          <View style={styles.countWrap}>
+            <View style={styles.countMain}>
+              <View style={styles.countbg1}>
+                <Text style={styles.count}>10</Text>
+              </View>
+              <Text style={styles.cotext}>Present</Text>
             </View>
-            <View style={[styles.countbg2]}>
-            <Text>Absent</Text>
+            <View style={styles.countMain}>
+              <View style={styles.countbg2}>
+                <Text style={styles.count}>10</Text>
+              </View>
+              <Text style={styles.cotext}>Absent</Text>
             </View>
-            <View style={[styles.countbg3]}>
-            <Text>Total Count</Text>
+            <View style={styles.countMain}>
+              <View style={styles.countbg3}>
+                <Text style={styles.count}>10</Text>
+              </View>
+              <Text style={styles.cotext}>UFM</Text>
             </View>
-          </View>
+            <View style={styles.countMain}>
+              <View style={styles.countbg4}>
+                <Text style={styles.count}>10</Text>
+              </View>
+              <Text style={styles.cotext}>Total Count</Text>
+            </View>
+        </View>
+
+
+
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : (
@@ -194,7 +209,7 @@ function RoomDetail({navigation}) {
             tempStudentDetails.map((studentData, index) => (
               <Pressable 
                 key={studentData.EMPLID}  // Use a unique identifier from studentData, such as EMPLID
-                onPress={() => UserAccess?.create === 1 ? navigation.navigate("StudentInfo", { room_Nbr: studentData.ROOM_NBR, exam_Dt: studentData.EXAM_DT, catlog_Nbr: studentData.CATALOG_NBR, system_Id: studentData.EMPLID, seat_Nbr: studentData.PTP_SEQ_CHAR, current_Term: studentData.STRM, reportId: presentStudentList?.filter((item) => item.EMPLID === Number(studentData.EMPLID))?.[0]?.PK_Report_Id, userAccess }) : ''}
+                onPress={() => UserAccess?.create === 1 ?  navigation.navigate("StudentInfo", { room_Nbr: studentData.ROOM_NBR ,exam_Dt: studentData.EXAM_DT,catlog_Nbr: studentData.CATALOG_NBR ,system_Id:studentData.EMPLID, seat_Nbr: studentData.PTP_SEQ_CHAR ,startTime: startTime,current_Term:studentData.STRM,reportId: presentStudentList?.filter((item)=>item.EMPLID === Number(studentData.EMPLID))?.[0]?.PK_Report_Id ,userAccess }) : ''}
               >
                 <View style={[styles.box, presentStudentList?.find((item) => item.EMPLID === Number(studentData.EMPLID)) ? styles.activebox : '']} key={studentData.EMPLID}>
                   <View style={styles.boxtext}>
@@ -274,7 +289,7 @@ const styles = StyleSheet.create({
      },
     heading: {
       fontSize: 20,
-      fontWeight: 'bold',
+      fontWeight:"bold",
       marginBottom: 10,
     },
  
@@ -397,30 +412,65 @@ const styles = StyleSheet.create({
       textAlign: "center"
     },
     countWrap:{
-      ontWeight:"bold",
+      fontWeight:"bold",
       flexDirection:"row",
-      justifyContent:"flex-end",
-      alignSelf:"end",
-      justifyContent:"space-between",
-      width:"50%"
+      alignSelf:"flex-end",
+      // width:"50%",
+      // justifyContent:"space-between",
+      
     },
     countbg1:{
-       borderRadius:22,
-       width:35,
-       height:35,
+       borderRadius:5,
+       width:30,
+       height:30,
       //  display: "flex",
        alignItems: "center",
        justifyContent: "center",
        backgroundColor: "#0CB551",
+       
+    },
+    countbg2:{
+      borderRadius:5,
+      width:30,
+      height:30,
+     //  display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: "red",
+    },
+    countbg4:{
+      borderRadius:5,
+      width:30,
+      height:30,
+     //  display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: "grey",
+    },
+    countbg3:{
+      borderRadius:5,
+      width:30,
+      height:30,
+     //  display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: "purple",
+    },
+    countMain:{
+     flexDirection:"row",
+     alignItems:"center",
+     alignSelf:"center",
+     marginRight:10,
+     marginBottom:10,
     },
     count:{
     color:"#fff",
     textAlign:"center",
-
     },
     cotext:{
-      color:"#ccc",
+      color:"#000",
       marginLeft:5,
       fontWeight:600,
     }
   });
+ 
