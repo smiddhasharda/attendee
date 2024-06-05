@@ -80,7 +80,9 @@ const styles = StyleSheet.create({
     padding: [10, 5],
     height: "auto"
   },
- 
+  drawerItemLabel:{
+    // marginLeft:10,
+  }
 });
 
 export default styles;
