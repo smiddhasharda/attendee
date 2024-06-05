@@ -139,7 +139,7 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
     const date = new Date(StartTime);
     const hours = date.getHours();
     const minutes = date.getMinutes().toString().padStart(2, '0'); // Pad minutes with leading 0
-  // console.log(StartTime,date,hours,minutes)
+  
     const amPm = hours >= 12 ? 'PM' : 'AM';
     const adjustedHours = hours % 12 || 12; // Convert to 12-hour format
   
@@ -161,6 +161,7 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
               return (
                 <Pressable onPress={() => handleDateClick(item.EXAM_DT)}>
                   <View style={[styles.dateItem, isActiveItem && styles.activebox]}>
+                    {console.log(new Date (item.EXAM_DT))}
                     <Text style={[styles.dateDay, isActiveItem && styles.activeText]}>{new Date(item.EXAM_DT).toString().split(' ')[0]}</Text>
                     <Text style={[styles.dateNumber, isActiveItem && styles.activeText]}>{new Date(item.EXAM_DT).getDate()}</Text>
                     <Text style={[styles.dateMonth, isActiveItem && styles.activeText]}>{new Date(item.EXAM_DT).toString().split(' ')[1]}</Text>
