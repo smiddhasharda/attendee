@@ -170,8 +170,23 @@ function RoomDetail({navigation}) {
           )}
           
           </View>
+        
           </View>
           <ScrollView style={styles.roomNumber}>
+          <View style={[styles.countWrap,]}>
+          <View style={[{flexDirection:"row",}]} >
+             <View style={[styles.countbg1]}>
+             <Text style={styles.count}>10</Text>
+             </View>
+               <Text style={[styles.cotext,]}>Present</Text>
+            </View>
+            <View style={[styles.countbg2]}>
+            <Text>Absent</Text>
+            </View>
+            <View style={[styles.countbg3]}>
+            <Text>Total Count</Text>
+            </View>
+          </View>
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : (
@@ -380,5 +395,32 @@ const styles = StyleSheet.create({
       alignItems: "center",
       justifyContent: "center",
       textAlign: "center"
+    },
+    countWrap:{
+      ontWeight:"bold",
+      flexDirection:"row",
+      justifyContent:"flex-end",
+      alignSelf:"end",
+      justifyContent:"space-between",
+      width:"50%"
+    },
+    countbg1:{
+       borderRadius:22,
+       width:35,
+       height:35,
+      //  display: "flex",
+       alignItems: "center",
+       justifyContent: "center",
+       backgroundColor: "#0CB551",
+    },
+    count:{
+    color:"#fff",
+    textAlign:"center",
+
+    },
+    cotext:{
+      color:"#ccc",
+      marginLeft:5,
+      fontWeight:600,
     }
   });

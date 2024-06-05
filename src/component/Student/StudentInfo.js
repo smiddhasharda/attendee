@@ -29,6 +29,7 @@ import {
   remove,
   view,
 } from "../../AuthService/AuthService";
+import DropDownPicker from "react-native-dropdown-picker";
 import style from "react-native-datepicker/style";
 
 const StudentInfo = ({ navigation }) => {
@@ -59,7 +60,13 @@ const StudentInfo = ({ navigation }) => {
   const [copyList, setCopyList] = useState([]);
   const [isScanning, setIsScanning] = useState(false);
   const [loading, setLoading] = useState(false);
-
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState(null);
+  const [items, setItems] = useState([
+    { label: 'Present', value: 'Present' },
+    { label: 'Absent', value: 'Absent' },
+    { label: 'UFM', value: 'UFM' },
+  ]);
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
 
@@ -126,14 +133,13 @@ const StudentInfo = ({ navigation }) => {
       : handleAlternateCopyChange(copyNumber, copyIndex, index);
   };
 
-  const renderCopyInput = (copyType, index, copyIndex) => {
-    const isLastAlternateCopy =
-      copyIndex === copiesData[index].alternateCopies.length - 1;
+  const renderCopyInput = (copyType, index, copyIndex,InputStyle) => {
+    console.log(InputStyle)
     return (
       <View style={styles.answerSheetWrap} key={copyIndex}>
-        <View style={{ width: "auto" }} key={copyIndex}>
+        <View r key={copyIndex}>
           <TextInput
-            style={[styles.input]}
+            style={[InputStyle,styles.input]}
             placeholder={`Enter ${copyType + " " + copyIndex + 1} Number`}
             onChangeText={(copyNumber) => setTempNumber(copyNumber)}
           />
@@ -141,13 +147,13 @@ const StudentInfo = ({ navigation }) => {
         </View>
         {/* <> */}
         {tempCopyNumber && (
-          <Pressable
+          <Pressable style={styles.doneWrap}
             onPress={() =>
               handleSaveCopy(copyType, tempCopyNumber, index, copyIndex)
             }
           >
             {/* <Text style={{color:"#fff"}}>Save</Text> */}
-            <MaterialIcons name="done" size={16} color="green" style={styles.saveicon} />
+            <MaterialIcons name="done" size={16} color="#fff" style={styles.saveicon} />
           </Pressable>
         )}
         {/* </>
@@ -518,21 +524,31 @@ const StudentInfo = ({ navigation }) => {
         />
       ) : (
         <View>
-          <View style={styles.studentInfoWrap}>
-            <Text style={styles.infoHeader}>Student Info:</Text>
-            <View style={styles.infoContainer}>
-              <View style={styles.userDetailWrap}>
-                <Image
-                  style={styles.userimage}
-                  source={require("../../local-assets/userimg.jpg")}
-                />
-                <FontAwesome6 name="signature" size={44} color="black" />
-              </View>
-            </View>
+        <View style={[styles.dropdownWrap,]}>
+        <Text style={[styles.label]}>Status </Text>
+            <DropDownPicker
+              open={open}
+              value={value}
+              items={items}
+              setOpen={setOpen}
+              setValue={setValue}
+              style={styles.dropdown}
+              dropDownStyle={{ backgroundColor: "#fafafa"}}
+              dropDownContainerStyle={styles.dropdownContainer} 
+              dropDownMaxHeight={150}
+              dropDownDirection="BOTTOM"
+              containerStyle={styles.rolePicker}
+              listItemContainerStyle={{ height: 30}} 
+              listItemLabelStyle={{ fontSize: 14 }}
+            />
           </View>
+    
           <View style={styles.studentInfoWrap}>
             <Text style={styles.infoHeader}>Basic Info:</Text>
             <View style={styles.infoContainer}>
+            <View style={[styles.userDetailWrap, ]} >
+            <FontAwesome name="user" size={48} color="#ccc"   />
+             </View> 
               <View style={styles.infoItem}>
                 <Text style={styles.label}>Name:</Text>
                 <Text style={styles.value}>
@@ -853,7 +869,7 @@ const StudentInfo = ({ navigation }) => {
             <View
               style={{ flexDirection: "row", justifyContent: "space-between" }}
             >
-              <Text style={styles.addAnsheading}> AnswerSheet </Text>
+              <Text style={styles.addAnsheading}> Answersheet </Text>
               {copiesData?.length < 6 && (
                 <AntDesign style={styles.addicon} name="pluscircleo" size={24} color="black" onPress={handleAddCopy} />
               )}
@@ -885,9 +901,9 @@ const StudentInfo = ({ navigation }) => {
                               styles.boxtext,
                             ]}
                           >
-                            <Text style={[styles.header]}>
+                            {/* <Text style={[styles.header]}>
                               Answersheet Number{" "}
-                            </Text>
+                            </Text> */}
                             <Text style={[styles.examname]}>
                               {copy.mainCopy}
                             </Text>
@@ -901,7 +917,7 @@ const StudentInfo = ({ navigation }) => {
                                   size={20}
                                   color="red"
                                   onPress={() =>
-                                    handleSaveCopy("AnswerSheet", "", index)
+                                    handleSaveCopy("Answersheet", "", index)
                                   }
                                 />
                               )}
@@ -915,9 +931,9 @@ const StudentInfo = ({ navigation }) => {
                               styles.boxtext,
                             ]}
                           >
-                            <Text style={{ fontWeight: "bold" }}>
+                            {/* <Text style={{ fontWeight: "bold" }}>
                               Answersheet {index + 1}
-                            </Text>
+                            </Text> */}
                             <MaterialCommunityIcons
                               name="barcode-scan"
                               onPress={() =>
@@ -927,7 +943,7 @@ const StudentInfo = ({ navigation }) => {
                               color="black"
                             />
                             <Text>OR</Text>
-                            {renderCopyInput("AnswerSheet", index)}
+                            {renderCopyInput("AnswerSheet", index,'')}
                           </View>
                         )}
                       </View>
@@ -952,12 +968,12 @@ const StudentInfo = ({ navigation }) => {
                                 )}                                
                                 <ScrollView>
                                   <View style={styles.tr}>
-                                    <View style={styles.theadcopy}>
+                               
                                       <Text style={styles.thead}>Copy No</Text>
-                                    </View>
-                                    <View style={styles.theadscan}>
+                               
+                              
                                       <Text style={[styles.thead]}>Scan</Text>
-                                    </View>
+                                  
                                     <Text
                                       style={[
                                         styles.thead,
@@ -970,22 +986,22 @@ const StudentInfo = ({ navigation }) => {
                                   {copy.alternateCopies.map(
                                     (alternateCopy, copyIndex) => (
                                       <View style={styles.tr}>
-                                        <View style={styles.tdcopyno}>
+                                     
                                           <Text style={styles.td}>{index+1}.{copyIndex+1}</Text>
-                                        </View>
-                                        <View style={styles.tdscan}>
-                                        <Text style={[ styles.td, styles.tablescan, ]} >
-                                          {alternateCopy ? ( <Text style={[styles.boxtext,styles.examname]}> {alternateCopy} </Text> 
+                                       
+                                       
+                                        <Text style={[ styles.td,  ]} >
+                                          {alternateCopy ? ( <Text > {alternateCopy} </Text> 
                                           ) : (
-                                            <Text>
-                                              <MaterialCommunityIcons name="barcode-scan" onPress={() => startScanning( "Alternate", index, copyIndex ) } size={40} color="black" />
+                                            <Text style={[  styles.tablescan, ]} >
+                                              <MaterialCommunityIcons name="barcode-scan" onPress={() => startScanning( "Alternate", index, copyIndex ) } size={24} color="black" />
                                               <Text>OR</Text>
-                                              {renderCopyInput( "Alternate", index, copyIndex )}
+                                              {renderCopyInput( "Alternate", index, copyIndex,styles.tableinput )}
                                               </Text>
                                           )}
                                           </Text>
 
-                                        </View>
+                                    
                                         <Text style={[ styles.td, styles.tableActionBtn, ]} >
                                               <MaterialIcons name="delete" size={24} color="red"  onPress={() =>   handleRemoveAlternateCopy(copyIndex, index) }/>
                                         </Text>
@@ -1130,7 +1146,6 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     padding: 8,
     marginRight: 10,
-    width: 150,
   },
   addButton: {
     // padding: 10,
@@ -1284,7 +1299,7 @@ const styles = StyleSheet.create({
   saveicon: {
     position: "relative",
     top: 0,
-    right: 8,
+    right: 0,
   },
 
   mainCopyheading: {
@@ -1297,9 +1312,7 @@ const styles = StyleSheet.create({
     width: 90,
     height: 90,
   },
-  userDetailWrap: {
-    alignItems: "center",
-  },
+  
   copiesdataWrap: {
     marginTop: 10,
     backgroundColor: "rgb(240 243 245)",
@@ -1327,6 +1340,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     width: 150,
     textAlign: "center",
+    marginBottom:10,
   },
   supplyblockWrap: {
     // backgroundColor:"#fff",
@@ -1335,6 +1349,7 @@ const styles = StyleSheet.create({
   tr: {
     flexDirection: "row",
     marginBottom: 4,
+    
   },
   thead: {
     flex: 1,
@@ -1358,9 +1373,9 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   tablescan: {
-    alignItems: "center",
-    display: "flex",
-    justifyContent: "space-between",
+    // alignItems: "center",
+    // // display: "flex",
+    // justifyContent: "space-between",
     // flexDirection:"row",
     // justifyContent:"space-between",
   },
@@ -1380,4 +1395,30 @@ const styles = StyleSheet.create({
   tdscan: {
     width: "60%",
   },
+  doneWrap:{
+    backgroundColor:"green",
+    borderRadius:4,
+  },
+  tableinput:{
+    width:"auto",
+  },
+  dropdown:{
+    width:200,
+    minHeight:30,
+    },
+    dropdownContainer:{
+      width:200,
+      padding: [10, 5],
+      height: "auto"
+    },
+    dropdownWrap:{
+      width:"40%",
+      zIndex:1000,
+   
+    },
+    userDetailWrap:{
+      width:"90%",
+      alignItems:"center",
+    }
+
 });
