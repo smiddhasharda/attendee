@@ -220,7 +220,7 @@ const StudentInfo = ({ navigation }) => {
               EXAM_START_TIME: startTime,
               CATALOG_NBR: catlog_Nbr,
               PTP_SEQ_CHAR: seat_Nbr,
-              Status:
+              Attendece_Status:
                 attendanceDetails?.length > 0
                   ? attendanceDetails.PERCENTAGE >= attendanceDetails.PERCENTCHG
                     ? "Eligible"
@@ -340,7 +340,7 @@ const StudentInfo = ({ navigation }) => {
             EXAM_START_TIME: startTime,
             CATALOG_NBR: catlog_Nbr,
             PTP_SEQ_CHAR: seat_Nbr,
-            Status:
+            Attendece_Status:
               attendanceDetails?.length > 0
                 ? attendanceDetails.PERCENTAGE >= attendanceDetails.PERCENTCHG
                   ? "Eligible"
@@ -614,7 +614,7 @@ const StudentInfo = ({ navigation }) => {
                 <Text style={styles.value}>{seat_Nbr}</Text>
               </View>
               <View style={styles.infoItem}>
-                <Text style={styles.label}>Status:</Text>
+                <Text style={styles.label}>Attendece_Status:</Text>
                 <Text style={styles.value}>
                   {attendanceDetails?.length > 0
                     ? attendanceDetails.PERCENTAGE >=
