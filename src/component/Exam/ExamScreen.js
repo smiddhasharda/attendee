@@ -161,7 +161,6 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
               return (
                 <Pressable onPress={() => handleDateClick(item.EXAM_DT)}>
                   <View style={[styles.dateItem, isActiveItem && styles.activebox]}>
-                    {console.log(new Date (item.EXAM_DT))}
                     <Text style={[styles.dateDay, isActiveItem && styles.activeText]}>{new Date(item.EXAM_DT).toString().split(' ')[0]}</Text>
                     <Text style={[styles.dateNumber, isActiveItem && styles.activeText]}>{new Date(item.EXAM_DT).getDate()}</Text>
                     <Text style={[styles.dateMonth, isActiveItem && styles.activeText]}>{new Date(item.EXAM_DT).toString().split(' ')[1]}</Text>
@@ -221,7 +220,7 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
           renderItem={({ item, index }) => (
             <Pressable
               key={index}
-              onPress={() => UserAccess?.create === 1 ? navigation.navigate("RoomDetail", { room_Nbr: item.ROOM_NBR, exam_Dt: item.EXAM_DT, startTime: item.EXAM_START_TIME, userAccess},) : null}
+              onPress={() => UserAccess?.create === 1 ? navigation.navigate("RoomDetail", { room_Nbr: item.ROOM_NBR, exam_Dt: item.EXAM_DT, startTime: item.EXAM_START_TIME, userAccess}) : null}
             >
                 <View style={[styles.box,styles.boxTextWrap]}>
                   <Text style={styles.examName}>{item.ROOM_NBR}</Text>
