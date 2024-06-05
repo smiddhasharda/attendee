@@ -186,7 +186,7 @@ const StudentInfo = ({ navigation }) => {
     try {
       const CopyEmptyValues = copiesData?.length > 0 ? copiesData.some(data => data.mainCopy === "" || data.alternateCopies.includes("")) : true;
       if(CopyEmptyValues){
-        addToast("Please Fill CopyData Fierst!", "error");
+        addToast("Please Fill CopyData First!", "error");
       }
       else{
         const authToken = await checkAuthToken();    
@@ -303,7 +303,7 @@ const StudentInfo = ({ navigation }) => {
     try {
       const CopyEmptyValues = copiesData?.length > 0 ? copiesData.some(data => data.mainCopy === "" || data.alternateCopies.includes("")) : true;
       if(CopyEmptyValues){
-        addToast("Please Fill CopyData Fierst!", "error");
+        addToast("Please Fill CopyData First!", "error");
       }
       else{
       const authToken = await checkAuthToken();

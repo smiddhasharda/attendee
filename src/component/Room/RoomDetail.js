@@ -176,25 +176,25 @@ function RoomDetail({navigation}) {
           <View style={styles.countWrap}>
             <View style={styles.countMain}>
               <View style={styles.countbg1}>
-                <Text style={styles.count}>10</Text>
+                <Text style={styles.count}>{presentStudentList?.length || "0"}</Text>
               </View>
               <Text style={styles.cotext}>Present</Text>
             </View>
-            <View style={styles.countMain}>
+            {/* <View style={styles.countMain}>
               <View style={styles.countbg2}>
                 <Text style={styles.count}>10</Text>
               </View>
               <Text style={styles.cotext}>Absent</Text>
-            </View>
-            <View style={styles.countMain}>
+            </View> */}
+            {/* <View style={styles.countMain}>
               <View style={styles.countbg3}>
                 <Text style={styles.count}>10</Text>
               </View>
               <Text style={styles.cotext}>UFM</Text>
-            </View>
+            </View> */}
             <View style={styles.countMain}>
               <View style={styles.countbg4}>
-                <Text style={styles.count}>10</Text>
+                <Text style={styles.count}>{studentDetails?.length || "0"}</Text>
               </View>
               <Text style={styles.cotext}>Total Count</Text>
             </View>
