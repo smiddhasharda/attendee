@@ -1,23 +1,57 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, Text, StyleSheet, ScrollView, TextInput, Pressable,ActivityIndicator ,Image} from "react-native";
-import { Ionicons, FontAwesome, AntDesign,MaterialCommunityIcons ,MaterialIcons,Entypo,FontAwesome6} from "@expo/vector-icons";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TextInput,
+  Pressable,
+  ActivityIndicator,
+  Image,
+} from "react-native";
+import {
+  Ionicons,
+  FontAwesome,
+  AntDesign,
+  MaterialCommunityIcons,
+  MaterialIcons,
+  Entypo,
+  FontAwesome6,
+} from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import CodeScanner from "../../globalComponent/CodeScanner/CodeScanner";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { insert, fetch, update,remove,view } from "../../AuthService/AuthService";
+import {
+  insert,
+  fetch,
+  update,
+  remove,
+  view,
+} from "../../AuthService/AuthService";
 import style from "react-native-datepicker/style";
 
-const StudentInfo = ({navigation}) => {
+const StudentInfo = ({ navigation }) => {
   const route = useRoute();
-  const { addToast  } = useToast();
+  const { addToast } = useToast();
   const [studentDetails, setStudentDetails] = useState({});
   const [courseDetails, setCourseDetails] = useState({});
   const [attendanceDetails, setAttendanceDetails] = useState({});
-  const { room_Nbr, catlog_Nbr, system_Id, seat_Nbr, exam_Dt, startTime, reportId, userAccess,current_Term } = route.params;
-  const UserAccess = userAccess?.module?.find((item)=> item?.FK_ModuleId === 6);
-  const [copiesData, setCopiesData] = useState([
-  ]);
+  const {
+    room_Nbr,
+    catlog_Nbr,
+    system_Id,
+    seat_Nbr,
+    exam_Dt,
+    startTime,
+    reportId,
+    userAccess,
+    current_Term,
+  } = route.params;
+  const UserAccess = userAccess?.module?.find(
+    (item) => item?.FK_ModuleId === 6
+  );
+  const [copiesData, setCopiesData] = useState([]);
   const [tempCopyNumber, setTempNumber] = useState("");
   const [mainCopyIndex, setMainCopyIndex] = useState("");
   const [alternateCopyIndex, setAlternateCopyIndex] = useState("");
@@ -30,12 +64,12 @@ const StudentInfo = ({navigation}) => {
     const authToken = await AsyncStorage.getItem("authToken");
 
     if (!authToken) {
-      addToast ("Authentication token not available", "error");
+      addToast("Authentication token not available", "error");
       throw new Error("Authentication token not available");
     }
 
     return authToken;
-  }, [addToast ]);
+  }, [addToast]);
 
   const handleMainCopyChange = (copyNumber, index) => {
     const updatedCopies = [...copiesData];
@@ -92,49 +126,53 @@ const StudentInfo = ({navigation}) => {
       : handleAlternateCopyChange(copyNumber, copyIndex, index);
   };
 
-  const renderCopyInput = (copyType, index, copyIndex) => {
-    const isLastAlternateCopy =
-      copyIndex === copiesData[index].alternateCopies.length - 1;
+  const renderCopyInput = (copyType, index, copyIndex,InputStyle) => {
+    console.log(InputStyle)
     return (
-      <View style= {styles.answerSheetWrap} key={copyIndex}>
-   
-      <View style={{width:"auto",}} key={copyIndex}>
-      <TextInput
-        style={[styles.input ]}
-        placeholder={`Enter ${copyType + ' ' + copyIndex + 1} Number`}
-          onChangeText={(copyNumber) => setTempNumber(copyNumber)}
-               
-   />
-       {/* <MaterialIcons name="done" size={24} color="green" style={styles.righticon}/> */}
-      </View>
-      {/* <> */}
-      {tempCopyNumber && (
-        
-                <Pressable  onPress={() => handleSaveCopy(copyType, tempCopyNumber, index, copyIndex) } >
-                  {/* <Text style={{color:"#fff"}}>Save</Text> */}
-                  <MaterialIcons name="done" size={16} color="green" style={styles.saveicon} />
-                </Pressable>
-              )}
-              {/* </>
+      <View style={styles.answerSheetWrap} key={copyIndex}>
+        <View r key={copyIndex}>
+          <TextInput
+            style={[InputStyle,styles.input]}
+            placeholder={`Enter ${copyType + " " + copyIndex + 1} Number`}
+            onChangeText={(copyNumber) => setTempNumber(copyNumber)}
+          />
+          {/* <MaterialIcons name="done" size={24} color="green" style={styles.righticon}/> */}
+        </View>
+        {/* <> */}
+        {tempCopyNumber && (
+          <Pressable style={styles.doneWrap}
+            onPress={() =>
+              handleSaveCopy(copyType, tempCopyNumber, index, copyIndex)
+            }
+          >
+            {/* <Text style={{color:"#fff"}}>Save</Text> */}
+            <MaterialIcons name="done" size={16} color="#fff" style={styles.saveicon} />
+          </Pressable>
+        )}
+        {/* </>
               <> */}
-      {copyType === "Alternate" && isLastAlternateCopy && (
+        {/* {copyType === "Alternate" && isLastAlternateCopy && (
           <Pressable
             style={styles.removeButton}
             onPress={() => handleRemoveAlternateCopy(copyIndex, index)}
           >
             <Text style={styles.addButtonText}>
-              <Entypo name="squared-cross" color="red" size={20} alignItems="center" /> 
+              <Entypo
+                name="squared-cross"
+                color="red"
+                size={20}
+                alignItems="center"
+              />
             </Text>
           </Pressable>
-        )}
+        )} */}
         {/* </> */}
       </View>
     );
   };
-
   const handleCancel = () => {
     setIsScanning(false);
-    navigation.setOptions({ headerShown: true});
+    navigation.setOptions({ headerShown: true });
     setTempCopyType("");
     setMainCopyIndex("");
     setAlternateCopyIndex("");
@@ -142,79 +180,89 @@ const StudentInfo = ({navigation}) => {
 
   const startScanning = (copyType, index, copyIndex) => {
     setIsScanning(true);
-    navigation.setOptions({ headerShown: false});
+    navigation.setOptions({ headerShown: false });
     setTempCopyType(copyType);
     setMainCopyIndex(index);
     setAlternateCopyIndex(copyIndex);
   };
 
+ 
+
   const handleStudentInfoSubmit = async () => {
     try {
-      const authToken = await checkAuthToken();
-      const response = await insert(
-        {
-          operation: "insert",
-          tblName: "tbl_report_master",
-          data: {
-            EMPLID: studentDetails.EMPLID,
-            NAME_FORMAL: studentDetails.NAME_FORMAL,
-            STRM: studentDetails.STRM,
-            ADM_APPL_NBR: studentDetails.ADM_APPL_NBR,
-            DESCR: studentDetails.DESCR,
-            DESCR2: studentDetails.DESCR2,
-            DESCR3: studentDetails.DESCR3,
-            EXAM_DT: exam_Dt,
-            ROOM_NBR: room_Nbr,
-            EXAM_START_TIME: startTime,
-            CATALOG_NBR: catlog_Nbr,
-            PTP_SEQ_CHAR: seat_Nbr,
-            Status:attendanceDetails?.length > 0 ?
-              (attendanceDetails.PERCENTAGE >= attendanceDetails.PERCENTCHG
-                ? "Eligible"
-                : "Debarred") : "Not Defined",
-            SU_PAPER_ID: courseDetails.SU_PAPER_ID,
-            DESCR100: courseDetails.DESCR100,
-          },
-          conditionString: "",
-          checkAvailability: "",
-          customQuery: "",
-        },
-        authToken
-      );
-
-      if (response) {
-        const studentCopyWithId = copiesData.map((item) => {
-          let newItem = {
-            FK_ReportId: response?.data?.insertId,
-            copyNumber: item.mainCopy,
-            EMPLID: studentDetails.EMPLID,
-          };
-          item.alternateCopies.forEach((copy, index) => {
-            newItem[`alternateCopyNumber${index + 1}`] = copy;
-          });
-          return newItem;
-        });
-        const NewResponse = await insert(
+      const CopyEmptyValues = copiesData?.length > 0 ? copiesData.some(data => data.mainCopy === "" || data.alternateCopies.includes("")) : true;
+      if(CopyEmptyValues){
+        addToast("Please Fill CopyData Fierst!", "error");
+      }
+      else{
+        const authToken = await checkAuthToken();    
+        const response = await insert(
           {
             operation: "insert",
-            tblName: "tbl_copy_master",
-            data: studentCopyWithId,
+            tblName: "tbl_report_master",
+            data: {
+              EMPLID: studentDetails.EMPLID,
+              NAME_FORMAL: studentDetails.NAME_FORMAL,
+              STRM: studentDetails.STRM,
+              ADM_APPL_NBR: studentDetails.ADM_APPL_NBR,
+              DESCR: studentDetails.DESCR,
+              DESCR2: studentDetails.DESCR2,
+              DESCR3: studentDetails.DESCR3,
+              EXAM_DT: exam_Dt,
+              ROOM_NBR: room_Nbr,
+              EXAM_START_TIME: startTime,
+              CATALOG_NBR: catlog_Nbr,
+              PTP_SEQ_CHAR: seat_Nbr,
+              Status:
+                attendanceDetails?.length > 0
+                  ? attendanceDetails.PERCENTAGE >= attendanceDetails.PERCENTCHG
+                    ? "Eligible"
+                    : "Debarred"
+                  : "Not Defined",
+              SU_PAPER_ID: courseDetails.SU_PAPER_ID,
+              DESCR100: courseDetails.DESCR100,
+            },
             conditionString: "",
             checkAvailability: "",
             customQuery: "",
           },
           authToken
         );
-        if (NewResponse) {
-          addToast ("Student Details Add Successful", "success");
-          navigation.navigate("RoomDetail", {
-            room_Nbr: room_Nbr,
-            exam_Dt: exam_Dt,
-            startTime: startTime,
-            navigation:navigation
+  
+        if (response) {
+          const studentCopyWithId = copiesData.map((item) => {
+            let newItem = {
+              FK_ReportId: response?.data?.insertId,
+              copyNumber: item.mainCopy,
+              EMPLID: studentDetails.EMPLID,
+            };
+            item.alternateCopies.forEach((copy, index) => {
+              newItem[`alternateCopyNumber${index + 1}`] = copy;
+            });
+            return newItem;
           });
+          const NewResponse = await insert(
+            {
+              operation: "insert",
+              tblName: "tbl_copy_master",
+              data: studentCopyWithId,
+              conditionString: "",
+              checkAvailability: "",
+              customQuery: "",
+            },
+            authToken
+          );
+          if (NewResponse) {
+            addToast("Student Details Add Successful", "success");
+            navigation.navigate("RoomDetail", {
+              room_Nbr: room_Nbr,
+              exam_Dt: exam_Dt,
+              startTime: startTime,
+              navigation: navigation,
+            });
+          }
         }
-      }
+      }   
     } catch (error) {
       handleAuthErrors(error);
     }
@@ -262,6 +310,11 @@ const StudentInfo = ({navigation}) => {
 
   const handleStudentInfoUpdate = async () => {
     try {
+      const CopyEmptyValues = copiesData?.length > 0 ? copiesData.some(data => data.mainCopy === "" || data.alternateCopies.includes("")) : true;
+      if(CopyEmptyValues){
+        addToast("Please Fill CopyData Fierst!", "error");
+      }
+      else{
       const authToken = await checkAuthToken();
       const response = await update(
         {
@@ -281,10 +334,11 @@ const StudentInfo = ({navigation}) => {
             CATALOG_NBR: catlog_Nbr,
             PTP_SEQ_CHAR: seat_Nbr,
             Status:
-            attendanceDetails?.length > 0 ?
-              (attendanceDetails.PERCENTAGE >= attendanceDetails.PERCENTCHG
-                ? "Eligible"
-                : "Debarred") : "Not Defined",
+              attendanceDetails?.length > 0
+                ? attendanceDetails.PERCENTAGE >= attendanceDetails.PERCENTCHG
+                  ? "Eligible"
+                  : "Debarred"
+                : "Not Defined",
             SU_PAPER_ID: courseDetails.SU_PAPER_ID,
             DESCR100: courseDetails.DESCR100,
           },
@@ -300,14 +354,14 @@ const StudentInfo = ({navigation}) => {
           {
             operation: "delete",
             tblName: "tbl_copy_master",
-            data: '',
+            data: "",
             conditionString: `PK_CopyId IN (${copyList})`,
-            checkAvailability: '',
+            checkAvailability: "",
             customQuery: "",
           },
           authToken
         );
-        if(DeleteResponse){
+        if (DeleteResponse) {
           const studentCopyWithId = copiesData.map((item) => {
             let newItem = {
               FK_ReportId: reportId,
@@ -331,16 +385,17 @@ const StudentInfo = ({navigation}) => {
             authToken
           );
           if (NewResponse) {
-            addToast ("Student Details Update Successful", "success");
+            addToast("Student Details Update Successful", "success");
             navigation.navigate("RoomDetail", {
               room_Nbr: room_Nbr,
               exam_Dt: exam_Dt,
               startTime: startTime,
-              navigation:navigation
+              navigation: navigation,
             });
           }
         }
-        }
+      }
+    }
     } catch (error) {
       handleAuthErrors(error);
     }
@@ -349,16 +404,16 @@ const StudentInfo = ({navigation}) => {
   const handleAuthErrors = (error) => {
     switch (error.message) {
       case "Invalid credentials":
-        addToast ("Invalid authentication credentials", "error");
+        addToast("Invalid authentication credentials", "error");
         break;
       case "Data already exists":
-        addToast ("Student Info with the same name already exists", "error");
+        addToast("Student Info with the same name already exists", "error");
         break;
       case "No response received from the server":
-        addToast ("No response received from the server", "error");
+        addToast("No response received from the server", "error");
         break;
       default:
-        addToast ("Student Info Operation Failed", "error");
+        addToast("Student Info Operation Failed", "error");
     }
   };
 
@@ -369,10 +424,10 @@ const StudentInfo = ({navigation}) => {
         {
           operation: "fetch",
           tblName: "PS_S_PRD_STDNT_VW",
-          data: '',
+          data: "",
           conditionString: `EMPLID = '${system_Id}'`,
-          checkAvailability: '',
-          customQuery: ''
+          checkAvailability: "",
+          customQuery: "",
         },
         authToken
       );
@@ -392,10 +447,10 @@ const StudentInfo = ({navigation}) => {
         {
           operation: "custom",
           tblName: "PS_S_PRD_EX_TME_VW",
-          data: '',
-          conditionString: '',
-          checkAvailability: '',
-          customQuery: `SELECT DISTINCT CATALOG_NBR, DESCR100 FROM PS_S_PRD_EX_TME_VW WHERE CATALOG_NBR = '${catlog_Nbr}'`
+          data: "",
+          conditionString: "",
+          checkAvailability: "",
+          customQuery: `SELECT DISTINCT CATALOG_NBR, DESCR100 FROM PS_S_PRD_EX_TME_VW WHERE CATALOG_NBR = '${catlog_Nbr}'`,
         },
         authToken
       );
@@ -415,15 +470,15 @@ const StudentInfo = ({navigation}) => {
         {
           operation: "custom",
           tblName: "PS_S_PRD_CT_ATT_VW",
-          data: '',
-          conditionString: '',
-          checkAvailability: '',
-          customQuery: `SELECT DISTINCT PS_S_PRD_CT_ATT_VW.PERCENTAGE,PS_S_PRD_TRS_AT_VW.PERCENTCHG FROM PS_S_PRD_CT_ATT_VW JOIN PS_S_PRD_TRS_AT_VW ON PS_S_PRD_TRS_AT_VW.EMPLID = PS_S_PRD_CT_ATT_VW.EMPLID WHERE PS_S_PRD_CT_ATT_VW.EMPLID = '${system_Id}' AND PS_S_PRD_CT_ATT_VW.CATALOG_NBR = '${catlog_Nbr}' AND PS_S_PRD_CT_ATT_VW.STRM = '${current_Term}'`
-        // customQuery: `Select * from PS_S_PRD_CT_ATT_VW where EMPLID Like '%20232037%' `
+          data: "",
+          conditionString: "",
+          checkAvailability: "",
+          customQuery: `SELECT DISTINCT PS_S_PRD_CT_ATT_VW.PERCENTAGE,PS_S_PRD_TRS_AT_VW.PERCENTCHG FROM PS_S_PRD_CT_ATT_VW JOIN PS_S_PRD_TRS_AT_VW ON PS_S_PRD_TRS_AT_VW.EMPLID = PS_S_PRD_CT_ATT_VW.EMPLID WHERE PS_S_PRD_CT_ATT_VW.EMPLID = '${system_Id}' AND PS_S_PRD_CT_ATT_VW.CATALOG_NBR = '${catlog_Nbr}' AND PS_S_PRD_CT_ATT_VW.STRM = '${current_Term}'`,
+          // customQuery: `Select * from PS_S_PRD_CT_ATT_VW where EMPLID Like '%20232037%' `
         },
         authToken
       );
-      if (response) {        
+      if (response) {
         setAttendanceDetails(response?.data?.[0] || []);
         setLoading(false);
       }
@@ -432,44 +487,57 @@ const StudentInfo = ({navigation}) => {
       handleAuthErrors(error);
     }
   };
-  const fetchData = async() => {
-      setLoading(true);
-     await handleGetStudentInfo();
-     await handleGetStudentCouseInfo();
-     await handleGetStudentAttendenceInfo();
-     await reportId ? handleGetCopyData() : '';
-}
-  
+  const fetchData = async () => {
+    setLoading(true);
+    await handleGetStudentInfo();
+    await handleGetStudentCouseInfo();
+    await handleGetStudentAttendenceInfo();
+    (await reportId) ? handleGetCopyData() : "";
+  };
 
   useEffect(() => {
     fetchData();
   }, [UserAccess]);
 
-  return (
-    loading ? (
-      <ActivityIndicator size="large" color="#0000ff" />
-    ) : (
+  return loading ? (
+    <ActivityIndicator size="large" color="#0000ff" />
+  ) : (
     <ScrollView contentContainerStyle={styles.container}>
       {isScanning ? (
-        <CodeScanner onScannedData={(data) => handleScanBarcode( data, tempCopyType, mainCopyIndex, alternateCopyIndex ) } onCancel={handleCancel} />
+        <CodeScanner
+          onScannedData={(data) =>
+            handleScanBarcode(
+              data,
+              tempCopyType,
+              mainCopyIndex,
+              alternateCopyIndex
+            )
+          }
+          onCancel={handleCancel}
+        />
       ) : (
         <View>
-        <View style={styles.studentInfoWrap} >
-        <Text style={styles.infoHeader}>Student Info:</Text>
-        <View style={styles.infoContainer}> 
-         <View style={styles.userDetailWrap}>
-           <Image  style={styles.userimage} source={require("../../local-assets/userimg.jpg")} />
-           <FontAwesome6 name="signature" size={44} color="black" />
-         </View>
-        </View>
-
-        </View>
+          <View style={styles.studentInfoWrap}>
+            <Text style={styles.infoHeader}>Student Info:</Text>
+            <View style={styles.infoContainer}>
+              <View style={styles.userDetailWrap}>
+                <Image
+                  style={styles.userimage}
+                  source={require("../../local-assets/userimg.jpg")}
+                />
+                <FontAwesome6 name="signature" size={44} color="black" />
+              </View>
+            </View>
+          </View>
           <View style={styles.studentInfoWrap}>
             <Text style={styles.infoHeader}>Basic Info:</Text>
             <View style={styles.infoContainer}>
               <View style={styles.infoItem}>
                 <Text style={styles.label}>Name:</Text>
-                <Text style={styles.value}> {studentDetails.NAME_FORMAL || ""} </Text>
+                <Text style={styles.value}>
+                  {" "}
+                  {studentDetails.NAME_FORMAL || ""}{" "}
+                </Text>
               </View>
               <View style={styles.infoItem}>
                 <Text style={styles.label}>System Id:</Text>
@@ -499,7 +567,7 @@ const StudentInfo = ({navigation}) => {
                   {studentDetails.STRM?.split("")?.[3] || ""}
                 </Text>
               </View>
-              </View>
+            </View>
           </View>
           <View style={styles.studentInfoWrap}>
             <Text style={styles.infoHeader}>Course Info:</Text>
@@ -531,230 +599,428 @@ const StudentInfo = ({navigation}) => {
               <View style={styles.infoItem}>
                 <Text style={styles.label}>Status:</Text>
                 <Text style={styles.value}>
-                  {attendanceDetails?.length > 0 ? (attendanceDetails.PERCENTAGE >= attendanceDetails.PERCENTCHG ? "Eligible" : "Debarred") : "Not Defined"}
+                  {attendanceDetails?.length > 0
+                    ? attendanceDetails.PERCENTAGE >=
+                      attendanceDetails.PERCENTCHG
+                      ? "Eligible"
+                      : "Debarred"
+                    : "Not Defined"}
                 </Text>
               </View>
             </View>
           </View>
 
           {/* -------------------------------------------------Amswersheet main code---------------------------------------------- */}
-          <View>
-               <View style={{flexDirection:"row" , justifyContent:"space-between"}}>
-              <Text style={styles.addAnsheading}> AnswerSheet </Text>
-              {copiesData?.length  < 6 &&   <AntDesign style={styles.addicon} name="pluscircleo" size={24} color="black" onPress={handleAddCopy} />}
-              </View>
-          {copiesData?.length > 0 ? (copiesData.map((copy, index) => (
-            <View key={copy.id || index}> 
-            <View style={styles.inputContainer}>
-              <Pressable
-                    onPress={() => handleRemoveCopy(index)}
-                  >
-                    <Text style={styles.addButtonText}>           
-                    <AntDesign  name="delete" size={24} alignItems="flex-end" color="red" />
-                    </Text>
-                  </Pressable>
-              </View>
-              <View>          
-              <View style={[styles.tablewrap, ]}>
-           <View style={styles.mainCopyheading}>
-              <Text style={{fontWeight:"bold", padding:5}} >Main Copy</Text>
-              <View style={styles.inputContainer}>
-              <Pressable
-                    onPress={() => handleRemoveCopy(index)}
-                  >
-                    <Text style={styles.crossiconWrap}>           
-                    {/* <AntDesign  name="delete" size={24} alignItems="flex-end" color="red" /> */}
-                    <Entypo name="cross" size={24} color="#fff" />
-                    </Text>
-                  </Pressable>
-              </View>
-              </View>
-                <View >
-                  {copy.mainCopy ? (
-                    <View key={index} style={[styles.sheetDetails,styles.box,styles.boxtext]}>              
-                    <Text style={[ styles.header]}>Answersheet Number {index + 1}</Text>
-                      <Text style={[styles.examname]}>{copy.mainCopy}</Text>
-                      <View style={styles.iconsWrap}>
-                      {!(
-                        copy.alternateCopies.length > 0 ||
-                        copy.alternateCopies?.includes("")
-                      ) && (
-                        <Entypo name="circle-with-cross" size={20} color="red" onPress={() => handleSaveCopy("AnswerSheet", "", index)} />  
-                      )}
-                      </View>
-                    </View>
-                  ) : (
-                  <View style={[styles.sheetDetails,styles.box,styles.boxtext]}>
-                  <Text style={{fontWeight:"bold"}}>Answersheet {index + 1}</Text>
-                   <MaterialCommunityIcons name="barcode-scan" onPress={() => startScanning("AnswerSheet", index)} size={40} color="black" />
-                      <Text>OR</Text>
-                      {renderCopyInput("AnswerSheet", index)}
-                    </View>
-                  )}
-                   </View>
-                  
-                 {/* <> */}
-                  {copy.mainCopy && (
-                  <View>
-                    {copy.alternateCopies.map((alternateCopy, copyIndex) =>
-                      alternateCopy ? ( 
-                        <View>
-                           <View key={index} style={[styles.box]}>
-                           <View style={{flexDirection:"row",justifyContent:"space-between"}}>
-                           <Text style={[ styles.header]}>
-                            Alternate Copy {copyIndex + 1}
-                          </Text>
-                            <View style={styles.boxtext} >
-                              <Text style={[styles.examname]}>{alternateCopy}</Text>
-                              <View >
-                              {copyIndex === copy.alternateCopies.length - 1 && (
-                                <View >
-                                <Entypo name="circle-with-cross"  size={20} color="red"  marginLeft="10px"  onPress={() => handleSaveCopy( "Alternate", "", index, copyIndex ) }/>
-                          </View>
-                          )}        
-                              </View>
-                            </View>   
-                            </View>        
-                        </View>
-                        {(copyIndex === copy.alternateCopies.length - 1 && copy.alternateCopies.length < 6) && (
-                                <Pressable
-                                style={styles.submitButton} 
-                                onPress={() => handleAddAlternateCopy(index)}   
-                              >
-                                <Text style={{color:"#fff" ,textAlign:"center" ,alignItems:"center"}}>Add SupplySheet</Text>
-                                </Pressable>
-                              )}  
-                              </View>
-                      ) : (
-                        <View style={styles.supplysheet}>
-                        <Text style={{fontWeight:"bold"}}>Supply </Text>
-                      <MaterialCommunityIcons name="barcode-scan" onPress={() =>  startScanning("Alternate", index, copyIndex)} size={40} color="black" />
-                      <Text>OR</Text>
-                        {renderCopyInput("Alternate", index, copyIndex)}
-                        </View>
-                      )
-                    )}
-                    {copy.alternateCopies.length === 0 && (
-                       <Pressable
-                       style={styles.submitButton} 
-                       onPress={() => handleAddAlternateCopy(index)}   
-                     >
-                       <Text style={{color:"#fff"}}>Add SupplySheet</Text>
-                       </Pressable>
-                    )}
-                  </View>
-                )}
-                {/* </> */}
-              </View>
-              </View>
-              {/* {(copy.mainCopy.length > 0 && index === copiesData.length - 1 ) &&
-            (<Pressable style={styles.addButton} onPress={handleAddCopy}>
-              <Text style={styles.addButtonText}> Add Copy</Text>
-            </Pressable>) } */}
-            </View>
-          ))) :    (
-          <Text style={[styles.tablewrap,styles.nodatadisplay]}>There is no answersheet added yet!</Text>) }
-          <View style={styles.buttonWrap}>
-            <Pressable
-              style={styles.submitButton}
-              onPress={ reportId ? handleStudentInfoUpdate: handleStudentInfoSubmit }
+          {/* <View>
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-between" }}
             >
-              <Text style={styles.addButtonText}> {reportId ? "Update" : "Submit"}</Text>
-            </Pressable>
-            <Pressable style={styles.submitButton} onPress={() => navigation.goBack()} > 
-            <Text style={styles.addButtonText}>Cancel</Text>
-            </Pressable>
-          </View>
-          </View>
-
-          {/* --------------------------------------------------AnsweSheet duplicate code-------------------------------------------- */}
-        <View>
-              <View style={{flexDirection:"row" , justifyContent:"space-between"}}>
-                  <Text style={styles.addAnsheading}> AnswerSheet </Text>
-                <AntDesign style={styles.addicon} name="pluscircleo" size={24} color="black" />
-              </View>
-              <View style={styles.cpoiesmainblock}>  
-                    {/* <Text style={{fontWeight:"bold"}}>Main Copy</Text> */}
-                        {/* <View style={styles.copiesdataWrap}>
-                          <View style={styles.mainWrap}>
-                            <Text style={{float:"right" ,fontWeight:"600"}}>879467588</Text>                    
-                            <MaterialCommunityIcons name="barcode-scan" size={40} color="black" />
-                            <Text>OR</Text>
-                            <View style= {styles.answerSheetWrap} >
-                            <View style={{width:"auto",}}>
-                            <TextInput
-                              style={[styles.input ]}
-                              placeholder={`Enter Copy Number`}
-                                onChangeText={(copyNumber) => setTempNumber(copyNumber)}
-                                    
+              <Text style={styles.addAnsheading}> AnswerSheet </Text>
+              {copiesData?.length < 6 && (
+                <AntDesign
+                  style={styles.addicon}
+                  name="pluscircleo"
+                  size={24}
+                  color="black"
+                  onPress={handleAddCopy}
+                />
+              )}
+            </View>
+            {copiesData?.length > 0 ? (
+              copiesData.map((copy, index) => (
+                <View key={copy.id || index}>
+                  <View style={styles.inputContainer}>
+                    <Pressable onPress={() => handleRemoveCopy(index)}>
+                      <Text style={styles.addButtonText}>
+                        <AntDesign
+                          name="delete"
+                          size={24}
+                          alignItems="flex-end"
+                          color="red"
                         />
-                        
-                             
-                            </View> 
-                            <View style={styles.iconsWrap}>     
-                                <MaterialIcons name="done" size={20} color="green" style={styles.saveicon} />
-                                 <MaterialIcons name="delete" size={20} color="red" /> 
-                            </View>   
+                      </Text>
+                    </Pressable>
+                  </View>
+                  <View>
+                    <View style={[styles.tablewrap]}>
+                      <View style={styles.mainCopyheading}>
+                        <Text style={{ fontWeight: "bold", padding: 5 }}>
+                          Main Copy
+                        </Text>
+                        <View style={styles.inputContainer}>
+                          <Pressable onPress={() => handleRemoveCopy(index)}>
+                            <Text style={styles.crossiconWrap}>
+                              <Entypo name="cross" size={24} color="#fff" />
+                            </Text>
+                          </Pressable>
+                        </View>
+                      </View>
+                      <View>
+                        {copy.mainCopy ? (
+                          <View
+                            key={index}
+                            style={[
+                              styles.sheetDetails,
+                              styles.box,
+                              styles.boxtext,
+                            ]}
+                          >
+                            <Text style={[styles.header]}>
+                              Answersheet Number {index + 1}
+                            </Text>
+                            <Text style={[styles.examname]}>
+                              {copy.mainCopy}
+                            </Text>
+                            <View style={styles.iconsWrap}>
+                              {!(
+                                copy.alternateCopies.length > 0 ||
+                                copy.alternateCopies?.includes("")
+                              ) && (
+                                <Entypo
+                                  name="circle-with-cross"
+                                  size={20}
+                                  color="red"
+                                  onPress={() =>
+                                    handleSaveCopy("AnswerSheet", "", index)
+                                  }
+                                />
+                              )}
+                            </View>
                           </View>
-            
-                          </View>  
-                        </View>                   */}
-                        <View style={styles.buttoncontainer}>
-                        <Pressable style={styles.addsuplybtn}>
+                        ) : (
+                          <View
+                            style={[
+                              styles.sheetDetails,
+                              styles.box,
+                              styles.boxtext,
+                            ]}
+                          >
+                            <Text style={{ fontWeight: "bold" }}>
+                              Answersheet {index + 1}
+                            </Text>
+                            <MaterialCommunityIcons
+                              name="barcode-scan"
+                              onPress={() =>
+                                startScanning("AnswerSheet", index)
+                              }
+                              size={40}
+                              color="black"
+                            />
+                            <Text>OR</Text>
+                            {renderCopyInput("AnswerSheet", index)}
+                          </View>
+                        )}
+                      </View>
+
+                      {copy.mainCopy && (
+                        <View>
+                          {copy.alternateCopies.map(
+                            (alternateCopy, copyIndex) =>
+                              alternateCopy ? (
+                                <View>
+                                  <View key={index} style={[styles.box]}>
+                                    <View
+                                      style={{
+                                        flexDirection: "row",
+                                        justifyContent: "space-between",
+                                      }}
+                                    >
+                                      <Text style={[styles.header]}>
+                                        Alternate Copy {copyIndex + 1}
+                                      </Text>
+                                      <View style={styles.boxtext}>
+                                        <Text style={[styles.examname]}>
+                                          {alternateCopy}
+                                        </Text>
+                                        <View>
+                                          {copyIndex ===
+                                            copy.alternateCopies.length - 1 && (
+                                            <View>
+                                              <Entypo
+                                                name="circle-with-cross"
+                                                size={20}
+                                                color="red"
+                                                marginLeft="10px"
+                                                onPress={() =>
+                                                  handleSaveCopy(
+                                                    "Alternate",
+                                                    "",
+                                                    index,
+                                                    copyIndex
+                                                  )
+                                                }
+                                              />
+                                            </View>
+                                          )}
+                                        </View>
+                                      </View>
+                                    </View>
+                                  </View>
+                                  {copyIndex ===
+                                    copy.alternateCopies.length - 1 &&
+                                    copy.alternateCopies.length < 6 && (
+                                      <Pressable
+                                        style={styles.submitButton}
+                                        onPress={() =>
+                                          handleAddAlternateCopy(index)
+                                        }
+                                      >
+                                        <Text
+                                          style={{
+                                            color: "#fff",
+                                            textAlign: "center",
+                                            alignItems: "center",
+                                          }}
+                                        >
+                                          Add SupplySheet
+                                        </Text>
+                                      </Pressable>
+                                    )}
+                                </View>
+                              ) : (
+                                <View style={styles.supplysheet}>
+                                  <Text style={{ fontWeight: "bold" }}>
+                                    Supply{" "}
+                                  </Text>
+                                  <MaterialCommunityIcons
+                                    name="barcode-scan"
+                                    onPress={() =>
+                                      startScanning(
+                                        "Alternate",
+                                        index,
+                                        copyIndex
+                                      )
+                                    }
+                                    size={40}
+                                    color="black"
+                                  />
+                                  <Text>OR</Text>
+                                  {renderCopyInput(
+                                    "Alternate",
+                                    index,
+                                    copyIndex
+                                  )}
+                                </View>
+                              )
+                          )}
+                          {copy.alternateCopies.length === 0 && (
+                            <Pressable
+                              style={styles.submitButton}
+                              onPress={() => handleAddAlternateCopy(index)}
+                            >
+                              <Text style={{ color: "#fff" }}>
+                                Add SupplySheet
+                              </Text>
+                            </Pressable>
+                          )}
+                        </View>
+                      )}
+
+                    </View>
+                  </View>
+                </View>
+              ))
+            ) : (
+              <Text style={[styles.tablewrap, styles.nodatadisplay]}>
+                There is no answersheet added yet!
+              </Text>
+            )}
+            <View style={styles.buttonWrap}>
+              <Pressable
+                style={styles.submitButton}
+                onPress={
+                  reportId ? handleStudentInfoUpdate : handleStudentInfoSubmit
+                }
+              >
+                <Text style={styles.addButtonText}>
+                  {" "}
+                  {reportId ? "Update" : "Submit"}
+                </Text>
+              </Pressable>
+              <Pressable
+                style={styles.submitButton}
+                onPress={() => navigation.goBack()}
+              >
+                <Text style={styles.addButtonText}>Cancel</Text>
+              </Pressable>
+            </View>
+          </View> */}
+
+
+          {/* -------------------------------------------------- New AnsweSheet code-------------------------------------------- */}
+          <View>
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-between" }}
+            >
+              <Text style={styles.addAnsheading}> Answersheet </Text>
+              {copiesData?.length < 6 && (
+                <AntDesign style={styles.addicon} name="pluscircleo" size={24} color="black" onPress={handleAddCopy} />
+              )}
+            </View>
+            {copiesData?.length > 0 ? (
+              copiesData.map((copy, index) => (
+                <View key={copy.id || index}>
+                  <View>
+                    <View style={[styles.tablewrap]}>
+                      <View style={styles.mainCopyheading}>
+                        <Text style={{ fontWeight: "bold", padding: 5 }}>
+                          Main Copy
+                        </Text>
+                        <View style={styles.inputContainer}>
+                          <Pressable onPress={() => handleRemoveCopy(index)}>
+                            <Text style={styles.addButtonText}>
+                              <AntDesign name="delete" size={24} alignItems="flex-end" color="red" />
+                            </Text>
+                          </Pressable>
+                        </View>
+                      </View>
+                      <View>
+                        {copy.mainCopy ? (
+                          <View
+                            key={index}
+                            style={[
+                              styles.sheetDetails,
+                              styles.box,
+                              styles.boxtext,
+                            ]}
+                          >
+                            {/* <Text style={[styles.header]}>
+                              Answersheet Number{" "}
+                            </Text> */}
+                            <Text style={[styles.examname]}>
+                              {copy.mainCopy}
+                            </Text>
+                            <View style={styles.iconsWrap}>
+                              {!(
+                                copy.alternateCopies.length > 0 ||
+                                copy.alternateCopies?.includes("")
+                              ) && (
+                                <Entypo
+                                  name="circle-with-cross"
+                                  size={20}
+                                  color="red"
+                                  onPress={() =>
+                                    handleSaveCopy("Answersheet", "", index)
+                                  }
+                                />
+                              )}
+                            </View>
+                          </View>
+                        ) : (
+                          <View
+                            style={[
+                              styles.sheetDetails,
+                              styles.box,
+                              styles.boxtext,
+                            ]}
+                          >
+                            {/* <Text style={{ fontWeight: "bold" }}>
+                              Answersheet {index + 1}
+                            </Text> */}
+                            <MaterialCommunityIcons
+                              name="barcode-scan"
+                              onPress={() =>
+                                startScanning("Answersheet", index)
+                              }
+                              size={40}
+                              color="black"
+                            />
+                            <Text>OR</Text>
+                            {renderCopyInput("Answersheet", index,'')}
+                          </View>
+                        )}
+                      </View>
+
+                      {copy.mainCopy && (
+                        <View>
+
+                          {copy.alternateCopies && (
+                            <View style={styles.cpoiesmainblock}>
+                              <View style={styles.supplyblockWrap}>
+                                <Text
+                                  style={{ fontWeight: "bold", padding: 10 }}
+                                >
+                                  Supplementary Sheet
+                                </Text>
+                                { copy.alternateCopies.length < 6 && (
+                                  <View style={styles.buttoncontainer}>
+                                <Pressable style={styles.addsuplybtn} onPress={() => handleAddAlternateCopy(index)}>
                             <Text style={{color:"#fff", textAlign:"center",}}>Add SupplySheet</Text>
                           </Pressable>
                           </View>
-
-                          {/* Supplycopy taable Block */}
-                          <View style={styles.supplyblockWrap}>
-                            <Text style={{fontWeight:"bold",padding:10}}>Supply Copy</Text>
-                            <ScrollView >
-                          <View style={styles.tr}>
-                          <View style={styles.theadcopy}>
-                          <Text style={styles.thead}>Copy No</Text>
-                        </View>
-                            <View style={styles.theadscan}>
-                            <Text style={[styles.thead, ]}>Scan</Text>
-                            </View>
-                            <Text style={[styles.thead,{flexWrap:"wrap"}]}>Actions</Text>                                  
-                          </View>      
-                            <View  style={styles.tr}>
-                            <View style={styles.tdcopyno}>
-                              <Text style={styles.td}>1.1</Text>
-                              </View>
-                              <View style={styles.tdscan}>
-                              <Text style={[styles.td, styles.tablescan]}> 
-                              <MaterialCommunityIcons name="barcode-scan" size={40} color="black" /> 
-                                  <Text>OR</Text>
-                                  <TextInput
-                              style={[styles.input ]}
-                              placeholder={`Enter Copy Number`}
+                                )}                                
+                                <ScrollView>
+                                  <View style={styles.tr}>
+                               
+                                      <Text style={styles.thead}>Copy No</Text>
+                               
                               
-                          />
-                              </Text>
+                                      <Text style={[styles.thead]}>Scan</Text>
+                                  
+                                    <Text
+                                      style={[
+                                        styles.thead,
+                                        { flexWrap: "wrap" },
+                                      ]}
+                                    >
+                                      Actions
+                                    </Text>
+                                  </View>
+                                  {copy.alternateCopies.map(
+                                    (alternateCopy, copyIndex) => (
+                                      <View style={styles.tr}>
+                                     
+                                          <Text style={styles.td}>{index+1}.{copyIndex+1}</Text>
+                                       
+                                       
+                                        <Text style={[ styles.td,  ]} >
+                                          {alternateCopy ? ( <Text > {alternateCopy} </Text> 
+                                          ) : (
+                                            <Text style={[  styles.tablescan, ]} >
+                                              <MaterialCommunityIcons name="barcode-scan" onPress={() => startScanning( "Alternate", index, copyIndex ) } size={24} color="black" />
+                                              <Text>OR</Text>
+                                              {renderCopyInput( "Alternate", index, copyIndex,styles.tableinput )}
+                                              </Text>
+                                          )}
+                                          </Text>
+
+                                    
+                                        <Text style={[ styles.td, styles.tableActionBtn, ]} >
+                                              <MaterialIcons name="delete" size={24} color="red"  onPress={() =>   handleRemoveAlternateCopy(copyIndex, index) }/>
+                                        </Text>
+                                      </View>
+                                    )
+                                  )}
+                                </ScrollView>
+                              </View>                    
+                            </View>
+                          )}
+                        </View>
+                      )}
+                      {/* </> */}
+                    </View>
+                  </View>
+                </View>
+              ))
+            ) : (
+              <Text style={[styles.tablewrap, styles.nodatadisplay]}>
+                There is no answersheet added yet!
+              </Text>
+            )}
+          </View>
+
+          <View style={styles.buttonWrap}>
+                                <Pressable style={styles.submitButton} onPress={ reportId ? handleStudentInfoUpdate : handleStudentInfoSubmit } >
+                                  <Text style={styles.addButtonText}> {" "} {reportId ? "Update" : "Submit"} </Text>
+                                </Pressable>
+                                <Pressable style={styles.submitButton} onPress={() => navigation.goBack()} >
+                                  <Text style={styles.addButtonText}> Cancel </Text>
+                                </Pressable>
                               </View>
-                              <Text style={[styles.td,styles.tableActionBtn]}>
-                               <MaterialIcons name="done" size={20} color="green" style={styles.saveicon} />    
-                                <MaterialIcons name="delete" size={24} color="red" />
-                              </Text>
-                            
-                            </View>    
-                  </ScrollView>
-                          </View>
-                          <View style={styles.buttonWrap}>
-                                <Pressable
-                                  style={styles.submitButton}>
-                                  <Text style={styles.addButtonText}> Submit</Text>
-                                </Pressable>
-                                <Pressable style={styles.submitButton} > 
-                                <Text style={styles.addButtonText}>Cancel</Text>
-                                </Pressable>
-                           </View>
-              </View>
-        </View>
+
         </View>
       )}
-    </ScrollView>)
+    </ScrollView>
   );
 };
 
@@ -771,10 +1037,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     borderRadius: 8,
     padding: 5,
-  
   },
   infoHeader: {
-    // fontSize: 18, 
+    // fontSize: 18,
     // fontWeight: "bold",
     // marginHorizontal: 20,
     // marginVertical: 10,
@@ -801,16 +1066,16 @@ const styles = StyleSheet.create({
     // fontWeight: "bold",
     fontWeight: "bold",
     color: "#333",
-    width:"40%",
+    width: "40%",
   },
   value: {
     // flex: 2,
     color: "#555",
-    width:"60%",
+    width: "60%",
   },
   // table: {
   //   // borderWidth: 1,
-  //   // borderColor: "#DDDDDD", 
+  //   // borderColor: "#DDDDDD",
   //   borderRadius: 10,
   //   overflow: "hidden",
   //   backgroundColor: "#F9F9F9",
@@ -836,7 +1101,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 10,
     paddingHorizontal: 8,
-    color: "#333333", 
+    color: "#333333",
   },
   header: {
     fontWeight: "bold",
@@ -855,7 +1120,7 @@ const styles = StyleSheet.create({
     // padding: 5,
     // margin:5,
     // borderWidth: 1,
-    // borderColor: "#DDDDDD", 
+    // borderColor: "#DDDDDD",
     // borderRadius: 5,
     // // marginRight: 10,
     // backgroundColor: "#FFFFFF",
@@ -864,7 +1129,6 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     padding: 8,
     marginRight: 10,
-    width:150 
   },
   addButton: {
     // padding: 10,
@@ -884,8 +1148,8 @@ const styles = StyleSheet.create({
   addButtonText: {
     color: "#FFFFFF",
     fontWeight: "bold",
-    alignItems:"center",
-    textAlign:"center"
+    alignItems: "center",
+    textAlign: "center",
   },
   removeButton: {
     // alignSelf: "flex-end",
@@ -902,7 +1166,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
- 
+
   mainText: {
     flexDirection: "row",
     alignItems: "center",
@@ -920,8 +1184,8 @@ const styles = StyleSheet.create({
     // flexDirection: "row",
     // justifyContent: "space-between",
     flexDirection: "row",
-     marginTop: 20,
-     marginRight:10,
+    marginTop: 20,
+    marginRight: 10,
   },
   submitButton: {
     backgroundColor: "#0C7C62",
@@ -930,8 +1194,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginTop: 10,
-    marginRight:10,
-    Width:100,
+    marginRight: 10,
+    Width: 100,
     // backgroundColor: "#0C7C62",
     // paddingVertical: 5,
     // paddingHorizontal: 20,
@@ -946,7 +1210,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   addAnsheading: {
-    fontSize: 18, 
+    fontSize: 18,
     fontWeight: "bold",
     padding: 10,
   },
@@ -960,7 +1224,7 @@ const styles = StyleSheet.create({
   },
   box: {
     // borderWidth: 1,
-    // borderColor: "#CCCCCC", 
+    // borderColor: "#CCCCCC",
     // width: 'auto',
     // backgroundColor: "#EAEAEA",
     // borderRadius: 25,
@@ -990,7 +1254,7 @@ const styles = StyleSheet.create({
   addicon: {
     marginRight: 10,
     marginTop: 10,
-    marginBottom:10,
+    marginBottom: 10,
     // marginLeft: 10,
     // marginTop: 5,
   },
@@ -1008,117 +1272,119 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 10,
   },
-  answerSheetWrap:{
-    flexDirection:"row",
-    justifyContent:"space-between",
-    width:"auto",
-    alignItems:"center",
-  },
- 
-  saveicon:{
-  position:"relative",
-  top:0,
-  right:8,
+  answerSheetWrap: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "auto",
+    alignItems: "center",
   },
 
-  mainCopyheading:{
-    flexDirection:"row",
-    justifyContent:"space-between",
-    marginBottom:10,
+  saveicon: {
+    position: "relative",
+    top: 0,
+    right: 0,
   },
 
-  userimage:{
-    width:90,
-    height:90,
+  mainCopyheading: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 10,
   },
-  userDetailWrap:{
-   alignItems:"center",
-  },
-  copiesdataWrap:{
-    marginTop:10,
-    backgroundColor:"rgb(240 243 245)",
-    borderWidth:1,
-    padding:8,
-    borderColor:"#ccc", 
-    borderRadius:8,
-  
-  },
-  mainWrap:{
-    flexDirection:"row",
-    justifyContent:"space-between",
-    alignItems:"center",
-    marginBottom:10,
 
+  userimage: {
+    width: 90,
+    height: 90,
   },
-  crossiconWrap:{
-   backgroundColor:"red",
-   borderRadius:5,
-
+  userDetailWrap: {
+    alignItems: "center",
   },
-  addsuplybtn:{
+  copiesdataWrap: {
+    marginTop: 10,
+    backgroundColor: "rgb(240 243 245)",
+    borderWidth: 1,
+    padding: 8,
+    borderColor: "#ccc",
+    borderRadius: 8,
+  },
+  mainWrap: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  crossiconWrap: {
+    backgroundColor: "red",
+    borderRadius: 5,
+  },
+  addsuplybtn: {
     backgroundColor: "#0C7C62",
     padding: 10,
     borderRadius: 5,
     // justifyContent: "center",
     // alignItems: "center",
     marginTop: 10,
-    width:150,
-    textAlign:"center"
+    width: 150,
+    textAlign: "center",
+    marginBottom:10,
   },
-  supplyblockWrap:{
+  supplyblockWrap: {
     // backgroundColor:"#fff",
     // padding:20,
   },
   tr: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginBottom: 4,
+    
   },
   thead: {
     flex: 1,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     padding: 8,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: "#f0f0f0",
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: "#ddd",
   },
   td: {
     flex: 1,
     padding: 8,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: "#ddd",
   },
-  cpoiesmainblock:{
-    backgroundColor:"#fff",
-    borderRadius:14,
-    padding:10,
-    width:"auto",
-    marginTop:10,
+  cpoiesmainblock: {
+    backgroundColor: "#fff",
+    borderRadius: 14,
+    padding: 10,
+    width: "auto",
+    marginTop: 10,
   },
-  tablescan:{
-    alignItems:"center",
-    display:"flex",
-    justifyContent:"space-between",
+  tablescan: {
+    // alignItems: "center",
+    // // display: "flex",
+    // justifyContent: "space-between",
     // flexDirection:"row",
     // justifyContent:"space-between",
   },
-  tableActionBtn:{
-    display:"flex",
-
- 
+  tableActionBtn: {
+    display: "flex",
   },
-  theadcopy:{
-    width:"20%",
-    flexWrap:"wrap",
- 
+  theadcopy: {
+    width: "20%",
+    flexWrap: "wrap",
   },
-  tdcopyno:{
-  width:"20%"
+  tdcopyno: {
+    width: "20%",
   },
-  theadscan:{
-    width:"60%",
+  theadscan: {
+    width: "60%",
   },
-  tdscan:{
-    width:"60%",
-  }
+  tdscan: {
+    width: "60%",
+  },
+  doneWrap:{
+    backgroundColor:"green",
+    borderRadius:4,
+  },
+  tableinput:{
+    width:"auto",
+  },
 });
-

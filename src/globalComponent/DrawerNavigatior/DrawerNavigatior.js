@@ -5,6 +5,7 @@ import {
   createDrawerNavigator,
   DrawerContentScrollView,
   DrawerItemList,
+  DrawerItem,
 } from "@react-navigation/drawer";
 
 import RoleScreen from "../../component/Roles/RoleScreen";
@@ -173,7 +174,18 @@ const CustomDrawerContent = ({ ...props }) => {
       <DrawerContentScrollView {...props}>
 
       <DrawerItemList {...props} style={styles.dropdownmain} />
-      <View>     
+      <DrawerItem
+        label="Logout"
+        onPress={props.handleLogout}
+        icon={({ color, size }) => (
+          <Ionicons 
+            name='log-out' 
+            size={size} 
+            color={color} 
+          />
+        )}
+      />
+      {/* <View>     
         <Pressable onPress={() => props.handleLogout()}>
         <Ionicons 
         style={styles.icons} 
@@ -183,7 +195,7 @@ const CustomDrawerContent = ({ ...props }) => {
       />
           <Text style={{ margin: 16 }}>Logout</Text>
         </Pressable>
-      </View>
+      </View> */}
       </DrawerContentScrollView>
     </View>
   );
