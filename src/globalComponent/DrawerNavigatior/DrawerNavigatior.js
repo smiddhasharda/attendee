@@ -184,6 +184,7 @@ const CustomDrawerContent = ({ ...props }) => {
             color={color} 
           />
         )}
+        labelStyle={styles.drawerItemLabel}
       />
       {/* <View>     
         <Pressable onPress={() => props.handleLogout()}>
@@ -369,6 +370,7 @@ const DrawerNavigator = ({ navigation }) => {
           size={size}
           color={color}
         />
+        
     )
   }}  key={index} name={module?.moduleMaster[0]?.moduleName}>
             {(props) => {
