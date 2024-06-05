@@ -920,13 +920,13 @@ const StudentInfo = ({ navigation }) => {
                             <MaterialCommunityIcons
                               name="barcode-scan"
                               onPress={() =>
-                                startScanning("Answersheet", index)
+                                startScanning("AnswerSheet", index)
                               }
                               size={40}
                               color="black"
                             />
                             <Text>OR</Text>
-                            {renderCopyInput("Answersheet", index,'')}
+                            {renderCopyInput("AnswerSheet", index,'')}
                           </View>
                         )}
                       </View>
