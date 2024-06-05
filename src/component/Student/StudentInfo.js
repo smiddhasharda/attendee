@@ -29,6 +29,7 @@ import {
   remove,
   view,
 } from "../../AuthService/AuthService";
+import DropDownPicker from "react-native-dropdown-picker";
 import style from "react-native-datepicker/style";
 
 const StudentInfo = ({ navigation }) => {
@@ -59,7 +60,13 @@ const StudentInfo = ({ navigation }) => {
   const [copyList, setCopyList] = useState([]);
   const [isScanning, setIsScanning] = useState(false);
   const [loading, setLoading] = useState(false);
-
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState(null);
+  const [items, setItems] = useState([
+    { label: 'Present', value: 'Present' },
+    { label: 'Absent', value: 'Absent' },
+    { label: 'UFM', value: 'UFM' },
+  ]);
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
 
@@ -517,21 +524,31 @@ const StudentInfo = ({ navigation }) => {
         />
       ) : (
         <View>
-          <View style={styles.studentInfoWrap}>
-            <Text style={styles.infoHeader}>Student Info:</Text>
-            <View style={styles.infoContainer}>
-              <View style={styles.userDetailWrap}>
-                <Image
-                  style={styles.userimage}
-                  source={require("../../local-assets/userimg.jpg")}
-                />
-                <FontAwesome6 name="signature" size={44} color="black" />
-              </View>
-            </View>
+        <View style={[styles.dropdownWrap,]}>
+        <Text style={[styles.label]}>Status </Text>
+            <DropDownPicker
+              open={open}
+              value={value}
+              items={items}
+              setOpen={setOpen}
+              setValue={setValue}
+              style={styles.dropdown}
+              dropDownStyle={{ backgroundColor: "#fafafa"}}
+              dropDownContainerStyle={styles.dropdownContainer} 
+              dropDownMaxHeight={150}
+              dropDownDirection="BOTTOM"
+              containerStyle={styles.rolePicker}
+              listItemContainerStyle={{ height: 30}} 
+              listItemLabelStyle={{ fontSize: 14 }}
+            />
           </View>
+    
           <View style={styles.studentInfoWrap}>
             <Text style={styles.infoHeader}>Basic Info:</Text>
             <View style={styles.infoContainer}>
+            <View style={[styles.userDetailWrap, ]} >
+            <FontAwesome name="user" size={48} color="#ccc"   />
+             </View> 
               <View style={styles.infoItem}>
                 <Text style={styles.label}>Name:</Text>
                 <Text style={styles.value}>
@@ -1295,9 +1312,7 @@ const styles = StyleSheet.create({
     width: 90,
     height: 90,
   },
-  userDetailWrap: {
-    alignItems: "center",
-  },
+  
   copiesdataWrap: {
     marginTop: 10,
     backgroundColor: "rgb(240 243 245)",
@@ -1387,4 +1402,23 @@ const styles = StyleSheet.create({
   tableinput:{
     width:"auto",
   },
+  dropdown:{
+    width:200,
+    minHeight:30,
+    },
+    dropdownContainer:{
+      width:200,
+      padding: [10, 5],
+      height: "auto"
+    },
+    dropdownWrap:{
+      width:"40%",
+      zIndex:1000,
+   
+    },
+    userDetailWrap:{
+      width:"90%",
+      alignItems:"center",
+    }
+
 });

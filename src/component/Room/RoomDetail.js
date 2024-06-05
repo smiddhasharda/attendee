@@ -405,11 +405,13 @@ const styles = StyleSheet.create({
       width:"50%"
     },
     countbg1:{
-      backgroundColor:"rgb(12, 181, 81)",
-      borderRadius:25,  
-      width:30,
-      height:30,
-      lineHeight:30,
+       borderRadius:22,
+       width:35,
+       height:35,
+      //  display: "flex",
+       alignItems: "center",
+       justifyContent: "center",
+       backgroundColor: "#0CB551",
     },
     count:{
     color:"#fff",
