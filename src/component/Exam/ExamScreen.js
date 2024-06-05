@@ -135,6 +135,17 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
     handleGetRoomView(date, userAccess?.label !== "Admin" && RoomArray);
   };
 
+  const convertedTime = (StartTime) => {
+    const date = new Date(StartTime);
+    const hours = date.getHours();
+    const minutes = date.getMinutes().toString().padStart(2, '0'); // Pad minutes with leading 0
+  // console.log(StartTime,date,hours,minutes)
+    const amPm = hours >= 12 ? 'PM' : 'AM';
+    const adjustedHours = hours % 12 || 12; // Convert to 12-hour format
+  
+    return `${adjustedHours}:${minutes}${amPm}`;
+  }
+  
   useEffect(() => {
     fetchRoomDetails(examSelectedDate);
   }, [UserAccess]);
@@ -213,7 +224,9 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
             >
                 <View style={[styles.box,styles.boxTextWrap]}>
                   <Text style={styles.examName}>{item.ROOM_NBR}</Text>
-                  <Text style={styles.examTime}>{item.EXAM_START_TIME?.split("T")?.[1]?.split(".")?.[0]}</Text>
+                  {/* <Text style={styles.examTime}>{item.EXAM_START_TIME?.split("T")?.[1]?.split(".")?.[0]}</Text> */}
+                  <Text style={styles.examTime}>{convertedTime(item.EXAM_START_TIME)}</Text>
+
                 </View>
             </Pressable>
           )}
