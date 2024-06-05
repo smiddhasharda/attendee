@@ -481,6 +481,16 @@ const StudentInfo = ({ navigation }) => {
     await handleGetStudentAttendenceInfo();
     (await reportId) ? handleGetCopyData() : "";
   };
+  const getStatuscolor = () =>{
+    switch(status) {
+      case 'UFM':
+        return 'red';
+      case 'Absent':
+        return 'grey';
+      default:
+        return 'green';
+    }
+  }
 
   useEffect(() => {
     fetchData();
@@ -588,12 +598,14 @@ const StudentInfo = ({ navigation }) => {
                 items={items}
                 setOpen={setOpen}
                 setValue={setStatus}
-                style={styles.dropdown}
+                style={[styles.dropdown,{backgroundColor: getStatuscolor()}]}
+                labelStyle={{
+                  color: "white"
+                }}
                 dropDownStyle={{ backgroundColor: "#fafafa"}}
                 dropDownContainerStyle={styles.dropdownContainer} 
                 dropDownMaxHeight={150}
                 dropDownDirection="BOTTOM"
-                containerStyle={styles.rolePicker}
                 listItemContainerStyle={{ height: 30}} 
                 listItemLabelStyle={{ fontSize: 14 }}
               />
