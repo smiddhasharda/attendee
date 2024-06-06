@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet, ScrollView, Pressable, ActivityIndicator } from 'react-native';
-import { Ionicons, Feather } from '@expo/vector-icons';
 import { view, fetch } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import DropDownPicker from "react-native-dropdown-picker";
+import { parse, format } from 'date-fns';
 
 const ExamScreen = ({ navigation, userAccess, userData }) => {
   const UserAccess = userAccess?.module?.find((item) => item?.FK_ModuleId === 5);
@@ -146,6 +145,34 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
     return `${adjustedHours}:${minutes}${amPm}`;
   }
   
+  const parseAndFormatDate = (dateString) => {
+    // Define possible date formats
+    const possibleFormats = [
+      "yyyy-MM-dd'T'HH:mm:ss.SSSX", // ISO format
+      "dd-MMMM-yyyy",               // e.g., 03-July-2023
+      "MM/dd/yyyy",                 // e.g., 07/03/2023
+      "yyyy-MM-dd",                 // e.g., 2023-07-03
+    ];
+  
+    let parsedDate;
+    for (let formatString of possibleFormats) {
+      try {
+        parsedDate = parse(dateString, formatString, new Date());
+        if (!isNaN(parsedDate)) break;
+      } catch (error) {
+        continue;
+      }
+    }
+  
+    if (!parsedDate || isNaN(parsedDate)) {
+      console.error('Invalid date format:', dateString);
+      return null;
+    }
+  
+    return parsedDate;
+  };
+  
+
   useEffect(() => {
     fetchRoomDetails(examSelectedDate);
   }, [UserAccess]);
@@ -158,14 +185,21 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
             data={examDates}
             renderItem={({ item }) => {
               const isActiveItem = item.EXAM_DT === examSelectedDate;
+              const normalizedDate = parseAndFormatDate(item.EXAM_DT);
               return (
-                <Pressable onPress={() => handleDateClick(item.EXAM_DT)}>
-                  <View style={[styles.dateItem, isActiveItem && styles.activebox]}>
-                    <Text style={[styles.dateDay, isActiveItem && styles.activeText]}>{new Date(item.EXAM_DT).toString().split(' ')[0]}</Text>
-                    <Text style={[styles.dateNumber, isActiveItem && styles.activeText]}>{new Date(item.EXAM_DT).getDate()}</Text>
-                    <Text style={[styles.dateMonth, isActiveItem && styles.activeText]}>{new Date(item.EXAM_DT).toString().split(' ')[1]}</Text>
-                  </View>
-                </Pressable>
+                 <Pressable onPress={() => handleDateClick(item.EXAM_DT)}>
+      <View style={[styles.dateItem, isActiveItem && styles.activebox]}>
+        <Text style={[styles.dateDay, isActiveItem && styles.activeText]}>
+          {normalizedDate.toString().split(' ')[0]}
+        </Text>
+        <Text style={[styles.dateNumber, isActiveItem && styles.activeText]}>
+          {normalizedDate.getDate()}
+        </Text>
+        <Text style={[styles.dateMonth, isActiveItem && styles.activeText]}>
+          {normalizedDate.toString().split(' ')[1]}
+        </Text>
+      </View>
+    </Pressable>
               );
             }}
             horizontal

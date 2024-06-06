@@ -1,42 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, Pressable } from 'react-native';
-import { CameraView, useCameraPermissions } from 'expo-camera';
+import { Camera } from 'expo-camera';
 
 export default function CodeScanner({ onScannedData, onCancel }) {
-  const [facing, setFacing] = useState('back');
-  const [permission, requestPermission] = useCameraPermissions();
   const [hasPermission, setHasPermission] = useState(null);
 
   useEffect(() => {
     (async () => {
-      const { status } = await requestPermission();
+      const { status } = await Camera.requestCameraPermissionsAsync();
       setHasPermission(status === 'granted');
     })();
-  }, [requestPermission]);
-
-  if (!permission) {
-    // Camera permissions are still loading.
-    return <View />;
-  } 
-
-  if (!hasPermission) {
-    // Camera permissions are not granted yet.
-    return (
-      <View style={styles.container}>
-        <Text style={{ textAlign: 'center' }}>We need your permission to show the camera</Text>
-        <Pressable style={styles.button} onPress={requestPermission} title="grant permission" >
-          <Text style={styles.text}>Grant Permission</Text>
-        </Pressable>
-        <Pressable style={styles.cancelButton} onPress={handleCancel}>
-            <Text style={styles.cancelButtonText}>Cancel</Text>
-          </Pressable>
-      </View>
-    );
-  }
-
-  const toggleCameraFacing = () => {
-    setFacing(current => (current === 'back' ? 'front' : 'back'));
-  }
+  }, []);
 
   const handleBarCodeScanned = ({ type, data }) => {
     onScannedData(data);
@@ -46,15 +20,40 @@ export default function CodeScanner({ onScannedData, onCancel }) {
     onCancel();
   };
 
+  const requestPermission = async () => {
+    const { status } = await Camera.requestCameraPermissionsAsync();
+    setHasPermission(status === 'granted');
+  };
+
+  if (hasPermission === null) {
+    // Camera permissions are still loading.
+    return <View />;
+  }
+
+  if (hasPermission === false) {
+    // Camera permissions are not granted yet.
+    return (
+      <View style={styles.container}>
+        <Text style={{ textAlign: 'center' }}>We need your permission to show the camera</Text>
+        <Pressable style={styles.button} onPress={requestPermission}>
+          <Text style={styles.text}>Grant Permission</Text>
+        </Pressable>
+        <Pressable style={styles.cancelButton} onPress={handleCancel}>
+          <Text style={styles.cancelButtonText}>Cancel</Text>
+        </Pressable>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
-      <CameraView style={styles.camera} onBarcodeScanned={handleBarCodeScanned}>
+      <Camera style={styles.camera} onBarCodeScanned={handleBarCodeScanned}>
         <View style={styles.buttonContainer}>
           <Pressable style={styles.cancelButton} onPress={handleCancel}>
             <Text style={styles.cancelButtonText}>Cancel</Text>
           </Pressable>
         </View>
-      </CameraView>
+      </Camera>
     </View>
   );
 }
