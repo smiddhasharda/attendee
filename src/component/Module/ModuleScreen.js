@@ -58,19 +58,21 @@ const ModuleScreen = ({ userAccess }) => {
   }, [checkAuthToken, moduleData, addToast]);
 
   const handleAddModule = useCallback(() => {
-    handleModuleOperation('insert', {
-      moduleName: moduleData.moduleName,
-      description: moduleData.moduleDescription,
-      isActive: moduleData.moduleStatus,
-    }, "Module Add Successful");
+    if(moduleData.moduleName.replace(/\s+/g, '') === ""){
+      addToast("Please enter module name first !", "error");
+    }
+    else {
+    handleModuleOperation('insert', { moduleName: moduleData.moduleName, description: moduleData.moduleDescription, isActive: moduleData.moduleStatus, }, "Module Add Successful");
+  }
   }, [handleModuleOperation, moduleData]);
 
   const handleUpdateModule = useCallback(() => {
-    handleModuleOperation('update', {
-      moduleName: moduleData.moduleName,
-      description: moduleData.moduleDescription,
-      isActive: moduleData.moduleStatus,
-    }, "Module Update Successful", `PK_ModuleId = ${moduleData.moduleId}`);
+    if(moduleData.moduleName.replace(/\s+/g, '') === ""){
+      addToast("Please enter module name first !", "error");
+    }
+    else {
+    handleModuleOperation('update', { moduleName: moduleData.moduleName, description: moduleData.moduleDescription, isActive: moduleData.moduleStatus, }, "Module Update Successful", `PK_ModuleId = ${moduleData.moduleId}`);
+    }
   }, [handleModuleOperation, moduleData]);
 
   const fetchModuleList = useCallback(async () => {
@@ -134,7 +136,7 @@ const ModuleScreen = ({ userAccess }) => {
         <View style={styles.formContainer}>
           <TextInput
             style={styles.input}
-            placeholder="New Module Name"
+            placeholder="Module Name*"
             value={moduleData.moduleName}
             onChangeText={text => setModuleData({ ...moduleData, moduleName: text })}
           />

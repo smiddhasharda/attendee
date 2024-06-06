@@ -139,7 +139,7 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
     const date = new Date(StartTime);
     const hours = date.getHours();
     const minutes = date.getMinutes().toString().padStart(2, '0'); // Pad minutes with leading 0
-  // console.log(StartTime,date,hours,minutes)
+  
     const amPm = hours >= 12 ? 'PM' : 'AM';
     const adjustedHours = hours % 12 || 12; // Convert to 12-hour format
   
@@ -220,7 +220,7 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
           renderItem={({ item, index }) => (
             <Pressable
               key={index}
-              onPress={() => UserAccess?.create === 1 ? navigation.navigate("RoomDetail", { room_Nbr: item.ROOM_NBR, exam_Dt: item.EXAM_DT, startTime: item.EXAM_START_TIME, userAccess},) : null}
+              onPress={() => UserAccess?.create === 1 ? navigation.navigate("RoomDetail", { room_Nbr: item.ROOM_NBR, exam_Dt: item.EXAM_DT, startTime: item.EXAM_START_TIME, userAccess}) : null}
             >
                 <View style={[styles.box,styles.boxTextWrap]}>
                   <Text style={styles.examName}>{item.ROOM_NBR}</Text>
