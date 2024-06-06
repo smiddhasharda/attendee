@@ -9,6 +9,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function Learn() {
   const [drawerOpen, setDrawerOpen] = useState({
+    examDrawer:false,
     roomDrawer: false,
     shiftDrawer: false,
   });
@@ -22,6 +23,14 @@ function Learn() {
   const [examSelectedshift, setExamSelectedShift] = useState("");
   const [examShiftList, setExamShiftList] = useState([]);
   const [examReportData, setExamReportData] = useState([]);
+  const examlist=[
+ 
+    { label: 'AI', value: 'AI' },
+    { label: '.Net', value: '.Net' },
+    { label: 'C', value: 'C' },
+    { label: 'C++', value: 'C++' },
+    { label: 'AI', value: 'AI' },
+  ];
 
   const [sampleData , setSampleData] = useState();
   const checkAuthToken = useCallback(async () => {
@@ -192,9 +201,10 @@ function Learn() {
   return (
     <ScrollView>
       <View style={styles.container}>
-        <Text style={styles.heading}>Student Report</Text>
-        <Image source={{ uri: `data:image/png;base64,${base64Image}` }} style={{ width: 100, height: 100, borderRadius: 50 }} />
-        <View style={styles.container}>
+        {/* <Text style={styles.heading}>Student Report</Text> */}
+        {/* <Image source={{ uri: `data:image/png;base64,${base64Image}` }} style={{ width: 100, height: 100, borderRadius: 50 }} /> */}
+  
+        <View style={styles.datesWrap}>
           <View style={styles.dates}>
             <FlatList
               data={examDates}
@@ -223,8 +233,29 @@ function Learn() {
               // scrollEnabled={false}
             />
           </View>
-          <View>
+          </View>
+      
             <View style={styles.dropdownWrap}>
+            <View style={styles.dropdownContainer}>
+                  <Text style={styles.label}>Exam</Text>
+                  <DropDownPicker
+                    open={drawerOpen.examDrawer}
+                    value={examSelectedshift?.label}
+                    items={examlist}
+                    setOpen={() =>
+                      setDrawerOpen({ examDrawer: !drawerOpen.examDrawer })
+                    }
+                    onSelectItem={(value) => handleChangeShift(value)}
+                    style={styles.dropdown}
+                    dropDownStyle={styles.dropDownList}
+                    // dropDownStyle={{ backgroundColor: "#fafafa" }}
+                    dropDownMaxHeight={150}
+                    dropDownDirection="BOTTOM"
+                    containerStyle={styles.rolePicker}
+              />
+              </View>
+            <View style={styles.dropdownContainer}>
+            <Text  style={styles.label}>Rooms</Text>
               <DropDownPicker
                 open={drawerOpen.roomDrawer}
                 value={examSelectedRoom?.label}
@@ -240,57 +271,59 @@ function Learn() {
                 dropDownDirection="TOP"
                 containerStyle={styles.rolePicker}
               />
-              <DropDownPicker
-                open={drawerOpen.shiftDrawer}
-                value={examSelectedshift?.label}
-                items={examShiftList}
-                setOpen={() =>
-                  setDrawerOpen({ shiftDrawer: !drawerOpen.shiftDrawer })
-                }
-                onSelectItem={(value) => handleChangeShift(value)}
-                style={styles.dropdown}
-                dropDownStyle={styles.dropDownList}
-                // dropDownStyle={{ backgroundColor: "#fafafa" }}
-                dropDownMaxHeight={150}
-                dropDownDirection="TOP"
-                containerStyle={styles.rolePicker}
+              </View>
+              <View style={styles.dropdownContainer}>
+                  <Text style={styles.label}>Times</Text>
+                  <DropDownPicker
+                    open={drawerOpen.shiftDrawer}
+                    value={examSelectedshift?.label}
+                    items={examShiftList}
+                    setOpen={() =>
+                      setDrawerOpen({ shiftDrawer: !drawerOpen.shiftDrawer })
+                    }
+                    onSelectItem={(value) => handleChangeShift(value)}
+                    style={styles.dropdown}
+                    dropDownStyle={styles.dropDownList}
+                    // dropDownStyle={{ backgroundColor: "#fafafa" }}
+                    dropDownMaxHeight={150}
+                    dropDownDirection="TOP"
+                    containerStyle={styles.rolePicker}
               />
+              </View>
             </View>
-            <PieChart />
-          </View>
-          <View style={styles.boxtable}>
-            <ScrollView horizontal>
+       
+          <View style={styles.boxtable}>  
               <View style={styles.tableWrap}>
-                <View style={[styles.row, styles.header]}>
-                  <Text style={styles.headerText}>System Id</Text>
-                  <Text style={styles.headerText}>Roll Number</Text>
-                  <Text style={styles.headerText}>Name</Text>
-                  <Text style={styles.headerText}>Room Number</Text>
-                  <Text style={styles.headerText}>Seat Number</Text>
-                  <Text style={styles.headerText}>Status</Text>  
-                  <Text style={styles.headerText}>School</Text>                
-                  <Text style={styles.headerText}>Graduation</Text>                
-                  <Text style={styles.headerText}>Stream</Text>                
+                <View style={[styles.tableHeader]}>
+                  <Text  style={styles.tableHeaderText}>System Id</Text>
+                  <Text style={styles.tableHeaderText}>Roll Number</Text>
+                  <Text style={styles.tableHeaderText}>Name</Text>
+                  <Text style={styles.tableHeaderText}>Room Number</Text>
+                  <Text style={styles.tableHeaderText}>Seat Number</Text>
+                  <Text style={styles.tableHeaderText}>Status</Text>  
+                  <Text style={styles.tableHeaderText}>School</Text>                
+                  <Text style={styles.tableHeaderText}>Graduation</Text>                
+                  <Text style={styles.tableHeaderText}>Stream</Text>                
               
                 </View>
                 {examReportData?.map((reportData) => (
-                  <View style={styles.row}>
-                    <Text style={styles.cell}>{reportData.EMPLID}</Text>
-                    <Text style={styles.cell}>{reportData.ADM_APPL_NBR}</Text>
-                    <Text style={styles.cell}>{reportData.NAME_FORMAL}</Text>
-                    <Text style={styles.cell}>{reportData.ROOM_NBR}</Text>
-                    <Text style={styles.cell}>{reportData.PTP_SEQ_CHAR}</Text>
-                    <Text style={styles.cell}>{reportData.Status}</Text>
-                    <Text style={styles.cell}>{reportData.DESCR}</Text>
-                    <Text style={styles.cell}>{reportData.DESCR2}</Text>
-                    <Text style={styles.cell}>{reportData.DESCR3}</Text>
+                  <View style={styles.listItem}>
+                    <Text  style={styles.listItemText}>{reportData.EMPLID}</Text>
+                    <Text style={styles.listItemText}>{reportData.ADM_APPL_NBR}</Text>
+                    <Text style={styles.listItemText}>{reportData.NAME_FORMAL}</Text>
+                    <Text style={styles.listItemText}>{reportData.ROOM_NBR}</Text>
+                    <Text style={styles.listItemText}>{reportData.PTP_SEQ_CHAR}</Text>
+                    <Text style={styles.listItemText}>{reportData.Status}</Text>
+                    <Text style={styles.listItemText}>{reportData.DESCR}</Text>
+                    <Text style={styles.listItemText}>{reportData.DESCR2}</Text>
+                    <Text style={styles.listItemText}>{reportData.DESCR3}</Text>
                   </View>
                 ))}
-              </View>
-            </ScrollView>
+              </View>     
           </View>
-          <Text>Total Student:50</Text>
-        </View>
+        <Text>Total Student:50</Text>
+        
+        <PieChart />
       </View>
     </ScrollView>
   );
@@ -301,11 +334,13 @@ export default Learn;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    padding: 10,
     backgroundColor: "#fff",
   },
   boxtable: {
-    padding: 5,
+    backgroundColor:"#fff",
+    padding:20,
+    // padding: 5,
     // flex: 1,
     // marginTop: 20,
     // marginBottom: 20,
@@ -315,17 +350,17 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   tableWrap: {
-    flexDirection: "column",
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 4,
-    marginBottom: 10,
-    backgroundColor: "#fff",
+    flexDirection: 'column',
+    // borderWidth: 1,
+    // borderColor: '#000',
+    // padding:10,
+   
   },
   row: {
     flexDirection: "row",
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
+    // borderBottomWidth: 1,
+    // borderBottomColor: "#ccc",
+    marginBottom:4,
   },
   header: {
     backgroundColor: "#f0f0f0",
@@ -352,9 +387,18 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 10,
   },
+  datesWrap:{
+    flexDirection:"row",
+    justifyContent:"space-between",
+    alignItems:"center",
+  },
   dates: {
-    flexDirection: "row",
-    padding: 10,
+    width:"auto",
+    backgroundColor: "#ffffff",
+    borderBottomWidth: 1,
+    borderBottomColor: "#dddedf",
+    borderTopWidth: 0,
+    marginTop: 0,
   },
 
   dateItem: {
@@ -439,16 +483,64 @@ const styles = StyleSheet.create({
   inactivebox: {
     backgroundColor: "#e50d0d",
   },
+
+  dropdownmain:{
+   flexDirection:"row",
+   justifyContent:"space-between",
+   width:"100%"
+
+  },
   dropdownWrap: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 10,
-    padding: 20,
+    // width: '100%',
+    zIndex: 1000,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom:10,
+    padding:10,
+  
   },
   dropdown: {
-    width: "100%",
+    width: 160,
+    minHeight:30,
   },
   rolePicker: {
-    width: 180,
+    width: 160,
+    height:"auto",
+  },
+  
+  tableHeaderText: {
+    fontWeight: 'bold',
+    color:"#fff",
+    textAlign:"center",
+    alignItems:"center",
+    fontSize:16,
+  },
+  tableHeader: {
+    flexDirection: "row",
+    justifyContent:"space-between",
+    backgroundColor: "rgb(17, 65, 102)",
+    flexWrap:"wrap",
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    // marginBottom: 10,
+    borderRadius:5,
+  },
+  listItem: {
+    flexDirection: 'row',
+    flexWrap:"wrap",
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    alignItems: 'center',   
+  },
+  listItemText: {
+    flex: 1,
+  },
+  label: {
+    // flex: 1,
+    // fontWeight: "bold",
+    fontWeight: "bold",
+    color: "#333",
+    width: "40%",
   },
 });
