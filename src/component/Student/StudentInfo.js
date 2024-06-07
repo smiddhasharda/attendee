@@ -29,7 +29,7 @@ import {
   remove,
   view,
 } from "../../AuthService/AuthService";
-import style from "react-native-datepicker/style";
+import DropDownPicker from "react-native-dropdown-picker";
 
 const StudentInfo = ({ navigation }) => {
   const route = useRoute();
@@ -37,20 +37,8 @@ const StudentInfo = ({ navigation }) => {
   const [studentDetails, setStudentDetails] = useState({});
   const [courseDetails, setCourseDetails] = useState({});
   const [attendanceDetails, setAttendanceDetails] = useState({});
-  const {
-    room_Nbr,
-    catlog_Nbr,
-    system_Id,
-    seat_Nbr,
-    exam_Dt,
-    startTime,
-    reportId,
-    userAccess,
-    current_Term,
-  } = route.params;
-  const UserAccess = userAccess?.module?.find(
-    (item) => item?.FK_ModuleId === 6
-  );
+  const { room_Nbr, catlog_Nbr, system_Id, seat_Nbr, exam_Dt, startTime, reportId, userAccess, current_Term, } = route.params;
+  const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 6 );
   const [copiesData, setCopiesData] = useState([]);
   const [tempCopyNumber, setTempNumber] = useState("");
   const [mainCopyIndex, setMainCopyIndex] = useState("");
@@ -59,7 +47,13 @@ const StudentInfo = ({ navigation }) => {
   const [copyList, setCopyList] = useState([]);
   const [isScanning, setIsScanning] = useState(false);
   const [loading, setLoading] = useState(false);
-
+  const [open, setOpen] = useState(false);
+  const [status, setStatus] = useState('Present');
+  const items=[
+    { label: 'Present', value: 'Present' },
+    { label: 'Absent', value: 'Absent' },
+    { label: 'UFM', value: 'UFM' },
+  ];
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
 
@@ -192,7 +186,7 @@ const StudentInfo = ({ navigation }) => {
     try {
       const CopyEmptyValues = copiesData?.length > 0 ? copiesData.some(data => data.mainCopy === "" || data.alternateCopies.includes("")) : true;
       if(CopyEmptyValues){
-        addToast("Please Fill CopyData Fierst!", "error");
+        addToast("Please Fill CopyData First!", "error");
       }
       else{
         const authToken = await checkAuthToken();    
@@ -213,12 +207,13 @@ const StudentInfo = ({ navigation }) => {
               EXAM_START_TIME: startTime,
               CATALOG_NBR: catlog_Nbr,
               PTP_SEQ_CHAR: seat_Nbr,
-              Status:
+              Attendece_Status:
                 attendanceDetails?.length > 0
                   ? attendanceDetails.PERCENTAGE >= attendanceDetails.PERCENTCHG
                     ? "Eligible"
                     : "Debarred"
                   : "Not Defined",
+              Status: status,
               SU_PAPER_ID: courseDetails.SU_PAPER_ID,
               DESCR100: courseDetails.DESCR100,
             },
@@ -254,12 +249,7 @@ const StudentInfo = ({ navigation }) => {
           );
           if (NewResponse) {
             addToast("Student Details Add Successful", "success");
-            navigation.navigate("RoomDetail", {
-              room_Nbr: room_Nbr,
-              exam_Dt: exam_Dt,
-              startTime: startTime,
-              navigation: navigation,
-            });
+            navigation.navigate("RoomDetail", {  room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation: navigation, userAccess});
           }
         }
       }   
@@ -278,12 +268,13 @@ const StudentInfo = ({ navigation }) => {
           data: "",
           conditionString: "",
           checkAvailability: "",
-          customQuery: `select JSON_ARRAYAGG(json_object('PK_Report_Id',p.PK_Report_Id,'copyData',( SELECT CAST( CONCAT('[', GROUP_CONCAT( JSON_OBJECT( 'PK_CopyId',q.PK_CopyId,'FK_ReportId', q.FK_ReportId,'EMPLID', q.EMPLID,'copyNumber',q.copyNumber,'alternateCopyNumber1',q.alternateCopyNumber1,'alternateCopyNumber2',q.alternateCopyNumber2,'alternateCopyNumber3',q.alternateCopyNumber3,'alternateCopyNumber4',q.alternateCopyNumber4,'alternateCopyNumber5',q.alternateCopyNumber5,'alternateCopyNumber6',q.alternateCopyNumber6) ), ']') AS JSON ) FROM tbl_copy_master q WHERE q.FK_ReportId = p.PK_Report_Id ))) AS ReportData from tbl_report_master p where PK_Report_Id = ${reportId}`,
+          customQuery: `select JSON_ARRAYAGG(json_object('PK_Report_Id',p.PK_Report_Id,'Status',p.Status,'copyData',( SELECT CAST( CONCAT('[', GROUP_CONCAT( JSON_OBJECT( 'PK_CopyId',q.PK_CopyId,'FK_ReportId', q.FK_ReportId,'EMPLID', q.EMPLID,'copyNumber',q.copyNumber,'alternateCopyNumber1',q.alternateCopyNumber1,'alternateCopyNumber2',q.alternateCopyNumber2,'alternateCopyNumber3',q.alternateCopyNumber3,'alternateCopyNumber4',q.alternateCopyNumber4,'alternateCopyNumber5',q.alternateCopyNumber5,'alternateCopyNumber6',q.alternateCopyNumber6) ), ']') AS JSON ) FROM tbl_copy_master q WHERE q.FK_ReportId = p.PK_Report_Id ))) AS ReportData from tbl_report_master p where PK_Report_Id = ${reportId}`,
         },
         authToken
       );
 
       if (response) {
+        setStatus( response.data?.[0]?.ReportData?.[0]?.Status);
         let CopyFetchDetails =
           response.data?.[0]?.ReportData?.[0]?.copyData?.map((item, index) => ({
             id: index,
@@ -312,7 +303,7 @@ const StudentInfo = ({ navigation }) => {
     try {
       const CopyEmptyValues = copiesData?.length > 0 ? copiesData.some(data => data.mainCopy === "" || data.alternateCopies.includes("")) : true;
       if(CopyEmptyValues){
-        addToast("Please Fill CopyData Fierst!", "error");
+        addToast("Please Fill CopyData First!", "error");
       }
       else{
       const authToken = await checkAuthToken();
@@ -333,12 +324,13 @@ const StudentInfo = ({ navigation }) => {
             EXAM_START_TIME: startTime,
             CATALOG_NBR: catlog_Nbr,
             PTP_SEQ_CHAR: seat_Nbr,
-            Status:
+            Attendece_Status:
               attendanceDetails?.length > 0
                 ? attendanceDetails.PERCENTAGE >= attendanceDetails.PERCENTCHG
                   ? "Eligible"
                   : "Debarred"
                 : "Not Defined",
+                Status: status,
             SU_PAPER_ID: courseDetails.SU_PAPER_ID,
             DESCR100: courseDetails.DESCR100,
           },
@@ -386,12 +378,7 @@ const StudentInfo = ({ navigation }) => {
           );
           if (NewResponse) {
             addToast("Student Details Update Successful", "success");
-            navigation.navigate("RoomDetail", {
-              room_Nbr: room_Nbr,
-              exam_Dt: exam_Dt,
-              startTime: startTime,
-              navigation: navigation,
-            });
+            navigation.navigate("RoomDetail", {  room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation: navigation, userAccess});
           }
         }
       }
@@ -494,6 +481,16 @@ const StudentInfo = ({ navigation }) => {
     await handleGetStudentAttendenceInfo();
     (await reportId) ? handleGetCopyData() : "";
   };
+  const getStatuscolor = () =>{
+    switch(status) {
+      case 'UFM':
+        return 'red';
+      case 'Absent':
+        return 'grey';
+      default:
+        return 'green';
+    }
+  }
 
   useEffect(() => {
     fetchData();
@@ -518,20 +515,11 @@ const StudentInfo = ({ navigation }) => {
       ) : (
         <View>
           <View style={styles.studentInfoWrap}>
-            <Text style={styles.infoHeader}>Student Info:</Text>
-            <View style={styles.infoContainer}>
-              <View style={styles.userDetailWrap}>
-                <Image
-                  style={styles.userimage}
-                  source={require("../../local-assets/userimg.jpg")}
-                />
-                <FontAwesome6 name="signature" size={44} color="black" />
-              </View>
-            </View>
-          </View>
-          <View style={styles.studentInfoWrap}>
             <Text style={styles.infoHeader}>Basic Info:</Text>
             <View style={styles.infoContainer}>
+            <View style={[styles.userDetailWrap, ]} >
+            <FontAwesome name="user" size={48} color="#ccc"   />
+             </View> 
               <View style={styles.infoItem}>
                 <Text style={styles.label}>Name:</Text>
                 <Text style={styles.value}>
@@ -570,7 +558,7 @@ const StudentInfo = ({ navigation }) => {
             </View>
           </View>
           <View style={styles.studentInfoWrap}>
-            <Text style={styles.infoHeader}>Course Info:</Text>
+            <Text style={styles.infoHeader}>Additional Info:</Text>
             <View style={styles.infoContainer}>
               <View style={styles.infoItem}>
                 <Text style={styles.label}>Paper Id:</Text>
@@ -597,16 +585,31 @@ const StudentInfo = ({ navigation }) => {
                 <Text style={styles.value}>{seat_Nbr}</Text>
               </View>
               <View style={styles.infoItem}>
-                <Text style={styles.label}>Status:</Text>
+                <Text style={styles.label}>Attendece_Status:</Text>
                 <Text style={styles.value}>
-                  {attendanceDetails?.length > 0
-                    ? attendanceDetails.PERCENTAGE >=
-                      attendanceDetails.PERCENTCHG
-                      ? "Eligible"
-                      : "Debarred"
-                    : "Not Defined"}
+                  {attendanceDetails?.length > 0 ? attendanceDetails.PERCENTAGE >= attendanceDetails.PERCENTCHG ? "Eligible" : "Debarred" : "Not Defined"}
                 </Text>
               </View>
+              <View style={[styles.infoItem,]}>
+              <Text style={[styles.label]}>Status </Text>
+              <DropDownPicker
+                open={open}
+                value={status}
+                items={items}
+                setOpen={setOpen}
+                setValue={setStatus}
+                style={[styles.dropdown,{backgroundColor: getStatuscolor()}]}
+                labelStyle={{
+                  color: "white"
+                }}
+                dropDownStyle={{ backgroundColor: "#fafafa"}}
+                dropDownContainerStyle={styles.dropdownContainer} 
+                dropDownMaxHeight={150}
+                dropDownDirection="BOTTOM"
+                listItemContainerStyle={{ height: 30}} 
+                listItemLabelStyle={{ fontSize: 14 }}
+              />
+          </View>
             </View>
           </View>
 
@@ -920,13 +923,13 @@ const StudentInfo = ({ navigation }) => {
                             <MaterialCommunityIcons
                               name="barcode-scan"
                               onPress={() =>
-                                startScanning("Answersheet", index)
+                                startScanning("AnswerSheet", index)
                               }
                               size={40}
                               color="black"
                             />
                             <Text>OR</Text>
-                            {renderCopyInput("Answersheet", index,'')}
+                            {renderCopyInput("AnswerSheet", index,'')}
                           </View>
                         )}
                       </View>
@@ -1295,9 +1298,7 @@ const styles = StyleSheet.create({
     width: 90,
     height: 90,
   },
-  userDetailWrap: {
-    alignItems: "center",
-  },
+  
   copiesdataWrap: {
     marginTop: 10,
     backgroundColor: "rgb(240 243 245)",
@@ -1387,4 +1388,23 @@ const styles = StyleSheet.create({
   tableinput:{
     width:"auto",
   },
+  dropdown:{
+    width:200,
+    minHeight:30,
+    },
+    dropdownContainer:{
+      width:200,
+      padding: [10, 5],
+      height: "auto"
+    },
+    dropdownWrap:{
+      width:"40%",
+      zIndex:1000,
+   
+    },
+    userDetailWrap:{
+      width:"90%",
+      alignItems:"center",
+    }
+
 });

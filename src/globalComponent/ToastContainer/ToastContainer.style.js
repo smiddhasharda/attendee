@@ -4,13 +4,14 @@ import { StyleSheet, Platform } from 'react-native';
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    top: 50, // Adjust this value to position the toast further down or up
+    top: 20, 
     width: '100%',
-    alignItems: 'center',
-    zIndex: 1000, // Ensure it's above other elements
+    right:10,
+    alignItems: 'flex-end',
+    zIndex: 1000, 
   },
   toastContainer: {
-    padding: 16,
+    padding: 14,
     borderRadius: 8,
     flexDirection: 'column',
     alignItems: 'center',
