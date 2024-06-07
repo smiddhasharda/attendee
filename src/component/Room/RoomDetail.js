@@ -180,18 +180,7 @@ function RoomDetail({navigation}) {
               </View>
               <Text style={styles.cotext}>Present</Text>
             </View>
-            {/* <View style={styles.countMain}>
-              <View style={styles.countbg2}>
-                <Text style={styles.count}>10</Text>
-              </View>
-              <Text style={styles.cotext}>Absent</Text>
-            </View> */}
-            {/* <View style={styles.countMain}>
-              <View style={styles.countbg3}>
-                <Text style={styles.count}>10</Text>
-              </View>
-              <Text style={styles.cotext}>UFM</Text>
-            </View> */}
+         
             <View style={styles.countMain}>
               <View style={styles.countbg4}>
                 <Text style={styles.count}>{studentDetails?.length || "0"}</Text>
@@ -289,7 +278,7 @@ const styles = StyleSheet.create({
      },
     heading: {
       fontSize: 20,
-      fontWeight:"bold",
+      // fontWeight:"bold",
       marginBottom: 10,
     },
  
@@ -412,7 +401,7 @@ const styles = StyleSheet.create({
       textAlign: "center"
     },
     countWrap:{
-      fontWeight:"bold",
+      // fontWeight:"bold",
       flexDirection:"row",
       alignSelf:"flex-end",
       // width:"50%",
@@ -470,7 +459,7 @@ const styles = StyleSheet.create({
     cotext:{
       color:"#000",
       marginLeft:5,
-      fontWeight:600,
+      fontWeight:"600",
     }
   });
  

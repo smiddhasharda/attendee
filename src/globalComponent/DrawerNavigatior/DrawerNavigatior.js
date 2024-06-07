@@ -254,11 +254,11 @@ const DrawerNavigator = ({ navigation }) => {
       console.error("Error fetching user role permission:", error);
     }
   };
-
+ 
   const getIconName = (moduleName, focused) => {
     const icons = {
       Dashboard: focused ? 'home' : 'home-outline',
-      RoleScreen: focused ? 'skull' : 'skull-outline',
+      RoleScreen: focused ? 'person-circle-sharp' : 'person-circle-sharp',
       ModuleScreen: focused ? 'bookmark' : 'bookmark-outline',
       UserScreen: focused ? 'person' : 'person-outline',
       ExamScreen: focused ? 'book' : 'book-outline',
