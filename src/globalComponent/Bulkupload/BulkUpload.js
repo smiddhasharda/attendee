@@ -170,24 +170,18 @@ const BulkUpload = (props) => {
             <FlatList
               data={excelData}
               keyExtractor={(item, index) => index.toString()}
-              ListHeaderComponent={() => (
-                <View style={styles.tableHeader}>
-                  <Text style={styles.tableHeaderText}>Employee Id</Text>
-                  <Text style={styles.tableHeaderText}>Name</Text>
-                  <Text style={styles.tableHeaderText}>Date</Text>
-                  <Text style={styles.tableHeaderText}>Shift</Text>
-                  <Text style={styles.tableHeaderText}>Room</Text>
-                  <Text style={styles.tableHeaderText}>Duty Status</Text>
-                </View>
-              )}
+              ListHeaderComponent={props?.renderData}
               renderItem={({ item }) => (
                 <View style={styles.listItem}>
-                  <Text style={styles.listItemText}>{item?.[0]}</Text>
+                  {item?.map((data)=>(
+                  <Text style={styles.listItemText}>{data}</Text>
+                  ))}
+                  {/* <Text style={styles.listItemText}>{item?.[0]}</Text>
                   <Text style={styles.listItemText}>{item?.[1]}</Text>
                   <Text style={styles.listItemText}>{item?.[2]}</Text>
                   <Text style={styles.listItemText}>{item?.[3]}</Text>
                   <Text style={styles.listItemText}>{item?.[4]}</Text>
-                  <Text style={styles.listItemText}>{item?.[5]}</Text>
+                  <Text style={styles.listItemText}>{item?.[5]}</Text> */}
                 </View>
               )}
             />
