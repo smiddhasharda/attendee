@@ -289,12 +289,12 @@ const UserScreen = ({userAccess}) => {
 
 
     const renderTooltipContent = () =>
-        <View style={styles.passwordTooltipContainer}>
+       ( <View style={styles.passwordTooltipContainer}>
           <Text style={styles.passwordTooltipTextStyle}>
             Incorrect
             <Text style={styles.passwordTooltipRedTextStyle}>password</Text>
           </Text>
-        </View>;
+        </View>);
 
     return (
         <View style={styles.passwordTextInputContainer}>
@@ -579,15 +579,15 @@ const UserScreen = ({userAccess}) => {
         </View>
         </View>
       ) : 
-      <View style={styles.userListWrap}>
+    (<View style={styles.userListWrap}>
         <Text style={styles.header}>User List:</Text>      
           <View style={{alignItems:"flex-end"}}>
           {UserAccess?.create === 1 &&    
-          <Pressable onPress={() => setUserContainerVisible(true)}>
+         ( <Pressable onPress={() => setUserContainerVisible(true)}>
                     <Text> 
                       <Ionicons name="add-circle-outline" size={35} color="black" />
                     </Text>
-                  </Pressable> }
+                  </Pressable>) }
           </View>
         <FlatList 
           data={userList}
@@ -609,14 +609,14 @@ const UserScreen = ({userAccess}) => {
               </Pressable>          
               <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
               {UserAccess?.update === 1 ? 
-              <Pressable style={styles.listItemEditButton} onPress={() => handleEditUser(item)}>
+              (<Pressable style={styles.listItemEditButton} onPress={() => handleEditUser(item)}>
                     <Text style={styles.listItemEditText} ><Feather name="edit" size={16} color="white" /></Text>
-                  </Pressable> : ' - '}
+                  </Pressable>) : (<Text>-</Text>)}
               </View>
             </View>
           )}
          />
-      </View>
+      </View>)
       }
       </View>     
       );

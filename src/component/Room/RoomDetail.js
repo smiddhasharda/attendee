@@ -97,7 +97,8 @@ function RoomDetail({navigation}) {
           data: '',
           conditionString: `EXAM_DT = '${new Date(SelectedDate).toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-')}' AND ROOM_NBR = '${SelectedRoom}'`,
           checkAvailability: '',
-          customQuery: ''
+          customQuery: '',
+          viewType:'Campus_View'
         },
         authToken
       );
@@ -151,8 +152,8 @@ function RoomDetail({navigation}) {
 
   return (
     <View style={styles.container}>
-        {isScanning ? <CodeScanner onScannedData={ handleScannedData} onCancel={handleCancel} /> : 
-        <View>
+        {isScanning ? (<CodeScanner onScannedData={ handleScannedData} onCancel={handleCancel} />) : 
+       ( <View>
           <View style={styles.topdetails}>
            <View style={styles.searchWrap}>
            <TextInput
@@ -227,13 +228,13 @@ function RoomDetail({navigation}) {
           )
         )}
           </ScrollView>
-        </View>
+        </View>)
           }
            <View style={[styles.magnifying]}>
               {/* <Ionicons name="search-outline" size={27} color="#fff" style={styles.searchIcon} /> */}
-              {UserAccess?.create === 1 && <Pressable onPress={startScanning}>
+              {UserAccess?.create === 1 &&(<Pressable onPress={startScanning}>
                 <Ionicons name="qr-code-outline" size={27} color="#fff" style={styles.magIcon} />
-              </Pressable>}
+              </Pressable>)}
               {scannedData && (
                 <View>
                   <Text>Scanned Data: {scannedData}</Text>

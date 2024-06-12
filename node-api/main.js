@@ -68,16 +68,28 @@ const transporter = nodemailer.createTransport({
     database: process.env.DB_DATABASE,
   };
 
-  const viewConfig = {
-    user: process.env.VIEW_USER,
-    password: process.env.VIEW_PASSWORD,
+  const viewCampusConfig = {
+    user: process.env.VIEW_CAMPUS_USER,
+    password: process.env.VIEW_CAMPUS_PASSWORD,
+    connectString: '35.154.115.237:9999/SHARDA',
+  };
+
+    const viewFCMConfig = {
+    user: process.env.VIEW_FCM_USER,
+    password: process.env.VIEW_FCM_PASSWORD,
+    connectString: '35.154.115.237:9999/SHARDA',
+  };
+
+ const viewHRMSConfig = {
+    user: process.env.VIEW_HRMS_USER,
+    password: process.env.VIEW_HRMS_PASSWORD,
     connectString: '35.154.115.237:9999/SHARDA',
   };
 
   try {
     // Create a promise-based pool
     const pool = await mysql.createPool(dbConfig);
-      await oracledb.initOracleClient({ libDir: process.env.OCI_HOME });
+      // await oracledb.initOracleClient({ libDir: process.env.OCI_HOME });
 
     // Set group_concat_max_len
     await pool.query('SET SESSION group_concat_max_len = 4294967295');
@@ -87,9 +99,17 @@ const transporter = nodemailer.createTransport({
     console.log("Local Connected to MySQL database:", process.env.DB_DATABASE);
     connection.release();
 
-//  Oracle Connection
-    const viewPool = await oracledb.getConnection(viewConfig);
-    console.log("Successfully Connected to to Oracle database : ", process.env.VIEW_DATABASE);
+    // Oracle Campus Connection
+    // const viewCampusPool = await oracledb.getConnection(viewCampusConfig);
+    // console.log("Successfully Connected to to Oracle database Campus View : ", process.env.VIEW_DATABASE);
+
+    // Oracle FCM Connection
+    // const viewFCMPool = await oracledb.getConnection(viewFCMConfig);
+    // console.log("Successfully Connected to to Oracle database FCM View : ", process.env.VIEW_DATABASE);
+
+      // Oracle HRMS Connection
+    // const viewHRMSPool = await oracledb.getConnection(viewHRMSConfig);
+    // console.log("Successfully Connected to to Oracle database HRMS View : ", process.env.VIEW_DATABASE);
 
     // Middleware to authenticate JWT token
     function authenticateToken(req, res, next) {
@@ -609,6 +629,7 @@ const transporter = nodemailer.createTransport({
             );
             return res.json({ message: "Fetch successful", data: selectRows });
           case "custom":
+          console.log("customQuery : ",customQuery)
             const [customRows] = await pool.query(customQuery);
             return res.json({
               message: "Custom query successful",
@@ -717,15 +738,133 @@ const transporter = nodemailer.createTransport({
     
 
   // For View Api
+// app.get("/api/view", authenticateToken, async (req, res) => {
+//   try {
+//     const { operation, tblName, data, conditionString, checkAvailability, customQuery, } = req.query;
+//     if (!operation || !tblName) {
+//       return res.status(400).json({ error: "Operation and table are required" });
+//     }
+
+//     if (checkAvailability) {
+//       const checkRows = await viewPool.execute(
+//         `SELECT * FROM ${tblName} WHERE ${conditionString}`
+//       ).catch(error => {
+//         console.error("Error checking availability:", error.message || error);
+//         throw error;
+//       });
+//       if (checkRows && checkRows.rows.length > 0) {
+//         return res.status(400).json({ error: "Data already exists" });
+//       }
+//     }
+//     switch (operation) {
+//       case "fetch":
+//       console.log(`SELECT * FROM ${tblName} ${conditionString ? `WHERE ${conditionString}` : ""}`);
+//     const selectRows = await viewPool.execute(
+//         `SELECT * FROM ${tblName} ${
+//             conditionString ? `WHERE ${conditionString}` : ""
+//         }`, {},{ outFormat: oracledb.OUT_FORMAT_OBJECT }
+//     ).catch(error => {
+//         console.error("Error fetching data:", error.message || error);
+//         throw error;
+//     });
+
+//     return res.json({ message: "Fetch successful", data: selectRows?.rows });
+
+//       case "custom":
+//         const customRows = await viewPool.execute(customQuery, {},{ outFormat: oracledb.OUT_FORMAT_OBJECT }).catch(error => {
+//           console.error("Error executing custom query:", error.message || error);
+//           throw error;
+//         });
+
+//     return res.json({ message: "Fetch successful", data: customRows?.rows });
+
+//       default:
+//         return res.status(400).json({ error: "Invalid operation type" });
+//     }
+//   } catch (error) {
+//     console.error("Error in view fetch:", error.message || error);
+//     return res.status(500).json({ error: "Internal server error" });
+//   }
+// });
+
+// app.get("/api/view", authenticateToken, async (req, res) => {
+//   try {
+//     const { operation, tblName, data, conditionString, checkAvailability, customQuery,viewType } = req.query;
+//     const viewSetup = viewCampusPool
+//     if (!operation || !tblName) {
+//       return res.status(400).json({ error: "Operation and table are required" });
+//     }
+
+//     if(viewType === "FCM_View"){
+//       viewSetup = viewFCMPool;
+//     }
+//     else
+//     {
+//       viewSetup = viewCampusPool; 
+//     }
+
+
+//     if (checkAvailability) {
+//       const checkRows = await viewCampusPool.execute(
+//         `SELECT * FROM ${tblName} WHERE ${conditionString}`
+//       ).catch(error => {
+//         console.error("Error checking availability:", error.message || error);
+//         throw error;
+//       });
+//       if (checkRows && checkRows.rows.length > 0) {
+//         return res.status(400).json({ error: "Data already exists" });
+//       }
+//     }
+
+//     switch (operation) {
+//       case "fetch":
+//         console.log(`SELECT * FROM ${tblName} ${conditionString ? `WHERE ${conditionString}` : ""}`);
+//         const selectRows = await viewCampusPool.execute(
+//           `SELECT * FROM ${tblName} ${conditionString ? `WHERE ${conditionString}` : ""}`,
+//           {},
+//           { outFormat: oracledb.OUT_FORMAT_OBJECT }
+//         ).catch(error => {
+//           console.error("Error fetching data:", error.message || error);
+//           throw error;
+//         });
+//         return res.json({ message: "Fetch successful", data: selectRows?.rows });
+
+//       case "custom":
+//         console.log(customQuery);
+//         const customRows = await viewCampusPool.execute(customQuery, {}, { outFormat: oracledb.OUT_FORMAT_OBJECT }).catch(error => {
+//           console.error("Error executing custom query:", error.message || error);
+//           throw error;
+//         });
+//         return res.json({ message: "Fetch successful", data: customRows?.rows });
+
+//       default:
+//         return res.status(400).json({ error: "Invalid operation type" });
+//     }
+//   } catch (error) {
+//     console.error("Error in view fetch:", error.message || error);
+//     return res.status(500).json({ error: "Internal server error" });
+//   }
+// });
+
 app.get("/api/view", authenticateToken, async (req, res) => {
   try {
-    const { operation, tblName, data, conditionString, checkAvailability, customQuery, } = req.query;
+    const { operation, tblName, data, conditionString, checkAvailability, customQuery, viewType } = req.query;
+    let viewSetup;
+
     if (!operation || !tblName) {
       return res.status(400).json({ error: "Operation and table are required" });
     }
 
+    if (viewType === "FCM_View") {
+      viewSetup = viewFCMPool;
+    } else if(viewType === "HRMS_View"){
+     viewSetup = viewHRMSPool;
+    } else {
+      viewSetup = viewCampusPool; 
+    }
+
     if (checkAvailability) {
-      const checkRows = await viewPool.execute(
+      const checkRows = await viewSetup.execute(
         `SELECT * FROM ${tblName} WHERE ${conditionString}`
       ).catch(error => {
         console.error("Error checking availability:", error.message || error);
@@ -735,66 +874,28 @@ app.get("/api/view", authenticateToken, async (req, res) => {
         return res.status(400).json({ error: "Data already exists" });
       }
     }
+
     switch (operation) {
       case "fetch":
-    const selectRows = await viewPool.execute(
-        `SELECT * FROM ${tblName} ${
-            conditionString ? "WHERE " + conditionString : ""
-        }`, {},{ outFormat: oracledb.OUT_FORMAT_OBJECT }
-    ).catch(error => {
-        console.error("Error fetching data:", error.message || error);
-        throw error;
-    });
-
-    // // Extracting column names from metaData
-    // let columnNames = selectRows.metaData.map(column => column.name);
-
-    // // Transforming rows into the desired JSON format
-    // const transformedData = selectRows.rows.map(row => {
-    //     const rowData = {};
-    //     for (let i = 0; i < columnNames.length; i++) {
-    //         rowData[columnNames[i]] = row[i];
-    //     }
-    //     return rowData;
-    // });
-
-    return res.json({ message: "Fetch successful", data: selectRows?.rows });
-
-      // case "fetch":
-      //   const selectRows = await viewPool.execute(
-      //     `SELECT * FROM ${tblName} ${
-      //       conditionString ? "WHERE " + conditionString : ""
-      //     }`
-      //   ).catch(error => {
-      //     console.error("Error fetching data:", error.message || error);
-      //     throw error;
-      //   });
-      //   return res.json({ message: "Fetch successful", data: selectRows });
-
+        console.log(`SELECT * FROM ${tblName} ${conditionString ? `WHERE ${conditionString}` : ""}`);
+        const selectRows = await viewSetup.execute(
+          `SELECT * FROM ${tblName} ${conditionString ? `WHERE ${conditionString}` : ""}`,
+          {},
+          { outFormat: oracledb.OUT_FORMAT_OBJECT }
+        ).catch(error => {
+          console.error("Error fetching data:", error.message || error);
+          throw error;
+        });
+        return res.json({ message: "Fetch successful", data: selectRows?.rows });
 
       case "custom":
-        const customRows = await viewPool.execute(customQuery, {},{ outFormat: oracledb.OUT_FORMAT_OBJECT }).catch(error => {
+        console.log(customQuery);
+        const customRows = await viewSetup.execute(customQuery, {}, { outFormat: oracledb.OUT_FORMAT_OBJECT }).catch(error => {
           console.error("Error executing custom query:", error.message || error);
           throw error;
         });
+        return res.json({ message: "Fetch successful", data: customRows?.rows });
 
-    //        let customColumnNames = customRows.metaData.map(column => column.name);
-
-    // // Transforming rows into the desired JSON format
-    // const CustomTransformedData = customRows.rows.map(row => {
-    //     const rowData = {};
-    //     for (let i = 0; i < customColumnNames.length; i++) {
-    //         rowData[customColumnNames[i]] = row[i];
-    //     }
-    //     return rowData;
-    // });
-
-    return res.json({ message: "Fetch successful", data: customRows?.rows });
-
-        // return res.json({
-        //   message: "Custom query successful",
-        //   data: customRows.rows,
-        // });
       default:
         return res.status(400).json({ error: "Invalid operation type" });
     }
@@ -803,6 +904,7 @@ app.get("/api/view", authenticateToken, async (req, res) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 });
+
 
 // For Bulkupload Api
 app.post("/api/bulkupload", upload.single("bulkupload_doc"), authenticateToken, async (req, res) => {
