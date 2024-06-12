@@ -204,7 +204,7 @@ const windowWidth = Dimensions.get("window").width;
 
    return (
     <View style={styles.container}>
-      {isBulkuploadInvigilater ?  <Bulkpload handleClose={() => {setIsBulkuploadInvigilater(false),setInvigilatorContainerVisible(false)}} /> : 
+      {isBulkuploadInvigilater ? (<Bulkpload handleClose={() => {setIsBulkuploadInvigilater(false),setInvigilatorContainerVisible(false)}} />) : 
         (invigilatorContainerVisible ? (
         <View style={styles.formContainer}>
           <TextInput
@@ -278,9 +278,9 @@ const windowWidth = Dimensions.get("window").width;
       <Text style={styles.header}>Invigilator Duty List :</Text>      
       <View style={styles.addWrap}>
         {UserAccess?.create === 1 &&    
-          <Pressable style={styles.addbtnWrap} onPress={() => handleAddButton()}>
+          (<Pressable style={styles.addbtnWrap} onPress={() => handleAddButton()}>
             <Text style={styles.addbtntext}>Add</Text>
-          </Pressable>
+          </Pressable>)
         }
       </View>
       <FlatList 
@@ -308,7 +308,7 @@ const windowWidth = Dimensions.get("window").width;
           <Text style={[styles.listItemText, ]}>{item.duty_status}</Text>    
           {UserAccess?.update === 1 ? <Pressable style={styles.listItemEditButton} onPress={() => handleEditInvigilator(item)}>
            <Text style={styles.listItemEditText}><Feather name="edit" size={16} color="white" /></Text>
-            </Pressable> : ' - '}  
+            </Pressable> : (<Text>-</Text>)}  
         </View>
         )}
       />

@@ -401,7 +401,7 @@ const RoleScreen = ({userAccess}) => {
 
         </View>
            ) :
-       <View style={styles.roleLists}>
+     (<View style={styles.roleLists}>
         <Text style={styles.header}>Role List:</Text>
         {UserAccess?.create === 1 &&
           <View style={{alignItems:"flex-end"}}>
@@ -448,14 +448,14 @@ const RoleScreen = ({userAccess}) => {
               </Pressable>
               <View style={{ flex: 1, flexDirection: "row", justifyContent: "flex-end", alignItems: "center", }} >
                 {UserAccess?.update === 1 ?
-                  <Pressable style={styles.listItemEditButton} onPress={() => handleEditRole(item)}>
+                 (<Pressable style={styles.listItemEditButton} onPress={() => handleEditRole(item)}>
                       <Text style={styles.listItemEditText}><Feather name="edit" size={16} color="white" /></Text>
-                    </Pressable> : ' - '}
+                    </Pressable>) : (<Text>-</Text>)}
               </View>
             </View>
           )}
       />
-        </View>
+        </View>)
         }
     </View>
   );

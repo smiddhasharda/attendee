@@ -1,121 +1,132 @@
-import {
-  ViewStyle,
-  ImageStyle,
-  Dimensions,
-  StyleSheet,
-  TextStyle,
-} from "react-native";
+import { StyleSheet } from 'react-native';
 
-const { width: ScreenWidth, height:ScreenHeight } = Dimensions.get("screen");
-
-const LoginStyles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fff',
+  },
+  bgimg1: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+  },
+  bgimages2: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
   },
   form: {
-    backgroundColor: "white",
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position:'relative',
+    zIndex:99999
+  },
+  logininfoWrap: {
+    width: '80%',
+    backgroundColor: '#fff',
+    padding: 20,
     borderRadius: 10,
-    display: "flex",
-    position: "absolute",
-    zIndex: 2,
-    width: "80%",
-    top: "24%",
-    left: "10%",
-    padding: 25,
-    height: 400
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
-  label: {
-    fontSize: 16,
-    marginBottom: 5,
-    fontWeight: "bold"
-  },
-  input: {
-    height: 40,
-    borderColor: "#ddd",
-    borderWidth: 1,
-    marginBottom: 15,
-    padding: 10,
-    borderRadius: 5,
+  loginheadWrap: {
+    marginBottom: 20,
   },
   loginheading: {
-    fontWeight: "bold",
-    fontSize: 28,
-    alignItems: "center",
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   loginsubheading: {
     fontSize: 16,
+    textAlign: 'center',
+    color: '#666',
   },
-  loginheadWrap: {
-    width: "100%",
-    // padding: 12,
+  label: {
+    fontSize: 16,
+    marginBottom: 8,
   },
-  logininfoWrap: {
-    width: "100%",
-    // padding: 12,
-  },
-  bgimg1: {
-    width: "100%",
-    height: "100%",
-    position: "absolute",
-    zIndex: 1,
-    top: "-60%",
-    transform: [{ rotate: '132deg' }],
-    left: "-70%",
-  },
-  bgimages2: {
-    position: "absolute",
-    width: "100%",
-    height: "100%",
-    zIndex: 1,
-    transform: [{ rotate: '450deg' }],
-    right: "-78%",
-    bottom: -250,
+  input: {
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    marginBottom: 14,
+    paddingLeft: 10,
   },
   loginButtonStyle: {
-    height: 45,
-    width: 180, 
-    backgroundColor: "#fea500",
-    borderRadius: 8,
-    alignItems: "center",
-    justifyContent: "center",
-    alignSelf: "center",
-    marginTop: 8,
-    marginLeft:0,
-    // marginLeft: 14,
-    boxShadow: '0px 0px 10px rgba(0, 0, 0, 0)',
-
-  },  
+    backgroundColor: '#007BFF',
+    paddingVertical: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 10,
+  },
   loginTextStyle: {
-    color: "#fff",
+    color: '#fff',
     fontSize: 16,
-    fontWeight: "bold",
+  },
+  userTypeSelection: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginVertical: 20,
+  },
+  userTypeButton: {
+    flex: 1,
+    padding: 10,
+    alignItems: 'center',
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    marginHorizontal: 5,
+  },
+  activeUserTypeButton: {
+    backgroundColor: '#007BFF',
+    borderColor: '#007BFF',
+  },
+  userTypeText: {
+    fontSize: 16,
+    color: '#000',
+  },
+  activeUserTypeText: {
+    color: '#fff',
   },
   emailTooltipContainer: {
-    padding: 12,
-    alignItems: "center",
-    justifyContent: "center",
-  
+    position: 'absolute',
+    top: 50,
+    left: 10,
+    backgroundColor: '#f8d7da',
+    borderRadius: 5,
+    padding: 10,
   },
   emailTooltipTextStyle: {
-    fontSize: 16,
+    color: '#721c24',
   },
   emailTooltipRedTextStyle: {
-    fontWeight: "bold",
-    color: "red",
+    fontWeight: 'bold',
+    color: '#721c24',
   },
   passwordTooltipContainer: {
-    padding: 12,
-    alignItems: "center",
-    justifyContent: "center",
+    position: 'absolute',
+    top: 50,
+    left: 10,
+    backgroundColor: '#f8d7da',
+    borderRadius: 5,
+    padding: 10,
   },
   passwordTooltipTextStyle: {
-    fontSize: 16,
+    color: '#721c24',
   },
   passwordTooltipRedTextStyle: {
-    fontWeight: "bold",
-    color: "red",
+    fontWeight: 'bold',
+    color: '#721c24',
   },
-  
 });
 
-export default LoginStyles;
+export default styles;

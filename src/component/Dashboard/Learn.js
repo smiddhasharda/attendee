@@ -144,20 +144,21 @@ function Learn() {
       const response = await view(
         {
           operation: "custom",
-          tblName: "PS_S_PRD_PHOTO_VW",
+          tblName: "PS_SU_PSFT_COEM_VW",
           data: '',
           conditionString: '',
           checkAvailability: '',
-          customQuery: `SELECT * from PS_S_PRD_PHOTO_VW`,
+          customQuery: `SELECT count(*) from PS_SU_PSFT_COEM_VW`,
+          viewType:'HRMS_View'
         },
         authToken
       );
 
       if (response) {
-        setSampleData(response.data);
+        console.log("Data : ",response.data);
       }
     } catch (error) {
-      setLoading(false);
+      // setLoading(false);
       handleAuthErrors(error);
     }
   };
@@ -182,20 +183,20 @@ function Learn() {
     handleGetExamReport(examSelectedDate, examSelectedRoom?.label, data?.label);
   };
 
-  const binaryToBase64 = (binary) => {
-    return btoa(
-      new Uint8Array(binary)
-        .reduce((data, byte) => data + String.fromCharCode(byte), '')
-    );
-  };
-  const binaryData = sampleData?.[0]?.EMPLOYEE_PHOTO;
-  const base64Image = binaryToBase64(binaryData);
+  // const binaryToBase64 = (binary) => {
+  //   return btoa(
+  //     new Uint8Array(binary)
+  //       .reduce((data, byte) => data + String.fromCharCode(byte), '')
+  //   );
+  // };
+  // const binaryData = sampleData?.[0]?.EMPLOYEE_PHOTO;
+  // const base64Image = binaryToBase64(binaryData);
 
-  console.log("base64Image : ",binaryData)
+  // console.log("base64Image : ",sampleData)
 
 
   useEffect(() => {
-    handleGetExamDateList();
+    // handleGetExamDateList();
     handleGetTestView();
   }, []);
   return (
