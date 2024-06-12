@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, FlatList, StyleSheet, ScrollView, Pressable, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, StyleSheet, ScrollView, Pressable, ActivityIndicator, Dimensions } from 'react-native';
 import { view, fetch } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { parse, format } from 'date-fns';
+
+const { width, height } = Dimensions.get('window');
 
 const ExamScreen = ({ navigation, userAccess, userData }) => {
   const UserAccess = userAccess?.module?.find((item) => item?.FK_ModuleId === 5);
@@ -230,7 +232,7 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
             keyExtractor={(item, index) => index.toString()}
           />
         ) : (
-          <Text style={styles.noRecordsText}>No record in this date</Text>
+          <Text style={styles.noRecordsText}>No Record Found!</Text>
         )
       )}
     </View>
@@ -347,6 +349,22 @@ const styles = StyleSheet.create({
   dropdown: {
     width: '50%',
     width: '100%',  
+  },
+  noRecordsText: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: "#ddd",
+    position: 'absolute',
+    textAlign: 'center',
+    borderRadius: 12,
+    fontSize: 16,
+    left: width / 2 - 150,  // Subtract half the element's width
+    top: height / 2 - 150,  // Subtract half the element's height
+    width: 300,  // Adjust this based on your requirements
+    padding: 12,  // Adjust this based on your requirements
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
