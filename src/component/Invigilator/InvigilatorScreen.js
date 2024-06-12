@@ -276,16 +276,18 @@ const windowWidth = Dimensions.get("window").width;
    ): (
     <View style={styles.userListWrap}>
       <Text style={styles.header}>Invigilator Duty List :</Text>      
-     
+      <View style={styles.addWrap}>
         {UserAccess?.create === 1 &&    
-          ( <View style={styles.addWrap}><Pressable style={styles.addbtnWrap} onPress={() => setIsBulkuploadInvigilater(true)}>
+          ( <Text >
+            <Pressable style={styles.addbtnWrap} onPress={() => setIsBulkuploadInvigilater(true)}>
             <Text style={styles.addbtntext}>BulkUpload</Text>
           </Pressable>
           <Pressable style={styles.addbtnWrap} onPress={() => handleAddButton()}>
           <Text style={styles.addbtntext}>Add</Text>
-        </Pressable> </View>
+        </Pressable> </Text>
 )
         }
+        </View>
       <FlatList 
         data={invigilatorList}
         keyExtractor={(item) => item.PK_InvigilatorDutyId.toString()}
