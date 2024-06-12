@@ -4,11 +4,11 @@ import { StyleSheet, Platform } from 'react-native';
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    top: 20, 
+    top: 20,
     width: '100%',
-    right:10,
+    right: 10,
     alignItems: 'flex-end',
-    zIndex: 1000, 
+    zIndex: 9999,
   },
   toastContainer: {
     padding: 14,

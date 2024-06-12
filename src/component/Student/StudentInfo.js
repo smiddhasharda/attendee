@@ -39,7 +39,7 @@ const StudentInfo = ({ navigation }) => {
   const [courseDetails, setCourseDetails] = useState({});
   const [attendanceDetails, setAttendanceDetails] = useState({});
   const { room_Nbr, catlog_Nbr, system_Id, seat_Nbr, exam_Dt, startTime, reportId, userAccess, current_Term, } = route.params;
-  const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 6 );
+  const UserAccess = userAccess?.module?.find((item) => item?.FK_ModuleId === 6);
   const [copiesData, setCopiesData] = useState([]);
   const [tempCopyNumber, setTempNumber] = useState("");
   const [mainCopyIndex, setMainCopyIndex] = useState("");
@@ -50,7 +50,7 @@ const StudentInfo = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState('Present');
-  const items=[
+  const items = [
     { label: 'Present', value: 'Present' },
     { label: 'Absent', value: 'Absent' },
     { label: 'UFM', value: 'UFM' },
@@ -121,13 +121,12 @@ const StudentInfo = ({ navigation }) => {
       : handleAlternateCopyChange(copyNumber, copyIndex, index);
   };
 
-  const renderCopyInput = (copyType, index, copyIndex,InputStyle) => {
-    console.log(InputStyle)
+  const renderCopyInput = (copyType, index, copyIndex, InputStyle) => {
     return (
       <View style={styles.answerSheetWrap} key={copyIndex}>
         <View r key={copyIndex}>
           <TextInput
-            style={[InputStyle,styles.input]}
+            style={[InputStyle, styles.input]}
             placeholder={`Enter ${copyType + " " + copyIndex + 1} Number`}
             onChangeText={(copyNumber) => setTempNumber(copyNumber)}
           />
@@ -181,16 +180,16 @@ const StudentInfo = ({ navigation }) => {
     setAlternateCopyIndex(copyIndex);
   };
 
- 
+
 
   const handleStudentInfoSubmit = async () => {
     try {
       const CopyEmptyValues = copiesData?.length > 0 ? copiesData.some(data => data.mainCopy === "" || data.alternateCopies.includes("")) : true;
-      if(CopyEmptyValues){
+      if (CopyEmptyValues) {
         addToast("Please Fill CopyData First!", "error");
       }
-      else{
-        const authToken = await checkAuthToken();    
+      else {
+        const authToken = await checkAuthToken();
         const response = await insert(
           {
             operation: "insert",
@@ -224,7 +223,7 @@ const StudentInfo = ({ navigation }) => {
           },
           authToken
         );
-  
+
         if (response) {
           const studentCopyWithId = copiesData.map((item) => {
             let newItem = {
@@ -250,10 +249,10 @@ const StudentInfo = ({ navigation }) => {
           );
           if (NewResponse) {
             addToast("Student Details Add Successful", "success");
-            navigation.navigate("RoomDetail", {  room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation: navigation, userAccess});
+            navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation: navigation, userAccess });
           }
         }
-      }   
+      }
     } catch (error) {
       handleAuthErrors(error);
     }
@@ -275,7 +274,7 @@ const StudentInfo = ({ navigation }) => {
       );
 
       if (response) {
-        setStatus( response.data?.[0]?.ReportData?.[0]?.Status);
+        setStatus(response.data?.[0]?.ReportData?.[0]?.Status);
         let CopyFetchDetails =
           response.data?.[0]?.ReportData?.[0]?.copyData?.map((item, index) => ({
             id: index,
@@ -303,87 +302,87 @@ const StudentInfo = ({ navigation }) => {
   const handleStudentInfoUpdate = async () => {
     try {
       const CopyEmptyValues = copiesData?.length > 0 ? copiesData.some(data => data.mainCopy === "" || data.alternateCopies.includes("")) : true;
-      if(CopyEmptyValues){
+      if (CopyEmptyValues) {
         addToast("Please Fill CopyData First!", "error");
       }
-      else{
-      const authToken = await checkAuthToken();
-      const response = await update(
-        {
-          operation: "update",
-          tblName: "tbl_report_master",
-          data: {
-            EMPLID: studentDetails.EMPLID,
-            NAME_FORMAL: studentDetails.NAME_FORMAL,
-            STRM: studentDetails.STRM,
-            ADM_APPL_NBR: studentDetails.ADM_APPL_NBR,
-            DESCR: studentDetails.DESCR,
-            DESCR2: studentDetails.DESCR2,
-            DESCR3: studentDetails.DESCR3,
-            EXAM_DT: exam_Dt,
-            ROOM_NBR: room_Nbr,
-            EXAM_START_TIME: startTime,
-            CATALOG_NBR: catlog_Nbr,
-            PTP_SEQ_CHAR: seat_Nbr,
-            Attendece_Status:
-              attendanceDetails?.length > 0
-                ? attendanceDetails.PERCENTAGE >= attendanceDetails.PERCENTCHG
-                  ? "Eligible"
-                  : "Debarred"
-                : "Not Defined",
-                Status: status,
-            SU_PAPER_ID: courseDetails.SU_PAPER_ID,
-            DESCR100: courseDetails.DESCR100,
-          },
-          conditionString: `PK_Report_Id = ${reportId}`,
-          checkAvailability: "",
-          customQuery: "",
-        },
-        authToken
-      );
-
-      if (response) {
-        const DeleteResponse = await remove(
+      else {
+        const authToken = await checkAuthToken();
+        const response = await update(
           {
-            operation: "delete",
-            tblName: "tbl_copy_master",
-            data: "",
-            conditionString: `PK_CopyId IN (${copyList})`,
+            operation: "update",
+            tblName: "tbl_report_master",
+            data: {
+              EMPLID: studentDetails.EMPLID,
+              NAME_FORMAL: studentDetails.NAME_FORMAL,
+              STRM: studentDetails.STRM,
+              ADM_APPL_NBR: studentDetails.ADM_APPL_NBR,
+              DESCR: studentDetails.DESCR,
+              DESCR2: studentDetails.DESCR2,
+              DESCR3: studentDetails.DESCR3,
+              EXAM_DT: exam_Dt,
+              ROOM_NBR: room_Nbr,
+              EXAM_START_TIME: startTime,
+              CATALOG_NBR: catlog_Nbr,
+              PTP_SEQ_CHAR: seat_Nbr,
+              Attendece_Status:
+                attendanceDetails?.length > 0
+                  ? attendanceDetails.PERCENTAGE >= attendanceDetails.PERCENTCHG
+                    ? "Eligible"
+                    : "Debarred"
+                  : "Not Defined",
+              Status: status,
+              SU_PAPER_ID: courseDetails.SU_PAPER_ID,
+              DESCR100: courseDetails.DESCR100,
+            },
+            conditionString: `PK_Report_Id = ${reportId}`,
             checkAvailability: "",
             customQuery: "",
           },
           authToken
         );
-        if (DeleteResponse) {
-          const studentCopyWithId = copiesData.map((item) => {
-            let newItem = {
-              FK_ReportId: reportId,
-              copyNumber: item.mainCopy,
-              EMPLID: studentDetails.EMPLID,
-            };
-            item.alternateCopies.forEach((copy, index) => {
-              newItem[`alternateCopyNumber${index + 1}`] = copy;
-            });
-            return newItem;
-          });
-          const NewResponse = await insert(
+
+        if (response) {
+          const DeleteResponse = await remove(
             {
-              operation: "insert",
+              operation: "delete",
               tblName: "tbl_copy_master",
-              data: studentCopyWithId,
-              conditionString: "",
+              data: "",
+              conditionString: `PK_CopyId IN (${copyList})`,
               checkAvailability: "",
               customQuery: "",
             },
             authToken
           );
-          if (NewResponse) {
-            addToast("Student Details Update Successful", "success");
-            navigation.navigate("RoomDetail", {  room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation: navigation, userAccess});
+          if (DeleteResponse) {
+            const studentCopyWithId = copiesData.map((item) => {
+              let newItem = {
+                FK_ReportId: reportId,
+                copyNumber: item.mainCopy,
+                EMPLID: studentDetails.EMPLID,
+              };
+              item.alternateCopies.forEach((copy, index) => {
+                newItem[`alternateCopyNumber${index + 1}`] = copy;
+              });
+              return newItem;
+            });
+            const NewResponse = await insert(
+              {
+                operation: "insert",
+                tblName: "tbl_copy_master",
+                data: studentCopyWithId,
+                conditionString: "",
+                checkAvailability: "",
+                customQuery: "",
+              },
+              authToken
+            );
+            if (NewResponse) {
+              addToast("Student Details Update Successful", "success");
+              navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation: navigation, userAccess });
+            }
           }
         }
       }
-    }
     } catch (error) {
       handleAuthErrors(error);
     }
@@ -416,7 +415,7 @@ const StudentInfo = ({ navigation }) => {
           conditionString: `EMPLID = '${system_Id}'`,
           checkAvailability: "",
           customQuery: "",
-          viewType:'Campus_View'
+          viewType: 'Campus_View'
         },
         authToken
       );
@@ -440,13 +439,13 @@ const StudentInfo = ({ navigation }) => {
           conditionString: `EMPLID = '${system_Id}'`,
           checkAvailability: "",
           customQuery: "",
-          viewType:'FCM_View'
+          viewType: 'FCM_View'
         },
         authToken
       );
       if (response) {
         setStudentPicture(response?.data?.[0]?.EMPLOYEE_PHOTO);
-        const buffer =response?.data?.[0]?.EMPLOYEE_PHOTO;
+        const buffer = response?.data?.[0]?.EMPLOYEE_PHOTO;
         const bufferData = buffer._readableState.buffer;
         const base64String = bufferData.toString('base64');
         const uri = `data:image/jpeg;base64,${base64String}`;
@@ -459,42 +458,42 @@ const StudentInfo = ({ navigation }) => {
   };
 
   // Function to convert blob to base64
-// const blobToBase64 = (blob) => {
-//   return new Promise((resolve, reject) => {
-//     const reader = new FileReader();
-//     reader.onloadend = () => {
-//       resolve(reader.result);
-//     };
-//     reader.onerror = () => {
-//       reject(new Error("Failed to convert blob to base64"));
-//     };
-//     reader.readAsDataURL(blob);
-//   });
-// };
+  // const blobToBase64 = (blob) => {
+  //   return new Promise((resolve, reject) => {
+  //     const reader = new FileReader();
+  //     reader.onloadend = () => {
+  //       resolve(reader.result);
+  //     };
+  //     reader.onerror = () => {
+  //       reject(new Error("Failed to convert blob to base64"));
+  //     };
+  //     reader.readAsDataURL(blob);
+  //   });
+  // };
 
-// Function to handle student picture
-// const handleStudentPicture = async (data) => {
-//   try {
-//     // Validate the data format
-//     if (!data) {
-//       throw new Error("Invalid data format");
-//     }
+  // Function to handle student picture
+  // const handleStudentPicture = async (data) => {
+  //   try {
+  //     // Validate the data format
+  //     if (!data) {
+  //       throw new Error("Invalid data format");
+  //     }
 
-//     // Log data for debugging
-//     console.log("Data to convert:", data);
+  //     // Log data for debugging
+  //     console.log("Data to convert:", data);
 
-//     // Convert data to Blob
-//     const blob = new Blob([data], { type: 'image/jpeg' });
-//     const base64String = await blobToBase64(blob);
+  //     // Convert data to Blob
+  //     const blob = new Blob([data], { type: 'image/jpeg' });
+  //     const base64String = await blobToBase64(blob);
 
-//     // Use the base64 string
-//     console.log("Base64 string:", base64String);
-//   } catch (error) {
-//     console.error("Error converting data to Blob:", error);
-//   }
-// };
+  //     // Use the base64 string
+  //     console.log("Base64 string:", base64String);
+  //   } catch (error) {
+  //     console.error("Error converting data to Blob:", error);
+  //   }
+  // };
 
- 
+
 
   const handleGetStudentCouseInfo = async () => {
     try {
@@ -507,7 +506,7 @@ const StudentInfo = ({ navigation }) => {
           conditionString: "",
           checkAvailability: "",
           customQuery: `SELECT DISTINCT CATALOG_NBR, DESCR100 FROM PS_S_PRD_EX_TME_VW WHERE CATALOG_NBR = '${catlog_Nbr}'`,
-          viewType:'Campus_View'
+          viewType: 'Campus_View'
         },
         authToken
       );
@@ -531,7 +530,7 @@ const StudentInfo = ({ navigation }) => {
           conditionString: "",
           checkAvailability: "",
           customQuery: `SELECT DISTINCT PS_S_PRD_CT_ATT_VW.PERCENTAGE,PS_S_PRD_TRS_AT_VW.PERCENTCHG FROM PS_S_PRD_CT_ATT_VW JOIN PS_S_PRD_TRS_AT_VW ON PS_S_PRD_TRS_AT_VW.EMPLID = PS_S_PRD_CT_ATT_VW.EMPLID WHERE PS_S_PRD_CT_ATT_VW.EMPLID = '${system_Id}' AND PS_S_PRD_CT_ATT_VW.CATALOG_NBR = '${catlog_Nbr}' AND PS_S_PRD_CT_ATT_VW.STRM = '${current_Term}'`,
-          viewType:'Campus_View'
+          viewType: 'Campus_View'
           // customQuery: `Select * from PS_S_PRD_CT_ATT_VW where EMPLID Like '%20232037%' `
         },
         authToken
@@ -553,8 +552,8 @@ const StudentInfo = ({ navigation }) => {
     await handleGetStudentPicture();
     (await reportId) ? handleGetCopyData() : "";
   };
-  const getStatuscolor = () =>{
-    switch(status) {
+  const getStatuscolor = () => {
+    switch (status) {
       case 'UFM':
         return 'red';
       case 'Absent':
@@ -568,7 +567,6 @@ const StudentInfo = ({ navigation }) => {
     fetchData();
   }, [UserAccess]);
 
-  console.log("studentPicture : ", studentPicture);
   return loading ? (
     <ActivityIndicator size="large" color="#0000ff" />
   ) : (
@@ -590,17 +588,17 @@ const StudentInfo = ({ navigation }) => {
           <View style={styles.studentInfoWrap}>
             <Text style={styles.infoHeader}>Basic Info:</Text>
             <View style={styles.infoContainer}>
-            <View style={styles.userDetailWrap}>
-          {/* {studentPicture ? (
+              <View style={styles.userDetailWrap}>
+                {/* {studentPicture ? (
               // <Image source={{ uri: handleStudentPicture(studentPicture) }} style={styles.userImage} />
               <Image
       source={{ uri: `data:image/png;base64,${studentPicture}` }} // Adjust content type based on image format
       style={{ width: 200, height: 200 }} // Set desired dimensions
     />
           ) : ( */}
-            <FontAwesome name="user" size={48} color="#ccc" />
-          {/* )} */}
-        </View>
+                <FontAwesome name="user" size={65} color="#fff" style={styles.studProfile} />
+                {/* )} */}
+              </View>
               <View style={styles.infoItem}>
                 <Text style={styles.label}>Name:</Text>
                 <Text style={styles.value}>
@@ -666,31 +664,31 @@ const StudentInfo = ({ navigation }) => {
                 <Text style={styles.value}>{seat_Nbr}</Text>
               </View>
               <View style={styles.infoItem}>
-                <Text style={styles.label}>Attendece_Status:</Text>
+                <Text style={styles.label}>Attendance Status:</Text>
                 <Text style={styles.value}>
                   {attendanceDetails?.length > 0 ? attendanceDetails.PERCENTAGE >= attendanceDetails.PERCENTCHG ? "Eligible" : "Debarred" : "Not Defined"}
                 </Text>
               </View>
               <View style={[styles.infoItem,]}>
-              <Text style={[styles.label]}>Status </Text>
-              <DropDownPicker
-                open={open}
-                value={status}
-                items={items}
-                setOpen={setOpen}
-                setValue={setStatus}
-                style={[styles.dropdown,{backgroundColor: getStatuscolor()}]}
-                labelStyle={{
-                  color: "white"
-                }}
-                dropDownStyle={{ backgroundColor: "#fafafa"}}
-                dropDownContainerStyle={styles.dropdownContainer} 
-                dropDownMaxHeight={150}
-                dropDownDirection="BOTTOM"
-                listItemContainerStyle={{ height: 30}} 
-                listItemLabelStyle={{ fontSize: 14 }}
-              />
-          </View>
+                <Text style={[styles.label]}>Status</Text>
+                <DropDownPicker
+                  open={open}
+                  value={status}
+                  items={items}
+                  setOpen={setOpen}
+                  setValue={setStatus}
+                  style={[styles.dropdown, { backgroundColor: getStatuscolor() }]}
+                  labelStyle={{
+                    color: "white"
+                  }}
+                  dropDownStyle={{ backgroundColor: "#fafafa" }}
+                  dropDownContainerStyle={styles.dropdownContainer}
+                  dropDownMaxHeight={150}
+                  dropDownDirection="BOTTOM"
+                  listItemContainerStyle={{ height: 30 }}
+                  listItemLabelStyle={{ fontSize: 14 }}
+                />
+              </View>
             </View>
           </View>
 
@@ -750,7 +748,7 @@ const StudentInfo = ({ navigation }) => {
                             ]}
                           >
                             <Text style={[styles.header]}>
-                              Answersheet Number {index + 1}
+                              AnswerSheet Number {index + 1}
                             </Text>
                             <Text style={[styles.examname]}>
                               {copy.mainCopy}
@@ -780,7 +778,7 @@ const StudentInfo = ({ navigation }) => {
                             ]}
                           >
                             <Text style={{ fontWeight: "bold" }}>
-                              Answersheet {index + 1}
+                              AnswerSheet {index + 1}
                             </Text>
                             <MaterialCommunityIcons
                               name="barcode-scan"
@@ -936,7 +934,7 @@ const StudentInfo = ({ navigation }) => {
             <View
               style={{ flexDirection: "row", justifyContent: "space-between" }}
             >
-              <Text style={styles.addAnsheading}> Answersheet </Text>
+              <Text style={styles.addAnsheading}> AnswerSheet </Text>
               {copiesData?.length < 6 && (
                 <AntDesign style={styles.addicon} name="pluscircleo" size={24} color="black" onPress={handleAddCopy} />
               )}
@@ -969,7 +967,7 @@ const StudentInfo = ({ navigation }) => {
                             ]}
                           >
                             {/* <Text style={[styles.header]}>
-                              Answersheet Number{" "}
+                              AnswerSheet Number{" "}
                             </Text> */}
                             <Text style={[styles.examname]}>
                               {copy.mainCopy}
@@ -979,15 +977,15 @@ const StudentInfo = ({ navigation }) => {
                                 copy.alternateCopies.length > 0 ||
                                 copy.alternateCopies?.includes("")
                               ) && (
-                                <Entypo
-                                  name="circle-with-cross"
-                                  size={20}
-                                  color="red"
-                                  onPress={() =>
-                                    handleSaveCopy("Answersheet", "", index)
-                                  }
-                                />
-                              )}
+                                  <Entypo
+                                    name="circle-with-cross"
+                                    size={20}
+                                    color="red"
+                                    onPress={() =>
+                                      handleSaveCopy("AnswerSheet", "", index)
+                                    }
+                                  />
+                                )}
                             </View>
                           </View>
                         ) : (
@@ -999,7 +997,7 @@ const StudentInfo = ({ navigation }) => {
                             ]}
                           >
                             {/* <Text style={{ fontWeight: "bold" }}>
-                              Answersheet {index + 1}
+                              AnswerSheet {index + 1}
                             </Text> */}
                             <MaterialCommunityIcons
                               name="barcode-scan"
@@ -1010,7 +1008,7 @@ const StudentInfo = ({ navigation }) => {
                               color="black"
                             />
                             <Text>OR</Text>
-                            {renderCopyInput("AnswerSheet", index,'')}
+                            {renderCopyInput("AnswerSheet", index, '')}
                           </View>
                         )}
                       </View>
@@ -1020,63 +1018,51 @@ const StudentInfo = ({ navigation }) => {
 
                           {copy.alternateCopies && (
                             <View style={styles.cpoiesmainblock}>
-                              <View style={styles.supplyblockWrap}>
-                                <Text
+                              <View style={styles.supplyblockWrap}>                                
+                                {copy.alternateCopies.length < 6 ? 
+                                  (<View style={styles.buttoncontainer}>
+                                    <Pressable style={styles.addsuplybtn} onPress={() => handleAddAlternateCopy(index)}>
+                                      <Text style={{ color: "#fff", textAlign: "center", }}>Add SupplySheet</Text>
+                                    </Pressable>
+                                  </View> ):
+                                 ( <Text
                                   style={{ fontWeight: "bold", padding: 10 }}
                                 >
                                   Supplementary Sheet
-                                </Text>
-                                { copy.alternateCopies.length < 6 && (
-                                  <View style={styles.buttoncontainer}>
-                                <Pressable style={styles.addsuplybtn} onPress={() => handleAddAlternateCopy(index)}>
-                            <Text style={{color:"#fff", textAlign:"center",}}>Add SupplySheet</Text>
-                          </Pressable>
-                          </View>
-                                )}                                
-                                <ScrollView>
-                                  <View style={styles.tr}>
-                               
-                                      <Text style={styles.thead}>Copy No</Text>
-                               
-                              
-                                      <Text style={[styles.thead]}>Scan</Text>
-                                  
-                                    <Text
-                                      style={[
-                                        styles.thead,
-                                        { flexWrap: "wrap" },
-                                      ]}
-                                    >
-                                      Actions
-                                    </Text>
-                                  </View>
+                                </Text>)
+                                }
+                                {copy.alternateCopies?.length > 0 &&
+                                  (<View style={styles.tr}>
+                                    <Text style={styles.thead}>Copy No</Text>
+                                    <Text style={styles.thead}>Scan</Text>
+                                    <Text style={[styles.thead]} >Actions</Text>
+                                  </View>)}
                                   {copy.alternateCopies.map(
                                     (alternateCopy, copyIndex) => (
                                       <View style={styles.tr}>
-                                     
-                                          <Text style={styles.td}>{index+1}.{copyIndex+1}</Text>
-                                       
-                                       
-                                        <Text style={[ styles.td,  ]} >
-                                          {alternateCopy ? ( <Text > {alternateCopy} </Text> 
-                                          ) : (
-                                            <Text style={[  styles.tablescan, ]} >
-                                              <MaterialCommunityIcons name="barcode-scan" onPress={() => startScanning( "Alternate", index, copyIndex ) } size={24} color="black" />
-                                              <Text>OR</Text>
-                                              {renderCopyInput( "Alternate", index, copyIndex,styles.tableinput )}
-                                              </Text>
-                                          )}
-                                          </Text>
 
-                                    
-                                        <Text style={[ styles.td, styles.tableActionBtn, ]} >
-                                              <MaterialIcons name="delete" size={24} color="red"  onPress={() =>   handleRemoveAlternateCopy(copyIndex, index) }/>
+                                        <Text style={styles.td}>{index + 1}.{copyIndex + 1}</Text>
+
+
+                                        <Text style={[styles.td,]} >
+                                          {alternateCopy ? (<Text > {alternateCopy} </Text>
+                                          ) : (
+                                            <Text style={[styles.tablescan,]} >
+                                              <MaterialCommunityIcons name="barcode-scan" onPress={() => startScanning("Alternate", index, copyIndex)} size={24} color="black" />
+                                              {/* <Text>OR</Text> */}
+                                              {renderCopyInput("Alternate", index, copyIndex, styles.tableinput)}
+                                            </Text>
+                                          )}
+                                        </Text>
+
+
+                                        <Text style={[styles.td, styles.tableActionBtn,]} >
+                                          <MaterialIcons name="delete" size={24} color="red" onPress={() => handleRemoveAlternateCopy(copyIndex, index)} />
                                         </Text>
                                       </View>
                                     )
                                   )}
-                                </ScrollView>
-                              </View>                    
+                              </View>
                             </View>
                           )}
                         </View>
@@ -1094,13 +1080,14 @@ const StudentInfo = ({ navigation }) => {
           </View>
 
           <View style={styles.buttonWrap}>
-                                <Pressable style={styles.submitButton} onPress={ reportId ? handleStudentInfoUpdate : handleStudentInfoSubmit } >
-                                  <Text style={styles.addButtonText}> {" "} {reportId ? "Update" : "Submit"} </Text>
-                                </Pressable>
-                                <Pressable style={styles.submitButton} onPress={() => navigation.goBack()} >
-                                  <Text style={styles.addButtonText}> Cancel </Text>
-                                </Pressable>
-                              </View>
+          {copiesData?.length > 0 && (<Pressable style={styles.submitButton} onPress={reportId ? handleStudentInfoUpdate : handleStudentInfoSubmit} >
+              <Text style={styles.addButtonText}> {" "} {reportId ? "Update" : "Submit"} </Text>
+            </Pressable>) }
+            
+            <Pressable style={[styles.submitButton,{backgroundColor:"red"}]} onPress={() => navigation.goBack()} >
+              <Text style={styles.addButtonText}> Cancel </Text>
+            </Pressable>
+          </View>
 
         </View>
       )}
@@ -1135,7 +1122,7 @@ const styles = StyleSheet.create({
     // paddingHorizontal: 20,
     // paddingBottom: 10,
     backgroundColor: "#FFFFFF",
-    padding: 10,
+    padding: 12,
     borderRadius: 8,
   },
   infoItem: {
@@ -1379,7 +1366,15 @@ const styles = StyleSheet.create({
     width: 90,
     height: 90,
   },
-  
+  studProfile: {
+    width: 100,
+    height: 100,
+    backgroundColor: '#dfdfdf',
+    borderRadius: 50,
+    textAlign: "center",
+    verticalAlign: "middle",
+    marginBottom: 20
+  },
   copiesdataWrap: {
     marginTop: 10,
     backgroundColor: "rgb(240 243 245)",
@@ -1407,7 +1402,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     width: 150,
     textAlign: "center",
-    marginBottom:10,
+    marginBottom: 10,
   },
   supplyblockWrap: {
     // backgroundColor:"#fff",
@@ -1416,7 +1411,7 @@ const styles = StyleSheet.create({
   tr: {
     flexDirection: "row",
     marginBottom: 4,
-    
+
   },
   thead: {
     flex: 1,
@@ -1449,43 +1444,45 @@ const styles = StyleSheet.create({
   tableActionBtn: {
     display: "flex",
   },
-  theadcopy: {
-    width: "20%",
-    flexWrap: "wrap",
+  // theadcopy: {
+  //   width: "20%",
+  //   flexWrap: "wrap",
+  // },
+  // tdcopyno: {
+  //   width: "20%",
+  // },
+  // theadscan: {
+  //   width: "60%",
+  // },
+  // tdscan: {
+  //   width: "20%",
+  // },
+  doneWrap: {
+    backgroundColor: "green",
+    borderRadius: 4,
   },
-  tdcopyno: {
-    width: "20%",
+  tableinput: {
+   display: "none"
   },
-  theadscan: {
-    width: "60%",
+  dropdown: {
+    width: 160,
+    minHeight: 30,
+    borderWidth: 0
   },
-  tdscan: {
-    width: "60%",
+  dropdownContainer: {
+    width: 160,
+    padding: [10, 5],
+    height: "auto"
   },
-  doneWrap:{
-    backgroundColor:"green",
-    borderRadius:4,
+  dropdownWrap: {
+    width: "40%",
+    zIndex: 1000,
   },
-  tableinput:{
-    width:"auto",
-  },
-  dropdown:{
-    width:200,
-    minHeight:30,
-    },
-    dropdownContainer:{
-      width:200,
-      padding: [10, 5],
-      height: "auto"
-    },
-    dropdownWrap:{
-      width:"40%",
-      zIndex:1000,
-   
-    },
-    userDetailWrap:{
-      width:"90%",
-      alignItems:"center",
-    }
+  userDetailWrap: {
+    width: "100%",
+    alignItems: "center",
+    display: "flex",
+    justifyContent: 'center'
+  }
 
 });
