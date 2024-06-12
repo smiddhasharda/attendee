@@ -41,6 +41,7 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
           conditionString: '',
           checkAvailability: '',
           customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW ORDER BY EXAM_DT ASC`,
+          viewType:'Campus_View'
         },
         authToken
       );
@@ -98,7 +99,8 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
           data: '',
           conditionString: '',
           checkAvailability: '',
-          customQuery: customQuery
+          customQuery: customQuery,
+          viewType:'Campus_View'
         },
         authToken
       );
@@ -206,68 +208,32 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
             keyExtractor={(item) => item.EXAM_DT}
           />
         </View>
-        {/* <View style={styles.searchicons}>
-              <View style={styles.dropdownWrap}>             
-                  <DropDownPicker
-                    open={open}
-                    value={''}
-                    items={userRoleList}
-                    setOpen={setOpen}
-                    // setValue={(value) => ''}
-                    style={styles.dropdown}
-                    dropDownStyle={{ backgroundColor: "#fafafa" }}
-                    dropDownMaxHeight={150}
-                    dropDownDirection="Bottom"                 
-                    containerStyle={styles.rolePicker}
-                  />
-              </View>
-        <Feather name="search" size={28} color="black" />
-        </View>  */}
       </View>
       <View style={styles.roomNumber}>
-        {loading ? (
-          <ActivityIndicator size="large" color="#0000ff" />
-        ) : (
-          // roomDetails.length > 0 ? (
-          //   <ScrollView style={styles.scrollabar}>
-          //     {roomDetails.map((roomData, index) => (
-          //       <Pressable
-          //         key={index}
-          //         onPress={() => UserAccess?.create === 1 ? navigation.navigate("RoomDetail", { room_Nbr: roomData.ROOM_NBR, exam_Dt: roomData.EXAM_DT, startTime: roomData.EXAM_START_TIME,navigation,userAccess }) : null}
-          //       >
-          //         <View  style={styles.box}>   
-          //           <View style={styles.boxTextWrap}>
-          //             <Text style={styles.examName}>{roomData.ROOM_NBR}</Text>
-          //             <Text style={styles.examTimedetail}>{roomData.EXAM_START_TIME?.split("T")?.[1]?.split(".")?.[0]}</Text>
-          //           </View>
-          //         </View>
-          //       </Pressable>
-          //     ))}
-          //   </ScrollView>
-          // ) : (
-          //   <Text>No rooms available for selected date.</Text>
-          // )
-
+      {loading ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : (
+        roomDetails.length > 0 ? (
           <FlatList 
-          style={styles.roomsListWrap}
-          data={roomDetails}
-          renderItem={({ item, index }) => (
-            <Pressable
-              key={index}
-              onPress={() => UserAccess?.create === 1 ? navigation.navigate("RoomDetail", { room_Nbr: item.ROOM_NBR, exam_Dt: item.EXAM_DT, startTime: item.EXAM_START_TIME, userAccess}) : null}
-            >
-                <View style={[styles.box,styles.boxTextWrap]}>
+            style={styles.roomsListWrap}
+            data={roomDetails}
+            renderItem={({ item, index }) => (
+              <Pressable
+                key={index}
+                onPress={() => UserAccess?.create === 1 ? navigation.navigate("RoomDetail", { room_Nbr: item.ROOM_NBR, exam_Dt: item.EXAM_DT, startTime: item.EXAM_START_TIME, userAccess}) : null} >  
+                <View style={[styles.box, styles.boxTextWrap]}>
                   <Text style={styles.examName}>{item.ROOM_NBR}</Text>
-                  {/* <Text style={styles.examTime}>{item.EXAM_START_TIME?.split("T")?.[1]?.split(".")?.[0]}</Text> */}
                   <Text style={styles.examTime}>{convertedTime(item.EXAM_START_TIME)}</Text>
-
                 </View>
-            </Pressable>
-          )}
-          keyExtractor={(item, index) => index.toString()}
-        />
-        )}
-      </View>
+              </Pressable>
+            )}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        ) : (
+          <Text style={styles.noRecordsText}>No record in this date</Text>
+        )
+      )}
+    </View>
     </View>
   );
 };

@@ -199,11 +199,11 @@ const ModuleScreen = ({ userAccess }) => {
                   </Text>
                 </Pressable>
                 <View style={styles.listItemActionContainer}>
-                  {userAccessForModule?.update === 1 && (
+                  {userAccessForModule?.update === 1 ? (
                     <Pressable style={styles.listItemEditButton} onPress={() => handleEditModule(item)}>
                       <Feather name="edit" size={16} color="white" />
                     </Pressable>
-                  )}
+                  ) : (<Text>-</Text>)}
                 </View>
               </View>
             )}

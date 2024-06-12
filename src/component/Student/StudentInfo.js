@@ -35,6 +35,7 @@ const StudentInfo = ({ navigation }) => {
   const route = useRoute();
   const { addToast } = useToast();
   const [studentDetails, setStudentDetails] = useState({});
+  const [studentPicture, setStudentPicture] = useState({});
   const [courseDetails, setCourseDetails] = useState({});
   const [attendanceDetails, setAttendanceDetails] = useState({});
   const { room_Nbr, catlog_Nbr, system_Id, seat_Nbr, exam_Dt, startTime, reportId, userAccess, current_Term, } = route.params;
@@ -415,6 +416,7 @@ const StudentInfo = ({ navigation }) => {
           conditionString: `EMPLID = '${system_Id}'`,
           checkAvailability: "",
           customQuery: "",
+          viewType:'Campus_View'
         },
         authToken
       );
@@ -427,6 +429,73 @@ const StudentInfo = ({ navigation }) => {
       handleAuthErrors(error);
     }
   };
+  const handleGetStudentPicture = async () => {
+    try {
+      const authToken = await checkAuthToken();
+      const response = await view(
+        {
+          operation: "fetch",
+          tblName: "PS_S_PRD_PHOTO_VW",
+          data: "",
+          conditionString: `EMPLID = '${system_Id}'`,
+          checkAvailability: "",
+          customQuery: "",
+          viewType:'FCM_View'
+        },
+        authToken
+      );
+      if (response) {
+        setStudentPicture(response?.data?.[0]?.EMPLOYEE_PHOTO);
+        const buffer =response?.data?.[0]?.EMPLOYEE_PHOTO;
+        const bufferData = buffer._readableState.buffer;
+        const base64String = bufferData.toString('base64');
+        const uri = `data:image/jpeg;base64,${base64String}`;
+        setLoading(false);
+      }
+    } catch (error) {
+      setLoading(false);
+      handleAuthErrors(error);
+    }
+  };
+
+  // Function to convert blob to base64
+// const blobToBase64 = (blob) => {
+//   return new Promise((resolve, reject) => {
+//     const reader = new FileReader();
+//     reader.onloadend = () => {
+//       resolve(reader.result);
+//     };
+//     reader.onerror = () => {
+//       reject(new Error("Failed to convert blob to base64"));
+//     };
+//     reader.readAsDataURL(blob);
+//   });
+// };
+
+// Function to handle student picture
+// const handleStudentPicture = async (data) => {
+//   try {
+//     // Validate the data format
+//     if (!data) {
+//       throw new Error("Invalid data format");
+//     }
+
+//     // Log data for debugging
+//     console.log("Data to convert:", data);
+
+//     // Convert data to Blob
+//     const blob = new Blob([data], { type: 'image/jpeg' });
+//     const base64String = await blobToBase64(blob);
+
+//     // Use the base64 string
+//     console.log("Base64 string:", base64String);
+//   } catch (error) {
+//     console.error("Error converting data to Blob:", error);
+//   }
+// };
+
+ 
+
   const handleGetStudentCouseInfo = async () => {
     try {
       const authToken = await checkAuthToken();
@@ -438,6 +507,7 @@ const StudentInfo = ({ navigation }) => {
           conditionString: "",
           checkAvailability: "",
           customQuery: `SELECT DISTINCT CATALOG_NBR, DESCR100 FROM PS_S_PRD_EX_TME_VW WHERE CATALOG_NBR = '${catlog_Nbr}'`,
+          viewType:'Campus_View'
         },
         authToken
       );
@@ -461,6 +531,7 @@ const StudentInfo = ({ navigation }) => {
           conditionString: "",
           checkAvailability: "",
           customQuery: `SELECT DISTINCT PS_S_PRD_CT_ATT_VW.PERCENTAGE,PS_S_PRD_TRS_AT_VW.PERCENTCHG FROM PS_S_PRD_CT_ATT_VW JOIN PS_S_PRD_TRS_AT_VW ON PS_S_PRD_TRS_AT_VW.EMPLID = PS_S_PRD_CT_ATT_VW.EMPLID WHERE PS_S_PRD_CT_ATT_VW.EMPLID = '${system_Id}' AND PS_S_PRD_CT_ATT_VW.CATALOG_NBR = '${catlog_Nbr}' AND PS_S_PRD_CT_ATT_VW.STRM = '${current_Term}'`,
+          viewType:'Campus_View'
           // customQuery: `Select * from PS_S_PRD_CT_ATT_VW where EMPLID Like '%20232037%' `
         },
         authToken
@@ -479,6 +550,7 @@ const StudentInfo = ({ navigation }) => {
     await handleGetStudentInfo();
     await handleGetStudentCouseInfo();
     await handleGetStudentAttendenceInfo();
+    await handleGetStudentPicture();
     (await reportId) ? handleGetCopyData() : "";
   };
   const getStatuscolor = () =>{
@@ -496,6 +568,7 @@ const StudentInfo = ({ navigation }) => {
     fetchData();
   }, [UserAccess]);
 
+  console.log("studentPicture : ", studentPicture);
   return loading ? (
     <ActivityIndicator size="large" color="#0000ff" />
   ) : (
@@ -517,9 +590,17 @@ const StudentInfo = ({ navigation }) => {
           <View style={styles.studentInfoWrap}>
             <Text style={styles.infoHeader}>Basic Info:</Text>
             <View style={styles.infoContainer}>
-            <View style={[styles.userDetailWrap, ]} >
-            <FontAwesome name="user" size={48} color="#ccc"   />
-             </View> 
+            <View style={styles.userDetailWrap}>
+          {/* {studentPicture ? (
+              // <Image source={{ uri: handleStudentPicture(studentPicture) }} style={styles.userImage} />
+              <Image
+      source={{ uri: `data:image/png;base64,${studentPicture}` }} // Adjust content type based on image format
+      style={{ width: 200, height: 200 }} // Set desired dimensions
+    />
+          ) : ( */}
+            <FontAwesome name="user" size={48} color="#ccc" />
+          {/* )} */}
+        </View>
               <View style={styles.infoItem}>
                 <Text style={styles.label}>Name:</Text>
                 <Text style={styles.value}>
