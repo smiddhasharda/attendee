@@ -204,7 +204,7 @@ const windowWidth = Dimensions.get("window").width;
 
    return (
     <View style={styles.container}>
-      {isBulkuploadInvigilater ? (<Bulkpload handleClose={() => {setIsBulkuploadInvigilater(false),setInvigilatorContainerVisible(false)}} />) : 
+      {isBulkuploadInvigilater ? (<Bulkpload handleClose={() => handleClose()} />) : 
         (invigilatorContainerVisible ? (
         <View style={styles.formContainer}>
           <TextInput
@@ -276,13 +276,16 @@ const windowWidth = Dimensions.get("window").width;
    ): (
     <View style={styles.userListWrap}>
       <Text style={styles.header}>Invigilator Duty List :</Text>      
-      <View style={styles.addWrap}>
+     
         {UserAccess?.create === 1 &&    
-          (<Pressable style={styles.addbtnWrap} onPress={() => handleAddButton()}>
-            <Text style={styles.addbtntext}>Add</Text>
-          </Pressable>)
+          ( <View style={styles.addWrap}><Pressable style={styles.addbtnWrap} onPress={() => setIsBulkuploadInvigilater(true)}>
+            <Text style={styles.addbtntext}>BulkUpload</Text>
+          </Pressable>
+          <Pressable style={styles.addbtnWrap} onPress={() => handleAddButton()}>
+          <Text style={styles.addbtntext}>Add</Text>
+        </Pressable> </View>
+)
         }
-      </View>
       <FlatList 
         data={invigilatorList}
         keyExtractor={(item) => item.PK_InvigilatorDutyId.toString()}
