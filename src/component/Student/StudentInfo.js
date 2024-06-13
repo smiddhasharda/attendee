@@ -223,7 +223,7 @@ const StudentInfo = ({ navigation }) => {
           },
           authToken
         );
-        if (response.status === 200) {
+        if (response) {
           const studentCopyWithId = copiesData.map((item) => {
             let newItem = {
               FK_ReportId: response?.data?.receivedData?.insertId,
@@ -250,9 +250,6 @@ const StudentInfo = ({ navigation }) => {
             addToast("Student Details Add Successful", "success");
             navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation: navigation, userAccess });
           }
-        }
-        else if (response.status === 400){
-          addToast("Please Update Student Detials First!","error");
         }
       }
     } catch (error) {
