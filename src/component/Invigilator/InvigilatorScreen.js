@@ -54,7 +54,7 @@ const windowWidth = Dimensions.get("window").width;
       );
 
       if (response) {
-        setInvigilatorList(response.data)
+        setInvigilatorList(response?.data?.receivedData)
       }
     } catch (error) {
       handleAuthErrors(error);

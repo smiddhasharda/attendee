@@ -79,7 +79,7 @@ function RoomDetail({navigation}) {
       );
 
       if (response) {
-        setPresentStudentList(response.data)
+        setPresentStudentList(response?.data?.receivedData)
       }
     } catch (error) {
       console.log(error);
@@ -104,8 +104,8 @@ function RoomDetail({navigation}) {
       );
 
       if (response) {
-       setStudentDetails(response?.data);
-       setTempStudentDetails(response?.data);
+       setStudentDetails(response?.data?.receivedData);
+       setTempStudentDetails(response?.data?.receivedData);
         setLoading(false);
       }
     } catch (error) {
@@ -176,7 +176,6 @@ function RoomDetail({navigation}) {
     fetchStudentDetails(exam_Dt, room_Nbr);
     handleGetReportData();
   }, [UserAccess,addToast]);
-
   return (
     <View style={styles.container}>
         {isScanning ? (<CodeScanner onScannedData={ handleScannedData} onCancel={handleCancel} />) : 
@@ -204,19 +203,19 @@ function RoomDetail({navigation}) {
           <View style={styles.countWrap}>
             <View style={styles.countMain}>
               <View style={styles.countbg1}>
-                <Text style={styles.count}>{presentStudentList?.length || "0"}</Text>
+                <Text style={styles.count}>{presentStudentList?.filter((item)=> item?.Status === "Present")?.length || "0"}</Text>
               </View>
               <Text style={styles.cotext}>Present</Text>
             </View>
             <View style={styles.countMain}>
               <View style={styles.countbg2}>
-                <Text style={styles.count}>{presentStudentList?.length || "0"}</Text>
+                <Text style={styles.count}>{presentStudentList?.filter((item)=> item?.Status === "Absent")?.length || "0"}</Text>
               </View>
               <Text style={styles.cotext}>Absent</Text>
             </View>
             <View style={styles.countMain}>
               <View style={styles.countbg3}>
-                <Text style={styles.count}>{presentStudentList?.length || "0"}</Text>
+                <Text style={styles.count}>{presentStudentList?.filter((item)=> item?.Status === "UFM")?.length || "0"}</Text>
               </View>
               <Text style={styles.cotext}>UFM</Text>
             </View>         

@@ -60,7 +60,7 @@ function Learn() {
       );
 
       if (response) {
-        let ExamDateList = response?.data;
+        let ExamDateList = response?.data?.receivedData;
         setExamDates(ExamDateList || []);
         setExamSelectedDate(ExamDateList?.[0]?.EXAM_DT);
         handleGetExamRoomList(ExamDateList?.[0]?.EXAM_DT);
@@ -85,14 +85,14 @@ function Learn() {
         authToken
       );
       if (response) {
-        setExamRoomList(response.data?.[0]?.ReportData);
-        setExamSelectedRoom(response.data?.[0]?.ReportData?.[0]);
-        setExamShiftList(response.data?.[0]?.ReportData?.[0]?.shifts);
-        setExamSelectedShift(response.data?.[0]?.ReportData?.[0]?.shifts?.[0]);
+        setExamRoomList(response?.data?.receivedData?.[0]?.ReportData);
+        setExamSelectedRoom(response?.data?.receivedData?.[0]?.ReportData?.[0]);
+        setExamShiftList(response?.data?.receivedData?.[0]?.ReportData?.[0]?.shifts);
+        setExamSelectedShift(response?.data?.receivedData?.[0]?.ReportData?.[0]?.shifts?.[0]);
         handleGetExamReport(
           date,
-          response.data?.[0]?.ReportData?.[0]?.label,
-          response.data?.[0]?.ReportData?.[0]?.shifts?.[0]?.label
+          response?.data?.receivedData?.[0]?.ReportData?.[0]?.label,
+          response?.data?.receivedData?.[0]?.ReportData?.[0]?.shifts?.[0]?.label
         );
       }
     } catch (error) {
@@ -114,7 +114,7 @@ function Learn() {
         authToken
       );
       if (response) {
-        setExamReportData(response.data?.[0]?.ReportMaster || []);
+        setExamReportData(response?.data?.receivedData?.[0]?.ReportMaster || []);
       }
     } catch (error) {
       console.log(error);
@@ -155,7 +155,7 @@ function Learn() {
       );
 
       if (response) {
-        console.log("Data : ",response.data);
+        console.log("Data : ",response?.data?.receivedData);
       }
     } catch (error) {
       // setLoading(false);

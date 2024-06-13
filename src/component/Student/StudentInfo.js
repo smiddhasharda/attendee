@@ -140,7 +140,7 @@ const StudentInfo = ({ navigation }) => {
             }
           >
             {/* <Text style={{color:"#fff"}}>Save</Text> */}
-            <MaterialIcons name="done" size={20} color="#fff" style={styles.saveicon} />
+            <MaterialIcons name="done" size={16} color="#fff" style={styles.saveicon} />
           </Pressable>
         )}
         {/* </>
@@ -217,17 +217,16 @@ const StudentInfo = ({ navigation }) => {
               SU_PAPER_ID: courseDetails.SU_PAPER_ID,
               DESCR100: courseDetails.DESCR100,
             },
-            conditionString: "",
-            checkAvailability: "",
+            conditionString: `EMPLID = '${studentDetails.EMPLID}' AND EXAM_DT = '${exam_Dt}' AND ROOM_NBR = '${room_Nbr}' AND EXAM_START_TIME = '${startTime}'`,
+            checkAvailability: true,
             customQuery: "",
           },
           authToken
         );
-
-        if (response) {
+        if (response.status === 200) {
           const studentCopyWithId = copiesData.map((item) => {
             let newItem = {
-              FK_ReportId: response?.data?.insertId,
+              FK_ReportId: response?.data?.receivedData?.insertId,
               copyNumber: item.mainCopy,
               EMPLID: studentDetails.EMPLID,
             };
@@ -252,6 +251,9 @@ const StudentInfo = ({ navigation }) => {
             navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation: navigation, userAccess });
           }
         }
+        else if (response.status === 400){
+          addToast("Please Update Student Detials First!","error");
+        }
       }
     } catch (error) {
       handleAuthErrors(error);
@@ -274,9 +276,9 @@ const StudentInfo = ({ navigation }) => {
       );
 
       if (response) {
-        setStatus(response.data?.[0]?.ReportData?.[0]?.Status);
+        setStatus(response?.data?.receivedData?.[0]?.ReportData?.[0]?.Status);
         let CopyFetchDetails =
-          response.data?.[0]?.ReportData?.[0]?.copyData?.map((item, index) => ({
+          response?.data?.receivedData?.[0]?.ReportData?.[0]?.copyData?.map((item, index) => ({
             id: index,
             mainCopy: item.copyNumber,
             alternateCopies: [
@@ -289,7 +291,7 @@ const StudentInfo = ({ navigation }) => {
             ].filter(Boolean),
           }));
         setCopiesData(CopyFetchDetails);
-        let TempcopyList = response.data?.[0]?.ReportData?.[0]?.copyData?.map(
+        let TempcopyList = response?.data?.receivedData?.[0]?.ReportData?.[0]?.copyData?.map(
           (item) => item.PK_CopyId
         );
         setCopyList(TempcopyList);
@@ -420,7 +422,8 @@ const StudentInfo = ({ navigation }) => {
         authToken
       );
       if (response) {
-        setStudentDetails(response?.data?.[0]);
+
+        setStudentDetails(response?.data?.receivedData?.[0]);
         setLoading(false);
       }
     } catch (error) {
@@ -444,8 +447,8 @@ const StudentInfo = ({ navigation }) => {
         authToken
       );
       if (response) {
-        setStudentPicture(response?.data?.[0]?.EMPLOYEE_PHOTO);
-        const buffer = response?.data?.[0]?.EMPLOYEE_PHOTO;
+        setStudentPicture(response?.data?.receivedData?.[0]?.EMPLOYEE_PHOTO);
+        const buffer = response?.data?.receivedData?.[0]?.EMPLOYEE_PHOTO;
         const bufferData = buffer._readableState.buffer;
         const base64String = bufferData.toString('base64');
         const uri = `data:image/jpeg;base64,${base64String}`;
@@ -511,7 +514,7 @@ const StudentInfo = ({ navigation }) => {
         authToken
       );
       if (response) {
-        setCourseDetails(response?.data?.[0] || []);
+        setCourseDetails(response?.data?.receivedData?.[0] || []);
         // setLoading(false);
       }
     } catch (error) {
@@ -536,7 +539,7 @@ const StudentInfo = ({ navigation }) => {
         authToken
       );
       if (response) {
-        setAttendanceDetails(response?.data?.[0] || []);
+        setAttendanceDetails(response?.data?.receivedData?.[0] || []);
         setLoading(false);
       }
     } catch (error) {
@@ -934,7 +937,7 @@ const StudentInfo = ({ navigation }) => {
             <View
               style={{ flexDirection: "row", justifyContent: "space-between" }}
             >
-              <Text style={styles.addAnsheading}>Answersheet </Text>
+              <Text style={styles.addAnsheading}> AnswerSheet </Text>
               {copiesData?.length < 6 && (
                 <AntDesign style={styles.addicon} name="pluscircleo" size={24} color="black" onPress={handleAddCopy} />
               )}
@@ -950,8 +953,8 @@ const StudentInfo = ({ navigation }) => {
                         </Text>
                         <View style={styles.inputContainer}>
                           <Pressable onPress={() => handleRemoveCopy(index)}>
-                            <Text style={styles.trashButtonText}>
-                              <AntDesign name="delete" size={20} alignItems="flex-end" color="red" />
+                            <Text style={styles.addButtonText}>
+                              <AntDesign name="delete" size={24} alignItems="flex-end" color="red" />
                             </Text>
                           </Pressable>
                         </View>
@@ -979,7 +982,7 @@ const StudentInfo = ({ navigation }) => {
                               ) && (
                                   <Entypo
                                     name="circle-with-cross"
-                                    size={26}
+                                    size={20}
                                     color="red"
                                     onPress={() =>
                                       handleSaveCopy("AnswerSheet", "", index)
@@ -1013,7 +1016,7 @@ const StudentInfo = ({ navigation }) => {
                         )}
                       </View>
 
-                      {copy.mainCopy && (
+                      {/* {copy.mainCopy && (
                         <View>
 
                           {copy.alternateCopies && (
@@ -1022,7 +1025,7 @@ const StudentInfo = ({ navigation }) => {
                                 {copy.alternateCopies.length < 6 ? 
                                   (<View style={styles.buttoncontainer}>
                                     <Pressable style={styles.addsuplybtn} onPress={() => handleAddAlternateCopy(index)}>
-                                      <Text style={{ color: "#fff", textAlign: "center", }}>Additional Copy</Text>
+                                      <Text style={{ color: "#fff", textAlign: "center", }}>Add SupplySheet</Text>
                                     </Pressable>
                                   </View> ):
                                  ( <Text
@@ -1049,7 +1052,7 @@ const StudentInfo = ({ navigation }) => {
                                           ) : (
                                             <Text style={[styles.tablescan,]} >
                                               <MaterialCommunityIcons name="barcode-scan" onPress={() => startScanning("Alternate", index, copyIndex)} size={24} color="black" />
-                                              {/* <Text>OR</Text> */}
+                                              <Text>OR</Text>
                                               {renderCopyInput("Alternate", index, copyIndex, styles.tableinput)}
                                             </Text>
                                           )}
@@ -1066,7 +1069,7 @@ const StudentInfo = ({ navigation }) => {
                             </View>
                           )}
                         </View>
-                      )}
+                      )} */}
                       {/* </> */}
                     </View>
                   </View>
@@ -1104,34 +1107,45 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   studentInfoWrap: {
+    // backgroundColor: "#EAEAEA",
     marginBottom: 20,
     borderRadius: 8,
     padding: 5,
   },
   infoHeader: {
+    // fontSize: 18,
+    // fontWeight: "bold",
+    // marginHorizontal: 20,
+    // marginVertical: 10,
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 10,
   },
   infoContainer: {
+    // paddingHorizontal: 20,
+    // paddingBottom: 10,
     backgroundColor: "#FFFFFF",
     padding: 12,
     borderRadius: 8,
   },
   infoItem: {
+    // flexDirection: "row",
+    // marginBottom: 10,
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 10,
   },
   label: {
+    // flex: 1,
+    // fontWeight: "bold",
     fontWeight: "bold",
     color: "#333",
-    width: "50%",
-    display: "inline-block"
+    width: "40%",
   },
   value: {
+    // flex: 2,
     color: "#555",
-    width: "50%",
+    width: "60%",
   },
   // table: {
   //   // borderWidth: 1,
@@ -1144,7 +1158,11 @@ const styles = StyleSheet.create({
   // },
   tablewrap: {
     backgroundColor: "#FFFFFF",
+    // padding: 20,
+    // borderRadius: 10,
     padding: 5,
+    // borderWidth: 1,
+    // borderColor: "#000",
     borderRadius: 8,
     marginBottom: 10,
     backgroundColor: "#FFF",
@@ -1164,42 +1182,59 @@ const styles = StyleSheet.create({
     backgroundColor: "#F0F0F0",
   },
   inputContainer: {
+    // flexDirection: "row",
+    // alignItems: "center",
+    // paddingHorizontal: 10,
     flexDirection: "row",
-    display: "flex",
+    justifyContent: "space-between",
     alignItems: "center",
-    maxWidth: 100
   },
   input: {
     flex: 1,
+    // padding: 5,
+    // margin:5,
+    // borderWidth: 1,
+    // borderColor: "#DDDDDD",
+    // borderRadius: 5,
+    // // marginRight: 10,
+    // backgroundColor: "#FFFFFF",
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 4,
     padding: 8,
-    marginRight: 8,
-    maxWidth: 100
+    marginRight: 10,
   },
   addButton: {
+    // padding: 10,
+    // borderRadius: 7,
+    // backgroundColor: "#129912",
+    // marginBottom: 10,
+    // justifyContent: "center",
+    // alignItems: "center",
+    // marginRight: 10,
+    // marginTop: 6,
     backgroundColor: "#129912",
     padding: 10,
     borderRadius: 5,
+    // justifyContent: "center",
+    // alignItems: "center",
   },
   addButtonText: {
     color: "#FFFFFF",
     fontWeight: "bold",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    textAlign: "center",
-    minWidth: 75
-  },
-  trashButtonText: {
-    color: "#FFFFFF",
-    fontWeight: "bold",
     alignItems: "center",
     textAlign: "center",
-    marginRight: 5
   },
   removeButton: {
+    // alignSelf: "flex-end",
+    // padding: 5,
+    // borderRadius: 5,
+    // backgroundColor: "#E60E1C",
+    // marginBottom: 20,
+    // justifyContent: "center",
+    // alignItems: "center",
+    // marginRight: 10,
+    // marginTop: 12,
     padding: 10,
     borderRadius: 5,
     justifyContent: "center",
@@ -1220,8 +1255,10 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   buttonWrap: {
+    // flexDirection: "row",
+    // justifyContent: "space-between",
     flexDirection: "row",
-    marginTop: 0,
+    marginTop: 20,
     marginRight: 10,
   },
   submitButton: {
@@ -1233,6 +1270,13 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginRight: 10,
     Width: 100,
+    // backgroundColor: "#0C7C62",
+    // paddingVertical: 5,
+    // paddingHorizontal: 20,
+    // borderRadius: 5,
+    // justifyContent: "center",
+    // alignItems: "center",
+    // marginVertical: 10,
   },
   mainCopyText: {
     color: "#000000",
@@ -1245,27 +1289,39 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   nodatadisplay: {
+    // fontSize: 18,
+    // alignItems: "center",
+    // textAlign: "center",
     textAlign: "center",
     fontSize: 16,
     color: "#666",
   },
   box: {
+    // borderWidth: 1,
+    // borderColor: "#CCCCCC",
+    // width: 'auto',
+    // backgroundColor: "#EAEAEA",
+    // borderRadius: 25,
+    // marginBottom: 10,
+    // marginTop: 10,
+    // padding: 10,
+    // flexDirection: "column",
     padding: 10,
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 8,
     marginBottom: 10,
     backgroundColor: "#f9f9f9",
-    display: "flex",
-    alignItems: "flex-start",
-    justifyContent: "space-around"  
   },
   boxtext: {
     flexDirection: "row",
+    // marginLeft: 10,
     color: "#000000",
     justifyContent: "space-between",
   },
   iconsWrap: {
+    // flexDirection: "row",
+    // justifyContent: "space-between",
     flexDirection: "row",
     alignItems: "center",
   },
@@ -1273,9 +1329,12 @@ const styles = StyleSheet.create({
     marginRight: 10,
     marginTop: 10,
     marginBottom: 10,
+    // marginLeft: 10,
+    // marginTop: 5,
   },
   supplysheet: {
-    display: "flex",
+    // flexDirection: "row",
+    // justifyContent: "space-between",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -1341,14 +1400,21 @@ const styles = StyleSheet.create({
     backgroundColor: "#0C7C62",
     padding: 10,
     borderRadius: 5,
-    marginTop: 0,
-    width: 130,
+    // justifyContent: "center",
+    // alignItems: "center",
+    marginTop: 10,
+    width: 150,
     textAlign: "center",
     marginBottom: 10,
+  },
+  supplyblockWrap: {
+    // backgroundColor:"#fff",
+    // padding:20,
   },
   tr: {
     flexDirection: "row",
     marginBottom: 4,
+
   },
   thead: {
     flex: 1,
@@ -1369,14 +1435,15 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     padding: 10,
     width: "auto",
-    marginTop: 0,
+    marginTop: 10,
   },
-  // tablescan: {
-  //   alignItems: "center",
-  //   justifyContent: "space-between",
-  //   flexDirection:"row",
-  //   justifyContent:"space-between",
-  // },
+  tablescan: {
+    // alignItems: "center",
+    // // display: "flex",
+    // justifyContent: "space-between",
+    // flexDirection:"row",
+    // justifyContent:"space-between",
+  },
   tableActionBtn: {
     display: "flex",
   },
@@ -1403,12 +1470,12 @@ const styles = StyleSheet.create({
   dropdown: {
     width: 160,
     minHeight: 30,
-    borderWidth: 0,
+    borderWidth: 0
   },
   dropdownContainer: {
     width: 160,
     padding: [10, 5],
-    height: "auto",
+    height: "auto"
   },
   dropdownWrap: {
     width: "40%",

@@ -55,7 +55,7 @@ const RoleScreen = ({userAccess}) => {
         if (roleData?.modulePermissions) {
           const rolePermissionsWithId = roleData?.modulePermissions?.map(
             (permissions) => ({
-              FK_RoleId: response?.data?.insertId,
+              FK_RoleId: response?.data?.receivedData?.insertId,
               ...permissions,
             })
           );
@@ -156,7 +156,7 @@ const RoleScreen = ({userAccess}) => {
       );
 
       if (response) {
-        setRoleList(response?.data?.[0]?.RoleMaster);
+        setRoleList(response?.data?.receivedData?.[0]?.RoleMaster);
       }
     } catch (error) {
       handleAuthErrors(error);
@@ -216,8 +216,8 @@ const RoleScreen = ({userAccess}) => {
       );
 
       if (response) {
-        setModuleList(response?.data);
-        let ModulePermissionData = response?.data?.map((item) => ({
+        setModuleList(response?.data?.receivedData);
+        let ModulePermissionData = response?.data?.receivedData?.map((item) => ({
           FK_ModuleId: item?.PK_ModuleId,
           create: 0,
           delete: 0,
@@ -343,7 +343,6 @@ const RoleScreen = ({userAccess}) => {
     handleGetRoleList();
     handleGetModuleList();
   }, [UserAccess]);
-
   return (
     <View style={styles.container}>
       {roleContainerVisible ? (
