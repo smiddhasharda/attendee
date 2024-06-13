@@ -185,7 +185,7 @@ const StudentInfo = ({ navigation }) => {
   const handleStudentInfoSubmit = async () => {
     try {
       const CopyEmptyValues = copiesData?.length > 0 ? copiesData.some(data => data.mainCopy === "" || data.alternateCopies.includes("")) : true;
-      if (CopyEmptyValues) {
+      if (CopyEmptyValues && status !== "Absent") {
         addToast("Please Fill CopyData First!", "error");
       }
       else {
@@ -1080,7 +1080,7 @@ const StudentInfo = ({ navigation }) => {
           </View>
 
           <View style={styles.buttonWrap}>
-          {copiesData?.length > 0 && (<Pressable style={styles.submitButton} onPress={reportId ? handleStudentInfoUpdate : handleStudentInfoSubmit} >
+          {(copiesData?.length > 0 || status === "Absent") && (<Pressable style={styles.submitButton} onPress={reportId ? handleStudentInfoUpdate : handleStudentInfoSubmit} >
               <Text style={styles.addButtonText}> {" "} {reportId ? "Update" : "Submit"} </Text>
             </Pressable>) }
             
