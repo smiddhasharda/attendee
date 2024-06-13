@@ -37,7 +37,7 @@ const request = async (method, endpoint, data, authToken,params) => {
   } catch (error) {
     if (axios.isAxiosError(error)) {
       if (error.response) {
-        throw new Error(error.response?.data?.receivedData?.message || 'Request failed');
+        throw new Error(error.response?.data?.message || 'Request failed');
       } else if (error.request) {
         throw new Error('No response received from the server');
       }
@@ -55,7 +55,7 @@ const handleAsyncStorageError = (error) => {
 const login = async (tblName, conditionString) => {
   try {
     const response = await request('post', 'login', { tblName, conditionString });
-    const { token,userRole,userData } = response;
+    const { token,userRole,userData } = response?.data;
     // const { token, expirationTimestamp,userRole,userData } = response;
 
     await AsyncStorage.setItem('userRolePermission', userRole ? JSON?.stringify(userRole) : '').catch(handleAsyncStorageError);
