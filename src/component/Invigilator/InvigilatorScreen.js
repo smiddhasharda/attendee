@@ -204,7 +204,14 @@ const windowWidth = Dimensions.get("window").width;
 
    return (
     <View style={styles.container}>
-      {isBulkuploadInvigilater ? (<Bulkpload handleClose={() => {setIsBulkuploadInvigilater(false),setInvigilatorContainerVisible(false)}} />) : 
+      {isBulkuploadInvigilater ? (<Bulkpload handleClose={() => handleClose()} renderData={    <View style={styles.tableHeader}>
+                  <Text style={styles.tableHeaderText}>Employee Id</Text>
+                  <Text style={styles.tableHeaderText}>Name</Text>
+                  <Text style={styles.tableHeaderText}>Date</Text>
+                  <Text style={styles.tableHeaderText}>Shift</Text>
+                  <Text style={styles.tableHeaderText}>Room</Text>
+                  <Text style={styles.tableHeaderText}>Duty Status</Text>
+                </View>} />) : 
         (invigilatorContainerVisible ? (
         <View style={styles.formContainer}>
           <TextInput
@@ -278,11 +285,16 @@ const windowWidth = Dimensions.get("window").width;
       <Text style={styles.header}>Invigilator Duty List :</Text>      
       <View style={styles.addWrap}>
         {UserAccess?.create === 1 &&    
-          (<Pressable style={styles.addbtnWrap} onPress={() => handleAddButton()}>
-            <Text style={styles.addbtntext}>Add</Text>
-          </Pressable>)
+          ( <Text >
+            <Pressable style={styles.addbtnWrap} onPress={() => setIsBulkuploadInvigilater(true)}>
+            <Text style={styles.addbtntext}>BulkUpload</Text>
+          </Pressable>
+          <Pressable style={styles.addbtnWrap} onPress={() => handleAddButton()}>
+          <Text style={styles.addbtntext}>Add</Text>
+        </Pressable> </Text>
+)
         }
-      </View>
+        </View>
       <FlatList 
         data={invigilatorList}
         keyExtractor={(item) => item.PK_InvigilatorDutyId.toString()}
