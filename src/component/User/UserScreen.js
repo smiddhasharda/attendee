@@ -74,7 +74,7 @@ const UserScreen = ({userAccess}) => {
         if (userData?.rolePermissions) {
           const rolePermissionsWithId = userData?.rolePermissions?.map(
             (permissions) => ({
-              FK_userId: response?.data?.insertId,
+              FK_userId: response?.data?.receivedData?.insertId,
               ...permissions,
             })
           );
@@ -189,7 +189,7 @@ const UserScreen = ({userAccess}) => {
       );
 
       if (response) {
-        setUserList(response?.data?.[0]?.UserMaster);
+        setUserList(response?.data?.receivedData?.[0]?.UserMaster);
       }
     } catch (error) {
       handleAuthErrors(error);
@@ -514,7 +514,7 @@ const UserScreen = ({userAccess}) => {
       );
 
       if (response) {
-        setRoleList(response?.data);
+        setRoleList(response?.data?.receivedData);
       }
     } catch (error) {
       handleAuthErrors(error);

@@ -70,7 +70,7 @@ const CustomDrawerContent = ({ ...props }) => {
       if (response) {
         await AsyncStorage.setItem(
           "userData",
-          (response.data?.[0] && JSON?.stringify(response.data?.[0])) || ""
+          (response?.data?.receivedData?.[0] && JSON?.stringify(response?.data?.receivedData?.[0])) || ""
         );
         setFile("");
         await props.fetchUserRolePermission();

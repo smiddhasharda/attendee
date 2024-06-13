@@ -86,7 +86,7 @@ const ModuleScreen = ({ userAccess }) => {
       }, authToken);
 
       if (response) {
-        setModuleList(response.data);
+        setModuleList(response?.data?.receivedData);
       }
     } catch (error) {
       handleAuthErrors(error);
