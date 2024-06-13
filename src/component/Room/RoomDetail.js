@@ -284,11 +284,6 @@ const styles = StyleSheet.create({
      clearfix:"both",
      position: "relative",
     },
-   
-    // imgWrap:{
-    //   width:"10%",
-    //  },
-
      seqWrap:{
        borderRadius:22,
        width:35,
@@ -303,20 +298,15 @@ const styles = StyleSheet.create({
        flexDirection:"row",
        alignItems:"center",
        minWeight:"98%",
-  
      },
     heading: {
       fontSize: 20,
-      // fontWeight:"bold",
       marginBottom: 10,
     },
  
     topdetails:{
-    //  padding:8,
-    //  clearfix:"both",
      flexDirection:"row",
      justifyContent:"space-between",
- 
     },
     roomNumber: {
       padding: 12,
@@ -336,16 +326,12 @@ const styles = StyleSheet.create({
       overflow: "hidden"
     },
     boxtext:{
-      // alignItems:"center",  
       display:"flex",
       flexDirection:"row",
-      // marginLeft:10,
       color:"#fff",
       justifyContent:"space-between",
-      // alignItems:"center",
       width:"98%",
       alignItems:"center",
-    
     },
     stuWrap:{
       flexDirection:"column",
@@ -361,8 +347,6 @@ const styles = StyleSheet.create({
     //   top: 28
     // },
     userimage:{
-        // width:75,
-        // height:75,
         borderRadius:50,
         marginRight:10,
         color:'#dcdcdc'
@@ -386,15 +370,6 @@ const styles = StyleSheet.create({
       borderWidth: 1,
       color:"#fff"
     },
-    // examname:{
-    //   color:"#fff",
-    //   fontWeight:"600"
-    // },
-    // employeeid:{
-    //   color:"#fff",
-    //   fontSize: 12,
-    //   fontWeight:"400"
-    // },
     activetext:{
       color:"#fff",
     },
@@ -438,18 +413,13 @@ const styles = StyleSheet.create({
       textAlign: "center"
     },
     countWrap:{
-      // fontWeight:"bold",
       flexDirection:"row",
       alignSelf:"flex-end",
-      // width:"50%",
-      // justifyContent:"space-between",
-      
     },
     countbg1:{
        borderRadius:3,
        width:30,
        height:30,
-      //  display: "flex",
        alignItems: "center",
        justifyContent: "center",
        backgroundColor: "#0cb551",
@@ -459,7 +429,6 @@ const styles = StyleSheet.create({
       borderRadius:3,
       width:30,
       height:30,
-     //  display: "flex",
       alignItems: "center",
       justifyContent: "center",
       backgroundColor: "#969595",
@@ -468,7 +437,6 @@ const styles = StyleSheet.create({
       borderRadius:3,
       width:30,
       height:30,
-     //  display: "flex",
       alignItems: "center",
       justifyContent: "center",
       backgroundColor: "#ea4242",
@@ -477,7 +445,6 @@ const styles = StyleSheet.create({
       borderRadius:3,
       width:30,
       height:30,
-     //  display: "flex",
       alignItems: "center",
       justifyContent: "center",
       backgroundColor: "#404142",
@@ -492,8 +459,8 @@ const styles = StyleSheet.create({
      marginLeft:0
     },
     count:{
-    color:"#fff",
-    textAlign:"center",
+      color:"#fff",
+      textAlign:"center",
     },
     cotext:{
       color:"#000",
