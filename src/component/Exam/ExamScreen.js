@@ -49,9 +49,9 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
       );
 
       if (response) {
-        setExamDates(response.data);
-        setExamSelectedDate(response.data?.[0]?.EXAM_DT);
-        handleGetRoomView(response.data?.[0]?.EXAM_DT);
+        setExamDates(response?.data?.receivedData);
+        setExamSelectedDate(response?.data?.receivedData?.[0]?.EXAM_DT);
+        handleGetRoomView(response?.data?.receivedData?.[0]?.EXAM_DT);
       }
     } catch (error) {
       setLoading(false);
@@ -75,12 +75,12 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
       );
 
       if (response) {
-        setInvigilatorData(response.data);
-        const ExamDateArray = response.data.filter((item, index, self) => index === self.findIndex((t) => t.date === item.date)).map((item) => ({ EXAM_DT: item.date }));
+        setInvigilatorData(response?.data?.receivedData);
+        const ExamDateArray = response?.data?.receivedData.filter((item, index, self) => index === self.findIndex((t) => t.date === item.date)).map((item) => ({ EXAM_DT: item.date }));
         setExamDates(ExamDateArray);
-        setExamSelectedDate(response.data?.[0]?.date);
-        const RoomArray = response.data.filter((item) => item.date === response.data?.[0]?.date).map((item) => item.room);
-        handleGetRoomView(response.data?.[0]?.date, RoomArray);
+        setExamSelectedDate(response?.data?.receivedData?.[0]?.date);
+        const RoomArray = response?.data?.receivedData.filter((item) => item.date === response?.data?.receivedData?.[0]?.date).map((item) => item.room);
+        handleGetRoomView(response?.data?.receivedData?.[0]?.date, RoomArray);
       }
     } catch (error) {
       handleAuthErrors(error);
@@ -108,7 +108,7 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
       );
 
       if (response) {
-        setRoomDetails(response.data);
+        setRoomDetails(response?.data?.receivedData);
         setLoading(false);
       }
     } catch (error) {
