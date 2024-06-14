@@ -401,15 +401,14 @@ const RoleScreen = ({userAccess}) => {
         </View>
            ) :
      (<View style={styles.roleLists}>
-        <Text style={styles.header}>Role List:</Text>
+        <Text style={styles.header}>User Roles:</Text>
         {UserAccess?.create === 1 &&
           <View style={{alignItems:"flex-end"}}>
-
-        <Pressable onPress={() => setRoleContainerVisible(true)}>
-                    <Ionicons  style={styles.icons} name="add-circle-outline" size={35} color="black" />
-                  </Pressable> 
-                  </View>
-}
+            <Pressable onPress={() => setRoleContainerVisible(true)}>
+            <Ionicons  style={styles.icons} name="add-circle-outline" size={35} color="black" />
+          </Pressable> 
+          </View>
+        }
       <FlatList
         data={roleList}
         keyExtractor={(item) => item.PK_RoleId.toString()}

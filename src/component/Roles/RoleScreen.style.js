@@ -97,10 +97,14 @@ import {
     },
     roleLists:{
       backgroundColor:"#fff",
-      padding:30,
+      padding:15,
       boxShadow: '0px 2px 3.84px rgba(0, 0, 0, 0.25)',
       borderRadius:10,
     },
+    // wrapElements: {
+    //   display: "flex",
+    //   justifyContent: "space-between"
+    // },
     addbtnWrap:{
       width:100,
       alignSelf:"flex-end",
