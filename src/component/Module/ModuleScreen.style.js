@@ -95,6 +95,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: 10,
   },
+  addBtn: {
+    alignItems:"flex-end", 
+    position: "relative", 
+    bottom: 38
+  },
+  modulesTbl:{
+    position: "relative",
+    top: -20
+  },
 });
 
 export default styles;

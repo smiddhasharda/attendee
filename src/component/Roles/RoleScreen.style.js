@@ -105,6 +105,15 @@ import {
     //   display: "flex",
     //   justifyContent: "space-between"
     // },
+    addBtn: {
+      alignItems:"flex-end", 
+      position: "relative", 
+      bottom: 40
+    },
+    rolesTbl:{
+      position: "relative",
+      top: -20
+    },
     addbtnWrap:{
       width:100,
       alignSelf:"flex-end",

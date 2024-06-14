@@ -170,9 +170,9 @@ const ModuleScreen = ({ userAccess }) => {
         </View>
       ) : (
         <View style={styles.moduleListContainer}>
-          <Text style={styles.header}>Module List:</Text>
+          <Text style={styles.header}>Manage Modules:</Text>
           {userAccessForModule?.create === 1 && (
-            <View style={{ alignItems: "flex-end" }}>
+            <View style={styles.addBtn}>
               <Pressable onPress={() => setModuleContainerVisible(true)}>
                 <Ionicons name="add-circle-outline" size={35} color="black" />
               </Pressable>
@@ -180,6 +180,7 @@ const ModuleScreen = ({ userAccess }) => {
           )}
           <FlatList
             data={moduleList}
+            style={styles.modulesTbl}
             keyExtractor={item => item.PK_ModuleId.toString()}
             ListHeaderComponent={() => (
               <View style={styles.tableHeader}>
