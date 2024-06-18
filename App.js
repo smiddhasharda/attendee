@@ -16,6 +16,8 @@ import StudentInfo from "./src/component/Student/StudentInfo";
 import RoomDetail from "./src/component/Room/RoomDetail";
 import TopHeader from "./src/globalComponent/Header/TopHeader";
 import ToastContainer from './src/globalComponent/ToastContainer/ToastContainer'; 
+import { Provider as PaperProvider } from 'react-native-paper';
+
 
 const Stack = createNativeStackNavigator();
 // global.SERVER_URL = `http://localhost:5000`;
@@ -56,6 +58,7 @@ const App = () => {
   );
   const renderRouting = () => (
     <Provider store={store}>
+        <PaperProvider>
       <StatusBar   barStyle="light-content" backgroundColor="#6a51ae"  />
       <ToastProvider>
         <ToastContainer/>
@@ -109,6 +112,7 @@ const App = () => {
           </NavigationContainer>
         </RoleProvider>
       </ToastProvider>
+      </PaperProvider>
     </Provider>
   );
 
