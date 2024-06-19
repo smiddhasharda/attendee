@@ -58,20 +58,20 @@ const ModuleScreen = ({ userAccess }) => {
   }, [checkAuthToken, moduleData, addToast]);
 
   const handleAddModule = useCallback(() => {
-    if(moduleData.moduleName.replace(/\s+/g, '') === ""){
+    if (moduleData.moduleName.replace(/\s+/g, '') === "") {
       addToast("Please enter module name first !", "error");
     }
     else {
-    handleModuleOperation('insert', { moduleName: moduleData.moduleName, description: moduleData.moduleDescription, isActive: moduleData.moduleStatus, }, "Module Add Successful");
-  }
+      handleModuleOperation('insert', { moduleName: moduleData.moduleName, description: moduleData.moduleDescription, isActive: moduleData.moduleStatus, }, "Module Add Successful");
+    }
   }, [handleModuleOperation, moduleData]);
 
   const handleUpdateModule = useCallback(() => {
-    if(moduleData.moduleName.replace(/\s+/g, '') === ""){
+    if (moduleData.moduleName.replace(/\s+/g, '') === "") {
       addToast("Please enter module name first !", "error");
     }
     else {
-    handleModuleOperation('update', { moduleName: moduleData.moduleName, description: moduleData.moduleDescription, isActive: moduleData.moduleStatus, }, "Module Update Successful", `PK_ModuleId = ${moduleData.moduleId}`);
+      handleModuleOperation('update', { moduleName: moduleData.moduleName, description: moduleData.moduleDescription, isActive: moduleData.moduleStatus, }, "Module Update Successful", `PK_ModuleId = ${moduleData.moduleId}`);
     }
   }, [handleModuleOperation, moduleData]);
 
@@ -169,46 +169,90 @@ const ModuleScreen = ({ userAccess }) => {
           </View>
         </View>
       ) : (
+        // <View style={styles.moduleListContainer}>
+        //   <Text style={styles.header}>Manage Modules:</Text>
+        //   {userAccessForModule?.create === 1 && (
+        //     <View style={styles.addBtn}>
+        //       <Pressable onPress={() => setModuleContainerVisible(true)}>
+        //         <Ionicons name="add-circle-outline" size={35} color="black" />
+        //       </Pressable>
+        //     </View>
+        //   )}
+        //   <FlatList
+        //     data={moduleList}
+        //     style={styles.modulesTbl}
+        //     keyExtractor={item => item.PK_ModuleId.toString()}
+        //     ListHeaderComponent={() => (
+        //       <View style={styles.tableHeader}>
+        //         <Text style={[styles.tableHeaderText, styles.column10]}>Module</Text>
+        //         <Text style={[styles.tableHeaderText, styles.column60]}>Description</Text>
+        //         <Text style={[styles.tableHeaderText, styles.column10]}>Status</Text>
+        //         <Text style={[styles.tableHeaderText, styles.column10]}>Actions</Text>
+        //       </View>
+        //     )}
+        //     renderItem={({ item }) => (
+        //       <View style={styles.listItem}>
+        //         <Text style={[styles.listItemText, styles.column10]}>{item.moduleName}</Text>
+        //         <Text style={[styles.listItemText, styles.column60]}>{item.description}</Text>
+        //         <Pressable onPress={() => userAccessForModule?.update === 1 && handleModuleStatus(item.PK_ModuleId, item.isActive)}>
+        //           <Text style={[styles.listItemText, item.isActive ? styles.listItemActiveStatus : styles.listItemInactiveStatus, styles.column10]}>
+        //             {item.isActive ? "Active" : "Inactive"}
+        //           </Text>
+        //         </Pressable>
+        //         <View style={[styles.listItemActionContainer, styles.column10]}>
+        //           {userAccessForModule?.update === 1 ? (
+        //             <Pressable style={styles.listItemEditButton} onPress={() => handleEditModule(item)}>
+        //               <Feather name="edit" size={16} color="white" />
+        //             </Pressable>
+        //           ) : (<Text>-</Text>)}
+        //         </View>
+        //       </View>
+        //     )}
+        //   />
+
+        // </View>
         <View style={styles.moduleListContainer}>
-          <Text style={styles.header}>Module List:</Text>
-          {userAccessForModule?.create === 1 && (
-            <View style={{ alignItems: "flex-end" }}>
-              <Pressable onPress={() => setModuleContainerVisible(true)}>
-                <Ionicons name="add-circle-outline" size={35} color="black" />
-              </Pressable>
-            </View>
-          )}
-          <FlatList
-            data={moduleList}
-            keyExtractor={item => item.PK_ModuleId.toString()}
-            ListHeaderComponent={() => (
-              <View style={styles.tableHeader}>
-                <Text style={styles.tableHeaderText}>Module</Text>
-                <Text style={styles.tableHeaderText}>Description</Text>
-                <Text style={styles.tableHeaderText}>Status</Text>
-                <Text style={styles.tableHeaderText}>Actions</Text>
-              </View>
-            )}
-            renderItem={({ item }) => (
-              <View style={styles.listItem}>
-                <Text style={styles.listItemText}>{item.moduleName}</Text>
-                <Text style={styles.listItemText}>{item.description}</Text>
-                <Pressable onPress={() => userAccessForModule?.update === 1 && handleModuleStatus(item.PK_ModuleId, item.isActive)}>
-                  <Text style={[styles.listItemText, item.isActive ? styles.listItemActiveStatus : styles.listItemInactiveStatus]}>
-                    {item.isActive ? "Active" : "Inactive"}
-                  </Text>
-                </Pressable>
-                <View style={styles.listItemActionContainer}>
-                  {userAccessForModule?.update === 1 ? (
-                    <Pressable style={styles.listItemEditButton} onPress={() => handleEditModule(item)}>
-                      <Feather name="edit" size={16} color="white" />
-                    </Pressable>
-                  ) : (<Text>-</Text>)}
-                </View>
-              </View>
-            )}
-          />
+  <Text style={styles.header}>Manage Modules:</Text>
+  {userAccessForModule?.create === 1 && (
+    <View style={styles.addBtn}>
+      <Pressable onPress={() => setModuleContainerVisible(true)}>
+        <Ionicons name="add-circle-outline" size={35} color="black" />
+      </Pressable>
+    </View>
+  )}
+  <FlatList
+    data={moduleList}
+    style={styles.modulesTbl}
+    keyExtractor={item => item.PK_ModuleId.toString()}
+    ListHeaderComponent={() => (
+      <View style={styles.tableHeader}>
+        <Text style={[styles.tableHeaderText, styles.columnModule]} numberOfLines={1}>Module</Text>
+        <Text style={[styles.tableHeaderText, styles.columnDescription]} numberOfLines={1}>Description</Text>
+        <Text style={[styles.tableHeaderText, styles.columnStatus]} numberOfLines={1}>Status</Text>
+        <Text style={[styles.tableHeaderText, styles.columnAction]} numberOfLines={1}>Actions</Text>
+      </View>
+    )}
+    renderItem={({ item }) => (
+      <View style={styles.listItem}>
+        <Text style={[styles.listItemText, styles.columnModule]} numberOfLines={1}>{item.moduleName}</Text>
+        <Text style={[styles.listItemText, styles.columnDescription]} numberOfLines={1}>{item.description}</Text>
+        <Pressable onPress={() => userAccessForModule?.update === 1 && handleModuleStatus(item.PK_ModuleId, item.isActive)}>
+          <Text style={[styles.listItemText, item.isActive ? styles.listItemActiveStatus : styles.listItemInactiveStatus, styles.columnStatus]} numberOfLines={1}>
+            {item.isActive ? "Active" : "Inactive"}
+          </Text>
+        </Pressable>
+        <View style={[styles.listItemActionContainer, styles.columnAction]}>
+          {userAccessForModule?.update === 1 ? (
+            <Pressable style={styles.listItemEditButton} onPress={() => handleEditModule(item)}>
+              <Feather name="edit" size={16} color="white" />
+            </Pressable>
+          ) : (<Text>-</Text>)}
         </View>
+      </View>
+    )}
+  />
+</View>
+
       )}
     </View>
   );
