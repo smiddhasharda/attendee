@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     minWidth:60,
   },
   btntext:{
-  color:"#fff",
+    color:"#fff",
   },
   profileImage: {
     width: 100,
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
   },
   rolePicker: {
     marginTop: 10,
-    width: 100,
+    // width: 100,
     // paddingHorizontal: 10,
   },
   drawerItem: {
@@ -72,11 +72,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
   }, 
   dropdown:{
-  width:110,
-  minHeight:30,
+  width:125,
+  minHeight:40,
+  margin: "auto",
+  textAlign: "center"
   },
   dropdownContainer:{
-    width:110,
+    width:125,
     padding: [10, 5],
     height: "auto"
   },

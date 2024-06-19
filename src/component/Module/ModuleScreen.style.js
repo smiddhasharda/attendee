@@ -21,14 +21,35 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
   },
+  // header: {
+  //   fontSize: 18,
+  //   fontWeight: "bold",
+  //   marginBottom: 10,
+  // },
   header: {
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 10,
   },
+  // tableHeader: {
+  //   flexDirection: "row",
+  //   justifyContent: "space-between",
+  //   backgroundColor: "rgb(17, 65, 102)",
+  //   paddingVertical: 10,
+  //   paddingHorizontal: 15,
+  //   marginBottom: 10,
+  //   borderRadius: 5,
+  // },
+  // tableHeaderText: {
+  //   fontSize: 16,
+  //   fontWeight: "bold",
+  //   color: "#fff",
+  //   textAlign: "center",
+  //   //textWrap: "nowrap",
+  //   marginRight: 30
+  // },
   tableHeader: {
     flexDirection: "row",
-    justifyContent: "space-between",
     backgroundColor: "rgb(17, 65, 102)",
     paddingVertical: 10,
     paddingHorizontal: 15,
@@ -39,16 +60,47 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     color: "#fff",
-    textAlign: "center",
+    textAlign: "left",
+    flexShrink: 1,
+    marginRight: 12,
   },
+  // moduleListContainer: {
+  //   flex: 1,
+  //   backgroundColor: "#fff",
+  //   padding: 10,
+  // },
   moduleListContainer: {
     flex: 1,
     backgroundColor: "#fff",
     padding: 10,
   },
+  // listItem: {
+  //   flexDirection: "row",
+  //   justifyContent: "space-between",
+  //   alignItems: "center",
+  //   borderBottomWidth: 1,
+  //   borderBottomColor: "#ddd",
+  //   paddingVertical: 10,
+  //   paddingHorizontal: 15,
+  // },
+  // listItemText: {
+  //   flex: 1,
+  //   //textWrap: "nowrap",
+  //   marginRight: 30
+  // },
+  // listItemActiveStatus: {
+  //   color: "green",
+  // },
+  // listItemInactiveStatus: {
+  //   color: "red",
+  // },
+  // listItemEditButton: {
+  //   backgroundColor: "#0C7C62",
+  //   padding: 4,
+  //   borderRadius: 5,
+  // },
   listItem: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
     borderBottomWidth: 1,
     borderBottomColor: "#ddd",
@@ -56,7 +108,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   listItemText: {
-    flex: 1,
+    fontSize: 16,
+    flexShrink: 1,
+    marginRight: 12,
   },
   listItemActiveStatus: {
     color: "green",
@@ -95,15 +149,50 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: 10,
   },
+  // addBtn: {
+  //   alignItems:"flex-end", 
+  //   position: "relative", 
+  //   bottom: 38
+  // },
   addBtn: {
-    alignItems:"flex-end", 
+    alignItems: "flex-end", 
     position: "relative", 
     bottom: 38
   },
-  modulesTbl:{
+  // modulesTbl:{
+  //   position: "relative",
+  //   top: 5,
+  //   // overflowY:"hidden",
+  //   // maxWidth: 320
+  // },
+  modulesTbl: {
     position: "relative",
-    top: -20
+    top: 5,
+    // overflowY:"hidden",
+    // maxWidth: 320
   },
+  // column10: {
+  //   flex: 1, // 10%
+  // },
+  // column60: {
+  //   flex: 6, // 60%
+  // },
+  // column20: {
+  //   flex: 2, // 20%
+  //   alignItems: "flex-end"
+  // }
+  columnModule: {
+    flex: 3, // 10%
+  },
+  columnDescription: {
+    flex: 5, // 60%
+  },
+  columnStatus: {
+    flex: 1, // 20%
+  },
+  columnAction: {
+    flex: 1, // 20%
+  }
 });
 
 export default styles;

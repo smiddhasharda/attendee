@@ -53,10 +53,7 @@ import {
       color:"#fff",
       textAlign:"center",
       alignItems:"center",
-
-    
-
- 
+      flexShrink: 1,
     },
     listItem: {
       // flexDirection: "row",
@@ -112,7 +109,7 @@ import {
     },
     rolesTbl:{
       position: "relative",
-      top: -20
+      top: 5
     },
     addbtnWrap:{
       width:100,
