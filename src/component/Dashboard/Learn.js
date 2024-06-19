@@ -1,547 +1,467 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { View, Text, StyleSheet, Dimensions, FlatList, Pressable, Image } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
-import DropDownPicker from "react-native-dropdown-picker";
-import PieChart from "./PieChart";
-import { fetch,view } from "../../AuthService/AuthService";
+import React, { useState, useEffect,useCallback  } from 'react';
+import { View, ScrollView, StyleSheet, Alert,FlatList ,Pressable,Text  } from 'react-native';
+import { Table, Row, Rows } from 'react-native-table-component';
+import { Searchbar, Button } from 'react-native-paper';
+import RNPickerSelect from 'react-native-picker-select';
+import { saveAs } from 'file-saver';
+import Pagination from './PaginationComponent';
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { fetch,view } from "../../AuthService/AuthService";
+import { parse, format } from 'date-fns';
 
-function Learn() {
-  const [drawerOpen, setDrawerOpen] = useState({
-    examDrawer:false,
-    roomDrawer: false,
-    shiftDrawer: false,
-  });
+const examData = [
+  {
+    "examRoom": "Room 101",
+    "shift": "Morning",
+    "school": "School A"
+  },
+  {
+    "examRoom": "Room 102",
+    "shift": "Afternoon",
+    "school": "School B"
+  },
+  {
+    "examRoom": "Room 103",
+    "shift": "Morning",
+    "school": "School C"
+  }
+]
 
 
-  const { addToast } = useToast();
+const Learn = () => {
+  const [tableHead, setTableHead] = useState(['System Id', 'Roll Number', 'Name','Copy','Room','Seat','Status','School','Graduation','Stream','Catelog Number','Exam Date','Exam Time']);
+  const [tableData, setTableData] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredData, setFilteredData] = useState([]);
+  const [schoolList, setSchoolList] = useState([]);
+  const [schoolFilter, setSchoolFilter] = useState('');
+  const [roomList, setRoomList] = useState([]);
+  const [roomFilter, setRoomFilter] = useState('');
+  const [shiftList, setShiftList] = useState([]);
+  const [shiftFilter, setShiftFilter] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
   const [examDates, setExamDates] = useState([]);
   const [examSelectedDate, setExamSelectedDate] = useState("");
-  const [examRoomList, setExamRoomList] = useState([]);
-  const [examSelectedRoom, setExamSelectedRoom] = useState("");
-  const [examSelectedshift, setExamSelectedShift] = useState("");
-  const [examShiftList, setExamShiftList] = useState([]);
-  const [examReportData, setExamReportData] = useState([]);
-  const examlist=[
- 
-    { label: 'AI', value: 'AI' },
-    { label: '.Net', value: '.Net' },
-    { label: 'C', value: 'C' },
-    { label: 'C++', value: 'C++' },
-    { label: 'AI', value: 'AI' },
-  ];
+  const pageSize = 10;
+  const { addToast } = useToast();
 
-  const [sampleData , setSampleData] = useState();
+  useEffect(() => {
+    // const data = examData.map(item => [item.examRoom, item.shift, item.school]);
+    // setTableData(data);
+    // setFilteredData(data);
+    handleGetExamDateList();
+  }, []);
+
+  useEffect(() => {
+    filterData();
+  }, [searchQuery, schoolFilter, shiftFilter,roomFilter]);
+
+  const filterData = () => {
+    let data = tableData;
+    console.log(data)
+    if (roomFilter) {
+      data = data.filter(item => item[4] === roomFilter);
+    }
+    if (schoolFilter) {
+      data = data.filter(item => item[7] === schoolFilter);
+    }
+    if (shiftFilter) {
+      data = data.filter(item => item[12] === shiftFilter);
+    }
+    if (searchQuery) {
+      data = data.filter(item =>
+        item.some(field => field.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
+    }
+
+    setFilteredData(data);
+    setCurrentPage(1); // Reset to first page after filtering
+  };
+
+  const exportToCSV = () => {
+    const csvData = [tableHead, ...filteredData];
+    const csvString = csvData.map(row => row.join(',')).join('\n');
+    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+    saveAs(blob, 'report.csv');
+  };
+
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
-
+    
     if (!authToken) {
       addToast("Authentication token not available", "error");
       throw new Error("Authentication token not available");
     }
-
+    
     return authToken;
-  }, [addToast]);
-
-  const handleGetExamDateList = async () => {
+    }, [addToast]);
+    
+    const handleGetExamDateList = async () => {
     try {
-      const authToken = await checkAuthToken();
-      const response = await fetch(
-        {
-          operation: "custom",
-          tblName: "tbl_report_master",
-          data: "",
-          conditionString: "",
-          checkAvailability: "",
-          customQuery: "SELECT DISTINCT EXAM_DT FROM tbl_report_master ;",
-        },
-        authToken
-      );
-
+    const authToken = await checkAuthToken();
+    const response = await fetch(
+    {
+    operation: "custom",
+    tblName: "tbl_report_master",
+    data: "",
+    conditionString: "",
+    checkAvailability: "",
+    customQuery: "SELECT DISTINCT EXAM_DT FROM tbl_report_master",
+    },
+    authToken
+    );
+    
+    
       if (response) {
         let ExamDateList = response?.data?.receivedData;
         setExamDates(ExamDateList || []);
         setExamSelectedDate(ExamDateList?.[0]?.EXAM_DT);
         handleGetExamRoomList(ExamDateList?.[0]?.EXAM_DT);
+        handleGetExamReport(ExamDateList?.[0]?.EXAM_DT);
+        handleGetSchoolList(ExamDateList?.[0]?.EXAM_DT);
+        handleGetShiftList(ExamDateList?.[0]?.EXAM_DT);
       }
     } catch (error) {
       handleAuthErrors(error);
     }
-  };
-
-  const handleGetExamRoomList = async (date) => {
+    };
+    
+    const handleGetExamRoomList = async (date) => {
     try {
-      const authToken = await checkAuthToken();
-      const response = await fetch(
-        {
-          operation: "custom",
-          tblName: "tbl_report_master",
-          data: "",
-          conditionString: "",
-          checkAvailability: "",
-          customQuery: `SELECT JSON_ARRAYAGG(room) AS ReportData FROM ( SELECT JSON_OBJECT( 'label', ROOM_NBR, 'value', ROOM_NBR, 'shifts', JSON_ARRAYAGG( JSON_OBJECT('label', EXAM_START_TIME, 'value', EXAM_START_TIME) ) ) AS room FROM tbl_report_master WHERE EXAM_DT = '${date}' GROUP BY ROOM_NBR ) AS rooms; `,
-        },
-        authToken
-      );
-      if (response) {
-        setExamRoomList(response?.data?.receivedData?.[0]?.ReportData);
-        setExamSelectedRoom(response?.data?.receivedData?.[0]?.ReportData?.[0]);
-        setExamShiftList(response?.data?.receivedData?.[0]?.ReportData?.[0]?.shifts);
-        setExamSelectedShift(response?.data?.receivedData?.[0]?.ReportData?.[0]?.shifts?.[0]);
-        handleGetExamReport(
-          date,
-          response?.data?.receivedData?.[0]?.ReportData?.[0]?.label,
-          response?.data?.receivedData?.[0]?.ReportData?.[0]?.shifts?.[0]?.label
-        );
-      }
-    } catch (error) {
-      handleAuthErrors(error);
-    }
-  };
-  const handleGetExamReport = async (date, room, shift) => {
-    try {
-      const authToken = await checkAuthToken();
-      const response = await fetch(
-        {
-          operation: "custom",
-          tblName: "tbl_report_master",
-          data: "",
-          conditionString:"",
-          checkAvailability: "",
-          customQuery: `select JSON_ARRAYAGG(json_object('PK_Report_Id',p.PK_Report_Id,'EMPLID',EMPLID,'EXAM_DT',p.EXAM_DT,'ROOM_NBR',p.ROOM_NBR,'EXAM_START_TIME',p.EXAM_START_TIME,'STRM',p.STRM,'CATALOG_NBR',p.CATALOG_NBR,'PTP_SEQ_CHAR',p.PTP_SEQ_CHAR,'NAME_FORMAL',p.NAME_FORMAL,'ADM_APPL_NBR',p.ADM_APPL_NBR,'DESCR',p.DESCR,'DESCR2',p.DESCR2,'DESCR3',p.DESCR3,'Status',p.Status,'isActive',p.isActive,'copyData',( SELECT CAST( CONCAT('[', GROUP_CONCAT( JSON_OBJECT( 'PK_CopyId',q.PK_CopyId,'FK_ReportId',q.FK_ReportId,'EMPLID',q.EMPLID,'copyNumber',q.copyNumber,'alternateCopyNumber1',q.alternateCopyNumber1,'alternateCopyNumber2',q.alternateCopyNumber2,'alternateCopyNumber3',q.alternateCopyNumber3,'alternateCopyNumber4',q.alternateCopyNumber4,'alternateCopyNumber5',q.alternateCopyNumber5,'alternateCopyNumber6',q.alternateCopyNumber6,'isActive',q.isActive) ), ']') AS JSON ) FROM tbl_copy_master q WHERE q.FK_ReportId = p.PK_Report_Id ))) AS ReportMaster from tbl_report_master p where EXAM_DT = '${date}' AND ROOM_NBR = '${room}' AND EXAM_START_TIME = '${shift}'`,
-        },
-        authToken
-      );
-      if (response) {
-        setExamReportData(response?.data?.receivedData?.[0]?.ReportMaster || []);
-      }
-    } catch (error) {
-      console.log(error);
-      handleAuthErrors(error);
-    }
-  };
-
-  const handleAuthErrors = (error) => {
-    switch (error.message) {
-      case "Invalid credentials":
-        addToast("Invalid authentication credentials", "error");
-        break;
-      case "Data already exists":
-        addToast("Module with the same name already exists", "error");
-        break;
-      case "No response received from the server":
-        addToast("No response received from the server", "error");
-        break;
-      default:
-        addToast("Module Operation Failed", "error");
-    }
-  };
-
-  const handleGetTestView = async () => {
-    try {
-      const authToken = await checkAuthToken();
-      const response = await view(
-        {
-          operation: "custom",
-          tblName: "PS_SU_PSFT_COEM_VW",
-          data: '',
-          conditionString: '',
-          checkAvailability: '',
-          customQuery: `SELECT count(*) from PS_SU_PSFT_COEM_VW`,
-          viewType:'HRMS_View'
-        },
-        authToken
-      );
-
-      if (response) {
-        console.log("Data : ",response?.data?.receivedData);
-      }
-    } catch (error) {
-      // setLoading(false);
-      handleAuthErrors(error);
-    }
-  };
-
-  const handleDateClick = (date) => {
-    setExamSelectedDate(date);
-    handleGetExamRoomList(date);
-  };
-
-  const handleChangeRoom = (data) => {
-    setExamSelectedRoom(data);
-    setExamShiftList(data?.shifts);
-    setExamSelectedShift(data?.shifts?.[0]);
-    handleGetExamReport(
-      examSelectedDate,
-      data?.label,
-      data?.shifts?.[0]?.label
+    const authToken = await checkAuthToken();
+    const response = await fetch(
+    {
+    operation: "custom",
+    tblName: "tbl_report_master",
+    data: "",
+    conditionString: "",
+    checkAvailability: "",
+    customQuery:`SELECT JSON_ARRAYAGG(room) AS ReportData FROM ( SELECT JSON_OBJECT( 'label', ROOM_NBR, 'value', ROOM_NBR, 'shifts', JSON_ARRAYAGG( JSON_OBJECT('label', EXAM_START_TIME, 'value', EXAM_START_TIME) ) ) AS room FROM tbl_report_master WHERE EXAM_DT = '${date}' GROUP BY ROOM_NBR,EXAM_START_TIME ) AS rooms` ,
+    },
+    authToken
     );
-  };
-  handleChangeShift = (data) => {
-    setExamSelectedShift(data);
-    handleGetExamReport(examSelectedDate, examSelectedRoom?.label, data?.label);
-  };
+    if (response) {
+    // setExamRoomList(response?.data?.receivedData?.[0]?.ReportData);
+    // setExamSelectedRoom(response?.data?.receivedData?.[0]?.ReportData?.[0]);
+    // setExamShiftList(response?.data?.receivedData?.[0]?.ReportData?.[0]?.shifts);
+    // setExamSelectedShift(response?.data?.receivedData?.[0]?.ReportData?.[0]?.shifts?.[0]);
+    setRoomList(response?.data?.receivedData?.[0]?.ReportData);
+    // handleGetExamReport(
+    // date,
+    // response?.data?.receivedData?.[0]?.ReportData?.[0]?.label,
+    // response?.data?.receivedData?.[0]?.ReportData?.[0]?.shifts?.[0]?.label
+    // );
+    }
+    } catch (error) {
+    handleAuthErrors(error);
+    }
+    };
+    
+    const handleGetSchoolList = async (date) => {
+      try {
+      const authToken = await checkAuthToken();
+      const response = await fetch(
+      {
+      operation: "custom",
+      tblName: "tbl_report_master",
+      data: "",
+      conditionString: "",
+      checkAvailability: "",
+      customQuery:`SELECT JSON_ARRAYAGG(room) AS SchoolData FROM ( SELECT JSON_OBJECT( 'label', DESCR, 'value', DESCR ) AS room FROM tbl_report_master WHERE EXAM_DT = '${date}' GROUP BY DESCR ) AS rooms` ,
+      },
+      authToken
+      );
+      if (response) {
+      setSchoolList(response?.data?.receivedData?.[0]?.SchoolData);
+      }
+      } catch (error) {
+      handleAuthErrors(error);
+      }
+      };
+      const handleGetShiftList = async (date) => {
+        try {
+        const authToken = await checkAuthToken();
+        const response = await fetch(
+        {
+        operation: "custom",
+        tblName: "tbl_report_master",
+        data: "",
+        conditionString: "",
+        checkAvailability: "",
+        customQuery:`SELECT JSON_ARRAYAGG(room) AS ShiftData FROM ( SELECT JSON_OBJECT( 'label', EXAM_START_TIME, 'value', EXAM_START_TIME ) AS room FROM tbl_report_master WHERE EXAM_DT = '${date}' GROUP BY EXAM_START_TIME ) AS rooms` ,
+        },
+        authToken
+        );
+        if (response) {
+        setShiftList(response?.data?.receivedData?.[0]?.ShiftData);
+        }
+        } catch (error) {
+        handleAuthErrors(error);
+        }
+        };
+    const handleGetExamReport = async (date, room, shift) => {
+    try {
+    const authToken = await checkAuthToken();
+    const response = await fetch(
+    {
+    operation: "custom",
+    tblName: "tbl_report_master",
+    data: "",
+    conditionString:"",
+    checkAvailability: "",
+    // customQuery: `select JSON_ARRAYAGG(json_object('PK_Report_Id',p.PK_Report_Id,'EMPLID',EMPLID,'EXAM_DT',p.EXAM_DT,'ROOM_NBR',p.ROOM_NBR,'EXAM_START_TIME',p.EXAM_START_TIME,'STRM',p.STRM,'CATALOG_NBR',p.CATALOG_NBR,'PTP_SEQ_CHAR',p.PTP_SEQ_CHAR,'NAME_FORMAL',p.NAME_FORMAL,'ADM_APPL_NBR',p.ADM_APPL_NBR,'DESCR',p.DESCR,'DESCR2',p.DESCR2,'DESCR3',p.DESCR3,'Status',p.Status,'isActive',p.isActive,'copyData',( SELECT CAST( CONCAT('[', GROUP_CONCAT( JSON_OBJECT( 'PK_CopyId',q.PK_CopyId,'FK_ReportId',q.FK_ReportId,'EMPLID',q.EMPLID,'copyNumber',q.copyNumber,'alternateCopyNumber1',q.alternateCopyNumber1,'alternateCopyNumber2',q.alternateCopyNumber2,'alternateCopyNumber3',q.alternateCopyNumber3,'alternateCopyNumber4',q.alternateCopyNumber4,'alternateCopyNumber5',q.alternateCopyNumber5,'alternateCopyNumber6',q.alternateCopyNumber6,'isActive',q.isActive) ), ']') AS JSON ) FROM tbl_copy_master q WHERE q.FK_ReportId = p.PK_Report_Id ))) AS ReportMaster from tbl_report_master p where EXAM_DT = '${date}' AND ROOM_NBR = '${room}' AND EXAM_START_TIME = '${shift}'`,
+    customQuery: `select JSON_ARRAYAGG(json_object('PK_Report_Id',p.PK_Report_Id,'EMPLID',EMPLID,'EXAM_DT',p.EXAM_DT,'ROOM_NBR',p.ROOM_NBR,'EXAM_START_TIME',p.EXAM_START_TIME,'STRM',p.STRM,'CATALOG_NBR',p.CATALOG_NBR,'PTP_SEQ_CHAR',p.PTP_SEQ_CHAR,'NAME_FORMAL',p.NAME_FORMAL,'ADM_APPL_NBR',p.ADM_APPL_NBR,'DESCR',p.DESCR,'DESCR2',p.DESCR2,'DESCR3',p.DESCR3,'Status',p.Status,'isActive',p.isActive,'copyData',( SELECT CAST( CONCAT('[', GROUP_CONCAT( JSON_OBJECT( 'PK_CopyId',q.PK_CopyId,'FK_ReportId',q.FK_ReportId,'EMPLID',q.EMPLID,'copyNumber',q.copyNumber,'alternateCopyNumber1',q.alternateCopyNumber1,'alternateCopyNumber2',q.alternateCopyNumber2,'alternateCopyNumber3',q.alternateCopyNumber3,'alternateCopyNumber4',q.alternateCopyNumber4,'alternateCopyNumber5',q.alternateCopyNumber5,'alternateCopyNumber6',q.alternateCopyNumber6,'isActive',q.isActive) ), ']') AS JSON ) FROM tbl_copy_master q WHERE q.FK_ReportId = p.PK_Report_Id ))) AS ReportMaster from tbl_report_master p where EXAM_DT = '${date}'`,
 
-  // const binaryToBase64 = (binary) => {
-  //   return btoa(
-  //     new Uint8Array(binary)
-  //       .reduce((data, byte) => data + String.fromCharCode(byte), '')
-  //   );
-  // };
-  // const binaryData = sampleData?.[0]?.EMPLOYEE_PHOTO;
-  // const base64Image = binaryToBase64(binaryData);
-
-  // console.log("base64Image : ",sampleData)
-
-
-  useEffect(() => {
-    // handleGetExamDateList();
-    handleGetTestView();
-  }, []);
-  return (
-    <ScrollView>
-      <View style={styles.container}>
-        {/* <Text style={styles.heading}>Student Report</Text> */}
-        {/* <Image source={{ uri: `data:image/png;base64,${base64Image}` }} style={{ width: 100, height: 100, borderRadius: 50 }} /> */}
-  
-        <View style={styles.datesWrap}>
-          <View style={styles.dates}>
-            <FlatList
-              data={examDates}
-              renderItem={({ item }) => (
-                <Pressable onPress={() => handleDateClick(item.EXAM_DT)}>
-                  <View
-                    style={[
-                      styles.dateItem,
-                      item.EXAM_DT === examSelectedDate && styles.activebox,
-                    ]}
-                  >
-                    <Text style={styles.dateDay}>
-                      {item.EXAM_DT.split("-")[1]}
-                    </Text>
-                    <Text style={styles.dateNumber}>
-                      {item.EXAM_DT.split("-")[0]}
-                    </Text>
-                    <Text style={styles.dateMonth}>
-                      {item.EXAM_DT.split("-")[2]}
-                    </Text>
-                  </View>
-                </Pressable>
-              )}
-              horizontal={true}
-              // showsHorizontalScrollIndicator={false}
-              // scrollEnabled={false}
-            />
-          </View>
-          </View>
+  },
+    authToken
+    );
+    if (response) {
+      let ReportData = response?.data?.receivedData?.[0]?.ReportMaster || [];
+      if(ReportData){
+      let SetupData =  ReportData.map(item => [ item.EMPLID, item.ADM_APPL_NBR, item.NAME_FORMAL,item.copyData?.map((item, index) => `Copy Number ${index + 1}: ${item.copyNumber}`).join(', '), item.ROOM_NBR, item.PTP_SEQ_CHAR, item.Status,item.DESCR, item.DESCR2, item.DESCR3, item.CATALOG_NBR,  item.EXAM_DT, item.EXAM_START_TIME ])
+      setTableData(SetupData);
+      setFilteredData(SetupData);
+      }
+      else{
+        setTableData([]);
+        setFilteredData([]);
+      }
       
-            <View style={styles.dropdownWrap}>
-            <View style={styles.dropdownContainer}>
-                  <Text style={styles.label}>Exam</Text>
-                  <DropDownPicker
-                    open={drawerOpen.examDrawer}
-                    value={examSelectedshift?.label}
-                    items={examlist}
-                    setOpen={() =>
-                      setDrawerOpen({ examDrawer: !drawerOpen.examDrawer })
-                    }
-                    onSelectItem={(value) => handleChangeShift(value)}
-                    style={styles.dropdown}
-                    dropDownStyle={styles.dropDownList}
-                    // dropDownStyle={{ backgroundColor: "#fafafa" }}
-                    dropDownMaxHeight={150}
-                    dropDownDirection="BOTTOM"
-                    containerStyle={styles.rolePicker}
-              />
-              </View>
-            <View style={styles.dropdownContainer}>
-            <Text  style={styles.label}>Rooms</Text>
-              <DropDownPicker
-                open={drawerOpen.roomDrawer}
-                value={examSelectedRoom?.label}
-                items={examRoomList}
-                setOpen={() =>
-                  setDrawerOpen({ roomDrawer: !drawerOpen.roomDrawer })
-                }
-                onSelectItem={(value) => handleChangeRoom(value)}
-                style={styles.dropdown}
-                dropDownStyle={styles.dropDownList}
-                // dropDownStyle={{ backgroundColor: "#fafafa" }}
-                dropDownMaxHeight={150}
-                dropDownDirection="TOP"
-                containerStyle={styles.rolePicker}
-              />
-              </View>
-              <View style={styles.dropdownContainer}>
-                  <Text style={styles.label}>Times</Text>
-                  <DropDownPicker
-                    open={drawerOpen.shiftDrawer}
-                    value={examSelectedshift?.label}
-                    items={examShiftList}
-                    setOpen={() =>
-                      setDrawerOpen({ shiftDrawer: !drawerOpen.shiftDrawer })
-                    }
-                    onSelectItem={(value) => handleChangeShift(value)}
-                    style={styles.dropdown}
-                    dropDownStyle={styles.dropDownList}
-                    // dropDownStyle={{ backgroundColor: "#fafafa" }}
-                    dropDownMaxHeight={150}
-                    dropDownDirection="TOP"
-                    containerStyle={styles.rolePicker}
-              />
-              </View>
-            </View>
-       
-          <View style={styles.boxtable}>  
-              <View style={styles.tableWrap}>
-                <View style={[styles.tableHeader]}>
-                  <Text  style={styles.tableHeaderText}>System Id</Text>
-                  <Text style={styles.tableHeaderText}>Roll Number</Text>
-                  <Text style={styles.tableHeaderText}>Name</Text>
-                  <Text style={styles.tableHeaderText}>Room Number</Text>
-                  <Text style={styles.tableHeaderText}>Seat Number</Text>
-                  <Text style={styles.tableHeaderText}>Status</Text>  
-                  <Text style={styles.tableHeaderText}>School</Text>                
-                  <Text style={styles.tableHeaderText}>Graduation</Text>                
-                  <Text style={styles.tableHeaderText}>Stream</Text>                
-              
-                </View>
-                {examReportData?.map((reportData) => (
-                  <View style={styles.listItem}>
-                    <Text  style={styles.listItemText}>{reportData.EMPLID}</Text>
-                    <Text style={styles.listItemText}>{reportData.ADM_APPL_NBR}</Text>
-                    <Text style={styles.listItemText}>{reportData.NAME_FORMAL}</Text>
-                    <Text style={styles.listItemText}>{reportData.ROOM_NBR}</Text>
-                    <Text style={styles.listItemText}>{reportData.PTP_SEQ_CHAR}</Text>
-                    <Text style={styles.listItemText}>{reportData.Status}</Text>
-                    <Text style={styles.listItemText}>{reportData.DESCR}</Text>
-                    <Text style={styles.listItemText}>{reportData.DESCR2}</Text>
-                    <Text style={styles.listItemText}>{reportData.DESCR3}</Text>
-                  </View>
-                ))}
-              </View>     
-          </View>
-        <Text>Total Student:50</Text>
-        
-        <PieChart />
-      </View>
-    </ScrollView>
-  );
-}
+    // setExamReportData(response?.data?.receivedData?.[0]?.ReportMaster || []);
+    }
+    } catch (error) {
+    console.log(error);
+    handleAuthErrors(error);
+    }
+    };
+    
+    const handleAuthErrors = (error) => {
+    switch (error.message) {
+    case "Invalid credentials":
+    addToast("Invalid authentication credentials", "error");
+    break;
+    case "Data already exists":
+    addToast("Module with the same name already exists", "error");
+    break;
+    case "No response received from the server":
+    addToast("No response received from the server", "error");
+    break;
+    default:
+    addToast("Module Operation Failed", "error");
+    }
+    };
 
-export default Learn;
+    const parseAndFormatDate = (dateString) => {
+      const possibleFormats = [
+        "yyyy-MM-dd'T'HH:mm:ss.SSSX", // ISO format with milliseconds
+        "yyyy-MM-dd'T'HH:mm:ssX",     // ISO format without milliseconds
+        "yyyy-MM-dd'T'HH:mmX",        // ISO format without seconds and milliseconds
+        "dd-MMMM-yyyy",               // e.g., 03-July-2023
+        "MM/dd/yyyy",                 // e.g., 07/03/2023
+        "yyyy-MM-dd",                 // e.g., 2023-07-03
+      ];
+    
+      let parsedDate;
+      for (let formatString of possibleFormats) {
+        try {
+          parsedDate = parse(dateString, formatString, new Date());
+          if (!isNaN(parsedDate)) break;
+        } catch (error) {
+          continue;
+        }
+      }
+    
+      if (!parsedDate || isNaN(parsedDate)) {
+        console.error('Invalid date format:', dateString);
+        return null;
+      }
+    
+      return parsedDate;
+    };
+    
+    const handleDateClick = (date) => {
+      setExamSelectedDate(date);
+      handleGetExamReport(date);
+      handleGetExamRoomList(date);
+      handleGetSchoolList(date);
+      handleGetShiftList(date);
+    }      
+
+  const filteredDataPaginated = filteredData.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+  return (
+    <View style={styles.container}>
+          <View style={dateSelectStyles.datesWrap}>
+        <View style={dateSelectStyles.dates}>
+          <FlatList
+            data={examDates}
+            renderItem={({ item }) => {
+              const isActiveItem = item.EXAM_DT === examSelectedDate;
+              const normalizedDate = parseAndFormatDate(item.EXAM_DT);
+              return (
+                 <Pressable onPress={() => handleDateClick(item.EXAM_DT)}>
+      <View style={[dateSelectStyles.dateItem, isActiveItem && dateSelectStyles.activebox]}>
+        <Text style={[dateSelectStyles.dateDay, isActiveItem && dateSelectStyles.activeText]}>
+          {normalizedDate.toString().split(' ')[0]}
+        </Text>
+        <Text style={[dateSelectStyles.dateNumber, isActiveItem && dateSelectStyles.activeText]}>
+          {normalizedDate.getDate()}
+        </Text>
+        <Text style={[dateSelectStyles.dateMonth, isActiveItem && dateSelectStyles.activeText]}>
+          {normalizedDate.toString().split(' ')[1]}
+        </Text>
+      </View>
+    </Pressable>
+              );
+            }}
+            horizontal
+            keyExtractor={(item) => item.EXAM_DT}
+          />
+        </View>
+      </View>
+      <Searchbar
+        placeholder="Search"
+        onChangeText={query => setSearchQuery(query)}
+        value={searchQuery}
+        style={styles.searchBar}
+      />
+      <RNPickerSelect
+        onValueChange={(value) => setSchoolFilter(value)}
+        items={schoolList}
+        placeholder={{ label: 'Select School', value: '' }}
+        style={pickerSelectStyles}
+      />
+      <RNPickerSelect
+        onValueChange={(value) => setRoomFilter(value)}
+        items={roomList}
+        placeholder={{ label: 'Select Room', value: '' }}
+        style={pickerSelectStyles}
+      />
+      <RNPickerSelect
+        onValueChange={(value) => setShiftFilter(value)}
+        items={shiftList}
+        placeholder={{ label: 'Select Shift', value: '' }}
+        style={pickerSelectStyles}
+      />
+      <ScrollView horizontal={true}>
+        <View>
+          <Table borderStyle={styles.tableBorder}>
+            <Row data={tableHead} style={styles.head} textStyle={styles.text} />
+            <Rows data={filteredDataPaginated} textStyle={styles.text} />
+          </Table>
+        </View>
+      </ScrollView>
+      <Pagination
+        total={filteredData.length}
+        currentPage={currentPage}
+        pageSize={pageSize}
+        onPageChange={setCurrentPage}
+      />
+      <Button icon="download" mode="contained" onPress={exportToCSV}>
+        Export CSV
+      </Button>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 10,
-    backgroundColor: "#fff",
-  },
-  boxtable: {
-    backgroundColor:"#fff",
-    padding:20,
-    // padding: 5,
-    // flex: 1,
-    // marginTop: 20,
-    // marginBottom: 20,
-  },
-  heading: {
-    fontWeight: "bold",
-    marginBottom: 5,
-  },
-  tableWrap: {
-    flexDirection: 'column',
-    // borderWidth: 1,
-    // borderColor: '#000',
-    // padding:10,
-   
-  },
-  row: {
-    flexDirection: "row",
-    // borderBottomWidth: 1,
-    // borderBottomColor: "#ccc",
-    marginBottom:4,
-  },
-  header: {
-    backgroundColor: "#f0f0f0",
-  },
-  headerText: {
-    flex: 1,
-    paddingVertical: 10,
-    paddingHorizontal: 5,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  cell: {
-    flex: 1,
-    paddingVertical: 10,
-    paddingHorizontal: 5,
-    textAlign: "center",
-  },
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  heading: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  datesWrap:{
-    flexDirection:"row",
-    justifyContent:"space-between",
-    alignItems:"center",
-  },
-  dates: {
-    width:"auto",
-    backgroundColor: "#ffffff",
-    borderBottomWidth: 1,
-    borderBottomColor: "#dddedf",
-    borderTopWidth: 0,
-    marginTop: 0,
-  },
+  container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff' },
+  head: { height: 40, backgroundColor: '#f1f8ff' },
+  text: { margin: 6 },
+  tableBorder: { borderWidth: 2, borderColor: '#c8e1ff' },
+  searchBar: { marginBottom: 10 }
+});
 
-  dateItem: {
-    padding: 10,
-    backgroundColor: "#f0f0f0",
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 5,
-    marginRight: 6,
-    alignItems: "center",
-    width: 45,
-  },
-
-  dateNumber: {
+const pickerSelectStyles = StyleSheet.create({
+  inputIOS: {
     fontSize: 16,
-    fontWeight: "bold",
-  },
-  dateDay: {
-    fontSize: 12,
-    marginBottom: 5,
-  },
-  dateMonth: {
-    fontSize: 12,
-    marginTop: 5,
-  },
-  examstatus: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    padding: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-    marginBottom: 10,
-  },
-
-  roomNumber: {
-    // flexDirection: "row",
-    // flexWrap: "wrap",
-    marginBottom: 10,
-    padding: 10,
-  },
-  box: {
+    paddingVertical: 12,
+    paddingHorizontal: 10,
     borderWidth: 1,
-    borderColor: "#ccc",
-    width: Dimensions.get("window").width / 1 - 10,
-    backgroundColor: "#eaeaea",
-    // height: 55,
-    // textAlign: "center",
-    // alignItems: "center",
-    borderRadius: 10,
-    marginBottom: 10,
-    padding: 10,
-    flexDirection: "row",
+    borderColor: 'gray',
+    borderRadius: 4,
+    color: 'black',
+    paddingRight: 30,
+    marginBottom: 10
   },
-  boxtext: {
-    // alignItems:"center",
-    flexDirection: "row",
-    marginLeft: 10,
-    color: "#000",
-  },
-  examtime: {
-    alignItems: "flex-start",
-    color: "#a79f9f",
-    marginRight: 10,
-    marginLeft: 40,
-  },
-  examname: {
-    fontWeight: "bold",
-    marginRight: 30,
-    maxWidth: 80,
-    color: "#000",
-  },
+  inputAndroid: {
+    fontSize: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderWidth: 0.5,
+    borderColor: 'purple',
+    borderRadius: 8,
+    color: 'black',
+    paddingRight: 30,
+    marginBottom: 10
+  }
+});
+
+const dateSelectStyles = StyleSheet.create({
+datesWrap:{
+  flexDirection:"row",
+  justifyContent:"space-between",
+  alignItems:"center",
+   marginBottom:15,
+},
+searchicons:{
+   padding:"10px",
+   alignSelf:"center",
+   flexDirection:"row",
+   marginRight:"10px",
+},
+dates: {
+  // padding: 10,
+  // width:"50%",
+  width:'auto',
+  // backgroundColor:"#e1e1e1",
+  // // borderWidth:1,
+  // // borderRadius:25,
+  // borderColor:"#ccc",
+  // borderTopWidth:1,
+  // borderBottomWidth:1,
+  backgroundColor: "#ffffff",
+  borderBottomWidth: 1,
+  borderBottomColor: "#dddedf",
+  borderTopWidth: 0,
+  marginTop: 0,
+},
+dateItem: {
+  padding: 10,
+  // marginRight: 6,
+  minWidth: 60,
+  alignItems: "center",
+  //  width:65,
+  //  height:40,
+  //  justifyContent:"center"
+},
+dateNumber: {
+  fontSize: 16,
+  fontWeight: 'bold',
+},
+dateDay: {
+  fontSize: 12,
+  marginBottom: 3,
+},
+dateMonth: {
+  fontSize: 12,
+  marginTop: 3,
+},
   activebox: {
     backgroundColor: "#0cb551",
     color: "#fff",
+    
   },
-  activetext: {
+  activeText: {
     color: "#fff",
   },
   inactivetext: {
-    color: "#fff",
+  color: "#fff",
   },
   inactivebox: {
-    backgroundColor: "#e50d0d",
-  },
-
-  dropdownmain:{
-   flexDirection:"row",
-   justifyContent:"space-between",
-   width:"100%"
-
-  },
-  dropdownWrap: {
-    // width: '100%',
-    zIndex: 1000,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom:10,
-    padding:10,
-  
-  },
-  dropdown: {
-    width: 160,
-    minHeight:30,
-  },
-  rolePicker: {
-    width: 160,
-    height:"auto",
-  },
-  
-  tableHeaderText: {
-    fontWeight: 'bold',
-    color:"#fff",
-    textAlign:"center",
-    alignItems:"center",
-    fontSize:16,
-  },
-  tableHeader: {
-    flexDirection: "row",
-    justifyContent:"space-between",
-    backgroundColor: "rgb(17, 65, 102)",
-    flexWrap:"wrap",
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    // marginBottom: 10,
-    borderRadius:5,
-  },
-  listItem: {
-    flexDirection: 'row',
-    flexWrap:"wrap",
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-    alignItems: 'center',   
-  },
-  listItemText: {
-    flex: 1,
-  },
-  label: {
-    // flex: 1,
-    // fontWeight: "bold",
-    fontWeight: "bold",
-    color: "#333",
-    width: "40%",
+  backgroundColor: "#e50d0d",
   },
 });
+
+export default Learn;
