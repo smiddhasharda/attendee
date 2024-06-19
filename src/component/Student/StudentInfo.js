@@ -1,35 +1,14 @@
 import React, { useState, useEffect, useCallback } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TextInput,
-  Pressable,
-  ActivityIndicator,
-  Image,
-} from "react-native";
-import {
-  Ionicons,
-  FontAwesome,
-  AntDesign,
-  MaterialCommunityIcons,
-  MaterialIcons,
-  Entypo,
-  FontAwesome6,
-} from "@expo/vector-icons";
+import { View, Text, StyleSheet, ScrollView, TextInput, Pressable, ActivityIndicator, Image, } from "react-native";
+import { Ionicons, FontAwesome, AntDesign, MaterialCommunityIcons, MaterialIcons, Entypo, FontAwesome6, } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import CodeScanner from "../../globalComponent/CodeScanner/CodeScanner";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  insert,
-  fetch,
-  update,
-  remove,
-  view,
-} from "../../AuthService/AuthService";
+import { insert, fetch, update, remove, view, } from "../../AuthService/AuthService";
 import DropDownPicker from "react-native-dropdown-picker";
+import CheckBox from "expo-checkbox";
+
 
 const StudentInfo = ({ navigation }) => {
   const route = useRoute();
@@ -37,7 +16,6 @@ const StudentInfo = ({ navigation }) => {
   const [studentDetails, setStudentDetails] = useState({});
   const [studentPicture, setStudentPicture] = useState({});
   const [courseDetails, setCourseDetails] = useState({});
-  const [attendanceDetails, setAttendanceDetails] = useState({});
   const { room_Nbr, catlog_Nbr, system_Id, seat_Nbr, exam_Dt, startTime, reportId, userAccess, current_Term, } = route.params;
   const UserAccess = userAccess?.module?.find((item) => item?.FK_ModuleId === 6);
   const [copiesData, setCopiesData] = useState([]);
@@ -48,8 +26,11 @@ const StudentInfo = ({ navigation }) => {
   const [copyList, setCopyList] = useState([]);
   const [isScanning, setIsScanning] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
   const [status, setStatus] = useState('Present');
+  const [attendenceStatus, setAttendenceStatus] = useState('Not Defined');
+  const [currentTime, setCurrentTime] = useState(new Date()?.getTime()); // Added current time state
+  const [isActive, setIsActive] = useState(false); // Added active status state
+
   const items = [
     { label: 'Present', value: 'Present' },
     { label: 'Absent', value: 'Absent' },
@@ -181,7 +162,6 @@ const StudentInfo = ({ navigation }) => {
   };
 
 
-
   const handleStudentInfoSubmit = async () => {
     try {
       const CopyEmptyValues = copiesData?.length > 0 ? copiesData.some(data => data.mainCopy === "" || data.alternateCopies.includes("")) : true;
@@ -207,12 +187,7 @@ const StudentInfo = ({ navigation }) => {
               EXAM_START_TIME: startTime,
               CATALOG_NBR: catlog_Nbr,
               PTP_SEQ_CHAR: seat_Nbr,
-              Attendece_Status:
-                attendanceDetails?.length > 0
-                  ? attendanceDetails.PERCENTAGE >= attendanceDetails.PERCENTCHG
-                    ? "Eligible"
-                    : "Debarred"
-                  : "Not Defined",
+              Attendece_Status:attendenceStatus,
               Status: status,
               SU_PAPER_ID: courseDetails.SU_PAPER_ID,
               DESCR100: courseDetails.DESCR100,
@@ -323,12 +298,7 @@ const StudentInfo = ({ navigation }) => {
               EXAM_START_TIME: startTime,
               CATALOG_NBR: catlog_Nbr,
               PTP_SEQ_CHAR: seat_Nbr,
-              Attendece_Status:
-                attendanceDetails?.length > 0
-                  ? attendanceDetails.PERCENTAGE >= attendanceDetails.PERCENTCHG
-                    ? "Eligible"
-                    : "Debarred"
-                  : "Not Defined",
+              Attendece_Status:attendenceStatus,
               Status: status,
               SU_PAPER_ID: courseDetails.SU_PAPER_ID,
               DESCR100: courseDetails.DESCR100,
@@ -419,7 +389,6 @@ const StudentInfo = ({ navigation }) => {
         authToken
       );
       if (response) {
-
         setStudentDetails(response?.data?.receivedData?.[0]);
         setLoading(false);
       }
@@ -445,10 +414,10 @@ const StudentInfo = ({ navigation }) => {
       );
       if (response) {
         setStudentPicture(response?.data?.receivedData?.[0]?.EMPLOYEE_PHOTO);
-        const buffer = response?.data?.receivedData?.[0]?.EMPLOYEE_PHOTO;
-        const bufferData = buffer._readableState.buffer;
-        const base64String = bufferData.toString('base64');
-        const uri = `data:image/jpeg;base64,${base64String}`;
+        // const buffer = response?.data?.receivedData?.[0]?.EMPLOYEE_PHOTO;
+        // const bufferData = buffer._readableState.buffer;
+        // const base64String = bufferData.toString('base64');
+        // const uri = `data:image/jpeg;base64,${base64String}`;
         setLoading(false);
       }
     } catch (error) {
@@ -456,7 +425,6 @@ const StudentInfo = ({ navigation }) => {
       handleAuthErrors(error);
     }
   };
-
   // Function to convert blob to base64
   // const blobToBase64 = (blob) => {
   //   return new Promise((resolve, reject) => {
@@ -493,8 +461,6 @@ const StudentInfo = ({ navigation }) => {
   //   }
   // };
 
-
-
   const handleGetStudentCouseInfo = async () => {
     try {
       const authToken = await checkAuthToken();
@@ -530,13 +496,14 @@ const StudentInfo = ({ navigation }) => {
           conditionString: "",
           checkAvailability: "",
           customQuery: `SELECT DISTINCT PS_S_PRD_CT_ATT_VW.PERCENTAGE,PS_S_PRD_TRS_AT_VW.PERCENTCHG FROM PS_S_PRD_CT_ATT_VW JOIN PS_S_PRD_TRS_AT_VW ON PS_S_PRD_TRS_AT_VW.EMPLID = PS_S_PRD_CT_ATT_VW.EMPLID WHERE PS_S_PRD_CT_ATT_VW.EMPLID = '${system_Id}' AND PS_S_PRD_CT_ATT_VW.CATALOG_NBR = '${catlog_Nbr}' AND PS_S_PRD_CT_ATT_VW.STRM = '${current_Term}'`,
-          viewType: 'Campus_View'
-          // customQuery: `Select * from PS_S_PRD_CT_ATT_VW where EMPLID Like '%20232037%' `
+          viewType: 'Campus_View',
         },
         authToken
       );
       if (response) {
-        setAttendanceDetails(response?.data?.receivedData?.[0] || []);
+        let AttendenceDetials = response?.data?.receivedData?.[0] || ''
+        let AttendenceStatus = AttendenceDetials ? AttendenceDetials.PERCENTAGE >= AttendenceDetials.PERCENTCHG ? "Eligible" : "Debarred" : "Not Defined";
+        setAttendenceStatus(AttendenceStatus);
         setLoading(false);
       }
     } catch (error) {
@@ -563,10 +530,65 @@ const StudentInfo = ({ navigation }) => {
     }
   }
 
+  const getAttendenceStatuscolor = () => {
+    switch (attendenceStatus) {
+      case 'Debarred':
+        return {
+          backgroundColor:'red',
+          borderRadius:10,
+          borderColor:'red',
+          color: 'white'
+        };
+      case 'Not Defined':
+        return {
+          backgroundColor:'grey',
+          borderRadius:10,
+          borderColor:'grey',
+          color: 'white'
+        };    
+      default:
+        return {
+          backgroundColor:'green',
+          borderRadius:10,
+          borderColor:'green',
+          color: 'white'
+        };
+    }
+  }
+
+
   useEffect(() => {
     fetchData();
   }, [UserAccess]);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = new Date();
+      setCurrentTime(now);
+
+      // Extract the hours and minutes from the startTime
+      const startHours = new Date(startTime).getUTCHours();
+      const startMinutes = new Date(startTime).getUTCMinutes();
+
+      // Create today's date with the same time as startTime
+      const startToday = new Date(now);
+      startToday.setUTCHours(startHours);
+      startToday.setUTCMinutes(startMinutes);
+      startToday.setUTCSeconds(0);
+      startToday.setUTCMilliseconds(0);
+
+      const start = startToday.getTime() - (15 * 60 * 1000); // 15 minutes before start time
+      const end = startToday.getTime() + (60 * 60 * 1000); // 1 hour after start time
+
+      if (now.getTime() >= start && now.getTime() <= end) {
+        setIsActive(true);
+      } else {
+        setIsActive(false);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [startTime]);
   return loading ? (
     <ActivityIndicator size="large" color="#0000ff" />
   ) : (
@@ -587,6 +609,7 @@ const StudentInfo = ({ navigation }) => {
         <View>
           <View style={styles.studentInfoWrap}>
             <Text style={styles.infoHeader}>Basic Info:</Text>
+            {/* <Text>Current Time: {currentTime}</Text> */}
             <View style={styles.infoContainer}>
               <View style={styles.userDetailWrap}>
                 {/* {studentPicture ? (
@@ -665,13 +688,28 @@ const StudentInfo = ({ navigation }) => {
               </View>
               <View style={styles.infoItem}>
                 <Text style={styles.label}>Attendance Status:</Text>
-                <Text style={styles.value}>
-                  {attendanceDetails?.length > 0 ? attendanceDetails.PERCENTAGE >= attendanceDetails.PERCENTCHG ? "Eligible" : "Debarred" : "Not Defined"}
+                <Text style={[styles.value,getAttendenceStatuscolor()]}>
+                  {attendenceStatus}
                 </Text>
               </View>
               <View style={[styles.infoItem,]}>
                 <Text style={[styles.label]}>Status</Text>
-                <DropDownPicker
+                <View style={styles.section}>
+                <CheckBox value={status === "Present"} onValueChange={(item) =>setStatus("Present")} color={getStatuscolor()} disabled={(!isActive || !(userAccess?.label === "Admin"))}/>
+                <Text style={styles.value}> Present</Text>
+                </View>
+                <View style={styles.section}>
+                <CheckBox value={status === "Absent"} onValueChange={() => setStatus("Absent")} color={getStatuscolor()} disabled={(!isActive || !(userAccess?.label === "Admin"))} />
+                <Text style={styles.value}> Absent</Text>
+                </View>
+                <View style={styles.section}>
+                <CheckBox value={status === "UFM"} onValueChange={() => setStatus("UFM")} color={getStatuscolor()} disabled={(!isActive || !(userAccess?.label === "Admin"))} />
+                <Text style={styles.value}> UFM</Text>
+                </View>
+                
+                
+
+                {/* <DropDownPicker
                   open={open}
                   value={status}
                   items={items}
@@ -687,7 +725,7 @@ const StudentInfo = ({ navigation }) => {
                   dropDownDirection="BOTTOM"
                   listItemContainerStyle={{ height: 30 }}
                   listItemLabelStyle={{ fontSize: 14 }}
-                />
+                /> */}
               </View>
             </View>
           </View>
@@ -935,7 +973,7 @@ const StudentInfo = ({ navigation }) => {
               style={{ flexDirection: "row", justifyContent: "space-between" }}
             >
               <Text style={styles.addAnsheading}> AnswerSheet </Text>
-              {copiesData?.length < 6 && (
+              {((copiesData?.length < 6 && isActive && attendenceStatus != 'Debarred') || userAccess?.label === "Admin") && (
                 <AntDesign style={styles.addicon} name="pluscircleo" size={24} color="black" onPress={handleAddCopy} />
               )}
             </View>
@@ -948,13 +986,15 @@ const StudentInfo = ({ navigation }) => {
                         <Text style={{ fontWeight: "bold", padding: 5 }}>
                           Main Copy
                         </Text>
+                        {isActive &&(
                         <View style={styles.inputContainer}>
-                          <Pressable onPress={() => handleRemoveCopy(index)}>
-                            <Text style={styles.addButtonText}>
-                              <AntDesign name="delete" size={24} alignItems="flex-end" color="red" />
-                            </Text>
-                          </Pressable>
-                        </View>
+                        <Pressable onPress={() => handleRemoveCopy(index)}>
+                          <Text style={styles.addButtonText}>
+                            <AntDesign name="delete" size={24} alignItems="flex-end" color="red" />
+                          </Text>
+                        </Pressable>
+                      </View>
+                      )}                      
                       </View>
                       <View>
                         {copy.mainCopy ? (
@@ -973,9 +1013,7 @@ const StudentInfo = ({ navigation }) => {
                               {copy.mainCopy}
                             </Text>
                             <View style={styles.iconsWrap}>
-                              {!(
-                                copy.alternateCopies.length > 0 ||
-                                copy.alternateCopies?.includes("")
+                              {!(( copy.alternateCopies.length > 0 || copy.alternateCopies?.includes("")) && isActive
                               ) && (
                                   <Entypo
                                     name="circle-with-cross"
@@ -1079,16 +1117,16 @@ const StudentInfo = ({ navigation }) => {
             )}
           </View>
 
-          <View style={styles.buttonWrap}>
-          {(copiesData?.length > 0 || status === "Absent") && (<Pressable style={styles.submitButton} onPress={reportId ? handleStudentInfoUpdate : handleStudentInfoSubmit} >
-              <Text style={styles.addButtonText}> {" "} {reportId ? "Update" : "Submit"} </Text>
-            </Pressable>) }
-            
-            <Pressable style={[styles.submitButton,{backgroundColor:"red"}]} onPress={() => navigation.goBack()} >
-              <Text style={styles.addButtonText}> Cancel </Text>
-            </Pressable>
-          </View>
-
+ <View style={styles.buttonWrap}>
+ {(((copiesData?.length > 0 || status === "Absent") && isActive && attendenceStatus != 'Debarred' ) || userAccess?.label === "Admin") && (<Pressable style={styles.submitButton} onPress={reportId ? handleStudentInfoUpdate : handleStudentInfoSubmit} >
+     <Text style={styles.addButtonText}> {" "} {reportId ? "Update" : "Submit"} </Text>
+   </Pressable>) }
+   
+   <Pressable style={[styles.submitButton,{backgroundColor:"red"}]} onPress={() => navigation.goBack()} >
+     <Text style={styles.addButtonText}> Cancel </Text>
+   </Pressable>
+ </View>
+      
         </View>
       )}
     </ScrollView>

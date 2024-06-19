@@ -4,11 +4,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native'; 
 const DashboardScreen = () => {
 const { navigate } = useNavigation(); 
-  const handleLearnPress = () => {
-    navigate('Learn');
+  const handleReportPress = () => {
+    navigate('ReportScreen');
   };
-  const handleTaskPress = () => {
-    navigate('InvigilatorScreen');
+  const handleExamPress = () => {
+    navigate('ExamScreen');
   };
   
   return (
@@ -27,24 +27,21 @@ const { navigate } = useNavigation();
                 <View style={[styles.box, styles.activebox]} >
                 <Ionicons style={styles.icons} name="book" size={24} color="#fff"   />
                 <View  style={[styles.boxtext,]}>
-                  <Text style={styles.activeboxtext} onPress={handleLearnPress}>Exam</Text>
-                  {/* <Text>Chapter 1</Text> */}
+                  <Text style={styles.activeboxtext} onPress={handleExamPress}>Exam</Text>
                 </View>
               </View>
               <View style={styles.box}>
               <Ionicons  style={styles.icons} name="book" size={24} color="rgb(71 75 78)" />
               <View  style={styles.boxtext}>
-                  <Text onPress={handleTaskPress}>Report</Text>
-                  {/* <Text>Chapter 2</Text> */}
+                  <Text onPress={handleReportPress}>Report</Text>
                   </View>
               </View>
-              <View style={styles.box}>
+              {/* <View style={styles.box}>
               <Ionicons   style={styles.icons} name="book" onPress={()=> navigate('TopHeader')} size={24} color="rgb(71 75 78)" />
                    <View  style={styles.boxtext}>
                   <Text>Setting</Text>
-                  {/* <Text>Chapter 3</Text> */}
                   </View>
-              </View>  
+              </View>   */}
                
             </View>
             </ScrollView>
