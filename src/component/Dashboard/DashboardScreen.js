@@ -14,13 +14,13 @@ const { navigate } = useNavigation();
   return (
 
     <View style={styles.container}>
-      <Text style={styles.heading}>Welcome to Attendace Portal</Text>      
+      <Text style={styles.heading}>Welcome to Attendance Portal</Text>      
           <TextInput
             style={styles.searchBox}
             placeholder="Search..."          
           />          
             <View style={styles.subtext}>
-              <Text  style={styles.taskheading}>Exam Details</Text>
+              <Text  style={styles.taskheading}>Navigation</Text>
             </View>
             <ScrollView vertical>        
             <View style={[styles.boxcontainer,]}>            
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     color:"#fff"
   },
   heading: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 16,
   },
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     marginBottom:10,  
   },
   taskheading:{
-   fontSize:24,
+   fontSize:18,
    fontWeight:"bold",
   },
   viewAll:{
