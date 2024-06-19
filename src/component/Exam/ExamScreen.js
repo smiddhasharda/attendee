@@ -16,13 +16,6 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
   const [loading, setLoading] = useState(false);
   const { addToast } = useToast();
 
-  // const [open, setOpen] = useState(false);
-  // const [userRoleList, setUserRoleList] = useState([
-  //   { label: 'OnGoing', value: 'ongoing' },
-  //   { label: 'Upcoming Exam', value: 'Upcoming' },
- 
-  // ]);
-
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
     if (!authToken) {
@@ -33,6 +26,7 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
   }, [addToast]);
 
   const handleGetDateView = async () => {
+    let CurrentDate = new Date().toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-');
     try {
       const authToken = await checkAuthToken();
       const response = await view(
@@ -42,7 +36,9 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
           data: '',
           conditionString: '',
           checkAvailability: '',
-          customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW ORDER BY EXAM_DT ASC`,
+          // customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW WHERE EXAM_DT >= '${CurrentDate}' ORDER BY EXAM_DT ASC`,
+          customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW Where STRM = '2302' ORDER BY EXAM_DT ASC`,
+
           viewType:'Campus_View'
         },
         authToken
@@ -50,8 +46,8 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
 
       if (response) {
         setExamDates(response?.data?.receivedData);
-        setExamSelectedDate(response?.data?.receivedData?.[0]?.EXAM_DT);
-        handleGetRoomView(response?.data?.receivedData?.[0]?.EXAM_DT);
+        setExamSelectedDate(response?.data?.receivedData?.[0]?.EXAM_DT || '');
+        handleGetRoomView(response?.data?.receivedData?.[0]?.EXAM_DT || '');
       }
     } catch (error) {
       setLoading(false);
@@ -60,7 +56,8 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
   };
 
   const handleGetInvigilatorDutyDate = async () => {
-    try {
+
+    let CurrentDate = new Date().toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-');    try {
       const authToken = await checkAuthToken();
       const response = await fetch(
         {
@@ -69,7 +66,7 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
           data: '',
           conditionString: '',
           checkAvailability: '',
-          customQuery: `SELECT DISTINCT date, room FROM tbl_invigilator_duty WHERE employeeId = '${userData?.username}' ORDER BY date ASC`,
+          customQuery: `SELECT DISTINCT date, room FROM tbl_invigilator_duty WHERE employeeId = '${userData?.username}' AND  date >= '${CurrentDate}' ORDER BY date ASC`,
         },
         authToken
       );
@@ -90,7 +87,7 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
   const handleGetRoomView = async (SelectedDate, RoomArray) => {
     try {
       const authToken = await checkAuthToken();
-      const formattedDate = new Date(SelectedDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }).toUpperCase().replace(/ /g, '-');
+      const formattedDate = SelectedDate ? new Date(SelectedDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }).toUpperCase().replace(/ /g, '-') : '';
       const roomCondition = RoomArray && RoomArray.length > 0 ? `AND PS_S_PRD_EX_RME_VW.ROOM_NBR IN (${RoomArray.map(room => `'${room}'`).join(', ')})` : '';
       const customQuery = `SELECT DISTINCT PS_S_PRD_EX_RME_VW.EXAM_DT, PS_S_PRD_EX_RME_VW.ROOM_NBR, PS_S_PRD_EX_TME_VW.EXAM_START_TIME FROM PS_S_PRD_EX_RME_VW JOIN PS_S_PRD_EX_TME_VW ON PS_S_PRD_EX_RME_VW.EXAM_DT = PS_S_PRD_EX_TME_VW.EXAM_DT WHERE PS_S_PRD_EX_RME_VW.EXAM_DT = '${formattedDate}' ${roomCondition}`;
 
@@ -150,7 +147,6 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
   }
   
   const parseAndFormatDate = (dateString) => {
-    // Define possible date formats
     const possibleFormats = [
       "yyyy-MM-dd'T'HH:mm:ss.SSSX", // ISO format
       "dd-MMMM-yyyy",               // e.g., 03-July-2023
@@ -296,9 +292,6 @@ const styles = StyleSheet.create({
   },
   roomNumber: {
     flex: 1,
-    // marginTop:4,
-    // marginHorizontal:0,
-    // marginVertical:0,
   },
   roomsListWrap:{
     overflow: "auto",
@@ -319,7 +312,6 @@ const styles = StyleSheet.create({
   
   boxTextWrap:{
     flexDirection:"row",
-    // marginLeft:10,
     color:"#000",
     justifyContent:"space-between",
 
@@ -328,8 +320,6 @@ const styles = StyleSheet.create({
   examTimedetail: {
     textAlign: "right",
     color:"#a79f9f",
-    // marginRight:10,
-    // marginLeft:40, 
   },
   examName: {
     fontWeight: "bold",

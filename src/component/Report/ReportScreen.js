@@ -1,35 +1,19 @@
 import React, { useState, useEffect,useCallback  } from 'react';
 import { View, ScrollView, StyleSheet, Alert,FlatList ,Pressable,Text  } from 'react-native';
-import { Table, Row, Rows } from 'react-native-table-component';
+// import { Table, Row, Rows } from 'react-native-table-component';
 import { Searchbar, Button } from 'react-native-paper';
 import RNPickerSelect from 'react-native-picker-select';
-import { saveAs } from 'file-saver';
-import Pagination from './PaginationComponent';
+// import { saveAs } from 'file-saver';
+// import Pagination from '../../globalComponent/Pagination/PaginationComponent';
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetch,view } from "../../AuthService/AuthService";
 import { parse, format } from 'date-fns';
 
-const examData = [
-  {
-    "examRoom": "Room 101",
-    "shift": "Morning",
-    "school": "School A"
-  },
-  {
-    "examRoom": "Room 102",
-    "shift": "Afternoon",
-    "school": "School B"
-  },
-  {
-    "examRoom": "Room 103",
-    "shift": "Morning",
-    "school": "School C"
-  }
-]
+import { DataTable } from 'react-native-paper';
 
 
-const Learn = () => {
+const ReportScreen = () => {
   const [tableHead, setTableHead] = useState(['System Id', 'Roll Number', 'Name','Copy','Room','Seat','Status','School','Graduation','Stream','Catelog Number','Exam Date','Exam Time']);
   const [tableData, setTableData] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -47,9 +31,6 @@ const Learn = () => {
   const { addToast } = useToast();
 
   useEffect(() => {
-    // const data = examData.map(item => [item.examRoom, item.shift, item.school]);
-    // setTableData(data);
-    // setFilteredData(data);
     handleGetExamDateList();
   }, []);
 
@@ -57,26 +38,47 @@ const Learn = () => {
     filterData();
   }, [searchQuery, schoolFilter, shiftFilter,roomFilter]);
 
+  // const filterData = () => {
+  //   let data = tableData;
+  //   console.log(data)
+  //   if (roomFilter) {
+  //     data = data.filter(item => item[4] === roomFilter);
+  //   }
+  //   if (schoolFilter) {
+  //     data = data.filter(item => item[7] === schoolFilter);
+  //   }
+  //   if (shiftFilter) {
+  //     data = data.filter(item => item[12] === shiftFilter);
+  //   }
+  //   if (searchQuery) {
+  //     data = data.filter(item =>
+  //       item.some(field => field.toLowerCase().includes(searchQuery.toLowerCase()))
+  //     );
+  //   }
+
+  //   setFilteredData(data);
+  //   setCurrentPage(1); // Reset to first page after filtering
+  // };
+
+
   const filterData = () => {
     let data = tableData;
-    console.log(data)
     if (roomFilter) {
-      data = data.filter(item => item[4] === roomFilter);
+      data = data.filter(item => item.ROOM_NBR === roomFilter);
     }
     if (schoolFilter) {
-      data = data.filter(item => item[7] === schoolFilter);
+      data = data.filter(item => item.DESCR === schoolFilter);
     }
     if (shiftFilter) {
-      data = data.filter(item => item[12] === shiftFilter);
+      data = data.filter(item => item.EXAM_START_TIME === shiftFilter);
     }
     if (searchQuery) {
       data = data.filter(item =>
-        item.some(field => field.toLowerCase().includes(searchQuery.toLowerCase()))
+        Object.values(item).some(field => field && field.toString().toLowerCase().includes(searchQuery.toLowerCase()))
       );
     }
-
     setFilteredData(data);
-    setCurrentPage(1); // Reset to first page after filtering
+    // setCurrentPage(1); // Reset to first page after filtering
   };
 
   const exportToCSV = () => {
@@ -217,18 +219,19 @@ const Learn = () => {
     authToken
     );
     if (response) {
-      let ReportData = response?.data?.receivedData?.[0]?.ReportMaster || [];
-      if(ReportData){
-      let SetupData =  ReportData.map(item => [ item.EMPLID, item.ADM_APPL_NBR, item.NAME_FORMAL,item.copyData?.map((item, index) => `Copy Number ${index + 1}: ${item.copyNumber}`).join(', '), item.ROOM_NBR, item.PTP_SEQ_CHAR, item.Status,item.DESCR, item.DESCR2, item.DESCR3, item.CATALOG_NBR,  item.EXAM_DT, item.EXAM_START_TIME ])
-      setTableData(SetupData);
-      setFilteredData(SetupData);
-      }
-      else{
-        setTableData([]);
-        setFilteredData([]);
-      }
+      // let ReportData = response?.data?.receivedData?.[0]?.ReportMaster || [];
+      // if(ReportData){
+      // let SetupData =  ReportData.map(item => [ item.EMPLID, item.ADM_APPL_NBR, item.NAME_FORMAL,item.copyData?.map((item, index) => `Copy Number ${index + 1}: ${item.copyNumber}`).join(', '), item.ROOM_NBR, item.PTP_SEQ_CHAR, item.Status,item.DESCR, item.DESCR2, item.DESCR3, item.CATALOG_NBR,  item.EXAM_DT, item.EXAM_START_TIME ])
+      // setTableData(SetupData);
+      // setFilteredData(SetupData);
+      // }
+      // else{
+      //   setTableData([]);
+      //   setFilteredData([]);
+      // }
       
-    // setExamReportData(response?.data?.receivedData?.[0]?.ReportMaster || []);
+      setFilteredData(response?.data?.receivedData?.[0]?.ReportMaster || []);
+      setTableData(response?.data?.receivedData?.[0]?.ReportMaster || []);
     }
     } catch (error) {
     console.log(error);
@@ -288,7 +291,20 @@ const Learn = () => {
       handleGetShiftList(date);
     }      
 
-  const filteredDataPaginated = filteredData.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  // const filteredDataPaginated = filteredData.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+  const [page, setPage] = useState(0);
+  const [numberOfItemsPerPageList] = useState([10,20,30,40,50,60,70,80,90,100]);
+  const [itemsPerPage, onItemsPerPageChange] = useState(
+    numberOfItemsPerPageList[0]
+  );
+
+  const from = page * itemsPerPage;
+  const to = Math.min((page + 1) * itemsPerPage, filteredData.length);
+
+  useEffect(() => {
+    setPage(0);
+  }, [itemsPerPage]);
 
   return (
     <View style={styles.container}>
@@ -344,7 +360,7 @@ const Learn = () => {
         placeholder={{ label: 'Select Shift', value: '' }}
         style={pickerSelectStyles}
       />
-      <ScrollView horizontal={true}>
+      {/* <ScrollView horizontal={true}>
         <View>
           <Table borderStyle={styles.tableBorder}>
             <Row data={tableHead} style={styles.head} textStyle={styles.text} />
@@ -357,10 +373,59 @@ const Learn = () => {
         currentPage={currentPage}
         pageSize={pageSize}
         onPageChange={setCurrentPage}
+      /> */}
+
+<DataTable>
+      <DataTable.Header>
+        <DataTable.Title >System Id</DataTable.Title>
+        <DataTable.Title>Roll Number</DataTable.Title>
+        <DataTable.Title>Name</DataTable.Title>
+        <DataTable.Title>Copy</DataTable.Title>
+        <DataTable.Title>Room</DataTable.Title>
+        <DataTable.Title>Seat</DataTable.Title>
+        <DataTable.Title>Status</DataTable.Title>
+        <DataTable.Title>School</DataTable.Title>
+        <DataTable.Title>Graduation</DataTable.Title>
+        <DataTable.Title>Stream</DataTable.Title>
+        <DataTable.Title>Catelog Number</DataTable.Title>
+        <DataTable.Title>Exam Date</DataTable.Title>
+        <DataTable.Title>Exam Time</DataTable.Title>
+      </DataTable.Header>
+
+      {filteredData.slice(from, to).map((item) => (
+        <DataTable.Row key={item.EMPLID}>
+          <DataTable.Cell>{item.ADM_APPL_NBR}</DataTable.Cell>
+          <DataTable.Cell>{item.NAME_FORMAL}</DataTable.Cell>
+          <DataTable.Cell>{item.copyData?.map((item, index) => `Copy Number ${index + 1}: ${item.copyNumber}`).join(', ')}</DataTable.Cell>
+          <DataTable.Cell>{item.ROOM_NBR}</DataTable.Cell>
+          <DataTable.Cell>{item.PTP_SEQ_CHAR}</DataTable.Cell>
+          <DataTable.Cell>{item.Status}</DataTable.Cell>
+          <DataTable.Cell>{item.DESCR}</DataTable.Cell>
+          <DataTable.Cell>{item.DESCR2}</DataTable.Cell>
+          <DataTable.Cell>{item.DESCR3}</DataTable.Cell>          
+          <DataTable.Cell>{item.CATALOG_NBR}</DataTable.Cell>
+          <DataTable.Cell>{item.EXAM_DT}</DataTable.Cell>
+          <DataTable.Cell>{item.EXAM_START_TIME}</DataTable.Cell>
+        </DataTable.Row>
+      ))}
+
+      <DataTable.Pagination
+        page={page}
+        numberOfPages={Math.ceil(filteredData.length / itemsPerPage)}
+        onPageChange={(page) => setPage(page)}
+        label={`${from + 1}-${to} of ${filteredData.length}`}
+        numberOfItemsPerPageList={numberOfItemsPerPageList}
+        numberOfItemsPerPage={itemsPerPage}
+        onItemsPerPageChange={onItemsPerPageChange}
+        showFastPaginationControls
+        selectPageDropdownLabel={'Rows per page'}
       />
-      <Button icon="download" mode="contained" onPress={exportToCSV}>
+    </DataTable>
+
+
+      {/* <Button icon="download" mode="contained" onPress={exportToCSV}>
         Export CSV
-      </Button>
+      </Button> */}
     </View>
   );
 };
@@ -412,15 +477,7 @@ searchicons:{
    marginRight:"10px",
 },
 dates: {
-  // padding: 10,
-  // width:"50%",
   width:'auto',
-  // backgroundColor:"#e1e1e1",
-  // // borderWidth:1,
-  // // borderRadius:25,
-  // borderColor:"#ccc",
-  // borderTopWidth:1,
-  // borderBottomWidth:1,
   backgroundColor: "#ffffff",
   borderBottomWidth: 1,
   borderBottomColor: "#dddedf",
@@ -429,12 +486,8 @@ dates: {
 },
 dateItem: {
   padding: 10,
-  // marginRight: 6,
   minWidth: 60,
   alignItems: "center",
-  //  width:65,
-  //  height:40,
-  //  justifyContent:"center"
 },
 dateNumber: {
   fontSize: 16,
@@ -464,4 +517,4 @@ dateMonth: {
   },
 });
 
-export default Learn;
+export default ReportScreen;
