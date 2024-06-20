@@ -584,8 +584,8 @@ const UserScreen = ({userAccess}) => {
           <View style={{alignItems:"flex-end"}}>
           {UserAccess?.create === 1 &&    
          ( <Pressable onPress={() => setUserContainerVisible(true)}>
-                    <Text> 
-                      <Ionicons name="add-circle-outline" size={35} color="black" />
+                    <Text style={styles.addBtn}> 
+                      <Ionicons name="add-circle-outline" size={24} color="black" style={styles.icons} />
                     </Text>
                   </Pressable>) }
           </View>
@@ -607,10 +607,10 @@ const UserScreen = ({userAccess}) => {
                 <Pressable onPress={() =>UserAccess?.update === 1 ? handleUserStatus(item.user_id, item?.isActive) : ''}>
               <Text style={[styles.listItemText, { flex: 1 }, item.isActive ? styles.listItemActiveStatus : styles.listItemInactiveStatus]}>{item.isActive ? "Active" : "Inactive"}</Text>
               </Pressable>          
-              <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
+              <View>
               {UserAccess?.update === 1 ? 
               (<Pressable style={styles.listItemEditButton} onPress={() => handleEditUser(item)}>
-                    <Text style={styles.listItemEditText} ><Feather name="edit" size={16} color="white" /></Text>
+                    <Text style={styles.listItemEditText} ><Feather name="edit" size={16} color="#0C7C62" /></Text>
                   </Pressable>) : (<Text>-</Text>)}
               </View>
             </View>
@@ -658,40 +658,42 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent:"space-between",
     backgroundColor: "rgb(17, 65, 102)",
-    paddingVertical: 10,
-    paddingHorizontal: 15,
+    // paddingVertical: 10,
+    // paddingHorizontal: 15,
+    padding: 10,
     marginBottom: 10,
     borderRadius:5,
   },
   tableHeaderText: {
     fontWeight: 'bold',
     color:"#fff",
-    textAlign:"center",
+    textAlign:"left",
     alignItems:"center",
   },
   listItem: {
     flexDirection: 'row',
+    justifyContent: "space-between",
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
     alignItems: 'center',   
   },
-  listItemText: {
-    flex: 1,
-  },
+  // listItemText: {
+  //   flex: 1,
+  // },
   listItemActiveStatus: {
-    color: 'green',
+    //color: 'green',
   },
   listItemInactiveStatus: {
-    color: 'red',
+    //color: 'red',
   },
   listItemEditButton: {
-    backgroundColor: "#0C7C62",
-    padding: 5,
+    //backgroundColor: "#0C7C62",
+    padding: 0,
     borderRadius: 5,
   },
   listItemEditText: {
-    color: 'white',
+    color: '#0C7C62',
   },
 
   logoImageStyle: {
@@ -793,12 +795,16 @@ const styles = StyleSheet.create({
     backgroundColor:"#0C7C62",
     padding:10,
     borderRadius:5,
-    
   },
   addbtntext:{
     color:"#fff",
     textAlign:"center",
    },
+   addBtn: {
+    alignItems:"flex-end", 
+    position: "relative", 
+    bottom: 34,
+  },
    cancelbtn:{
     width:100,
     marginBottom:10,

@@ -535,23 +535,41 @@ const StudentInfo = ({ navigation }) => {
       case 'Debarred':
         return {
           backgroundColor:'red',
-          borderRadius:10,
+          borderRadius:4,
           borderColor:'red',
-          color: 'white'
+          color: 'white',
+          marginRight: 54,
+          paddingTop: 5,
+          PaddingBottom: 5,
+          paddingLeft: 10,
+          paddingRight: 10,
+          maxWidth: 100
         };
       case 'Not Defined':
         return {
           backgroundColor:'grey',
-          borderRadius:10,
+          borderRadius:4,
           borderColor:'grey',
-          color: 'white'
+          color: 'white',
+          marginRight: 54,
+          paddingTop: 5,
+          PaddingBottom: 5,
+          paddingLeft: 10,
+          paddingRight: 10,
+          maxWidth: 100
         };    
       default:
         return {
           backgroundColor:'green',
-          borderRadius:10,
+          borderRadius:4,
           borderColor:'green',
-          color: 'white'
+          color: 'white',
+          marginRight: 54,
+          paddingTop: 5,
+          PaddingBottom: 5,
+          paddingLeft: 10,
+          paddingRight: 10,
+          maxWidth: 100
         };
     }
   }
