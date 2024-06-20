@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ActivityIndicator, Alert, StatusBar } from "react-native";
+import { View, Text, ActivityIndicator, StyleSheet, StatusBar } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Provider } from "react-redux";
@@ -9,7 +9,7 @@ import { RoleProvider } from "./src/component/Roles/RoleContext";
 import LoginScreen from "./src/component/Login/LoginScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DrawerNavigator from "./src/globalComponent/DrawerNavigatior/DrawerNavigatior";
-import Learn from "./src/component/Dashboard/Learn";
+import ReportScreen from "./src/component/Report/ReportScreen";
 import InvigilatorScreen from "./src/component/Invigilator/InvigilatorScreen";
 import PieChart from "./src/component/Dashboard/PieChart";
 import StudentInfo from "./src/component/Student/StudentInfo";
@@ -18,6 +18,7 @@ import TopHeader from "./src/globalComponent/Header/TopHeader";
 import ToastContainer from './src/globalComponent/ToastContainer/ToastContainer'; 
 import { Provider as PaperProvider } from 'react-native-paper';
 
+import SplashScreen from "./src/component/Splash/SplashScreen";
 
 const Stack = createNativeStackNavigator();
 // global.SERVER_URL = `http://localhost:5000`;
@@ -26,6 +27,7 @@ global.SERVER_URL = "http://3.111.185.105:3502";
 const App = () => {
   const [initialRoute, setInitialRoute] = useState("Login");
   const [loading, setLoading] = useState(true);
+  const [isShowSplashScreen, setIsShowSplashScreen] = useState(true);
   const TopHeaderCommonConfig = {
     headerStyle: {
       backgroundColor: "rgb(17, 65, 102)",
@@ -50,6 +52,12 @@ const App = () => {
     };
     checkAuthStatus();
   }, []);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsShowSplashScreen(false);
+    }, 3000);
+  });
 
   const renderLoading = () => (
     <View style={{ flex: 1, backgroundColor: "plum", padding: 60 }}>
@@ -94,8 +102,8 @@ const App = () => {
                 options={{ headerShown: false }}
               />
               <Stack.Screen
-                name="Learn"
-                component={Learn}
+                name="ReportScreen"
+                component={ReportScreen}
                 options={TopHeaderCommonConfig}
               />
               <Stack.Screen
@@ -116,7 +124,15 @@ const App = () => {
     </Provider>
   );
 
-  return loading ? renderLoading() : renderRouting();w
+  return  <View style={styles.container}>
+  {isShowSplashScreen ? <SplashScreen /> : loading ? renderLoading() : renderRouting()}
+</View> 
 };
 
 export default App;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
