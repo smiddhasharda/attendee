@@ -8,7 +8,7 @@ import {
   
   const styles = StyleSheet.create({
     container: {
-      flex: 1,
+      //flex: 1,
       padding: 10,
     },
     formContainer: {
@@ -33,17 +33,18 @@ import {
     header: {
       fontSize: 18,
       fontWeight: "bold",
-      marginBottom:10,
-      marginBottom: 10,
+      //marginBottom:10,
+      clear: "both"
     },
     
     tableHeader: {
       flexDirection: "row",
       justifyContent: "space-between",
+      alignItems: "center",
       backgroundColor: "rgb(17, 65, 102)",
-      paddingVertical: 10,
-      paddingHorizontal: 15,
-      marginBottom: 10,
+      padding: 10,
+      //paddingHorizontal: 15,
+      //marginBottom: 10,
       borderRadius:5,
     },
     tableHeaderText: {
@@ -51,7 +52,7 @@ import {
       fontWeight: 'bold', 
       // paddingHorizontal: 5,
       color:"#fff",
-      textAlign:"center",
+      textAlign:"left",
       alignItems:"center",
       flexShrink: 1,
     },
@@ -64,28 +65,32 @@ import {
       // paddingVertical: 10,
       // paddingHorizontal: 15,
      flexDirection: 'row',
+    //paddingTop: 15,
     padding: 10,
+    // paddingLeft: 10,
+    // paddingRight: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
     alignItems: 'center',
+    justifyContent: "space-between"
     },
-    listItemText: {
-      flex: 1,
-    },
+    // listItemText: {
+    //    flex: 1,
+    // },
     listItemActiveStatus: {
-      color: "green",
+      //color: "green",
       textAlign: 'center',
     },
     listItemInactiveStatus: {
-      color: "red",
+      //color: "red",
     },
     listItemEditButton: {
-      backgroundColor: "#0C7C62",
-      padding: 4,
+      //backgroundColor: "#0C7C62",
+      padding: 0,
       borderRadius: 5,
     },
     listItemEditText: {
-      color: "white",
+      color: "#0C7C62",
     },
     checkboxContainer: {
       marginTop: 12,
@@ -105,11 +110,12 @@ import {
     addBtn: {
       alignItems:"flex-end", 
       position: "relative", 
-      bottom: 40
+      bottom: 24,
+      //minHeight: 40
     },
     rolesTbl:{
       position: "relative",
-      top: 5
+      top: 0
     },
     addbtnWrap:{
       width:100,
@@ -121,8 +127,6 @@ import {
       
     },
    
-  
-
     addbtntext:{
      color:"#fff",
      textAlign:"center",
@@ -135,7 +139,16 @@ import {
       borderRadius:5,
       textAlign:"center",
       color:"#fff"
-    }
+    },
+    // columnRole: {
+    //   flex: 5, // 10%
+    // },
+    // columnStatus: {
+    //   flex: 3, // 20%
+    // },
+    // columnAction: {
+    //   flex: 2, // 20%
+    // }
   });
 
   export default styles;

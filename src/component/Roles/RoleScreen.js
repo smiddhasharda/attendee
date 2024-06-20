@@ -405,7 +405,7 @@ const RoleScreen = ({userAccess}) => {
         {UserAccess?.create === 1 &&
           <View style={styles.addBtn}>
             <Pressable onPress={() => setRoleContainerVisible(true)}>
-            <Ionicons  style={styles.icons} name="add-circle-outline" size={35} color="black" />
+            <Ionicons style={styles.icons} name="add-circle-outline" size={24} color="black" />
           </Pressable> 
           </View>
         }
@@ -415,28 +415,28 @@ const RoleScreen = ({userAccess}) => {
         keyExtractor={(item) => item.PK_RoleId.toString()}
           ListHeaderComponent={() => (
             <View style={styles.tableHeader}>
-              <Text  numberOfLines={1} style={[styles.tableHeaderText, ]}>Role Name</Text>
-              <Text style={[styles.tableHeaderText,]}>
+              <Text  numberOfLines={1} style={[styles.tableHeaderText, styles.columnRole]}>Role Name</Text>
+              {/* <Text style={[styles.tableHeaderText,]}>
                 Description
-              </Text>
-              <Text style={[styles.tableHeaderText, ]}>Status</Text>
-              <Text style={[styles.tableHeaderText,]}>Actions</Text>
+              </Text> */}
+              <Text style={[styles.tableHeaderText, styles.columnStatus]}>Status</Text>
+              <Text style={[styles.tableHeaderText, styles.columnAction]}>Actions</Text>
             </View>
           )}
           renderItem={({ item }) => (
-            <View style={styles.listItem}>
-              <Text style={[styles.listItemText, ]}>
+            <View style={[styles.listItem]}>
+              <Text style={[styles.listItemText, styles.columnRole]}>
                 {item.roleName}
               </Text>
-              <Text style={[styles.listItemText,]}>
+              {/* <Text style={[styles.listItemText,]}>
                 {item.description}
-              </Text>
+              </Text> */}
               <Pressable
                 onPress={() => UserAccess?.update === 1 ? handleRoleStatus(item.PK_RoleId, item?.isActive) : ''}
               >
                 <Text
                   style={[
-                    styles.listItemText,
+                    styles.listItemText, styles.columnStatus,
                     item.isActive
                       ? styles.listItemActiveStatus
                       : styles.listItemInactiveStatus,
@@ -445,11 +445,11 @@ const RoleScreen = ({userAccess}) => {
                   {item.isActive ? "Active" : "Inactive"}
                 </Text>
               </Pressable>
-              <View style={{ flex: 1, flexDirection: "row", justifyContent: "flex-end", alignItems: "center", }} >
+              <View >
                 {UserAccess?.update === 1 ?
-                 (<Pressable style={styles.listItemEditButton} onPress={() => handleEditRole(item)}>
-                      <Text style={styles.listItemEditText}><Feather name="edit" size={16} color="white" /></Text>
-                    </Pressable>) : (<Text>-</Text>)}
+                 (<Pressable style={[styles.listItemEditButton]} onPress={() => handleEditRole(item)}>
+                     <Text style={[styles.listItemEditText, styles.columnAction]}><Feather name="edit" size={16} color="#0C7C62" /></Text>
+                  </Pressable>) : (<Text>-</Text>)}
               </View>
             </View>
           )}
