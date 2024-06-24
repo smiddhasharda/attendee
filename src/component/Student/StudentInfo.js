@@ -1,44 +1,23 @@
 import React, { useState, useEffect, useCallback } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TextInput,
-  Pressable,
-  ActivityIndicator,
-  Image,
-} from "react-native";
-import {
-  Ionicons,
-  FontAwesome,
-  AntDesign,
-  MaterialCommunityIcons,
-  MaterialIcons,
-  Entypo,
-  FontAwesome6,
-} from "@expo/vector-icons";
+import { View, Text, StyleSheet, ScrollView, TextInput, Pressable, ActivityIndicator, Image, } from "react-native";
+import { Ionicons, FontAwesome, AntDesign, MaterialCommunityIcons, MaterialIcons, Entypo, FontAwesome6, } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import CodeScanner from "../../globalComponent/CodeScanner/CodeScanner";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  insert,
-  fetch,
-  update,
-  remove,
-  view,
-} from "../../AuthService/AuthService";
+import { insert, fetch, update, remove, view, } from "../../AuthService/AuthService";
 import DropDownPicker from "react-native-dropdown-picker";
+import CheckBox from "expo-checkbox";
+
 
 const StudentInfo = ({ navigation }) => {
   const route = useRoute();
   const { addToast } = useToast();
   const [studentDetails, setStudentDetails] = useState({});
+  const [studentPicture, setStudentPicture] = useState({});
   const [courseDetails, setCourseDetails] = useState({});
-  const [attendanceDetails, setAttendanceDetails] = useState({});
   const { room_Nbr, catlog_Nbr, system_Id, seat_Nbr, exam_Dt, startTime, reportId, userAccess, current_Term, } = route.params;
-  const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 6 );
+  const UserAccess = userAccess?.module?.find((item) => item?.FK_ModuleId === 6);
   const [copiesData, setCopiesData] = useState([]);
   const [tempCopyNumber, setTempNumber] = useState("");
   const [mainCopyIndex, setMainCopyIndex] = useState("");
@@ -47,9 +26,12 @@ const StudentInfo = ({ navigation }) => {
   const [copyList, setCopyList] = useState([]);
   const [isScanning, setIsScanning] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
   const [status, setStatus] = useState('Present');
-  const items=[
+  const [attendenceStatus, setAttendenceStatus] = useState('Not Defined');
+  const [currentTime, setCurrentTime] = useState(new Date()?.getTime()); // Added current time state
+  const [isActive, setIsActive] = useState(false); // Added active status state
+
+  const items = [
     { label: 'Present', value: 'Present' },
     { label: 'Absent', value: 'Absent' },
     { label: 'UFM', value: 'UFM' },
@@ -120,13 +102,12 @@ const StudentInfo = ({ navigation }) => {
       : handleAlternateCopyChange(copyNumber, copyIndex, index);
   };
 
-  const renderCopyInput = (copyType, index, copyIndex,InputStyle) => {
-    console.log(InputStyle)
+  const renderCopyInput = (copyType, index, copyIndex, InputStyle) => {
     return (
       <View style={styles.answerSheetWrap} key={copyIndex}>
         <View r key={copyIndex}>
           <TextInput
-            style={[InputStyle,styles.input]}
+            style={[InputStyle, styles.input]}
             placeholder={`Enter ${copyType + " " + copyIndex + 1} Number`}
             onChangeText={(copyNumber) => setTempNumber(copyNumber)}
           />
@@ -180,16 +161,15 @@ const StudentInfo = ({ navigation }) => {
     setAlternateCopyIndex(copyIndex);
   };
 
- 
 
   const handleStudentInfoSubmit = async () => {
     try {
       const CopyEmptyValues = copiesData?.length > 0 ? copiesData.some(data => data.mainCopy === "" || data.alternateCopies.includes("")) : true;
-      if(CopyEmptyValues){
+      if (CopyEmptyValues && status !== "Absent") {
         addToast("Please Fill CopyData First!", "error");
       }
-      else{
-        const authToken = await checkAuthToken();    
+      else {
+        const authToken = await checkAuthToken();
         const response = await insert(
           {
             operation: "insert",
@@ -207,27 +187,21 @@ const StudentInfo = ({ navigation }) => {
               EXAM_START_TIME: startTime,
               CATALOG_NBR: catlog_Nbr,
               PTP_SEQ_CHAR: seat_Nbr,
-              Attendece_Status:
-                attendanceDetails?.length > 0
-                  ? attendanceDetails.PERCENTAGE >= attendanceDetails.PERCENTCHG
-                    ? "Eligible"
-                    : "Debarred"
-                  : "Not Defined",
+              Attendece_Status:attendenceStatus,
               Status: status,
               SU_PAPER_ID: courseDetails.SU_PAPER_ID,
               DESCR100: courseDetails.DESCR100,
             },
-            conditionString: "",
-            checkAvailability: "",
+            conditionString: `EMPLID = '${studentDetails.EMPLID}' AND EXAM_DT = '${exam_Dt}' AND ROOM_NBR = '${room_Nbr}' AND EXAM_START_TIME = '${startTime}'`,
+            checkAvailability: true,
             customQuery: "",
           },
           authToken
         );
-  
         if (response) {
           const studentCopyWithId = copiesData.map((item) => {
             let newItem = {
-              FK_ReportId: response?.data?.insertId,
+              FK_ReportId: response?.data?.receivedData?.insertId,
               copyNumber: item.mainCopy,
               EMPLID: studentDetails.EMPLID,
             };
@@ -249,10 +223,10 @@ const StudentInfo = ({ navigation }) => {
           );
           if (NewResponse) {
             addToast("Student Details Add Successful", "success");
-            navigation.navigate("RoomDetail", {  room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation: navigation, userAccess});
+            navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation: navigation, userAccess });
           }
         }
-      }   
+      }
     } catch (error) {
       handleAuthErrors(error);
     }
@@ -274,9 +248,9 @@ const StudentInfo = ({ navigation }) => {
       );
 
       if (response) {
-        setStatus( response.data?.[0]?.ReportData?.[0]?.Status);
+        setStatus(response?.data?.receivedData?.[0]?.ReportData?.[0]?.Status);
         let CopyFetchDetails =
-          response.data?.[0]?.ReportData?.[0]?.copyData?.map((item, index) => ({
+          response?.data?.receivedData?.[0]?.ReportData?.[0]?.copyData?.map((item, index) => ({
             id: index,
             mainCopy: item.copyNumber,
             alternateCopies: [
@@ -289,7 +263,7 @@ const StudentInfo = ({ navigation }) => {
             ].filter(Boolean),
           }));
         setCopiesData(CopyFetchDetails);
-        let TempcopyList = response.data?.[0]?.ReportData?.[0]?.copyData?.map(
+        let TempcopyList = response?.data?.receivedData?.[0]?.ReportData?.[0]?.copyData?.map(
           (item) => item.PK_CopyId
         );
         setCopyList(TempcopyList);
@@ -302,87 +276,82 @@ const StudentInfo = ({ navigation }) => {
   const handleStudentInfoUpdate = async () => {
     try {
       const CopyEmptyValues = copiesData?.length > 0 ? copiesData.some(data => data.mainCopy === "" || data.alternateCopies.includes("")) : true;
-      if(CopyEmptyValues){
+      if (CopyEmptyValues) {
         addToast("Please Fill CopyData First!", "error");
       }
-      else{
-      const authToken = await checkAuthToken();
-      const response = await update(
-        {
-          operation: "update",
-          tblName: "tbl_report_master",
-          data: {
-            EMPLID: studentDetails.EMPLID,
-            NAME_FORMAL: studentDetails.NAME_FORMAL,
-            STRM: studentDetails.STRM,
-            ADM_APPL_NBR: studentDetails.ADM_APPL_NBR,
-            DESCR: studentDetails.DESCR,
-            DESCR2: studentDetails.DESCR2,
-            DESCR3: studentDetails.DESCR3,
-            EXAM_DT: exam_Dt,
-            ROOM_NBR: room_Nbr,
-            EXAM_START_TIME: startTime,
-            CATALOG_NBR: catlog_Nbr,
-            PTP_SEQ_CHAR: seat_Nbr,
-            Attendece_Status:
-              attendanceDetails?.length > 0
-                ? attendanceDetails.PERCENTAGE >= attendanceDetails.PERCENTCHG
-                  ? "Eligible"
-                  : "Debarred"
-                : "Not Defined",
-                Status: status,
-            SU_PAPER_ID: courseDetails.SU_PAPER_ID,
-            DESCR100: courseDetails.DESCR100,
-          },
-          conditionString: `PK_Report_Id = ${reportId}`,
-          checkAvailability: "",
-          customQuery: "",
-        },
-        authToken
-      );
-
-      if (response) {
-        const DeleteResponse = await remove(
+      else {
+        const authToken = await checkAuthToken();
+        const response = await update(
           {
-            operation: "delete",
-            tblName: "tbl_copy_master",
-            data: "",
-            conditionString: `PK_CopyId IN (${copyList})`,
+            operation: "update",
+            tblName: "tbl_report_master",
+            data: {
+              EMPLID: studentDetails.EMPLID,
+              NAME_FORMAL: studentDetails.NAME_FORMAL,
+              STRM: studentDetails.STRM,
+              ADM_APPL_NBR: studentDetails.ADM_APPL_NBR,
+              DESCR: studentDetails.DESCR,
+              DESCR2: studentDetails.DESCR2,
+              DESCR3: studentDetails.DESCR3,
+              EXAM_DT: exam_Dt,
+              ROOM_NBR: room_Nbr,
+              EXAM_START_TIME: startTime,
+              CATALOG_NBR: catlog_Nbr,
+              PTP_SEQ_CHAR: seat_Nbr,
+              Attendece_Status:attendenceStatus,
+              Status: status,
+              SU_PAPER_ID: courseDetails.SU_PAPER_ID,
+              DESCR100: courseDetails.DESCR100,
+            },
+            conditionString: `PK_Report_Id = ${reportId}`,
             checkAvailability: "",
             customQuery: "",
           },
           authToken
         );
-        if (DeleteResponse) {
-          const studentCopyWithId = copiesData.map((item) => {
-            let newItem = {
-              FK_ReportId: reportId,
-              copyNumber: item.mainCopy,
-              EMPLID: studentDetails.EMPLID,
-            };
-            item.alternateCopies.forEach((copy, index) => {
-              newItem[`alternateCopyNumber${index + 1}`] = copy;
-            });
-            return newItem;
-          });
-          const NewResponse = await insert(
+
+        if (response) {
+          const DeleteResponse = await remove(
             {
-              operation: "insert",
+              operation: "delete",
               tblName: "tbl_copy_master",
-              data: studentCopyWithId,
-              conditionString: "",
+              data: "",
+              conditionString: `PK_CopyId IN (${copyList})`,
               checkAvailability: "",
               customQuery: "",
             },
             authToken
           );
-          if (NewResponse) {
-            addToast("Student Details Update Successful", "success");
-            navigation.navigate("RoomDetail", {  room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation: navigation, userAccess});
+          if (DeleteResponse) {
+            const studentCopyWithId = copiesData.map((item) => {
+              let newItem = {
+                FK_ReportId: reportId,
+                copyNumber: item.mainCopy,
+                EMPLID: studentDetails.EMPLID,
+              };
+              item.alternateCopies.forEach((copy, index) => {
+                newItem[`alternateCopyNumber${index + 1}`] = copy;
+              });
+              return newItem;
+            });
+            const NewResponse = await insert(
+              {
+                operation: "insert",
+                tblName: "tbl_copy_master",
+                data: studentCopyWithId,
+                conditionString: "",
+                checkAvailability: "",
+                customQuery: "",
+              },
+              authToken
+            );
+            if (NewResponse) {
+              addToast("Student Details Update Successful", "success");
+              navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation: navigation, userAccess });
+            }
           }
         }
       }
-    }
     } catch (error) {
       handleAuthErrors(error);
     }
@@ -415,11 +384,12 @@ const StudentInfo = ({ navigation }) => {
           conditionString: `EMPLID = '${system_Id}'`,
           checkAvailability: "",
           customQuery: "",
+          viewType: 'Campus_View'
         },
         authToken
       );
       if (response) {
-        setStudentDetails(response?.data?.[0]);
+        setStudentDetails(response?.data?.receivedData?.[0]);
         setLoading(false);
       }
     } catch (error) {
@@ -427,6 +397,70 @@ const StudentInfo = ({ navigation }) => {
       handleAuthErrors(error);
     }
   };
+  const handleGetStudentPicture = async () => {
+    try {
+      const authToken = await checkAuthToken();
+      const response = await view(
+        {
+          operation: "fetch",
+          tblName: "PS_S_PRD_PHOTO_VW",
+          data: "",
+          conditionString: `EMPLID = '${system_Id}'`,
+          checkAvailability: "",
+          customQuery: "",
+          viewType: 'FCM_View'
+        },
+        authToken
+      );
+      if (response) {
+        setStudentPicture(response?.data?.receivedData?.[0]?.EMPLOYEE_PHOTO);
+        // const buffer = response?.data?.receivedData?.[0]?.EMPLOYEE_PHOTO;
+        // const bufferData = buffer._readableState.buffer;
+        // const base64String = bufferData.toString('base64');
+        // const uri = `data:image/jpeg;base64,${base64String}`;
+        setLoading(false);
+      }
+    } catch (error) {
+      setLoading(false);
+      handleAuthErrors(error);
+    }
+  };
+  // Function to convert blob to base64
+  // const blobToBase64 = (blob) => {
+  //   return new Promise((resolve, reject) => {
+  //     const reader = new FileReader();
+  //     reader.onloadend = () => {
+  //       resolve(reader.result);
+  //     };
+  //     reader.onerror = () => {
+  //       reject(new Error("Failed to convert blob to base64"));
+  //     };
+  //     reader.readAsDataURL(blob);
+  //   });
+  // };
+
+  // Function to handle student picture
+  // const handleStudentPicture = async (data) => {
+  //   try {
+  //     // Validate the data format
+  //     if (!data) {
+  //       throw new Error("Invalid data format");
+  //     }
+
+  //     // Log data for debugging
+  //     console.log("Data to convert:", data);
+
+  //     // Convert data to Blob
+  //     const blob = new Blob([data], { type: 'image/jpeg' });
+  //     const base64String = await blobToBase64(blob);
+
+  //     // Use the base64 string
+  //     console.log("Base64 string:", base64String);
+  //   } catch (error) {
+  //     console.error("Error converting data to Blob:", error);
+  //   }
+  // };
+
   const handleGetStudentCouseInfo = async () => {
     try {
       const authToken = await checkAuthToken();
@@ -438,11 +472,12 @@ const StudentInfo = ({ navigation }) => {
           conditionString: "",
           checkAvailability: "",
           customQuery: `SELECT DISTINCT CATALOG_NBR, DESCR100 FROM PS_S_PRD_EX_TME_VW WHERE CATALOG_NBR = '${catlog_Nbr}'`,
+          viewType: 'Campus_View'
         },
         authToken
       );
       if (response) {
-        setCourseDetails(response?.data?.[0] || []);
+        setCourseDetails(response?.data?.receivedData?.[0] || []);
         // setLoading(false);
       }
     } catch (error) {
@@ -461,12 +496,14 @@ const StudentInfo = ({ navigation }) => {
           conditionString: "",
           checkAvailability: "",
           customQuery: `SELECT DISTINCT PS_S_PRD_CT_ATT_VW.PERCENTAGE,PS_S_PRD_TRS_AT_VW.PERCENTCHG FROM PS_S_PRD_CT_ATT_VW JOIN PS_S_PRD_TRS_AT_VW ON PS_S_PRD_TRS_AT_VW.EMPLID = PS_S_PRD_CT_ATT_VW.EMPLID WHERE PS_S_PRD_CT_ATT_VW.EMPLID = '${system_Id}' AND PS_S_PRD_CT_ATT_VW.CATALOG_NBR = '${catlog_Nbr}' AND PS_S_PRD_CT_ATT_VW.STRM = '${current_Term}'`,
-          // customQuery: `Select * from PS_S_PRD_CT_ATT_VW where EMPLID Like '%20232037%' `
+          viewType: 'Campus_View',
         },
         authToken
       );
       if (response) {
-        setAttendanceDetails(response?.data?.[0] || []);
+        let AttendenceDetials = response?.data?.receivedData?.[0] || ''
+        let AttendenceStatus = AttendenceDetials ? AttendenceDetials.PERCENTAGE >= AttendenceDetials.PERCENTCHG ? "Eligible" : "Debarred" : "Not Defined";
+        setAttendenceStatus(AttendenceStatus);
         setLoading(false);
       }
     } catch (error) {
@@ -479,10 +516,11 @@ const StudentInfo = ({ navigation }) => {
     await handleGetStudentInfo();
     await handleGetStudentCouseInfo();
     await handleGetStudentAttendenceInfo();
+    await handleGetStudentPicture();
     (await reportId) ? handleGetCopyData() : "";
   };
-  const getStatuscolor = () =>{
-    switch(status) {
+  const getStatuscolor = () => {
+    switch (status) {
       case 'UFM':
         return 'red';
       case 'Absent':
@@ -492,10 +530,83 @@ const StudentInfo = ({ navigation }) => {
     }
   }
 
+  const getAttendenceStatuscolor = () => {
+    switch (attendenceStatus) {
+      case 'Debarred':
+        return {
+          backgroundColor:'red',
+          borderRadius:4,
+          borderColor:'red',
+          color: 'white',
+          marginRight: 54,
+          paddingTop: 5,
+          PaddingBottom: 5,
+          paddingLeft: 10,
+          paddingRight: 10,
+          maxWidth: 100
+        };
+      case 'Not Defined':
+        return {
+          backgroundColor:'grey',
+          borderRadius:4,
+          borderColor:'grey',
+          color: 'white',
+          marginRight: 54,
+          paddingTop: 5,
+          PaddingBottom: 5,
+          paddingLeft: 10,
+          paddingRight: 10,
+          maxWidth: 100
+        };    
+      default:
+        return {
+          backgroundColor:'green',
+          borderRadius:4,
+          borderColor:'green',
+          color: 'white',
+          marginRight: 54,
+          paddingTop: 5,
+          PaddingBottom: 5,
+          paddingLeft: 10,
+          paddingRight: 10,
+          maxWidth: 100
+        };
+    }
+  }
+
+
   useEffect(() => {
     fetchData();
   }, [UserAccess]);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = new Date();
+      setCurrentTime(now);
+
+      // Extract the hours and minutes from the startTime
+      const startHours = new Date(startTime).getUTCHours();
+      const startMinutes = new Date(startTime).getUTCMinutes();
+
+      // Create today's date with the same time as startTime
+      const startToday = new Date(now);
+      startToday.setUTCHours(startHours);
+      startToday.setUTCMinutes(startMinutes);
+      startToday.setUTCSeconds(0);
+      startToday.setUTCMilliseconds(0);
+
+      const start = startToday.getTime() - (15 * 60 * 1000); // 15 minutes before start time
+      const end = startToday.getTime() + (60 * 60 * 1000); // 1 hour after start time
+
+      if (now.getTime() >= start && now.getTime() <= end) {
+        setIsActive(true);
+      } else {
+        setIsActive(false);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [startTime]);
   return loading ? (
     <ActivityIndicator size="large" color="#0000ff" />
   ) : (
@@ -516,10 +627,19 @@ const StudentInfo = ({ navigation }) => {
         <View>
           <View style={styles.studentInfoWrap}>
             <Text style={styles.infoHeader}>Basic Info:</Text>
+            {/* <Text>Current Time: {currentTime}</Text> */}
             <View style={styles.infoContainer}>
-            <View style={[styles.userDetailWrap, ]} >
-            <FontAwesome name="user" size={48} color="#ccc"   />
-             </View> 
+              <View style={styles.userDetailWrap}>
+                {/* {studentPicture ? (
+              // <Image source={{ uri: handleStudentPicture(studentPicture) }} style={styles.userImage} />
+              <Image
+      source={{ uri: `data:image/png;base64,${studentPicture}` }} // Adjust content type based on image format
+      style={{ width: 200, height: 200 }} // Set desired dimensions
+    />
+          ) : ( */}
+                <FontAwesome name="user" size={65} color="#fff" style={styles.studProfile} />
+                {/* )} */}
+              </View>
               <View style={styles.infoItem}>
                 <Text style={styles.label}>Name:</Text>
                 <Text style={styles.value}>
@@ -585,31 +705,46 @@ const StudentInfo = ({ navigation }) => {
                 <Text style={styles.value}>{seat_Nbr}</Text>
               </View>
               <View style={styles.infoItem}>
-                <Text style={styles.label}>Attendece_Status:</Text>
-                <Text style={styles.value}>
-                  {attendanceDetails?.length > 0 ? attendanceDetails.PERCENTAGE >= attendanceDetails.PERCENTCHG ? "Eligible" : "Debarred" : "Not Defined"}
+                <Text style={styles.label}>Attendance Status:</Text>
+                <Text style={[styles.value,getAttendenceStatuscolor()]}>
+                  {attendenceStatus}
                 </Text>
               </View>
               <View style={[styles.infoItem,]}>
-              <Text style={[styles.label]}>Status </Text>
-              <DropDownPicker
-                open={open}
-                value={status}
-                items={items}
-                setOpen={setOpen}
-                setValue={setStatus}
-                style={[styles.dropdown,{backgroundColor: getStatuscolor()}]}
-                labelStyle={{
-                  color: "white"
-                }}
-                dropDownStyle={{ backgroundColor: "#fafafa"}}
-                dropDownContainerStyle={styles.dropdownContainer} 
-                dropDownMaxHeight={150}
-                dropDownDirection="BOTTOM"
-                listItemContainerStyle={{ height: 30}} 
-                listItemLabelStyle={{ fontSize: 14 }}
-              />
-          </View>
+                <Text style={[styles.label]}>Status</Text>
+                <View style={styles.section}>
+                <CheckBox value={status === "Present"} onValueChange={(item) =>setStatus("Present")} color={getStatuscolor()} disabled={(!isActive || !(userAccess?.label === "Admin"))}/>
+                <Text style={styles.value}> Present</Text>
+                </View>
+                <View style={styles.section}>
+                <CheckBox value={status === "Absent"} onValueChange={() => setStatus("Absent")} color={getStatuscolor()} disabled={(!isActive || !(userAccess?.label === "Admin"))} />
+                <Text style={styles.value}> Absent</Text>
+                </View>
+                <View style={styles.section}>
+                <CheckBox value={status === "UFM"} onValueChange={() => setStatus("UFM")} color={getStatuscolor()} disabled={(!isActive || !(userAccess?.label === "Admin"))} />
+                <Text style={styles.value}> UFM</Text>
+                </View>
+                
+                
+
+                {/* <DropDownPicker
+                  open={open}
+                  value={status}
+                  items={items}
+                  setOpen={setOpen}
+                  setValue={setStatus}
+                  style={[styles.dropdown, { backgroundColor: getStatuscolor() }]}
+                  labelStyle={{
+                    color: "white"
+                  }}
+                  dropDownStyle={{ backgroundColor: "#fafafa" }}
+                  dropDownContainerStyle={styles.dropdownContainer}
+                  dropDownMaxHeight={150}
+                  dropDownDirection="BOTTOM"
+                  listItemContainerStyle={{ height: 30 }}
+                  listItemLabelStyle={{ fontSize: 14 }}
+                /> */}
+              </View>
             </View>
           </View>
 
@@ -669,7 +804,7 @@ const StudentInfo = ({ navigation }) => {
                             ]}
                           >
                             <Text style={[styles.header]}>
-                              Answersheet Number {index + 1}
+                              AnswerSheet Number {index + 1}
                             </Text>
                             <Text style={[styles.examname]}>
                               {copy.mainCopy}
@@ -699,7 +834,7 @@ const StudentInfo = ({ navigation }) => {
                             ]}
                           >
                             <Text style={{ fontWeight: "bold" }}>
-                              Answersheet {index + 1}
+                              AnswerSheet {index + 1}
                             </Text>
                             <MaterialCommunityIcons
                               name="barcode-scan"
@@ -855,8 +990,8 @@ const StudentInfo = ({ navigation }) => {
             <View
               style={{ flexDirection: "row", justifyContent: "space-between" }}
             >
-              <Text style={styles.addAnsheading}> Answersheet </Text>
-              {copiesData?.length < 6 && (
+              <Text style={styles.addAnsheading}> AnswerSheet </Text>
+              {((copiesData?.length < 6 && isActive && attendenceStatus != 'Debarred') || userAccess?.label === "Admin") && (
                 <AntDesign style={styles.addicon} name="pluscircleo" size={24} color="black" onPress={handleAddCopy} />
               )}
             </View>
@@ -869,13 +1004,15 @@ const StudentInfo = ({ navigation }) => {
                         <Text style={{ fontWeight: "bold", padding: 5 }}>
                           Main Copy
                         </Text>
+                        {isActive &&(
                         <View style={styles.inputContainer}>
-                          <Pressable onPress={() => handleRemoveCopy(index)}>
-                            <Text style={styles.addButtonText}>
-                              <AntDesign name="delete" size={24} alignItems="flex-end" color="red" />
-                            </Text>
-                          </Pressable>
-                        </View>
+                        <Pressable onPress={() => handleRemoveCopy(index)}>
+                          <Text style={styles.addButtonText}>
+                            <AntDesign name="delete" size={24} alignItems="flex-end" color="red" />
+                          </Text>
+                        </Pressable>
+                      </View>
+                      )}                      
                       </View>
                       <View>
                         {copy.mainCopy ? (
@@ -888,25 +1025,23 @@ const StudentInfo = ({ navigation }) => {
                             ]}
                           >
                             {/* <Text style={[styles.header]}>
-                              Answersheet Number{" "}
+                              AnswerSheet Number{" "}
                             </Text> */}
                             <Text style={[styles.examname]}>
                               {copy.mainCopy}
                             </Text>
                             <View style={styles.iconsWrap}>
-                              {!(
-                                copy.alternateCopies.length > 0 ||
-                                copy.alternateCopies?.includes("")
+                              {!(( copy.alternateCopies.length > 0 || copy.alternateCopies?.includes("")) && isActive
                               ) && (
-                                <Entypo
-                                  name="circle-with-cross"
-                                  size={20}
-                                  color="red"
-                                  onPress={() =>
-                                    handleSaveCopy("Answersheet", "", index)
-                                  }
-                                />
-                              )}
+                                  <Entypo
+                                    name="circle-with-cross"
+                                    size={20}
+                                    color="red"
+                                    onPress={() =>
+                                      handleSaveCopy("AnswerSheet", "", index)
+                                    }
+                                  />
+                                )}
                             </View>
                           </View>
                         ) : (
@@ -918,7 +1053,7 @@ const StudentInfo = ({ navigation }) => {
                             ]}
                           >
                             {/* <Text style={{ fontWeight: "bold" }}>
-                              Answersheet {index + 1}
+                              AnswerSheet {index + 1}
                             </Text> */}
                             <MaterialCommunityIcons
                               name="barcode-scan"
@@ -929,77 +1064,65 @@ const StudentInfo = ({ navigation }) => {
                               color="black"
                             />
                             <Text>OR</Text>
-                            {renderCopyInput("AnswerSheet", index,'')}
+                            {renderCopyInput("AnswerSheet", index, '')}
                           </View>
                         )}
                       </View>
 
-                      {copy.mainCopy && (
+                      {/* {copy.mainCopy && (
                         <View>
 
                           {copy.alternateCopies && (
                             <View style={styles.cpoiesmainblock}>
-                              <View style={styles.supplyblockWrap}>
-                                <Text
+                              <View style={styles.supplyblockWrap}>                                
+                                {copy.alternateCopies.length < 6 ? 
+                                  (<View style={styles.buttoncontainer}>
+                                    <Pressable style={styles.addsuplybtn} onPress={() => handleAddAlternateCopy(index)}>
+                                      <Text style={{ color: "#fff", textAlign: "center", }}>Add SupplySheet</Text>
+                                    </Pressable>
+                                  </View> ):
+                                 ( <Text
                                   style={{ fontWeight: "bold", padding: 10 }}
                                 >
                                   Supplementary Sheet
-                                </Text>
-                                { copy.alternateCopies.length < 6 && (
-                                  <View style={styles.buttoncontainer}>
-                                <Pressable style={styles.addsuplybtn} onPress={() => handleAddAlternateCopy(index)}>
-                            <Text style={{color:"#fff", textAlign:"center",}}>Add SupplySheet</Text>
-                          </Pressable>
-                          </View>
-                                )}                                
-                                <ScrollView>
-                                  <View style={styles.tr}>
-                               
-                                      <Text style={styles.thead}>Copy No</Text>
-                               
-                              
-                                      <Text style={[styles.thead]}>Scan</Text>
-                                  
-                                    <Text
-                                      style={[
-                                        styles.thead,
-                                        { flexWrap: "wrap" },
-                                      ]}
-                                    >
-                                      Actions
-                                    </Text>
-                                  </View>
+                                </Text>)
+                                }
+                                {copy.alternateCopies?.length > 0 &&
+                                  (<View style={styles.tr}>
+                                    <Text style={styles.thead}>Copy No</Text>
+                                    <Text style={styles.thead}>Scan</Text>
+                                    <Text style={[styles.thead]} >Actions</Text>
+                                  </View>)}
                                   {copy.alternateCopies.map(
                                     (alternateCopy, copyIndex) => (
                                       <View style={styles.tr}>
-                                     
-                                          <Text style={styles.td}>{index+1}.{copyIndex+1}</Text>
-                                       
-                                       
-                                        <Text style={[ styles.td,  ]} >
-                                          {alternateCopy ? ( <Text > {alternateCopy} </Text> 
-                                          ) : (
-                                            <Text style={[  styles.tablescan, ]} >
-                                              <MaterialCommunityIcons name="barcode-scan" onPress={() => startScanning( "Alternate", index, copyIndex ) } size={24} color="black" />
-                                              <Text>OR</Text>
-                                              {renderCopyInput( "Alternate", index, copyIndex,styles.tableinput )}
-                                              </Text>
-                                          )}
-                                          </Text>
 
-                                    
-                                        <Text style={[ styles.td, styles.tableActionBtn, ]} >
-                                              <MaterialIcons name="delete" size={24} color="red"  onPress={() =>   handleRemoveAlternateCopy(copyIndex, index) }/>
+                                        <Text style={styles.td}>{index + 1}.{copyIndex + 1}</Text>
+
+
+                                        <Text style={[styles.td,]} >
+                                          {alternateCopy ? (<Text > {alternateCopy} </Text>
+                                          ) : (
+                                            <Text style={[styles.tablescan,]} >
+                                              <MaterialCommunityIcons name="barcode-scan" onPress={() => startScanning("Alternate", index, copyIndex)} size={24} color="black" />
+                                              <Text>OR</Text>
+                                              {renderCopyInput("Alternate", index, copyIndex, styles.tableinput)}
+                                            </Text>
+                                          )}
+                                        </Text>
+
+
+                                        <Text style={[styles.td, styles.tableActionBtn,]} >
+                                          <MaterialIcons name="delete" size={24} color="red" onPress={() => handleRemoveAlternateCopy(copyIndex, index)} />
                                         </Text>
                                       </View>
                                     )
                                   )}
-                                </ScrollView>
-                              </View>                    
+                              </View>
                             </View>
                           )}
                         </View>
-                      )}
+                      )} */}
                       {/* </> */}
                     </View>
                   </View>
@@ -1012,15 +1135,16 @@ const StudentInfo = ({ navigation }) => {
             )}
           </View>
 
-          <View style={styles.buttonWrap}>
-                                <Pressable style={styles.submitButton} onPress={ reportId ? handleStudentInfoUpdate : handleStudentInfoSubmit } >
-                                  <Text style={styles.addButtonText}> {" "} {reportId ? "Update" : "Submit"} </Text>
-                                </Pressable>
-                                <Pressable style={styles.submitButton} onPress={() => navigation.goBack()} >
-                                  <Text style={styles.addButtonText}> Cancel </Text>
-                                </Pressable>
-                              </View>
-
+ <View style={styles.buttonWrap}>
+ {(((copiesData?.length > 0 || status === "Absent") && isActive && attendenceStatus != 'Debarred' ) || userAccess?.label === "Admin") && (<Pressable style={styles.submitButton} onPress={reportId ? handleStudentInfoUpdate : handleStudentInfoSubmit} >
+     <Text style={styles.addButtonText}> {" "} {reportId ? "Update" : "Submit"} </Text>
+   </Pressable>) }
+   
+   <Pressable style={[styles.submitButton,{backgroundColor:"red"}]} onPress={() => navigation.goBack()} >
+     <Text style={styles.addButtonText}> Cancel </Text>
+   </Pressable>
+ </View>
+      
         </View>
       )}
     </ScrollView>
@@ -1036,45 +1160,34 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   studentInfoWrap: {
-    // backgroundColor: "#EAEAEA",
     marginBottom: 20,
     borderRadius: 8,
     padding: 5,
   },
   infoHeader: {
-    // fontSize: 18,
-    // fontWeight: "bold",
-    // marginHorizontal: 20,
-    // marginVertical: 10,
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 10,
   },
   infoContainer: {
-    // paddingHorizontal: 20,
-    // paddingBottom: 10,
     backgroundColor: "#FFFFFF",
-    padding: 10,
+    padding: 12,
     borderRadius: 8,
   },
   infoItem: {
-    // flexDirection: "row",
-    // marginBottom: 10,
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 10,
   },
   label: {
-    // flex: 1,
-    // fontWeight: "bold",
     fontWeight: "bold",
     color: "#333",
-    width: "40%",
+    width: "50%",
+    display: "inline-block"
   },
   value: {
-    // flex: 2,
     color: "#555",
-    width: "60%",
+    width: "50%",
   },
   // table: {
   //   // borderWidth: 1,
@@ -1087,11 +1200,7 @@ const styles = StyleSheet.create({
   // },
   tablewrap: {
     backgroundColor: "#FFFFFF",
-    // padding: 20,
-    // borderRadius: 10,
     padding: 5,
-    // borderWidth: 1,
-    // borderColor: "#000",
     borderRadius: 8,
     marginBottom: 10,
     backgroundColor: "#FFF",
@@ -1111,59 +1220,42 @@ const styles = StyleSheet.create({
     backgroundColor: "#F0F0F0",
   },
   inputContainer: {
-    // flexDirection: "row",
-    // alignItems: "center",
-    // paddingHorizontal: 10,
     flexDirection: "row",
-    justifyContent: "space-between",
+    display: "flex",
     alignItems: "center",
+    maxWidth: 100
   },
   input: {
     flex: 1,
-    // padding: 5,
-    // margin:5,
-    // borderWidth: 1,
-    // borderColor: "#DDDDDD",
-    // borderRadius: 5,
-    // // marginRight: 10,
-    // backgroundColor: "#FFFFFF",
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 4,
     padding: 8,
-    marginRight: 10,
+    marginRight: 8,
+    maxWidth: 100
   },
   addButton: {
-    // padding: 10,
-    // borderRadius: 7,
-    // backgroundColor: "#129912",
-    // marginBottom: 10,
-    // justifyContent: "center",
-    // alignItems: "center",
-    // marginRight: 10,
-    // marginTop: 6,
     backgroundColor: "#129912",
     padding: 10,
     borderRadius: 5,
-    // justifyContent: "center",
-    // alignItems: "center",
   },
   addButtonText: {
     color: "#FFFFFF",
     fontWeight: "bold",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    textAlign: "center",
+    minWidth: 75
+  },
+  trashButtonText: {
+    color: "#FFFFFF",
+    fontWeight: "bold",
     alignItems: "center",
     textAlign: "center",
+    marginRight: 5
   },
   removeButton: {
-    // alignSelf: "flex-end",
-    // padding: 5,
-    // borderRadius: 5,
-    // backgroundColor: "#E60E1C",
-    // marginBottom: 20,
-    // justifyContent: "center",
-    // alignItems: "center",
-    // marginRight: 10,
-    // marginTop: 12,
     padding: 10,
     borderRadius: 5,
     justifyContent: "center",
@@ -1184,10 +1276,8 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   buttonWrap: {
-    // flexDirection: "row",
-    // justifyContent: "space-between",
     flexDirection: "row",
-    marginTop: 20,
+    marginTop: 0,
     marginRight: 10,
   },
   submitButton: {
@@ -1199,13 +1289,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginRight: 10,
     Width: 100,
-    // backgroundColor: "#0C7C62",
-    // paddingVertical: 5,
-    // paddingHorizontal: 20,
-    // borderRadius: 5,
-    // justifyContent: "center",
-    // alignItems: "center",
-    // marginVertical: 10,
   },
   mainCopyText: {
     color: "#000000",
@@ -1218,39 +1301,31 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   nodatadisplay: {
-    // fontSize: 18,
-    // alignItems: "center",
-    // textAlign: "center",
     textAlign: "center",
     fontSize: 16,
     color: "#666",
+    padding: 12,
+    marginTop: 12,
+    width: "90%",
+    margin: "auto"
   },
   box: {
-    // borderWidth: 1,
-    // borderColor: "#CCCCCC",
-    // width: 'auto',
-    // backgroundColor: "#EAEAEA",
-    // borderRadius: 25,
-    // marginBottom: 10,
-    // marginTop: 10,
-    // padding: 10,
-    // flexDirection: "column",
     padding: 10,
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 8,
     marginBottom: 10,
     backgroundColor: "#f9f9f9",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-around"  
   },
   boxtext: {
     flexDirection: "row",
-    // marginLeft: 10,
     color: "#000000",
     justifyContent: "space-between",
   },
   iconsWrap: {
-    // flexDirection: "row",
-    // justifyContent: "space-between",
     flexDirection: "row",
     alignItems: "center",
   },
@@ -1258,12 +1333,9 @@ const styles = StyleSheet.create({
     marginRight: 10,
     marginTop: 10,
     marginBottom: 10,
-    // marginLeft: 10,
-    // marginTop: 5,
   },
   supplysheet: {
-    // flexDirection: "row",
-    // justifyContent: "space-between",
+    display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -1298,7 +1370,19 @@ const styles = StyleSheet.create({
     width: 90,
     height: 90,
   },
-  
+  studProfile: {
+    width: 100,
+    height: 100,
+    backgroundColor: '#dfdfdf',
+    borderRadius: 50,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    textAlign: "center",
+    verticalAlign: "middle",
+    marginBottom: 20
+  },
   copiesdataWrap: {
     marginTop: 10,
     backgroundColor: "rgb(240 243 245)",
@@ -1321,21 +1405,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#0C7C62",
     padding: 10,
     borderRadius: 5,
-    // justifyContent: "center",
-    // alignItems: "center",
-    marginTop: 10,
-    width: 150,
+    marginTop: 0,
+    width: 130,
     textAlign: "center",
-    marginBottom:10,
-  },
-  supplyblockWrap: {
-    // backgroundColor:"#fff",
-    // padding:20,
+    marginBottom: 10,
   },
   tr: {
     flexDirection: "row",
     marginBottom: 4,
-    
   },
   thead: {
     flex: 1,
@@ -1356,55 +1433,56 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     padding: 10,
     width: "auto",
-    marginTop: 10,
+    marginTop: 0,
   },
-  tablescan: {
-    // alignItems: "center",
-    // // display: "flex",
-    // justifyContent: "space-between",
-    // flexDirection:"row",
-    // justifyContent:"space-between",
-  },
+  // tablescan: {
+  //   alignItems: "center",
+  //   justifyContent: "space-between",
+  //   flexDirection:"row",
+  //   justifyContent:"space-between",
+  // },
   tableActionBtn: {
     display: "flex",
   },
-  theadcopy: {
-    width: "20%",
-    flexWrap: "wrap",
+  // theadcopy: {
+  //   width: "20%",
+  //   flexWrap: "wrap",
+  // },
+  // tdcopyno: {
+  //   width: "20%",
+  // },
+  // theadscan: {
+  //   width: "60%",
+  // },
+  // tdscan: {
+  //   width: "20%",
+  // },
+  doneWrap: {
+    backgroundColor: "green",
+    borderRadius: 4,
   },
-  tdcopyno: {
-    width: "20%",
+  tableinput: {
+   display: "none"
   },
-  theadscan: {
-    width: "60%",
+  dropdown: {
+    width: 160,
+    minHeight: 30,
+    borderWidth: 0,
   },
-  tdscan: {
-    width: "60%",
+  dropdownContainer: {
+    width: 160,
+    padding: [10, 5],
+    height: "auto",
   },
-  doneWrap:{
-    backgroundColor:"green",
-    borderRadius:4,
+  dropdownWrap: {
+    width: "40%",
+    zIndex: 1000,
   },
-  tableinput:{
-    width:"auto",
-  },
-  dropdown:{
-    width:200,
-    minHeight:30,
-    },
-    dropdownContainer:{
-      width:200,
-      padding: [10, 5],
-      height: "auto"
-    },
-    dropdownWrap:{
-      width:"40%",
-      zIndex:1000,
-   
-    },
-    userDetailWrap:{
-      width:"90%",
-      alignItems:"center",
-    }
+  userDetailWrap: {
+    width: "100%",
+    alignItems: "center",
+    display: "flex",
+    justifyContent: 'center'
+  }
 
 });

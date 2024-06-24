@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, FlatList, StyleSheet, ScrollView, Pressable, ActivityIndicator } from 'react-native';
-import { Ionicons, Feather } from '@expo/vector-icons';
+import { View, Text, FlatList, StyleSheet, ScrollView, Pressable, ActivityIndicator, Dimensions } from 'react-native';
 import { view, fetch } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import DropDownPicker from "react-native-dropdown-picker";
+import { parse, format } from 'date-fns';
+
+const { width, height } = Dimensions.get('window');
 
 const ExamScreen = ({ navigation, userAccess, userData }) => {
   const UserAccess = userAccess?.module?.find((item) => item?.FK_ModuleId === 5);
@@ -14,13 +15,6 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
   const [invigilatorData, setInvigilatorData] = useState();
   const [loading, setLoading] = useState(false);
   const { addToast } = useToast();
-
-  // const [open, setOpen] = useState(false);
-  // const [userRoleList, setUserRoleList] = useState([
-  //   { label: 'OnGoing', value: 'ongoing' },
-  //   { label: 'Upcoming Exam', value: 'Upcoming' },
- 
-  // ]);
 
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
@@ -32,6 +26,7 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
   }, [addToast]);
 
   const handleGetDateView = async () => {
+    let CurrentDate = new Date().toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-');
     try {
       const authToken = await checkAuthToken();
       const response = await view(
@@ -41,15 +36,18 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
           data: '',
           conditionString: '',
           checkAvailability: '',
-          customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW ORDER BY EXAM_DT ASC`,
+          // customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW WHERE EXAM_DT >= '${CurrentDate}' ORDER BY EXAM_DT ASC`,
+          customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW Where STRM = '2302' ORDER BY EXAM_DT ASC`,
+
+          viewType:'Campus_View'
         },
         authToken
       );
 
       if (response) {
-        setExamDates(response.data);
-        setExamSelectedDate(response.data?.[0]?.EXAM_DT);
-        handleGetRoomView(response.data?.[0]?.EXAM_DT);
+        setExamDates(response?.data?.receivedData);
+        setExamSelectedDate(response?.data?.receivedData?.[0]?.EXAM_DT || '');
+        handleGetRoomView(response?.data?.receivedData?.[0]?.EXAM_DT || '');
       }
     } catch (error) {
       setLoading(false);
@@ -58,7 +56,8 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
   };
 
   const handleGetInvigilatorDutyDate = async () => {
-    try {
+
+    let CurrentDate = new Date().toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-');    try {
       const authToken = await checkAuthToken();
       const response = await fetch(
         {
@@ -67,18 +66,18 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
           data: '',
           conditionString: '',
           checkAvailability: '',
-          customQuery: `SELECT DISTINCT date, room FROM tbl_invigilator_duty WHERE employeeId = '${userData?.username}' ORDER BY date ASC`,
+          customQuery: `SELECT DISTINCT date, room FROM tbl_invigilator_duty WHERE employeeId = '${userData?.username}' AND  date >= '${CurrentDate}' ORDER BY date ASC`,
         },
         authToken
       );
 
       if (response) {
-        setInvigilatorData(response.data);
-        const ExamDateArray = response.data.filter((item, index, self) => index === self.findIndex((t) => t.date === item.date)).map((item) => ({ EXAM_DT: item.date }));
+        setInvigilatorData(response?.data?.receivedData);
+        const ExamDateArray = response?.data?.receivedData.filter((item, index, self) => index === self.findIndex((t) => t.date === item.date)).map((item) => ({ EXAM_DT: item.date }));
         setExamDates(ExamDateArray);
-        setExamSelectedDate(response.data?.[0]?.date);
-        const RoomArray = response.data.filter((item) => item.date === response.data?.[0]?.date).map((item) => item.room);
-        handleGetRoomView(response.data?.[0]?.date, RoomArray);
+        setExamSelectedDate(response?.data?.receivedData?.[0]?.date);
+        const RoomArray = response?.data?.receivedData.filter((item) => item.date === response?.data?.receivedData?.[0]?.date).map((item) => item.room);
+        handleGetRoomView(response?.data?.receivedData?.[0]?.date, RoomArray);
       }
     } catch (error) {
       handleAuthErrors(error);
@@ -88,7 +87,7 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
   const handleGetRoomView = async (SelectedDate, RoomArray) => {
     try {
       const authToken = await checkAuthToken();
-      const formattedDate = new Date(SelectedDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }).toUpperCase().replace(/ /g, '-');
+      const formattedDate = SelectedDate ? new Date(SelectedDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }).toUpperCase().replace(/ /g, '-') : '';
       const roomCondition = RoomArray && RoomArray.length > 0 ? `AND PS_S_PRD_EX_RME_VW.ROOM_NBR IN (${RoomArray.map(room => `'${room}'`).join(', ')})` : '';
       const customQuery = `SELECT DISTINCT PS_S_PRD_EX_RME_VW.EXAM_DT, PS_S_PRD_EX_RME_VW.ROOM_NBR, PS_S_PRD_EX_TME_VW.EXAM_START_TIME FROM PS_S_PRD_EX_RME_VW JOIN PS_S_PRD_EX_TME_VW ON PS_S_PRD_EX_RME_VW.EXAM_DT = PS_S_PRD_EX_TME_VW.EXAM_DT WHERE PS_S_PRD_EX_RME_VW.EXAM_DT = '${formattedDate}' ${roomCondition}`;
 
@@ -99,13 +98,14 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
           data: '',
           conditionString: '',
           checkAvailability: '',
-          customQuery: customQuery
+          customQuery: customQuery,
+          viewType:'Campus_View'
         },
         authToken
       );
 
       if (response) {
-        setRoomDetails(response.data);
+        setRoomDetails(response?.data?.receivedData);
         setLoading(false);
       }
     } catch (error) {
@@ -146,6 +146,33 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
     return `${adjustedHours}:${minutes}${amPm}`;
   }
   
+  const parseAndFormatDate = (dateString) => {
+    const possibleFormats = [
+      "yyyy-MM-dd'T'HH:mm:ss.SSSX", // ISO format
+      "dd-MMMM-yyyy",               // e.g., 03-July-2023
+      "MM/dd/yyyy",                 // e.g., 07/03/2023
+      "yyyy-MM-dd",                 // e.g., 2023-07-03
+    ];
+  
+    let parsedDate;
+    for (let formatString of possibleFormats) {
+      try {
+        parsedDate = parse(dateString, formatString, new Date());
+        if (!isNaN(parsedDate)) break;
+      } catch (error) {
+        continue;
+      }
+    }
+  
+    if (!parsedDate || isNaN(parsedDate)) {
+      console.error('Invalid date format:', dateString);
+      return null;
+    }
+  
+    return parsedDate;
+  };
+  
+
   useEffect(() => {
     fetchRoomDetails(examSelectedDate);
   }, [UserAccess]);
@@ -158,82 +185,53 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
             data={examDates}
             renderItem={({ item }) => {
               const isActiveItem = item.EXAM_DT === examSelectedDate;
+              const normalizedDate = parseAndFormatDate(item.EXAM_DT);
               return (
-                <Pressable onPress={() => handleDateClick(item.EXAM_DT)}>
-                  <View style={[styles.dateItem, isActiveItem && styles.activebox]}>
-                    <Text style={[styles.dateDay, isActiveItem && styles.activeText]}>{new Date(item.EXAM_DT).toString().split(' ')[0]}</Text>
-                    <Text style={[styles.dateNumber, isActiveItem && styles.activeText]}>{new Date(item.EXAM_DT).getDate()}</Text>
-                    <Text style={[styles.dateMonth, isActiveItem && styles.activeText]}>{new Date(item.EXAM_DT).toString().split(' ')[1]}</Text>
-                  </View>
-                </Pressable>
+                 <Pressable onPress={() => handleDateClick(item.EXAM_DT)}>
+      <View style={[styles.dateItem, isActiveItem && styles.activebox]}>
+        <Text style={[styles.dateDay, isActiveItem && styles.activeText]}>
+          {normalizedDate.toString().split(' ')[0]}
+        </Text>
+        <Text style={[styles.dateNumber, isActiveItem && styles.activeText]}>
+          {normalizedDate.getDate()}
+        </Text>
+        <Text style={[styles.dateMonth, isActiveItem && styles.activeText]}>
+          {normalizedDate.toString().split(' ')[1]}
+        </Text>
+      </View>
+    </Pressable>
               );
             }}
             horizontal
             keyExtractor={(item) => item.EXAM_DT}
           />
         </View>
-        {/* <View style={styles.searchicons}>
-              <View style={styles.dropdownWrap}>             
-                  <DropDownPicker
-                    open={open}
-                    value={''}
-                    items={userRoleList}
-                    setOpen={setOpen}
-                    // setValue={(value) => ''}
-                    style={styles.dropdown}
-                    dropDownStyle={{ backgroundColor: "#fafafa" }}
-                    dropDownMaxHeight={150}
-                    dropDownDirection="Bottom"                 
-                    containerStyle={styles.rolePicker}
-                  />
-              </View>
-        <Feather name="search" size={28} color="black" />
-        </View>  */}
       </View>
       <View style={styles.roomNumber}>
-        {loading ? (
-          <ActivityIndicator size="large" color="#0000ff" />
-        ) : (
-          // roomDetails.length > 0 ? (
-          //   <ScrollView style={styles.scrollabar}>
-          //     {roomDetails.map((roomData, index) => (
-          //       <Pressable
-          //         key={index}
-          //         onPress={() => UserAccess?.create === 1 ? navigation.navigate("RoomDetail", { room_Nbr: roomData.ROOM_NBR, exam_Dt: roomData.EXAM_DT, startTime: roomData.EXAM_START_TIME,navigation,userAccess }) : null}
-          //       >
-          //         <View  style={styles.box}>   
-          //           <View style={styles.boxTextWrap}>
-          //             <Text style={styles.examName}>{roomData.ROOM_NBR}</Text>
-          //             <Text style={styles.examTimedetail}>{roomData.EXAM_START_TIME?.split("T")?.[1]?.split(".")?.[0]}</Text>
-          //           </View>
-          //         </View>
-          //       </Pressable>
-          //     ))}
-          //   </ScrollView>
-          // ) : (
-          //   <Text>No rooms available for selected date.</Text>
-          // )
-
+      {loading ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : (
+        roomDetails.length > 0 ? (
           <FlatList 
-          style={styles.roomsListWrap}
-          data={roomDetails}
-          renderItem={({ item, index }) => (
-            <Pressable
-              key={index}
-              onPress={() => UserAccess?.create === 1 ? navigation.navigate("RoomDetail", { room_Nbr: item.ROOM_NBR, exam_Dt: item.EXAM_DT, startTime: item.EXAM_START_TIME, userAccess}) : null}
-            >
-                <View style={[styles.box,styles.boxTextWrap]}>
+            style={styles.roomsListWrap}
+            data={roomDetails}
+            renderItem={({ item, index }) => (
+              <Pressable
+                key={index}
+                onPress={() => UserAccess?.create === 1 ? navigation.navigate("RoomDetail", { room_Nbr: item.ROOM_NBR, exam_Dt: item.EXAM_DT, startTime: item.EXAM_START_TIME, userAccess}) : null} >  
+                <View style={[styles.box, styles.boxTextWrap]}>
                   <Text style={styles.examName}>{item.ROOM_NBR}</Text>
-                  {/* <Text style={styles.examTime}>{item.EXAM_START_TIME?.split("T")?.[1]?.split(".")?.[0]}</Text> */}
                   <Text style={styles.examTime}>{convertedTime(item.EXAM_START_TIME)}</Text>
-
                 </View>
-            </Pressable>
-          )}
-          keyExtractor={(item, index) => index.toString()}
-        />
-        )}
-      </View>
+              </Pressable>
+            )}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        ) : (
+          <Text style={styles.noRecordsText}>No Record Found!</Text>
+        )
+      )}
+    </View>
     </View>
   );
 };
@@ -294,9 +292,6 @@ const styles = StyleSheet.create({
   },
   roomNumber: {
     flex: 1,
-    // marginTop:4,
-    // marginHorizontal:0,
-    // marginVertical:0,
   },
   roomsListWrap:{
     overflow: "auto",
@@ -317,7 +312,6 @@ const styles = StyleSheet.create({
   
   boxTextWrap:{
     flexDirection:"row",
-    // marginLeft:10,
     color:"#000",
     justifyContent:"space-between",
 
@@ -326,8 +320,6 @@ const styles = StyleSheet.create({
   examTimedetail: {
     textAlign: "right",
     color:"#a79f9f",
-    // marginRight:10,
-    // marginLeft:40, 
   },
   examName: {
     fontWeight: "bold",
@@ -347,6 +339,22 @@ const styles = StyleSheet.create({
   dropdown: {
     width: '50%',
     width: '100%',  
+  },
+  noRecordsText: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: "#ddd",
+    position: 'absolute',
+    textAlign: 'center',
+    borderRadius: 12,
+    fontSize: 16,
+    left: width / 2 - 150,  // Subtract half the element's width
+    top: height / 2 - 150,  // Subtract half the element's height
+    width: 300,  // Adjust this based on your requirements
+    padding: 12,  // Adjust this based on your requirements
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

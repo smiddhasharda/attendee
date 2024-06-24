@@ -73,13 +73,13 @@ function RoomDetail({navigation}) {
           data: '',
           conditionString:'',
           checkAvailability: '',
-          customQuery: `select PK_Report_Id,EMPLID from tbl_report_master where EXAM_DT = '${exam_Dt}' AND ROOM_NBR = '${room_Nbr}' AND EXAM_START_TIME = '${startTime}' `, 
+          customQuery: `select PK_Report_Id,EMPLID,Status from tbl_report_master where EXAM_DT = '${exam_Dt}' AND ROOM_NBR = '${room_Nbr}' AND EXAM_START_TIME = '${startTime}' `, 
         },
         authToken
       );
 
       if (response) {
-        setPresentStudentList(response.data)
+        setPresentStudentList(response?.data?.receivedData)
       }
     } catch (error) {
       console.log(error);
@@ -97,14 +97,15 @@ function RoomDetail({navigation}) {
           data: '',
           conditionString: `EXAM_DT = '${new Date(SelectedDate).toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-')}' AND ROOM_NBR = '${SelectedRoom}'`,
           checkAvailability: '',
-          customQuery: ''
+          customQuery: '',
+          viewType:'Campus_View'
         },
         authToken
       );
 
       if (response) {
-       setStudentDetails(response?.data);
-       setTempStudentDetails(response?.data);
+       setStudentDetails(response?.data?.receivedData);
+       setTempStudentDetails(response?.data?.receivedData);
         setLoading(false);
       }
     } catch (error) {
@@ -142,17 +143,43 @@ function RoomDetail({navigation}) {
     setTempStudentDetails(studentDetails);
   };
 
-  
+  const getStatuscolor = (status) => {
+    switch (status) {
+      case 'Present':
+        return {
+          backgroundColor: '#0cb551',
+          borderColor: "#0cb551",
+          borderWidth: 1,
+          color: "#fff"
+        };
+      case 'UFM':
+        return {
+          backgroundColor: '#ea4242',
+          borderColor: "#ea4242",
+          borderWidth: 1,
+          color: "#fff"
+        };
+      case 'Absent':
+        return {
+          backgroundColor: '#969595',
+          borderColor: "#969595",
+          borderWidth: 1,
+          color: "#fff"
+        };
+      default:
+      return ''
+    }
+    
+  }
   
   useEffect(() => {
     fetchStudentDetails(exam_Dt, room_Nbr);
     handleGetReportData();
-  }, [UserAccess]);
-
+  }, [UserAccess,addToast]);
   return (
     <View style={styles.container}>
-        {isScanning ? <CodeScanner onScannedData={ handleScannedData} onCancel={handleCancel} /> : 
-        <View>
+        {isScanning ? (<CodeScanner onScannedData={ handleScannedData} onCancel={handleCancel} />) : 
+       ( <View>
           <View style={styles.topdetails}>
            <View style={styles.searchWrap}>
            <TextInput
@@ -176,49 +203,61 @@ function RoomDetail({navigation}) {
           <View style={styles.countWrap}>
             <View style={styles.countMain}>
               <View style={styles.countbg1}>
-                <Text style={styles.count}>{presentStudentList?.length || "0"}</Text>
+                <Text style={styles.count}>{presentStudentList?.filter((item)=> item?.Status === "Present")?.length || "0"}</Text>
               </View>
               <Text style={styles.cotext}>Present</Text>
             </View>
-         
+            <View style={styles.countMain}>
+              <View style={styles.countbg2}>
+                <Text style={styles.count}>{presentStudentList?.filter((item)=> item?.Status === "Absent")?.length || "0"}</Text>
+              </View>
+              <Text style={styles.cotext}>Absent</Text>
+            </View>
+            <View style={styles.countMain}>
+              <View style={styles.countbg3}>
+                <Text style={styles.count}>{presentStudentList?.filter((item)=> item?.Status === "UFM")?.length || "0"}</Text>
+              </View>
+              <Text style={styles.cotext}>UFM</Text>
+            </View>         
             <View style={styles.countMain}>
               <View style={styles.countbg4}>
                 <Text style={styles.count}>{studentDetails?.length || "0"}</Text>
               </View>
-              <Text style={styles.cotext}>Total Count</Text>
+              <Text style={styles.cotext}>Total</Text>
             </View>
         </View>
 
-
-
+        <View style={styles.studentWrapSec}>
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : (
           studentDetails?.length > 0 ? tempStudentDetails?.length > 0 ? (
             tempStudentDetails.map((studentData, index) => (
+              
               <Pressable 
                 key={studentData.EMPLID}  // Use a unique identifier from studentData, such as EMPLID
                 onPress={() => UserAccess?.create === 1 ?  navigation.navigate("StudentInfo", { room_Nbr: studentData.ROOM_NBR ,exam_Dt: studentData.EXAM_DT,catlog_Nbr: studentData.CATALOG_NBR ,system_Id:studentData.EMPLID, seat_Nbr: studentData.PTP_SEQ_CHAR ,startTime: startTime,current_Term:studentData.STRM,reportId: presentStudentList?.filter((item)=>item.EMPLID === Number(studentData.EMPLID))?.[0]?.PK_Report_Id ,userAccess }) : ''}
               >
-                <View style={[styles.box, presentStudentList?.find((item) => item.EMPLID === Number(studentData.EMPLID)) ? styles.activebox : '']} key={studentData.EMPLID}>
-                  <View style={styles.boxtext}>
-                    {/* <View style={styles.imgWrap}>
-                  
-                  </View> */}
-                    <View  style={styles.info}>
-                    {/* <Image source={user}  /> */}
-                    <FontAwesome name="user-circle" size={36}  color="black" style={styles.userimage} />
-                  <View style={styles.stuWrap}>
-                    <Text style={styles.examname }>{studentData.NAME}</Text>
-                    <Text style={styles.employeeid}>{studentData.EMPLID}</Text>
-                    </View>
-                    </View>
-                    <View style={styles.seqWrap}>
-                    <Text style={styles.seqnumber}>{studentData.PTP_SEQ_CHAR}</Text>
+                
+                  <View style={[styles.box,getStatuscolor(presentStudentList?.filter((item) => item.EMPLID === Number(studentData.EMPLID))?.[0]?.Status)]} key={studentData.EMPLID}>
+                    <View style={styles.boxtext}>
+                      {/* <View style={styles.imgWrap}></View> */}
+                      <View  style={styles.info}>
+                        {/* <Image source={user}  /> */}
+                        <FontAwesome name="user-circle" size={36}  color="black" style={styles.userimage} />
+                        <View style={styles.stuWrap}>
+                          <Text style={styles.examname }>{studentData.NAME}</Text>
+                          <Text style={styles.employeeid}>{studentData.EMPLID}</Text>
+                          </View>
+                      </View>
+                      <View style={styles.seqWrap}>
+                        <Text style={styles.seqnumber}>{studentData.PTP_SEQ_CHAR}</Text>
+                      </View>
                     </View>
                   </View>
-                </View>
+                
               </Pressable>
+              
             ))
           ) : (
               <Text style={styles.centerText}>There is no student available in this room you searched for!</Text>
@@ -226,19 +265,15 @@ function RoomDetail({navigation}) {
               <Text style={styles.centerText}>There are no records found!</Text>
           )
         )}
-          </ScrollView>
         </View>
+          </ScrollView>
+        </View>)
           }
            <View style={[styles.magnifying]}>
               {/* <Ionicons name="search-outline" size={27} color="#fff" style={styles.searchIcon} /> */}
-              {UserAccess?.create === 1 && <Pressable onPress={startScanning}>
+              {(UserAccess?.create === 1 && !isScanning) &&(<Pressable onPress={startScanning}>
                 <Ionicons name="qr-code-outline" size={27} color="#fff" style={styles.magIcon} />
-              </Pressable>}
-              {scannedData && (
-                <View>
-                  <Text>Scanned Data: {scannedData}</Text>
-                </View>
-              )}
+              </Pressable>)}
             </View>
     </View>
   );
@@ -252,75 +287,55 @@ const styles = StyleSheet.create({
       flex: 1,
       backgroundColor:"#fff" ,
      clearfix:"both",
-     position: "relative"
+     position: "relative",
     },
-   
-    // imgWrap:{
-    //   width:"10%",
-    //  },
-
      seqWrap:{
-       backgroundColor:"#ccc",
        borderRadius:22,
        width:35,
        height:35,
        display: "flex",
        alignItems: "center",
        justifyContent: "center",
-       backgroundColor: "#0CB551",
+       backgroundColor: "#f7eac7",
      } ,
      info:{
        display:"flex",
        flexDirection:"row",
        alignItems:"center",
        minWeight:"98%",
-  
      },
     heading: {
       fontSize: 20,
-      // fontWeight:"bold",
       marginBottom: 10,
     },
  
     topdetails:{
-    //  padding:8,
-    //  clearfix:"both",
      flexDirection:"row",
      justifyContent:"space-between",
- 
     },
     roomNumber: {
-    //   flexDirection: "column",
-      // flexWrap: "nowrap",
-      // marginBottom: 10,
       padding: 12,
-      // flex:1,
-      clearfix:"both",
-      // position:"relative",
-      // overflowX:"visible",
-      // maxHeight:"0%"
-     
+      //marginBottom: 20,
+      clear:"both"
     },
     box: {
       borderWidth: 1,
-      borderColor: "#ccc",
+      borderColor: "#dcdcdc",
+      backgroundColor: "#f3f3f3",
       // width: Dimensions.get("window").width / 1 - 20, 
       borderRadius: 6,
-      marginBottom: 15,
-      padding:12,
+      marginBottom: 10,
+      padding: 10,
+      clear: "both"
+      // overflow: "hidden"
     },
     boxtext:{
-      // alignItems:"center",  
       display:"flex",
       flexDirection:"row",
-      // marginLeft:10,
-      color:"#000",
+      color:"#fff",
       justifyContent:"space-between",
-      // alignItems:"center",
-
       width:"98%",
       alignItems:"center",
-    
     },
     stuWrap:{
       flexDirection:"column",
@@ -336,26 +351,27 @@ const styles = StyleSheet.create({
     //   top: 28
     // },
     userimage:{
-        // width:75,
-        // height:75,
         borderRadius:50,
-        marginRight:10
+        marginRight:10,
+        color:'#dcdcdc'
     },
     examname:{
-      color:"#000000",
+      color:"#0c1e35",
       fontWeight:"600"
     },
     employeeid:{
-      color:"#a79f9f",
+      color:"#0c1e35",
       fontSize: 12,
       fontWeight:"400"
     },
     seqnumber:{
       fontWeight:"400",
-      color:"#fff",
+      color:"#000",
     },
     activebox:{
-      backgroundColor:"#0cb551",
+      backgroundColor:"#e55353",
+      borderColor:"#e55353",
+      borderWidth: 1,
       color:"#fff"
     },
     activetext:{
@@ -401,65 +417,66 @@ const styles = StyleSheet.create({
       textAlign: "center"
     },
     countWrap:{
-      // fontWeight:"bold",
       flexDirection:"row",
       alignSelf:"flex-end",
-      // width:"50%",
-      // justifyContent:"space-between",
-      
     },
     countbg1:{
-       borderRadius:5,
+       borderRadius:3,
        width:30,
        height:30,
-      //  display: "flex",
        alignItems: "center",
        justifyContent: "center",
-       backgroundColor: "#0CB551",
+       backgroundColor: "#0cb551",
        
     },
     countbg2:{
-      borderRadius:5,
+      borderRadius:3,
       width:30,
       height:30,
-     //  display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      backgroundColor: "red",
-    },
-    countbg4:{
-      borderRadius:5,
-      width:30,
-      height:30,
-     //  display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      backgroundColor: "grey",
+      backgroundColor: "#969595",
     },
     countbg3:{
-      borderRadius:5,
+      borderRadius:3,
       width:30,
       height:30,
-     //  display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      backgroundColor: "purple",
+      backgroundColor: "#ea4242",
+    },
+    countbg4:{
+      borderRadius:3,
+      width:30,
+      height:30,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: "#404142",
     },
     countMain:{
      flexDirection:"row",
      alignItems:"center",
      alignSelf:"center",
-     marginRight:10,
-     marginBottom:10,
+     marginTop: 0,
+     marginBottom: 20,
+     marginRight: 10,
+     marginLeft:0
     },
     count:{
-    color:"#fff",
-    textAlign:"center",
+      color:"#fff",
+      textAlign:"center",
     },
     cotext:{
       color:"#000",
       marginLeft:5,
       fontWeight:"600",
+    },
+    studentWrapSec: {
+      overflowY:"scroll",
+      minHeight: 330,
+      //maxHeight: 440,
+      clear: "both"
     }
   });
  
+  

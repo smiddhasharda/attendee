@@ -4,32 +4,30 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const mysql = require("mysql2/promise");
 const nodemailer = require("nodemailer");
-const upload = require('./middlewares/multer.js');
-const path = require('path');
-const oracledb = require('oracledb');
-const corsOptions = require('./config/corsOptions.js');
-const credentials = require('./middlewares/credentials.js');
-const {logger} = require('./middlewares/logEvents.js');
-const XLSX = require('xlsx');
-
+const upload = require("./middlewares/multer.js");
+const path = require("path");
+const oracledb = require("oracledb");
+const corsOptions = require("./config/corsOptions.js");
+const credentials = require("./middlewares/credentials.js");
+const { logger } = require("./middlewares/logEvents.js");
+const XLSX = require("xlsx");
 
 const dotenv = require("dotenv");
 dotenv.config(); // Load variables from .env file
 
 const app = express();
-const PORT  = process.env.SERVER_PORT || 5000;
+const PORT = process.env.SERVER_PORT || 5000;
 
 app.use(cors());
 app.use(bodyParser.json());
 
-
 global.__basedir = __dirname;
 
 // built-in middleware to handle urlencoded form data
-app.use(express.urlencoded({ extended: false, limit: '100mb' }));
+app.use(express.urlencoded({ extended: false, limit: "100mb" }));
 
-// built-in middleware for json 
-app.use(express.json({ limit: '100mb' }));
+// built-in middleware for json
+app.use(express.json({ limit: "100mb" }));
 
 // custom middleware logger
 // app.use(logger);
@@ -68,28 +66,57 @@ const transporter = nodemailer.createTransport({
     database: process.env.DB_DATABASE,
   };
 
-  const viewConfig = {
-    user: process.env.VIEW_USER,
-    password: process.env.VIEW_PASSWORD,
-    connectString: '35.154.115.237:9999/SHARDA',
+  const viewCampusConfig = {
+    user: process.env.VIEW_CAMPUS_USER,
+    password: process.env.VIEW_CAMPUS_PASSWORD,
+    connectString: "35.154.115.237:9999/SHARDA",
+  };
+
+  const viewFCMConfig = {
+    user: process.env.VIEW_FCM_USER,
+    password: process.env.VIEW_FCM_PASSWORD,
+    connectString: "35.154.115.237:9999/SHARDA",
+  };
+
+  const viewHRMSConfig = {
+    user: process.env.VIEW_HRMS_USER,
+    password: process.env.VIEW_HRMS_PASSWORD,
+    connectString: "35.154.115.237:9999/SHARDA",
   };
 
   try {
     // Create a promise-based pool
     const pool = await mysql.createPool(dbConfig);
-      await oracledb.initOracleClient({ libDir: process.env.OCI_HOME });
+    await oracledb.initOracleClient({ libDir: process.env.OCI_HOME });
 
     // Set group_concat_max_len
-    await pool.query('SET SESSION group_concat_max_len = 4294967295');
+    await pool.query("SET SESSION group_concat_max_len = 4294967295");
 
     // Handle database connection errors
     const connection = await pool.getConnection();
     console.log("Local Connected to MySQL database:", process.env.DB_DATABASE);
     connection.release();
 
-//  Oracle Connection
-    const viewPool = await oracledb.getConnection(viewConfig);
-    console.log("Successfully Connected to to Oracle database : ", process.env.VIEW_DATABASE);
+    // Oracle Campus Connection
+    const viewCampusPool = await oracledb.getConnection(viewCampusConfig);
+    console.log(
+      "Successfully Connected to to Oracle database Campus View : ",
+      process.env.VIEW_DATABASE
+    );
+
+    // Oracle FCM Connection
+    const viewFCMPool = await oracledb.getConnection(viewFCMConfig);
+    console.log(
+      "Successfully Connected to to Oracle database FCM View : ",
+      process.env.VIEW_DATABASE
+    );
+
+    // Oracle HRMS Connection
+    const viewHRMSPool = await oracledb.getConnection(viewHRMSConfig);
+    console.log(
+      "Successfully Connected to to Oracle database HRMS View : ",
+      process.env.VIEW_DATABASE
+    );
 
     // Middleware to authenticate JWT token
     function authenticateToken(req, res, next) {
@@ -135,7 +162,10 @@ const transporter = nodemailer.createTransport({
       });
     }
 
-    app.use('/userImg', express.static(path.join(__dirname, './resources/assets/ProfilePics')))
+    app.use(
+      "/userImg",
+      express.static(path.join(__dirname, "./resources/assets/ProfilePics"))
+    );
 
     // Email Verified
     app.post("/api/emailVerify", async (req, res) => {
@@ -160,7 +190,7 @@ const transporter = nodemailer.createTransport({
           //   );
           //   if (updateRows?.affectedRows > 0) {
           //     sendOTP(otp, userData);
-          //     res.json({ message: "Email Sent Successfully" });
+          //      res.status(200).json({ message: "Email Sent Successfully" });
           //   } else {
           //     res.status(401).json({ error: "Email Not Send" });
           //   }
@@ -177,7 +207,7 @@ const transporter = nodemailer.createTransport({
           //     );
           //     if (insertUserRole?.affectedRows > 0) {
           //       sendOTP(otp, userData);
-          //       res.json({ message: "Email Sent Successfully" });
+          //        res.status(200).json({ message: "Email Sent Successfully" });
           //     } else {
           //       res.status(401).json({ error: "Email Not Send" });
           //     }
@@ -191,7 +221,7 @@ const transporter = nodemailer.createTransport({
           );
           if (updateRows?.affectedRows > 0) {
             sendOTP(otp, userData);
-            res.json({ message: "Email Sent Successfully" });
+             res.status(200).json({ message: "Email Sent Successfully" });
           } else {
             res.status(401).json({ error: "Email Not Send" });
           }
@@ -214,11 +244,11 @@ const transporter = nodemailer.createTransport({
         if (rows.length > 0) {
           const userData = rows[0];
           const [UserRole] = await pool.query(
-          `SELECT JSON_ARRAYAGG( JSON_OBJECT( 'FK_userId', p.FK_userId, 'FK_RoleId', p.FK_RoleId, 'rolePermission', ( SELECT CAST( CONCAT( '[', GROUP_CONCAT( JSON_OBJECT( 'PK_RoleId', r.PK_RoleId, 'roleName', r.roleName ) ORDER BY r.PK_RoleId ASC ), ']' ) AS JSON ) FROM tbl_role_master r WHERE r.PK_RoleId = p.FK_RoleId ), 'modulePermission', ( SELECT CAST( CONCAT( '[', GROUP_CONCAT( JSON_OBJECT( 'PK_role_module_permissionId', q.PK_role_module_permissionId, 'FK_RoleId', q.FK_RoleId, 'FK_ModuleId', q.FK_ModuleId, 'create', q.create, 'read', q.read, 'update', q.update, 'delete', q.delete, 'moduleMaster', ( SELECT CAST( CONCAT( '[', GROUP_CONCAT( JSON_OBJECT( 'PK_ModuleId', s.PK_ModuleId, 'moduleName', s.moduleName ) ), ']' ) AS JSON ) FROM tbl_module_master s WHERE s.PK_ModuleId = q.FK_ModuleId ) ) ORDER BY q.FK_ModuleId ASC ), ']' ) AS JSON ) FROM tbl_role_module_permission q WHERE q.FK_RoleId = p.FK_RoleId ) ) ) AS UserRoleData FROM tbl_user_role_permission p WHERE p.FK_userId = ${userData.user_id} ORDER BY p.FK_RoleId ASC;`
+            `SELECT JSON_ARRAYAGG( JSON_OBJECT( 'FK_userId', p.FK_userId, 'FK_RoleId', p.FK_RoleId, 'rolePermission', ( SELECT CAST( CONCAT( '[', GROUP_CONCAT( JSON_OBJECT( 'PK_RoleId', r.PK_RoleId, 'roleName', r.roleName ) ORDER BY r.PK_RoleId ASC ), ']' ) AS JSON ) FROM tbl_role_master r WHERE r.PK_RoleId = p.FK_RoleId ), 'modulePermission', ( SELECT CAST( CONCAT( '[', GROUP_CONCAT( JSON_OBJECT( 'PK_role_module_permissionId', q.PK_role_module_permissionId, 'FK_RoleId', q.FK_RoleId, 'FK_ModuleId', q.FK_ModuleId, 'create', q.create, 'read', q.read, 'update', q.update, 'delete', q.delete, 'moduleMaster', ( SELECT CAST( CONCAT( '[', GROUP_CONCAT( JSON_OBJECT( 'PK_ModuleId', s.PK_ModuleId, 'moduleName', s.moduleName ) ), ']' ) AS JSON ) FROM tbl_module_master s WHERE s.PK_ModuleId = q.FK_ModuleId ) ) ORDER BY q.FK_ModuleId ASC ), ']' ) AS JSON ) FROM tbl_role_module_permission q WHERE q.FK_RoleId = p.FK_RoleId ) ) ) AS UserRoleData FROM tbl_user_role_permission p WHERE p.FK_userId = ${userData.user_id} ORDER BY p.FK_RoleId ASC;`
           );
           // const expirationTimestamp =
-            // Math.floor(Date.now() / 1000) + 60 * 60 * 24; // 24 hours expiry
-            // Math.floor((Date.now() / 1000 + 60 * 60 * 24) / 60) // 1 minutes expiry
+          // Math.floor(Date.now() / 1000) + 60 * 60 * 24; // 24 hours expiry
+          // Math.floor((Date.now() / 1000 + 60 * 60 * 24) / 60) // 1 minutes expiry
           const token = jwt.sign(
             {
               id: userData.user_id,
@@ -228,9 +258,8 @@ const transporter = nodemailer.createTransport({
             secretKey
           );
           const userRole = UserRole?.[0]?.UserRoleData;
-          // res.json({ token, expirationTimestamp, userRole, userData });
-          res.json({ token, userRole, userData });
-
+          //  res.status(200).json({ token, expirationTimestamp, userRole, userData });
+           res.status(200).json({ token, userRole, userData });
         } else {
           res.status(401).json({ error: "Invalid credentials" });
         }
@@ -249,7 +278,7 @@ const transporter = nodemailer.createTransport({
           req.body,
         ]);
         if (rows.affectedRows > 0) {
-          res.json({ message: "Registration successful" });
+           res.status(200).json({ message: "Registration successful" });
         } else {
           res.status(401).json({ error: "Invalid credentials" });
         }
@@ -305,7 +334,7 @@ const transporter = nodemailer.createTransport({
               );
 
               if (allSuccessful) {
-                res.json({ message: "Insert successful", data: insertResults });
+                 res.status(200).json({ message: "Insert successful", receivedData: insertResults });
               } else {
                 res.status(401).json({ error: "Insert failed" });
               }
@@ -316,7 +345,7 @@ const transporter = nodemailer.createTransport({
                 data
               );
               if (insertRows.affectedRows > 0) {
-                res.json({ message: "Insert successful", data: insertRows });
+                 res.status(200).json({ message: "Insert successful", receivedData: insertRows });
               } else {
                 res.status(401).json({ error: "Insert failed" });
               }
@@ -342,7 +371,7 @@ const transporter = nodemailer.createTransport({
               );
 
               if (allSuccessful) {
-                return res.json({ message: "Update successful" });
+                return  res.status(200).json({ message: "Update successful" });
               } else {
                 return res.status(500).json({ error: "Update failed" });
               }
@@ -353,7 +382,7 @@ const transporter = nodemailer.createTransport({
                 data
               );
               if (updateRows.affectedRows > 0) {
-                return res.json({ message: "Update successful" });
+                return  res.status(200).json({ message: "Update successful" });
               } else {
                 return res.status(500).json({ error: "Update failed" });
               }
@@ -365,7 +394,7 @@ const transporter = nodemailer.createTransport({
               `DELETE FROM ${tblName} WHERE ${conditionString}`
             );
             if (deleteRows.affectedRows > 0) {
-              res.json({ message: "Deletion successful" });
+               res.status(200).json({ message: "Deletion successful" });
             } else {
               res.status(401).json({ error: "Deletion failed" });
             }
@@ -376,11 +405,11 @@ const transporter = nodemailer.createTransport({
                 conditionString ? "WHERE " + conditionString : ""
               }`
             );
-            res.json({ message: "Fetch successful", data: selectRows });
+             res.status(200).json({ message: "Fetch successful", receivedData: selectRows });
             break;
           case "custom":
             const [customRows] = await pool.query(customQuery);
-            res.json({ message: "Custom query successful", data: customRows });
+             res.status(200).json({ message: "Custom query successful", receivedData: customRows });
             break;
           default:
             res.status(400).json({ error: "Invalid operation type" });
@@ -394,7 +423,14 @@ const transporter = nodemailer.createTransport({
     // insert operation API
     app.post("/api/insert", authenticateToken, async (req, res) => {
       try {
-        const { operation, tblName, data, conditionString, checkAvailability, customQuery, } = req.body;
+        const {
+          operation,
+          tblName,
+          data,
+          conditionString,
+          checkAvailability,
+          customQuery,
+        } = req.body;
         if (operation === undefined || tblName === undefined) {
           return res
             .status(400)
@@ -429,7 +465,7 @@ const transporter = nodemailer.createTransport({
               );
 
               if (allSuccessful) {
-                res.json({ message: "Insert successful", data: insertResults });
+                 res.status(200).json({ message: "Insert successful", receivedData: insertResults });
               } else {
                 res.status(401).json({ error: "Insert failed" });
               }
@@ -440,7 +476,7 @@ const transporter = nodemailer.createTransport({
                 data
               );
               if (insertRows.affectedRows > 0) {
-                res.json({ message: "Insert successful", data: insertRows });
+                 res.status(200).json({ message: "Insert successful", receivedData: insertRows });
               } else {
                 res.status(401).json({ error: "Insert failed" });
               }
@@ -449,7 +485,7 @@ const transporter = nodemailer.createTransport({
 
           case "custom":
             const [customRows] = await pool.query(customQuery);
-            res.json({ message: "Custom query successful", data: customRows });
+             res.status(200).json({ message: "Custom query successful", receivedData: customRows });
             break;
 
           default:
@@ -503,7 +539,7 @@ const transporter = nodemailer.createTransport({
               );
 
               if (insertRows.affectedRows > 0) {
-                return { message: "Insert successful", data: insertRows };
+                return { message: "Insert successful", receivedData: insertRows };
               } else {
                 return { error: "Insert failed" };
               }
@@ -519,7 +555,7 @@ const transporter = nodemailer.createTransport({
               .json({ error: "One or more operations failed" });
           }
 
-          return res.json({ message: "All operations successful" });
+          return  res.status(200).json({ message: "All operations successful" });
         }
 
         switch (operation) {
@@ -542,7 +578,7 @@ const transporter = nodemailer.createTransport({
               );
 
               if (allSuccessful) {
-                return res.json({ message: "Update successful" });
+                return  res.status(200).json({ message: "Update successful" });
               } else {
                 return res.status(500).json({ error: "Update failed" });
               }
@@ -554,7 +590,7 @@ const transporter = nodemailer.createTransport({
               );
 
               if (updateRows.affectedRows > 0) {
-                return res.json({ message: "Update successful" });
+                return  res.status(200).json({ message: "Update successful" });
               } else {
                 return res.status(500).json({ error: "Update failed" });
               }
@@ -562,9 +598,9 @@ const transporter = nodemailer.createTransport({
             break;
           case "custom":
             const [customRows] = await pool.query(customQuery);
-            return res.json({
+            return  res.status(200).json({
               message: "Custom query successful",
-              data: customRows,
+              receivedData: customRows,
             });
           default:
             return res.status(400).json({ error: "Invalid operation type" });
@@ -607,12 +643,13 @@ const transporter = nodemailer.createTransport({
                 conditionString ? "WHERE " + conditionString : ""
               }`
             );
-            return res.json({ message: "Fetch successful", data: selectRows });
+            return  res.status(200).json({ message: "Fetch successful", receivedData: selectRows });
           case "custom":
+            console.log("customQuery : ", customQuery);
             const [customRows] = await pool.query(customQuery);
-            return res.json({
+            return  res.status(200).json({
               message: "Custom query successful",
-              data: customRows,
+              receivedData: customRows,
             });
           default:
             return res.status(400).json({ error: "Invalid operation type" });
@@ -655,14 +692,14 @@ const transporter = nodemailer.createTransport({
               `DELETE FROM ${tblName} WHERE ${conditionString}`
             );
             if (deleteRows.affectedRows > 0) {
-              res.json({ message: "Deletion successful" });
+               res.status(200).json({ message: "Deletion successful" });
             } else {
               res.status(401).json({ error: "Deletion failed" });
             }
             break;
           case "custom":
             const [customRows] = await pool.query(customQuery);
-            res.json({ message: "Custom query successful", data: customRows });
+             res.status(200).json({ message: "Custom query successful", receivedData: customRows });
             break;
           default:
             res.status(400).json({ error: "Invalid operation type" });
@@ -675,206 +712,231 @@ const transporter = nodemailer.createTransport({
 
     // Sample protected route API
     app.get("/api/protected", authenticateToken, (req, res) => {
-      res.json({ message: "This is a protected route!" });
+       res.status(200).json({ message: "This is a protected route!" });
     });
 
-    // For Multer Api  
-    app.post("/api/multer", upload.single('profile_pics'), authenticateToken, async (req, res) => {
+    // For Multer Api
+    app.post(
+      "/api/multer",
+      upload.single("profile_pics"),
+      authenticateToken,
+      async (req, res) => {
+        try {
+          const { tblName, data, conditionString, fileParam } = req.body;
+          const file = req.file?.filename;
+
+          if (!tblName) {
+            return res
+              .status(400)
+              .json({ error: "Operation and table are required" });
+          }
+
+          if (!file) {
+            return res.status(400).send("No files were uploaded.");
+          }
+
+          const [checkRows] = await pool.query(
+            `SELECT * FROM ${tblName} WHERE ${conditionString}`
+          );
+
+          if (checkRows.length > 0) {
+            const [updateRows] = await pool.query(
+              `UPDATE ${tblName} SET ${fileParam} = ? WHERE ${conditionString}`,
+              [file]
+            );
+            if (updateRows.affectedRows > 0) {
+              return  res.status(200).json({ message: "Update successful" });
+            } else {
+              return res.status(500).json({ error: "Update failed" });
+            }
+          } else {
+            const [insertRows] = await pool.query(
+              `INSERT INTO ${tblName} SET ${fileParam} = ?, data = ?`,
+              [file, data]
+            );
+            if (insertRows.affectedRows > 0) {
+              return  res.status(200).json({
+                message: "Insert successful",
+                receivedData: insertRows,
+              });
+            } else {
+              return res.status(500).json({ error: "Insert failed" });
+            }
+          }
+        } catch (error) {
+          console.error("Error:", error.message || error);
+          return res.status(500).json({ error: "Internal server error" });
+        }
+      }
+    );
+
+
+    app.get("/api/view", authenticateToken, async (req, res) => {
       try {
-        const { tblName, data, conditionString, fileParam } = req.body;
-        const file = req.file?.filename; 
-    
-        if (!tblName) {
-          return res.status(400).json({ error: "Operation and table are required" });
+        const {
+          operation,
+          tblName,
+          data,
+          conditionString,
+          checkAvailability,
+          customQuery,
+          viewType,
+        } = req.query;
+        let viewSetup;
+
+        if (!operation || !tblName) {
+          return res
+            .status(400)
+            .json({ error: "Operation and table are required" });
         }
-    
-        if (!file) {
-          return res.status(400).send('No files were uploaded.');
-        }
-    
-        const [checkRows] = await pool.query(`SELECT * FROM ${tblName} WHERE ${conditionString}`);
-    
-        if (checkRows.length > 0) {
-          const [updateRows] = await pool.query(`UPDATE ${tblName} SET ${fileParam} = ? WHERE ${conditionString}`, [file]);
-          if (updateRows.affectedRows > 0) {
-            return res.json({ message: "Update successful" });
-          } else {
-            return res.status(500).json({ error: "Update failed" });
-          }
+
+        if (viewType === "FCM_View") {
+          viewSetup = viewFCMPool;
+        } else if (viewType === "HRMS_View") {
+          viewSetup = viewHRMSPool;
         } else {
-          const [insertRows] = await pool.query(`INSERT INTO ${tblName} SET ${fileParam} = ?, data = ?`, [file, data]);
-          if (insertRows.affectedRows > 0) {
-            return res.json({ message: "Insert successful", data: insertRows });
-          } else {
-            return res.status(500).json({ error: "Insert failed" });
+          viewSetup = viewCampusPool;
+        }
+
+        if (checkAvailability) {
+          const checkRows = await viewSetup
+            .execute(`SELECT * FROM ${tblName} WHERE ${conditionString}`)
+            .catch((error) => {
+              console.error(
+                "Error checking availability:",
+                error.message || error
+              );
+              throw error;
+            });
+          if (checkRows && checkRows.rows.length > 0) {
+            return res.status(400).json({ error: "Data already exists" });
           }
+        }
+
+        switch (operation) {
+          case "fetch":
+            console.log(
+              `SELECT * FROM ${tblName} ${
+                conditionString ? `WHERE ${conditionString}` : ""
+              }`
+            );
+            const selectRows = await viewSetup
+              .execute(
+                `SELECT * FROM ${tblName} ${
+                  conditionString ? `WHERE ${conditionString}` : ""
+                }`,
+                {},
+                { outFormat: oracledb.OUT_FORMAT_OBJECT }
+              )
+              .catch((error) => {
+                console.error("Error fetching data:", error.message || error);
+                throw error;
+              });
+            return  res.status(200).json({
+              message: "Fetch successful",
+              receivedData: selectRows?.rows,
+            });
+
+          case "custom":
+            console.log(customQuery);
+            const customRows = await viewSetup
+              .execute(
+                customQuery,
+                {},
+                { outFormat: oracledb.OUT_FORMAT_OBJECT }
+              )
+              .catch((error) => {
+                console.error(
+                  "Error executing custom query:",
+                  error.message || error
+                );
+                throw error;
+              });
+            return  res.status(200).json({
+              message: "Fetch successful",
+              receivedData: customRows?.rows,
+            });
+
+          default:
+            return res.status(400).json({ error: "Invalid operation type" });
         }
       } catch (error) {
-        console.error("Error:", error.message || error);
+        console.error("Error in view fetch:", error.message || error);
         return res.status(500).json({ error: "Internal server error" });
       }
     });
-    
 
-  // For View Api
-app.get("/api/view", authenticateToken, async (req, res) => {
-  try {
-    const { operation, tblName, data, conditionString, checkAvailability, customQuery, } = req.query;
-    if (!operation || !tblName) {
-      return res.status(400).json({ error: "Operation and table are required" });
-    }
+    // For Bulkupload Api
+    app.post(
+      "/api/bulkupload",
+      upload.single("bulkupload_doc"),
+      authenticateToken,
+      async (req, res) => {
+        try {
+          const { tblName, conditionString, checkAvailability, checkColumn } =
+            req.body;
+          const file = req.file;
+          if (tblName === undefined) {
+            return res.status(400).json({ error: "Table are required" });
+          }
 
-    if (checkAvailability) {
-      const checkRows = await viewPool.execute(
-        `SELECT * FROM ${tblName} WHERE ${conditionString}`
-      ).catch(error => {
-        console.error("Error checking availability:", error.message || error);
-        throw error;
-      });
-      if (checkRows && checkRows.rows.length > 0) {
-        return res.status(400).json({ error: "Data already exists" });
-      }
-    }
-    switch (operation) {
-      case "fetch":
-    const selectRows = await viewPool.execute(
-        `SELECT * FROM ${tblName} ${
-            conditionString ? "WHERE " + conditionString : ""
-        }`, {},{ outFormat: oracledb.OUT_FORMAT_OBJECT }
-    ).catch(error => {
-        console.error("Error fetching data:", error.message || error);
-        throw error;
-    });
+          const workbook = XLSX.readFile(file.path);
+          const sheetName = workbook.SheetNames?.[0];
+          const worksheet = workbook.Sheets[sheetName];
+          const excelData = XLSX.utils.sheet_to_json(worksheet);
+          const existingData = [];
+          const newData = [];
+          if (checkAvailability === "true") {
+            for (const item of excelData) {
+              let Data = item[checkColumn];
+              const [checkRows] = await pool.query(
+                `SELECT * FROM ${tblName} WHERE ${conditionString}`,
+                [Data]
+              );
+              if (checkRows.length > 0) {
+                existingData.push(checkRows[0]);
+              } else {
+                newData.push(item);
+              }
+            }
+          } else {
+            newData.push(...excelData);
+          }
 
-    // // Extracting column names from metaData
-    // let columnNames = selectRows.metaData.map(column => column.name);
+          const insertResults = await Promise.all(
+            newData.map(async (item) => {
+              const [insertRows] = await pool.query(
+                `INSERT INTO ${tblName} SET ?`,
+                item
+              );
+              return insertRows;
+            })
+          );
 
-    // // Transforming rows into the desired JSON format
-    // const transformedData = selectRows.rows.map(row => {
-    //     const rowData = {};
-    //     for (let i = 0; i < columnNames.length; i++) {
-    //         rowData[columnNames[i]] = row[i];
-    //     }
-    //     return rowData;
-    // });
-
-    return res.json({ message: "Fetch successful", data: selectRows?.rows });
-
-      // case "fetch":
-      //   const selectRows = await viewPool.execute(
-      //     `SELECT * FROM ${tblName} ${
-      //       conditionString ? "WHERE " + conditionString : ""
-      //     }`
-      //   ).catch(error => {
-      //     console.error("Error fetching data:", error.message || error);
-      //     throw error;
-      //   });
-      //   return res.json({ message: "Fetch successful", data: selectRows });
-
-
-      case "custom":
-        const customRows = await viewPool.execute(customQuery, {},{ outFormat: oracledb.OUT_FORMAT_OBJECT }).catch(error => {
-          console.error("Error executing custom query:", error.message || error);
-          throw error;
-        });
-
-    //        let customColumnNames = customRows.metaData.map(column => column.name);
-
-    // // Transforming rows into the desired JSON format
-    // const CustomTransformedData = customRows.rows.map(row => {
-    //     const rowData = {};
-    //     for (let i = 0; i < customColumnNames.length; i++) {
-    //         rowData[customColumnNames[i]] = row[i];
-    //     }
-    //     return rowData;
-    // });
-
-    return res.json({ message: "Fetch successful", data: customRows?.rows });
-
-        // return res.json({
-        //   message: "Custom query successful",
-        //   data: customRows.rows,
-        // });
-      default:
-        return res.status(400).json({ error: "Invalid operation type" });
-    }
-  } catch (error) {
-    console.error("Error in view fetch:", error.message || error);
-    return res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-// For Bulkupload Api
-app.post("/api/bulkupload", upload.single("bulkupload_doc"), authenticateToken, async (req, res) => {
-  try {
-    const {
-      tblName,
-      conditionString,
-      checkAvailability,
-      checkColumn
-    } = req.body;
-    const file = req.file;
-    if (tblName === undefined) {
-      return res
-        .status(400)
-        .json({ error: "Table are required" });
-    }
-
-    const workbook = XLSX.readFile(file.path);
-    const sheetName = workbook.SheetNames?.[0];
-    const worksheet = workbook.Sheets[sheetName];
-    const excelData = XLSX.utils.sheet_to_json(worksheet);
-    const existingData = [];
-    const newData = [];
-    if (checkAvailability === "true") {
-      for (const item of excelData) {
-        let Data = item[checkColumn];
-        const [checkRows] = await pool.query(
-          `SELECT * FROM ${tblName} WHERE ${conditionString}`,[Data]
-        );
-        if (checkRows.length > 0) {
-          existingData.push(checkRows[0]);
-        } else {
-          newData.push(item);
+          //   const allData = existingData.concat(insertResults);
+          if (existingData.length > 0) {
+            res.status(202).json({
+              message: "Some rows already exist and were not inserted",
+              existingRows: existingData,
+              insertResults: insertResults,
+            });
+          } else {
+             res.status(200).json({
+              message: "Data inserted successfully",
+              insertResults: insertResults,
+            });
+          }
+          //  res.status(200).json({ message: "Bulk upload completed", receivedData: allData });
+        } catch (error) {
+          console.error("Error:", error.message || error);
+          res.status(500).json({ error: "Internal server error" });
         }
       }
-    } else {
-      newData.push(...excelData);
-    }
-
-    const insertResults = await Promise.all(
-      newData.map(async (item) => {
-        const [insertRows] = await pool.query( `INSERT INTO ${tblName} SET ?`, item );
-        return insertRows;
-      })
     );
 
-    //   const allData = existingData.concat(insertResults);
-    if (existingData.length > 0) {
-      res.status(202).json({
-        message: "Some rows already exist and were not inserted",
-        existingRows: existingData,
-        insertResults: insertResults,
-
-      });
-    } else {
-      res.json({
-        message: "Data inserted successfully",
-        insertResults: insertResults,
-      });
-    }
-      // res.json({ message: "Bulk upload completed", data: allData });
-  } catch (error) {
-    console.error("Error:", error.message || error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-
-
     // Start the server
-    app.listen(PORT , () => {
-      console.log(`Server is running on SERVER_PORT: ${PORT }`);
+    app.listen(PORT, () => {
+      console.log(`Server is running on SERVER_PORT: ${PORT}`);
     });
   } catch (error) {
     console.error("Database connection error:", error.message || error);

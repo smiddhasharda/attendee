@@ -74,7 +74,7 @@ const UserScreen = ({userAccess}) => {
         if (userData?.rolePermissions) {
           const rolePermissionsWithId = userData?.rolePermissions?.map(
             (permissions) => ({
-              FK_userId: response?.data?.insertId,
+              FK_userId: response?.data?.receivedData?.insertId,
               ...permissions,
             })
           );
@@ -189,7 +189,7 @@ const UserScreen = ({userAccess}) => {
       );
 
       if (response) {
-        setUserList(response?.data?.[0]?.UserMaster);
+        setUserList(response?.data?.receivedData?.[0]?.UserMaster);
       }
     } catch (error) {
       handleAuthErrors(error);
@@ -289,12 +289,12 @@ const UserScreen = ({userAccess}) => {
 
 
     const renderTooltipContent = () =>
-        <View style={styles.passwordTooltipContainer}>
+       ( <View style={styles.passwordTooltipContainer}>
           <Text style={styles.passwordTooltipTextStyle}>
             Incorrect
             <Text style={styles.passwordTooltipRedTextStyle}>password</Text>
           </Text>
-        </View>;
+        </View>);
 
     return (
         <View style={styles.passwordTextInputContainer}>
@@ -514,7 +514,7 @@ const UserScreen = ({userAccess}) => {
       );
 
       if (response) {
-        setRoleList(response?.data);
+        setRoleList(response?.data?.receivedData);
       }
     } catch (error) {
       handleAuthErrors(error);
@@ -579,15 +579,15 @@ const UserScreen = ({userAccess}) => {
         </View>
         </View>
       ) : 
-      <View style={styles.userListWrap}>
+    (<View style={styles.userListWrap}>
         <Text style={styles.header}>User List:</Text>      
           <View style={{alignItems:"flex-end"}}>
           {UserAccess?.create === 1 &&    
-          <Pressable onPress={() => setUserContainerVisible(true)}>
-                    <Text> 
-                      <Ionicons name="add-circle-outline" size={35} color="black" />
+         ( <Pressable onPress={() => setUserContainerVisible(true)}>
+                    <Text style={styles.addBtn}> 
+                      <Ionicons name="add-circle-outline" size={24} color="black" style={styles.icons} />
                     </Text>
-                  </Pressable> }
+                  </Pressable>) }
           </View>
         <FlatList 
           data={userList}
@@ -607,16 +607,16 @@ const UserScreen = ({userAccess}) => {
                 <Pressable onPress={() =>UserAccess?.update === 1 ? handleUserStatus(item.user_id, item?.isActive) : ''}>
               <Text style={[styles.listItemText, { flex: 1 }, item.isActive ? styles.listItemActiveStatus : styles.listItemInactiveStatus]}>{item.isActive ? "Active" : "Inactive"}</Text>
               </Pressable>          
-              <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
+              <View>
               {UserAccess?.update === 1 ? 
-              <Pressable style={styles.listItemEditButton} onPress={() => handleEditUser(item)}>
-                    <Text style={styles.listItemEditText} ><Feather name="edit" size={16} color="white" /></Text>
-                  </Pressable> : ' - '}
+              (<Pressable style={styles.listItemEditButton} onPress={() => handleEditUser(item)}>
+                    <Text style={styles.listItemEditText} ><Feather name="edit" size={16} color="#0C7C62" /></Text>
+                  </Pressable>) : (<Text>-</Text>)}
               </View>
             </View>
           )}
          />
-      </View>
+      </View>)
       }
       </View>     
       );
@@ -658,40 +658,42 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent:"space-between",
     backgroundColor: "rgb(17, 65, 102)",
-    paddingVertical: 10,
-    paddingHorizontal: 15,
+    // paddingVertical: 10,
+    // paddingHorizontal: 15,
+    padding: 10,
     marginBottom: 10,
     borderRadius:5,
   },
   tableHeaderText: {
     fontWeight: 'bold',
     color:"#fff",
-    textAlign:"center",
+    textAlign:"left",
     alignItems:"center",
   },
   listItem: {
     flexDirection: 'row',
+    justifyContent: "space-between",
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
     alignItems: 'center',   
   },
-  listItemText: {
-    flex: 1,
-  },
+  // listItemText: {
+  //   flex: 1,
+  // },
   listItemActiveStatus: {
-    color: 'green',
+    //color: 'green',
   },
   listItemInactiveStatus: {
-    color: 'red',
+    //color: 'red',
   },
   listItemEditButton: {
-    backgroundColor: "#0C7C62",
-    padding: 5,
+    //backgroundColor: "#0C7C62",
+    padding: 0,
     borderRadius: 5,
   },
   listItemEditText: {
-    color: 'white',
+    color: '#0C7C62',
   },
 
   logoImageStyle: {
@@ -793,12 +795,16 @@ const styles = StyleSheet.create({
     backgroundColor:"#0C7C62",
     padding:10,
     borderRadius:5,
-    
   },
   addbtntext:{
     color:"#fff",
     textAlign:"center",
    },
+   addBtn: {
+    alignItems:"flex-end", 
+    position: "relative", 
+    bottom: 34,
+  },
    cancelbtn:{
     width:100,
     marginBottom:10,

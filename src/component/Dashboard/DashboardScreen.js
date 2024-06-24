@@ -4,47 +4,44 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native'; 
 const DashboardScreen = () => {
 const { navigate } = useNavigation(); 
-  const handleLearnPress = () => {
-    navigate('Learn');
+  const handleReportPress = () => {
+    navigate('ReportScreen');
   };
-  const handleTaskPress = () => {
-    navigate('InvigilatorScreen');
+  const handleExamPress = () => {
+    navigate('ExamScreen');
   };
   
   return (
 
     <View style={styles.container}>
-      <Text style={styles.heading}>Welcome to Attendace Portal</Text>      
+      <Text style={styles.heading}>Welcome to Attendance Portal</Text>      
           <TextInput
             style={styles.searchBox}
             placeholder="Search..."          
           />          
             <View style={styles.subtext}>
-              <Text  style={styles.taskheading}>Exam Details</Text>
+              <Text  style={styles.taskheading}>Navigation</Text>
             </View>
             <ScrollView vertical>        
             <View style={[styles.boxcontainer,]}>            
                 <View style={[styles.box, styles.activebox]} >
                 <Ionicons style={styles.icons} name="book" size={24} color="#fff"   />
                 <View  style={[styles.boxtext,]}>
-                  <Text style={styles.activeboxtext} onPress={handleLearnPress}>Exam</Text>
-                  {/* <Text>Chapter 1</Text> */}
+                  <Text style={styles.activeboxtext} onPress={handleExamPress}>Exam</Text>
                 </View>
               </View>
               <View style={styles.box}>
               <Ionicons  style={styles.icons} name="book" size={24} color="rgb(71 75 78)" />
               <View  style={styles.boxtext}>
-                  <Text onPress={handleTaskPress}>Report</Text>
-                  {/* <Text>Chapter 2</Text> */}
+                  <Text onPress={handleReportPress}>Report</Text>
                   </View>
               </View>
-              <View style={styles.box}>
+              {/* <View style={styles.box}>
               <Ionicons   style={styles.icons} name="book" onPress={()=> navigate('TopHeader')} size={24} color="rgb(71 75 78)" />
                    <View  style={styles.boxtext}>
                   <Text>Setting</Text>
-                  {/* <Text>Chapter 3</Text> */}
                   </View>
-              </View>  
+              </View>   */}
                
             </View>
             </ScrollView>
@@ -68,7 +65,7 @@ const styles = StyleSheet.create({
     color:"#fff"
   },
   heading: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 16,
   },
@@ -78,7 +75,7 @@ const styles = StyleSheet.create({
     marginBottom:10,  
   },
   taskheading:{
-   fontSize:24,
+   fontSize:18,
    fontWeight:"bold",
   },
   viewAll:{

@@ -70,7 +70,7 @@ const CustomDrawerContent = ({ ...props }) => {
       if (response) {
         await AsyncStorage.setItem(
           "userData",
-          (response.data?.[0] && JSON?.stringify(response.data?.[0])) || ""
+          (response?.data?.receivedData?.[0] && JSON?.stringify(response?.data?.receivedData?.[0])) || ""
         );
         setFile("");
         await props.fetchUserRolePermission();
@@ -258,7 +258,7 @@ const DrawerNavigator = ({ navigation }) => {
   const getIconName = (moduleName, focused) => {
     const icons = {
       Dashboard: focused ? 'home' : 'home-outline',
-      RoleScreen: focused ? 'person-circle-sharp' : 'person-circle-sharp',
+      RoleScreen: focused ? 'person-circle' : 'person-circle',
       ModuleScreen: focused ? 'bookmark' : 'bookmark-outline',
       UserScreen: focused ? 'person' : 'person-outline',
       ExamScreen: focused ? 'book' : 'book-outline',
@@ -367,7 +367,7 @@ const DrawerNavigator = ({ navigation }) => {
         <Ionicons
           style={styles.icons}
           name={getIconName(module.moduleMaster[0].moduleName, focused)}
-          size={size}
+          size={26}
           color={color}
         />
         
@@ -376,8 +376,7 @@ const DrawerNavigator = ({ navigation }) => {
             {(props) => {
               switch (module?.moduleMaster[0]?.moduleName) {
                 case "RoleScreen":
-                  return <RoleComponent {...props} userAccess={userRoleList?.[userRoleIndex]} 
-                  />;
+                  return <RoleComponent {...props} userAccess={userRoleList?.[userRoleIndex]} />;
                 case "ModuleScreen":
                   return <ModuleComponent {...props} userAccess={userRoleList?.[userRoleIndex]} />;
                 case "Dashboard":

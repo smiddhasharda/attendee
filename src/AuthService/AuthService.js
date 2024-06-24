@@ -2,7 +2,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
-// const API_URL = 'http://localhost:5000/api';
+// const API_URL = 'http://localhost:3502/api';
 const API_URL = 'http://3.111.185.105:3502/api';
 
 
@@ -26,16 +26,18 @@ const request = async (method, endpoint, data, authToken,params) => {
 
     const response = await axios(config);
 
-    if (!response || !response.data) {
+    if (!response || !response?.data) {
       throw new Error('Invalid response format');
     }
 
-    return response.data;
+    // return response?.data;
+    return response;
+
     
   } catch (error) {
     if (axios.isAxiosError(error)) {
       if (error.response) {
-        throw new Error(error.response.data.message || 'Request failed');
+        throw new Error(error.response?.data?.message || 'Request failed');
       } else if (error.request) {
         throw new Error('No response received from the server');
       }
@@ -53,7 +55,7 @@ const handleAsyncStorageError = (error) => {
 const login = async (tblName, conditionString) => {
   try {
     const response = await request('post', 'login', { tblName, conditionString });
-    const { token,userRole,userData } = response;
+    const { token,userRole,userData } = response?.data;
     // const { token, expirationTimestamp,userRole,userData } = response;
 
     await AsyncStorage.setItem('userRolePermission', userRole ? JSON?.stringify(userRole) : '').catch(handleAsyncStorageError);

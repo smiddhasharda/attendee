@@ -1,4 +1,4 @@
-import React, { useState,useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Pressable, Text, FlatList, StyleSheet, Platform, ScrollView } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
@@ -7,10 +7,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { bulkupload } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 
-
 const BulkUpload = (props) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [excelData, setExcelData] = useState([]);
+  const { addToast } = useToast();
+
   const pickFile = async () => {
     let result = await DocumentPicker.getDocumentAsync({
       type: Platform.OS === 'ios' || Platform.OS === 'android'
@@ -19,10 +20,14 @@ const BulkUpload = (props) => {
     });
     if (!result.canceled) {
       setSelectedFile({
+        // uri: result.uri,
+        // name: result.name,
+        // type: result.mimeType,
         uri: result.assets[0].uri,
         name: result.assets[0].name,
         type: result.assets[0].mimeType,
       });
+      // readExcelFile(result.uri);
       readExcelFile(result.assets[0].uri);
     }
   };
@@ -38,7 +43,7 @@ const BulkUpload = (props) => {
       setExcelData(content);
     } catch (error) {
       console.error('Error reading file:', error);
-      alert('Error reading file.');
+      addToast('Error reading file.', 'error');
     }
   };
 
@@ -46,8 +51,15 @@ const BulkUpload = (props) => {
     try {
       const fileInfo = await FileSystem.getInfoAsync(fileUri);
       if (fileInfo.exists && fileInfo.isFile) {
-        const content = await FileSystem.readAsStringAsync(fileUri);
-        return parseExcelData(content);
+        const content = await FileSystem.readAsStringAsync(fileUri, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
+        // const content = await FileSystem.readAsStringAsync(fileUri);
+        // return parseExcelData(content);
+        const workbook = XLSX.read(content, { type: 'base64' });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        return XLSX.utils.sheet_to_json(worksheet, { header: 1 });
       } else {
         throw new Error('File does not exist or is not a file');
       }
@@ -68,38 +80,35 @@ const BulkUpload = (props) => {
       };
       reader.onerror = (error) => {
         console.error('Error reading file:', error);
-        alert('Error reading file.');
+        addToast('Error reading file.', 'error');
       };
       reader.readAsBinaryString(blob);
     } catch (error) {
       console.error('Error reading file:', error);
-      alert('Error reading file.');
+      addToast('Error reading file.', 'error');
     }
   };
 
   const parseExcelData = (data) => {
     const workbook = XLSX.read(data, { type: 'binary' });
-    const sheetName = workbook.SheetNames[0]; // Assuming only one sheet
+    const sheetName = workbook.SheetNames[0];
     const worksheet = workbook.Sheets[sheetName];
     return XLSX.utils.sheet_to_json(worksheet, { header: 1 });
   };
 
-  const { addToast } = useToast();
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
-
     if (!authToken) {
       addToast("Authentication token not available", "error");
       throw new Error("Authentication token not available");
     }
-
     return authToken;
   }, [addToast]);
 
   const handleBulkInvigiltor = async () => {
     try {
       if (!selectedFile) {
-        addToast('Please select a file to upload.',"error");
+        addToast('Please select a file to upload.', "error");
         return;
       } else {
         const authToken = await checkAuthToken();
@@ -115,7 +124,6 @@ const BulkUpload = (props) => {
         const ProfilePics = new File([blob], fileName, { type: mimeType });
         formData.append("bulkupload_doc", ProfilePics);
         
-        // Assuming bulkupload is a function that handles the file upload
         const response = await bulkupload(formData, authToken);
   
         if (response) {
@@ -126,7 +134,7 @@ const BulkUpload = (props) => {
     } catch (error) {
       handleAuthErrors(error);
     }
-  };  
+  };
 
   const handleAuthErrors = (error) => {
     switch (error.message) {
@@ -144,51 +152,86 @@ const BulkUpload = (props) => {
     }
   };
 
-
   const cancelUpload = () => {
     setSelectedFile(null);
     setExcelData([]);
   };
+
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Pressable onPress={() => pickFile()}>
-        <Text>Pick Excel File</Text>
+    <View style={styles.container}>
+      <Pressable style={styles.pickFileButton} onPress={() => pickFile()}>
+        <Text style={styles.buttonText}>Pick Excel File</Text>
       </Pressable>
-      <ScrollView>
-        {selectedFile && (
-          <View style={{ marginTop: 20 }}>
-            <Text>Selected File:</Text>
-            <Text>{selectedFile.name}</Text>
+      {selectedFile && (
+        <ScrollView style={styles.fileContainer}>
+          <View style={styles.fileDetails}>
+            <Text style={styles.fileName}>Selected File: {selectedFile.name}</Text>
             <Text style={styles.previewTitle}>Preview:</Text>
-            <ScrollView>
-              <FlatList
-                data={excelData}
-                renderItem={({ item }) => (
-                  <Text style={styles.cell}>{item}</Text>
-                )}
-                keyExtractor={(item, index) => index.toString()}
-              />
-            </ScrollView>
-            <View style={{ flexDirection: 'row', marginTop: 10 }}>
-              <Pressable onPress={() => handleBulkInvigiltor()}>
-                <Text>Upload</Text>
+            <FlatList
+              data={excelData}
+              keyExtractor={(item, index) => index.toString()}
+              ListHeaderComponent={props?.renderData}
+              renderItem={({ item }) => (
+                <View style={styles.listItem}>
+                  {item?.map((data)=>(
+                  <Text style={styles.listItemText}>{data}</Text>
+                  ))}
+                  {/* <Text style={styles.listItemText}>{item?.[0]}</Text>
+                  <Text style={styles.listItemText}>{item?.[1]}</Text>
+                  <Text style={styles.listItemText}>{item?.[2]}</Text>
+                  <Text style={styles.listItemText}>{item?.[3]}</Text>
+                  <Text style={styles.listItemText}>{item?.[4]}</Text>
+                  <Text style={styles.listItemText}>{item?.[5]}</Text> */}
+                </View>
+              )}
+            />
+            <View style={styles.buttonContainer}>
+              <Pressable style={styles.uploadButton} onPress={() => handleBulkInvigiltor()}>
+                <Text style={styles.buttonText}>Upload</Text>
               </Pressable>
-              <Pressable onPress={() => cancelUpload()}>
-                <Text>Cancel Upload</Text>
+              <Pressable style={styles.cancelButton} onPress={() => cancelUpload()}>
+                <Text style={styles.buttonText}>Cancel</Text>
               </Pressable>
             </View>
           </View>
-        )}
-      </ScrollView>
-      {props?.handleClose &&
-      <Pressable onPress={() => props?.handleClose()}>
-                <Text>Cancel</Text>
-       </Pressable>}
+        </ScrollView>
+      )}
+      {props?.handleClose && (
+        <Pressable style={styles.cancelButton} onPress={() => props?.handleClose()}>
+          <Text style={styles.buttonText}>Back</Text>
+        </Pressable>
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  pickFileButton: {
+    padding: 10,
+    backgroundColor: '#6200ea',
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: 'white',
+    textAlign: 'center',
+  },
+  fileContainer: {
+    marginTop: 20,
+    width: '100%',
+  },
+  fileDetails: {
+    alignItems: 'center',
+  },
+  fileName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
   previewTitle: {
     marginTop: 10,
     marginBottom: 5,
@@ -196,6 +239,75 @@ const styles = StyleSheet.create({
   },
   cell: {
     padding: 5,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    marginTop: 10,
+  },
+  uploadButton: {
+    padding: 10,
+    backgroundColor: '#4caf50',
+    borderRadius: 5,
+    marginRight: 10,
+  },
+  cancelButton: {
+    padding: 10,
+    backgroundColor: '#f44336',
+    borderRadius: 5,
+  },
+  header: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  tableHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    backgroundColor: "rgb(17, 65, 102)",
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    marginBottom: 10,
+    borderRadius: 5,
+  },
+  tableHeaderText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#fff",
+    textAlign: "center",
+  },
+  moduleListContainer: {
+    flex: 1,
+    backgroundColor: "#fff",
+    padding: 10,
+  },
+  listItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+  },
+  listItemText: {
+    flex: 1,
+  },
+  listItemActiveStatus: {
+    color: "green",
+  },
+  listItemInactiveStatus: {
+    color: "red",
+  },
+  listItemEditButton: {
+    backgroundColor: "#0C7C62",
+    padding: 4,
+    borderRadius: 5,
+  },
+  listItemActionContainer: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
   },
 });
 
