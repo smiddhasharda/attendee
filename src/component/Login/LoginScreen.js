@@ -46,7 +46,7 @@ const LoginScreen = ({ navigation }) => {
 
   const loginUser = async () => {
     try {
-      await login('tbl_user_master', `email_id = '${loginData.email}' AND OTP = '${loginData.OTP}'`);
+      await login('tbl_user_master', `email_id = '${loginData.email}' AND OTP = '${loginData.OTP}' AND isActive = 1`);
       const userRoleArray = await AsyncStorage.getItem('userRolePermission') || [];
       const userRolePermission = JSON.parse(userRoleArray) || [];
       navigation.replace('PostLogin', { userRolePermission });
@@ -57,7 +57,7 @@ const LoginScreen = ({ navigation }) => {
 
   const verifyEmail = async () => {
     try {
-      const response = await emailVerify('tbl_user_master', `email_id = '${loginData.email}' AND isActive = 1`);
+      const response = await emailVerify('tbl_user_master', `email_id = '${loginData.email}' `,'PS_SU_PSFT_COEM_VW',`EMAILID = '${loginData.email}'`);
       if (response) {
         addToast(`OTP Sent Successfully to ${loginData.email}`, 'success');
         setOTPInputDiasbled(false);
@@ -99,7 +99,11 @@ const LoginScreen = ({ navigation }) => {
   const handleEmailVerifyError = (error) => {
     if (error.message === 'Invalid Email Id') {
       addToast('Invalid Email Id', 'error');
-    } else {
+    } 
+    else if (error.message === 'Email Id Not Allowed'){
+      addToast('Not Allowed, Contact Admin', 'error');
+    }
+    else {
       console.error('Email Verification Failed', error);
       addToast('Email verification failed, please try again later', 'error');
     }
