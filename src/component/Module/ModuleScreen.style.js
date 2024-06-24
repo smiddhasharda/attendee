@@ -50,9 +50,12 @@ const styles = StyleSheet.create({
   // },
   tableHeader: {
     flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     backgroundColor: "rgb(17, 65, 102)",
-    paddingVertical: 10,
-    paddingHorizontal: 15,
+    padding: 10,
+    // paddingVertical: 10,
+    // paddingHorizontal: 15,
     marginBottom: 10,
     borderRadius: 5,
   },
@@ -62,7 +65,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     textAlign: "left",
     flexShrink: 1,
-    marginRight: 12,
+    // marginRight: 12,
   },
   // moduleListContainer: {
   //   flex: 1,
@@ -102,47 +105,49 @@ const styles = StyleSheet.create({
   listItem: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
     borderBottomWidth: 1,
     borderBottomColor: "#ddd",
-    paddingVertical: 10,
-    paddingHorizontal: 15,
+    // paddingVertical: 10,
+    // paddingHorizontal: 15,
+    padding: 10,
   },
   listItemText: {
     fontSize: 16,
     flexShrink: 1,
-    marginRight: 12,
+    //marginRight: 12,
   },
   listItemActiveStatus: {
-    color: "green",
+    //color: "green",
   },
   listItemInactiveStatus: {
-    color: "red",
+    //color: "red",
   },
   listItemEditButton: {
-    backgroundColor: "#0C7C62",
-    padding: 4,
+    //backgroundColor: "#0C7C62",
+    padding: 0,
     borderRadius: 5,
   },
-  listItemActionContainer: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    alignItems: "center",
-  },
+  // listItemActionContainer: {
+  //   flex: 1,
+  //   flexDirection: "row",
+  //   justifyContent: "flex-end",
+  //   alignItems: "center",
+  // },
   updatebtn: {
     width: 120,
     backgroundColor: "#0C7C62",
     padding: 10,
     borderRadius: 5,
     color: "#fff",
-    textAlign: "center",
+    textAlign: "left",
   },
   cancelbtn: {
     width: 100,
     backgroundColor: "rgb(237, 52, 52)",
     padding: 10,
     borderRadius: 5,
-    textAlign: "center",
+    textAlign: "left",
     color: "#fff",
   },
   modulists: {
@@ -181,18 +186,15 @@ const styles = StyleSheet.create({
   //   flex: 2, // 20%
   //   alignItems: "flex-end"
   // }
-  columnModule: {
-    flex: 3, // 10%
-  },
-  columnDescription: {
-    flex: 5, // 60%
-  },
-  columnStatus: {
-    flex: 1, // 20%
-  },
-  columnAction: {
-    flex: 1, // 20%
-  }
+  // columnModule: {
+  //   flex: 4, // 10%
+  // },
+  // columnStatus: {
+  //   flex: 3, // 20%
+  // },
+  // columnAction: {
+  //   flex: 3, // 20%
+  // }
 });
 
 export default styles;

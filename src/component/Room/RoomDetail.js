@@ -227,32 +227,37 @@ function RoomDetail({navigation}) {
             </View>
         </View>
 
+        <View style={styles.studentWrapSec}>
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : (
           studentDetails?.length > 0 ? tempStudentDetails?.length > 0 ? (
             tempStudentDetails.map((studentData, index) => (
+              
               <Pressable 
                 key={studentData.EMPLID}  // Use a unique identifier from studentData, such as EMPLID
                 onPress={() => UserAccess?.create === 1 ?  navigation.navigate("StudentInfo", { room_Nbr: studentData.ROOM_NBR ,exam_Dt: studentData.EXAM_DT,catlog_Nbr: studentData.CATALOG_NBR ,system_Id:studentData.EMPLID, seat_Nbr: studentData.PTP_SEQ_CHAR ,startTime: startTime,current_Term:studentData.STRM,reportId: presentStudentList?.filter((item)=>item.EMPLID === Number(studentData.EMPLID))?.[0]?.PK_Report_Id ,userAccess }) : ''}
               >
-                <View style={[styles.box,getStatuscolor(presentStudentList?.filter((item) => item.EMPLID === Number(studentData.EMPLID))?.[0]?.Status)]} key={studentData.EMPLID}>
-                  <View style={styles.boxtext}>
-                    {/* <View style={styles.imgWrap}></View> */}
-                    <View  style={styles.info}>
-                      {/* <Image source={user}  /> */}
-                      <FontAwesome name="user-circle" size={36}  color="black" style={styles.userimage} />
-                      <View style={styles.stuWrap}>
-                        <Text style={styles.examname }>{studentData.NAME}</Text>
-                        <Text style={styles.employeeid}>{studentData.EMPLID}</Text>
-                        </View>
-                    </View>
-                    <View style={styles.seqWrap}>
-                      <Text style={styles.seqnumber}>{studentData.PTP_SEQ_CHAR}</Text>
+                
+                  <View style={[styles.box,getStatuscolor(presentStudentList?.filter((item) => item.EMPLID === Number(studentData.EMPLID))?.[0]?.Status)]} key={studentData.EMPLID}>
+                    <View style={styles.boxtext}>
+                      {/* <View style={styles.imgWrap}></View> */}
+                      <View  style={styles.info}>
+                        {/* <Image source={user}  /> */}
+                        <FontAwesome name="user-circle" size={36}  color="black" style={styles.userimage} />
+                        <View style={styles.stuWrap}>
+                          <Text style={styles.examname }>{studentData.NAME}</Text>
+                          <Text style={styles.employeeid}>{studentData.EMPLID}</Text>
+                          </View>
+                      </View>
+                      <View style={styles.seqWrap}>
+                        <Text style={styles.seqnumber}>{studentData.PTP_SEQ_CHAR}</Text>
+                      </View>
                     </View>
                   </View>
-                </View>
+                
               </Pressable>
+              
             ))
           ) : (
               <Text style={styles.centerText}>There is no student available in this room you searched for!</Text>
@@ -260,6 +265,7 @@ function RoomDetail({navigation}) {
               <Text style={styles.centerText}>There are no records found!</Text>
           )
         )}
+        </View>
           </ScrollView>
         </View>)
           }
@@ -309,9 +315,7 @@ const styles = StyleSheet.create({
     },
     roomNumber: {
       padding: 12,
-      overflowY: "auto",
-      maxHeight: 530,
-      marginBottom: 20,
+      //marginBottom: 20,
       clear:"both"
     },
     box: {
@@ -322,7 +326,8 @@ const styles = StyleSheet.create({
       borderRadius: 6,
       marginBottom: 10,
       padding: 10,
-      overflow: "hidden"
+      clear: "both"
+      // overflow: "hidden"
     },
     boxtext:{
       display:"flex",
@@ -465,6 +470,13 @@ const styles = StyleSheet.create({
       color:"#000",
       marginLeft:5,
       fontWeight:"600",
+    },
+    studentWrapSec: {
+      overflowY:"scroll",
+      minHeight: 330,
+      //maxHeight: 440,
+      clear: "both"
     }
   });
  
+  
