@@ -21,7 +21,13 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.CAMERA",
+        "INTERNET"
+      ],
+      "package": "com.dev.saxena.attendee"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -47,6 +53,11 @@
           "recordAudioAndroid": true
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "7168485f-bab9-42e8-a93a-8206c1265e40"
+      }
+    }
   }
 }
