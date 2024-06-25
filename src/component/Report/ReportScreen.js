@@ -10,7 +10,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetch,view } from "../../AuthService/AuthService";
 import { parse, format } from 'date-fns';
 import DropDownPicker from "react-native-dropdown-picker";
-import { DataTable } from 'react-native-paper';
+import { DataTable,Provider as PaperProvider, DarkTheme as PaperDarkTheme, DefaultTheme as PaperDefaultTheme  } from 'react-native-paper';
+import { DarkTheme } from '@react-navigation/native';
 
 
 const ReportScreen = () => {
@@ -487,7 +488,9 @@ const ReportScreen = () => {
                   showFastPaginationControls
                   selectPageDropdownLabel={'Rows per page'}
                   style={styles.pagination}
-              
+                  labelStyle={styles.paginationText}
+                  selectPageDropdownStyle={styles.paginationDropdown}
+                  theme={DarkTheme}
                 />
           </DataTable>
           </ScrollView>
@@ -558,10 +561,14 @@ const styles = StyleSheet.create({
   searchBar: { marginBottom: 10, backgroundColor:"#fff", borderWidth:1, borderColor:"#ccc"},
   dropdownWrap: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: "flex-start",
     marginBottom: 16,
-  },
 
+    
+  },
+  table:{
+   clear:"both"
+  },
   headerText:{
     color:"#fff",
   },
@@ -574,13 +581,21 @@ const styles = StyleSheet.create({
     color:"#000",
   },
   pagination:{
-   backgroundColor:"rgb(46 44 44)",
+  //  backgroundColor:"rgb(17, 65, 102)",
    borderRadius:40,
    margin:8,
+  //  width:"100%",
   //  width:"40%",
-   alignSelf:"flex-start"
+   alignSelf:"flex-start",
+   borderWidth:1,
+   borderColor:"#ccc"
+  
   // justifyContent:"center"
-  }
+  },
+  paginationText:{
+    color:"#000"
+  },
+ 
 });
 
 const pickerSelectStyles = StyleSheet.create({
@@ -615,6 +630,7 @@ const pickerSelectStyles = StyleSheet.create({
   inputWeb:{
     padding:8,
     borderRadius:4,
+    marginRight:10,
   },
   modalViewBottom:{
   backgroundColor:"red",
