@@ -707,15 +707,15 @@ const StudentInfo = ({ navigation }) => {
               <View style={[styles.infoItem, styles.studStatus]}>
                 <Text style={[styles.label]}>Status</Text>
                 <View style={styles.attStatus}>
-                  <CheckBox value={status === "Present"} onValueChange={(item) =>setStatus("Present")} color={getStatuscolor()} disabled={(!isActive || !(userAccess?.label === "Admin"))} />                
+                  <CheckBox value={status === "Present"} onValueChange={(item) =>setStatus("Present")} color={getStatuscolor()} disabled={(!isActive && !(userAccess?.label === "Admin"))} />                
                   <Text style={[styles.value, styles.customValue]}> Present</Text>
                 </View>
                 <View style={styles.attStatus}>
-                <CheckBox value={status === "Absent"} onValueChange={() => setStatus("Absent")} color={getStatuscolor()} disabled={(!isActive || !(userAccess?.label === "Admin"))} />
+                <CheckBox value={status === "Absent"} onValueChange={() => setStatus("Absent")} color={getStatuscolor()} disabled={(!isActive && !(userAccess?.label === "Admin"))} />
                 <Text style={[styles.value, styles.customValue]}> Absent</Text>
                 </View>
                 <View style={styles.attStatus}>
-                <CheckBox value={status === "UFM"} onValueChange={() => setStatus("UFM")} color={getStatuscolor()} disabled={(!isActive || !(userAccess?.label === "Admin"))} />
+                <CheckBox value={status === "UFM"} onValueChange={() => setStatus("UFM")} color={getStatuscolor()} disabled={(!isActive && !(userAccess?.label === "Admin"))} />
                 <Text style={[styles.value, styles.customValue]}> UFM</Text>
                 </View>
                 
