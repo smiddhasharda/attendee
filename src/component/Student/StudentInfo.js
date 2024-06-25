@@ -707,16 +707,16 @@ const StudentInfo = ({ navigation }) => {
               <View style={[styles.infoItem, styles.studStatus]}>
                 <Text style={[styles.label]}>Status</Text>
                 <View style={styles.attStatus}>
-                  <CheckBox value={status === "Present"} onValueChange={(item) =>setStatus("Present")} color={getStatuscolor()} disabled={(!isActive || !(userAccess?.label === "Admin"))} />                
-                  <Text style={styles.value}> Present</Text>
+                  <CheckBox value={status === "Present"} onValueChange={(item) =>setStatus("Present")} color={getStatuscolor()} disabled={(!isActive && !(userAccess?.label === "Admin"))} />                
+                  <Text style={[styles.value, styles.customValue]}> Present</Text>
                 </View>
                 <View style={styles.attStatus}>
-                <CheckBox value={status === "Absent"} onValueChange={() => setStatus("Absent")} color={getStatuscolor()} disabled={(!isActive || !(userAccess?.label === "Admin"))} />
-                <Text style={styles.value}> Absent</Text>
+                <CheckBox value={status === "Absent"} onValueChange={() => setStatus("Absent")} color={getStatuscolor()} disabled={(!isActive && !(userAccess?.label === "Admin"))} />
+                <Text style={[styles.value, styles.customValue]}> Absent</Text>
                 </View>
                 <View style={styles.attStatus}>
-                <CheckBox value={status === "UFM"} onValueChange={() => setStatus("UFM")} color={getStatuscolor()} disabled={(!isActive || !(userAccess?.label === "Admin"))} />
-                <Text style={styles.value}> UFM</Text>
+                <CheckBox value={status === "UFM"} onValueChange={() => setStatus("UFM")} color={getStatuscolor()} disabled={(!isActive && !(userAccess?.label === "Admin"))} />
+                <Text style={[styles.value, styles.customValue]}> UFM</Text>
                 </View>
                 
                 
@@ -1157,6 +1157,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     borderRadius: 8,
     padding: 5,
+    //overflow: "hidden"
   },
   infoHeader: {
     fontSize: 20,
@@ -1177,12 +1178,12 @@ const styles = StyleSheet.create({
   label: {
     fontWeight: "bold",
     color: "#333",
-    width: "42%",
+    width: "35%",
     display: "inline-block"
   },
   value: {
     color: "#555",
-    width: "58%",
+    width: "65%",
   },
   // table: {
   //   // borderWidth: 1,
@@ -1479,12 +1480,14 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: 'center'
   },
-    // studStatus: {
-    //   // flexDirection: "row",
-    //   // justifyContent: "space-between"
-    // },
+  customValue:{
+    fontSize: 12,
+    marginTop: 5,
+    fontWeight: "bold"
+  },
   attStatus: {
-    width: 90,
-    flexDirection: "row",
+    width: 75,
+    flexDirection: "column",
+    marginRight: 0,
   }
 });
