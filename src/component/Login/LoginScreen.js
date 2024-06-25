@@ -11,7 +11,7 @@ const LoginScreen = ({ navigation }) => {
   const { addToast } = useToast();
   const [loginData, setLoginData] = useState({
     email: '',
-    OTP: '',
+    OTP: null,
     password: ''
   });
   const [activeUserType, setActiveUserType] = useState('Faculty');
@@ -21,7 +21,14 @@ const LoginScreen = ({ navigation }) => {
   const [isOTPInputDisabled, setOTPInputDiasbled] = useState(true);
 
   const handleInputChange = (field, value) => {
-    setLoginData({ ...loginData, [field]: value });
+    if (field === 'OTP') {
+      if (/^\d*$/.test(value) && value.length <= 6) {
+        setLoginData({ ...loginData, [field]: value });
+      }
+    } else {
+      setLoginData({ ...loginData, [field]: value });
+    }
+    // setLoginData({ ...loginData, [field]: value });
   };
 
   const validateEmail = () => {
@@ -46,7 +53,7 @@ const LoginScreen = ({ navigation }) => {
 
   const loginUser = async () => {
     try {
-      await login('tbl_user_master', `email_id = '${loginData.email}' AND OTP = '${loginData.OTP}' AND isActive = 1`);
+      await login('tbl_user_master', `email_id = '${loginData.email}' AND OTP = ${loginData.OTP} AND isActive = 1`);
       const userRoleArray = await AsyncStorage.getItem('userRolePermission') || [];
       const userRolePermission = JSON.parse(userRoleArray) || [];
       navigation.replace('PostLogin', { userRolePermission });
