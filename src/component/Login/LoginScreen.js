@@ -1,166 +1,149 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, Pressable, Image, LayoutAnimation } from 'react-native';
-import LoginStyles from "./LoginScreen.style";
-import useStateWithCallback from "../../helpers/useStateWithCallback";
+import { useToast } from '../../globalComponent/ToastContainer/ToastContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import emailValidator from "../../helpers/emailValidator";
 import Tooltip from "../../globalComponent/ToolTip/Tooltip";
 import { login, emailVerify } from '../../AuthService/AuthService';
-import { useToast } from '../../globalComponent/ToastContainer/ToastContext';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import styles from "./LoginScreen.style";
 
 const LoginScreen = ({ navigation }) => {
   const { addToast } = useToast();
   const [loginData, setLoginData] = useState({
     email: '',
     OTP: '',
-    password:''
+    password: ''
   });
-  const [activeUserType, setActiveUserType] = useState('Faculty'); // 'Faculty' or 'Admin'
-  const [isEmailTooltipVisible, setEmailTooltipVisible] = useStateWithCallback(false);
-  const [isPasswordTooltipVisible, setPasswordTooltipVisible] = useStateWithCallback(false);
-  const [isOTPTooltipVisible, setOTPTooltipVisible] = useStateWithCallback(false);
-  const [isOTPInputDisabled, setOTPInputDiasbled] = useStateWithCallback(true);
+  const [activeUserType, setActiveUserType] = useState('Faculty');
+  const [isEmailTooltipVisible, setEmailTooltipVisible] = useState(false);
+  const [isPasswordTooltipVisible, setPasswordTooltipVisible] = useState(false);
+  const [isOTPTooltipVisible, setOTPTooltipVisible] = useState(false);
+  const [isOTPInputDisabled, setOTPInputDiasbled] = useState(true);
 
-  const handleEmailChange = (text) => {
-    isEmailTooltipVisible && setEmailTooltipVisible(false);
-    setLoginData({ ...loginData, email: text });
-  };
-  const handlePaaswordChange = (text) => {
-    isPasswordTooltipVisible && setPasswordTooltipVisible(false);
-    setLoginData({ ...loginData, password: text });
+  const handleInputChange = (field, value) => {
+    setLoginData({ ...loginData, [field]: value });
   };
 
-  const handleOTPChange = (text) => {
-    isOTPTooltipVisible && setOTPTooltipVisible(false);
-    setLoginData({ ...loginData, OTP: text });
-  };
-
-  const handleEmailValidation = () => {
-    if (emailValidator(loginData?.email)) {
+  const validateEmail = () => {
+    if (emailValidator(loginData.email)) {
       setEmailTooltipVisible(false);
-      handleEmailVerify();
-      return;
+      verifyEmail();
     } else {
       LayoutAnimation.spring();
       setEmailTooltipVisible(true);
     }
   };
 
-  const handleOTPValidation = () => {
-    if (loginData?.OTP) {
+  const validateOTP = () => {
+    if (loginData.OTP) {
       setOTPTooltipVisible(false);
-      handleLogin();
-      return;
+      loginUser();
     } else {
       LayoutAnimation.spring();
       setOTPTooltipVisible(true);
     }
   };
 
-  const handleLogin = async () => {
+  const loginUser = async () => {
     try {
-      await login(
-        'tbl_user_master',
-        `email_id = '${loginData.email}' AND OTP = '${loginData.OTP}'`
-      );
+      await login('tbl_user_master', `email_id = '${loginData.email}' AND OTP = '${loginData.OTP}' AND isActive = 1`);
       const userRoleArray = await AsyncStorage.getItem('userRolePermission') || [];
-      const userRolePermission = JSON?.parse(userRoleArray) || [];
+      const userRolePermission = JSON.parse(userRoleArray) || [];
       navigation.replace('PostLogin', { userRolePermission });
     } catch (error) {
-      if (error.message === 'Invalid credentials') {
-        addToast('Invalid email or OTP', 'error');
-      } else if (error.message === 'Token has expired') {
-        addToast('Token has expired, please log in again', 'error');
-        navigation.replace('Login');
-      } else {
-        console.error('Login Failed', error);
-        addToast('Login failed, please try again later', 'error');
-      }
+      handleLoginError(error);
     }
   };
 
-  const handleEmailVerify = async () => {
+  const verifyEmail = async () => {
     try {
-      const response = await emailVerify(
-        'tbl_user_master',
-        `email_id = '${loginData.email}' AND isActive = 1`
-      );
+      const response = await emailVerify('tbl_user_master', `email_id = '${loginData.email}' `,'PS_SU_PSFT_COEM_VW',`EMAILID = '${loginData.email}'`);
       if (response) {
         addToast(`OTP Sent Successfully to ${loginData.email}`, 'success');
         setOTPInputDiasbled(false);
       }
     } catch (error) {
-      if (error.message === 'Invalid Email Id') {
-        addToast('Invalid Email Id', 'error');
-      } else {
-        console.error('Email Verification Failed', error);
-        addToast('Email verification failed, please try again later', 'error');
+      handleEmailVerifyError(error);
+    }
+  };
+
+  const loginAdmin = async () => {
+    if (!emailValidator(loginData.email)) {
+      setEmailTooltipVisible(true);
+    } else if (!loginData.password.trim()) {
+      setPasswordTooltipVisible(true);
+    } else {
+      try {
+        await login('tbl_user_master', `email_id = '${loginData.email}' AND Password = '${loginData.password}'`);
+        const userRoleArray = await AsyncStorage.getItem('userRolePermission') || [];
+        const userRolePermission = JSON.parse(userRoleArray) || [];
+        navigation.replace('PostLogin', { userRolePermission });
+      } catch (error) {
+        handleLoginError(error);
       }
     }
   };
 
-  
-  const handleAdminLogin = async () => {
-    try {
-      if(loginData.email.replace(/\s+/g, '') === "" || !emailValidator(loginData?.email)){
-        setEmailTooltipVisible(true);
-      }
-      else if(loginData.password.replace(/\s+/g, '') === ""){
-        setPasswordTooltipVisible(true);
-      }
-      else{
-      await login( 'tbl_user_master', `email_id = '${loginData.email}' AND Password = '${loginData.password}'`);
-      const userRoleArray = await AsyncStorage.getItem('userRolePermission') || [];
-      const userRolePermission = JSON?.parse(userRoleArray) || [];     
-      navigation.replace('PostLogin', { userRolePermission });
-      }
-    } catch (error) {
-      if (error.message === 'Invalid credentials') {
-        addToast('Invalid email or password', 'error');
-      } else if (error.message === 'Token has expired') {
-        addToast('Token has expired, please log in again', 'error');
-        navigation.replace('Login');
-      } else {
-        console.error('Login Failed', error);
-        addToast('Login failed, please try again later', 'error');
-      }
+  const handleLoginError = (error) => {
+    if (error.message === 'Invalid credentials') {
+      addToast('Invalid email or OTP', 'error');
+    } else if (error.message === 'Token has expired') {
+      addToast('Token has expired, please log in again', 'error');
+      navigation.replace('Login');
+    } else {
+      console.error('Login Failed', error);
+      addToast('Login failed, please try again later', 'error');
     }
   };
+
+  const handleEmailVerifyError = (error) => {
+    if (error.message === 'Invalid Email Id') {
+      addToast('Invalid Email Id', 'error');
+    } 
+    else if (error.message === 'Email Id Not Allowed'){
+      addToast('Not Allowed, Contact Admin', 'error');
+    }
+    else {
+      console.error('Email Verification Failed', error);
+      addToast('Email verification failed, please try again later', 'error');
+    }
+  };
+
   return (
-    <View style={LoginStyles.container}>
-      <Image style={LoginStyles.bgimg1} source={require("../../local-assets/login-shape-bg-1.png")} />
-      <View style={LoginStyles.form}>
-        <View style={LoginStyles.logininfoWrap}>
-          <View style={LoginStyles.loginheadWrap}>
-            <Text style={LoginStyles.loginheading}>Login</Text>
-            <Text style={LoginStyles.loginsubheading}>Login into your Account</Text>
+    <View style={styles.container}>
+      <Image style={styles.bgimg1} source={require("../../local-assets/login-shape-bg-1.png")} />
+      <View style={styles.form}>
+        <View style={styles.logininfoWrap}>
+          <View style={styles.loginheadWrap}>
+            <Text style={styles.loginheading}>Login</Text>
+            <Text style={styles.loginsubheading}>Login into your Account</Text>
           </View>
-          <View style={LoginStyles.userTypeSelection}>
+          <View style={styles.userTypeSelection}>
             <Pressable
-              style={[LoginStyles.userTypeButton, activeUserType === 'Faculty' && LoginStyles.activeUserTypeButton]}
+              style={[styles.userTypeButton, activeUserType === 'Faculty' && styles.activeUserTypeButton]}
               onPress={() => setActiveUserType('Faculty')}
             >
-              <Text style={[LoginStyles.userTypeText, activeUserType === 'Faculty' && LoginStyles.activeUserTypeText]}>
+              <Text style={[styles.userTypeText, activeUserType === 'Faculty' && styles.activeUserTypeText]}>
                 Faculty
               </Text>
             </Pressable>
             <Pressable
-              style={[LoginStyles.userTypeButton, activeUserType === 'Admin' && LoginStyles.activeUserTypeButton]}
+              style={[styles.userTypeButton, activeUserType === 'Admin' && styles.activeUserTypeButton]}
               onPress={() => setActiveUserType('Admin')}
             >
-              <Text style={[LoginStyles.userTypeText, activeUserType === 'Admin' && LoginStyles.activeUserTypeText]}>
+              <Text style={[styles.userTypeText, activeUserType === 'Admin' && styles.activeUserTypeText]}>
                 Admin
               </Text>
             </Pressable>
           </View>
           <View style={{ marginTop: 14 }}>
-            <Text style={LoginStyles.label}>Email Id</Text>
+            <Text style={styles.label}>Email Id</Text>
             {isEmailTooltipVisible && (
               <Tooltip>
-                <View style={LoginStyles.emailTooltipContainer}>
-                  <Text style={LoginStyles.emailTooltipTextStyle}>
+                <View style={styles.emailTooltipContainer}>
+                  <Text style={styles.emailTooltipTextStyle}>
                     That
-                    <Text style={LoginStyles.emailTooltipRedTextStyle}> email address </Text>
+                    <Text style={styles.emailTooltipRedTextStyle}> email address </Text>
                     doesn't look right
                   </Text>
                 </View>
@@ -168,81 +151,81 @@ const LoginScreen = ({ navigation }) => {
             )}
             <TextInput
               placeholder='Enter Your Email ID'
-              style={LoginStyles.input}
+              style={styles.input}
               value={loginData.email}
-              onChangeText={handleEmailChange}
+              onChangeText={(text) => handleInputChange('email', text)}
               autoCapitalize="none"
               onFocus={() => setEmailTooltipVisible(false)}
               editable={isOTPInputDisabled}
             />
-            {activeUserType === 'Faculty' ?  (<View>
-              {!isOTPInputDisabled && (
+            {activeUserType === 'Faculty' ? (
               <View>
-                <Text style={LoginStyles.label}>OTP</Text>
-                {isOTPTooltipVisible && (
+                {!isOTPInputDisabled && (
+                  <View>
+                    <Text style={styles.label}>OTP</Text>
+                    {isOTPTooltipVisible && (
+                      <Tooltip>
+                        <View style={styles.passwordTooltipContainer}>
+                          <Text style={styles.passwordTooltipTextStyle}>
+                            Incorrect
+                            <Text style={styles.passwordTooltipRedTextStyle}> OTP</Text>
+                          </Text>
+                        </View>
+                      </Tooltip>
+                    )}
+                    <TextInput
+                      placeholder='Enter The OTP'
+                      value={loginData.OTP}
+                      onChangeText={(text) => handleInputChange('OTP', text)}
+                      style={styles.input}
+                      autoCapitalize="none"
+                      onFocus={() => setOTPTooltipVisible(false)}
+                    />
+                  </View>
+                )}
+                <Pressable
+                  style={styles.loginButtonStyle}
+                  onPress={isOTPInputDisabled ? validateEmail : validateOTP}
+                >
+                  <Text style={styles.loginTextStyle}>{isOTPInputDisabled ? "Send OTP" : "Login"}</Text>
+                </Pressable>
+              </View>
+            ) : (
+              <View>
+                <Text style={styles.label}>Password</Text>
+                {isPasswordTooltipVisible && (
                   <Tooltip>
-                    <View style={LoginStyles.passwordTooltipContainer}>
-                      <Text style={LoginStyles.passwordTooltipTextStyle}>
-                        Incorrect
-                        <Text style={LoginStyles.passwordTooltipRedTextStyle}> OTP</Text>
+                    <View style={styles.emailTooltipContainer}>
+                      <Text style={styles.emailTooltipTextStyle}>
+                        That
+                        <Text style={styles.emailTooltipRedTextStyle}> password </Text>
+                        doesn't look right
                       </Text>
                     </View>
                   </Tooltip>
                 )}
                 <TextInput
-                  placeholder='Enter The OTP'
-                  value={loginData.OTP}
-                  onChangeText={handleOTPChange}
-                  style={LoginStyles.input}
+                  placeholder='Enter Your Password'
+                  style={styles.input}
+                  value={loginData.password}
+                  onChangeText={(text) => handleInputChange('password', text)}
                   autoCapitalize="none"
-                  onFocus={() => { setOTPTooltipVisible(false); }}
+                  onFocus={() => setPasswordTooltipVisible(false)}
                 />
+                <Pressable
+                  style={styles.loginButtonStyle}
+                  onPress={loginAdmin}
+                >
+                  <Text style={styles.loginTextStyle}>Sign In</Text>
+                </Pressable>
               </View>
             )}
-            <Pressable
-              style={[LoginStyles.loginButtonStyle]}
-              onPress={() => { isOTPInputDisabled ? handleEmailValidation() : handleOTPValidation(); }}
-            >
-              <Text style={[LoginStyles.loginTextStyle]}>{isOTPInputDisabled ? "Send OTP" : "Login"}</Text>
-            </Pressable> 
-            </View>)
-            : 
-            (<View>
-            <Text style={LoginStyles.label}>Password</Text>
-            {isPasswordTooltipVisible && (
-              <Tooltip>
-                <View style={LoginStyles.emailTooltipContainer}>
-                  <Text style={LoginStyles.emailTooltipTextStyle}>
-                    That
-                    <Text style={LoginStyles.emailTooltipRedTextStyle}> password </Text>
-                    doesn't look right
-                  </Text>
-                </View>
-              </Tooltip>
-            )}
-            <TextInput
-              placeholder='Enter Your Password'
-              style={LoginStyles.input}
-              value={loginData.password}
-              onChangeText={handlePaaswordChange}
-              autoCapitalize="none"
-              onFocus={() => [setPasswordTooltipVisible(false),setEmailTooltipVisible(false)]}
-            />
-                <Pressable
-              style={[LoginStyles.loginButtonStyle]}
-              onPress={() => handleAdminLogin()}
-            >
-              <Text style={[LoginStyles.loginTextStyle]}>Sign In</Text>
-            </Pressable>
-            </View>)       
-             }
-           
           </View>
         </View>
       </View>
-      <Image style={LoginStyles.bgimages2} source={require("../../local-assets/login-shape-bg-2.png")} />
+      <Image style={styles.bgimages2} source={require("../../local-assets/login-shape-bg-2.png")} />
     </View>
   );
-}
+};
 
 export default LoginScreen;

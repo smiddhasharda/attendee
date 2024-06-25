@@ -6,7 +6,7 @@ import {
   FlatList,
   Pressable,
 } from "react-native";
-import { insert, fetch, update } from "../../AuthService/AuthService";
+import { insert, fetch, update,view } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import styles from "./ModuleScreen.style";
@@ -126,8 +126,35 @@ const ModuleScreen = ({ userAccess }) => {
     });
   };
 
+  // const handleGetSampleView = async () => {
+  //   try {
+  //     const authToken = await checkAuthToken();
+  //     const response = await view(
+  //       {
+  //         operation: "fetch",
+  //         tblName: "PS_SU_PSFT_COEM_VW",
+  //         data: '',
+  //         conditionString: '',
+  //         checkAvailability: '',
+  //         customQuery: '',
+  //         viewType:'HRMS_View'
+  //       },
+  //       authToken
+  //     );
+
+  //     if (response) {
+  //       console.log("View Data : ",response?.data);
+  //       // setLoading(false);
+  //     }
+  //   } catch (error) {
+  //     // setLoading(false);
+  //     handleAuthErrors(error);
+  //   }
+  // };
+
   useEffect(() => {
     fetchModuleList();
+    // handleGetSampleView();
   }, [userAccessForModule]);
 
   return (

@@ -71,8 +71,8 @@ const login = async (tblName, conditionString) => {
 const register = async (tblName, conditionString) => {
   return request('post', 'register', { tblName, conditionString });
 };
-const emailVerify = async (tblName, conditionString) => {
-  return request('post', 'emailVerify', { tblName, conditionString });
+const emailVerify = async (tblName, conditionString,viewTblName,viewConditionString) => {
+  return request('post', 'emailVerify', { tblName, conditionString, viewTblName, viewConditionString });
 };
 
 const logout = async () => {
