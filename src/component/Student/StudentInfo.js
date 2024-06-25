@@ -1169,19 +1169,20 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   infoItem: {
+    flex: 1,
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
     marginBottom: 10,
   },
   label: {
     fontWeight: "bold",
     color: "#333",
-    width: "50%",
+    width: "42%",
     display: "inline-block"
   },
   value: {
     color: "#555",
-    width: "50%",
+    width: "58%",
   },
   // table: {
   //   // borderWidth: 1,
@@ -1478,12 +1479,12 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: 'center'
   },
-  studStatus: {
-    flexDirection: "column"
-  },
+    // studStatus: {
+    //   // flexDirection: "row",
+    //   // justifyContent: "space-between"
+    // },
   attStatus: {
+    width: 90,
     flexDirection: "row",
-    justifyContent: "flex-start",
-    width: 150,
   }
 });
