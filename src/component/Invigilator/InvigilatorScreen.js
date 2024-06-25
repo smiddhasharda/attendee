@@ -263,7 +263,7 @@ const windowWidth = Dimensions.get("window").width;
               ...prevState,
               duty_status: callback(invigilatorData.duty_status)
             }))}
-                    style={styles.dropdown}
+            style={styles.dropdown}
             dropDownStyle={{ backgroundColor: "#fafafa"}}
             dropDownMaxHeight={150}
             dropDownDirection="TOP"
@@ -286,12 +286,15 @@ const windowWidth = Dimensions.get("window").width;
       <View style={styles.addWrap}>
         {UserAccess?.create === 1 &&    
           ( <Text >
+           <View style={{flexDirection:"row",justifyContent:"space-between"}} >
             <Pressable style={styles.addbtnWrap} onPress={() => setIsBulkuploadInvigilater(true)}>
             <Text style={styles.addbtntext}>BulkUpload</Text>
           </Pressable>
           <Pressable style={styles.addbtnWrap} onPress={() => handleAddButton()}>
           <Text style={styles.addbtntext}>Add</Text>
-        </Pressable> </Text>
+        </Pressable>
+        </View>
+   </Text>
 )
         }
         </View>
@@ -300,7 +303,7 @@ const windowWidth = Dimensions.get("window").width;
         keyExtractor={(item) => item.PK_InvigilatorDutyId.toString()}
             ListHeaderComponent={() => (
               <View style={styles.tableHeader}>
-                <Text style={[styles.tableHeaderText,]}>Duty Id</Text>
+                <Text style={[styles.tableHeaderText, ]}>Duty Id</Text>
                 <Text style={[styles.tableHeaderText, ]}>Employee Id</Text>
                 <Text style={[styles.tableHeaderText,]}>Invigilator Name</Text>
                 <Text style={[styles.tableHeaderText, ]}>Room</Text>
@@ -499,16 +502,19 @@ const windowWidth = Dimensions.get("window").width;
   },
   addWrap:{
    width:100,
-   alignSelf:"flex-end",
    marginBottom:10,
+  },
+  addbtntext:{
+    color:"#fff"
   },
   addbtnWrap:{
     width:100,
-    alignSelf:"flex-end",
+    // alignSelf:"flex-end",
     marginBottom:10,
     backgroundColor:"#0C7C62",
     padding:10,
     borderRadius:5,
+    marginRight:10,
     
   },
 });

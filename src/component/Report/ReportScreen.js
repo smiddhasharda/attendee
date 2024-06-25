@@ -9,7 +9,7 @@ import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetch,view } from "../../AuthService/AuthService";
 import { parse, format } from 'date-fns';
-
+import DropDownPicker from "react-native-dropdown-picker";
 import { DataTable } from 'react-native-paper';
 
 
@@ -27,6 +27,7 @@ const ReportScreen = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [examDates, setExamDates] = useState([]);
   const [examSelectedDate, setExamSelectedDate] = useState("");
+  const [open, setOpen] = useState(false);
   const pageSize = 10;
   const { addToast } = useToast();
 
@@ -308,8 +309,8 @@ const ReportScreen = () => {
 
   return (
     <View style={styles.container}>
-          <View style={dateSelectStyles.datesWrap}>
-        <View style={dateSelectStyles.dates}>
+          <View style={styles.datesWrap}>
+        <View style={styles.dates}>
           <FlatList
             data={examDates}
             renderItem={({ item }) => {
@@ -317,18 +318,18 @@ const ReportScreen = () => {
               const normalizedDate = parseAndFormatDate(item.EXAM_DT);
               return (
                  <Pressable onPress={() => handleDateClick(item.EXAM_DT)}>
-      <View style={[dateSelectStyles.dateItem, isActiveItem && dateSelectStyles.activebox]}>
-        <Text style={[dateSelectStyles.dateDay, isActiveItem && dateSelectStyles.activeText]}>
-          {normalizedDate.toString().split(' ')[0]}
-        </Text>
-        <Text style={[dateSelectStyles.dateNumber, isActiveItem && dateSelectStyles.activeText]}>
-          {normalizedDate.getDate()}
-        </Text>
-        <Text style={[dateSelectStyles.dateMonth, isActiveItem && dateSelectStyles.activeText]}>
-          {normalizedDate.toString().split(' ')[1]}
-        </Text>
-      </View>
-    </Pressable>
+                      <View style={[styles.dateItem, isActiveItem && styles.activebox]}>
+                        <Text style={[styles.dateDay, isActiveItem && styles.activeText]}>
+                          {normalizedDate.toString().split(' ')[0]}
+                        </Text>
+                        <Text style={[styles.dateNumber, isActiveItem && styles.activeText]}>
+                          {normalizedDate.getDate()}
+                        </Text>
+                        <Text style={[styles.dateMonth, isActiveItem && styles.activeText]}>
+                          {normalizedDate.toString().split(' ')[1]}
+                        </Text>
+                      </View>
+                </Pressable>
               );
             }}
             horizontal
@@ -342,24 +343,90 @@ const ReportScreen = () => {
         value={searchQuery}
         style={styles.searchBar}
       />
-      <RNPickerSelect
-        onValueChange={(value) => setSchoolFilter(value)}
-        items={schoolList}
-        placeholder={{ label: 'Select School', value: '' }}
-        style={pickerSelectStyles}
-      />
-      <RNPickerSelect
-        onValueChange={(value) => setRoomFilter(value)}
-        items={roomList}
-        placeholder={{ label: 'Select Room', value: '' }}
-        style={pickerSelectStyles}
-      />
-      <RNPickerSelect
-        onValueChange={(value) => setShiftFilter(value)}
-        items={shiftList}
-        placeholder={{ label: 'Select Shift', value: '' }}
-        style={pickerSelectStyles}
-      />
+      <View style={styles.dropdownWrap}>
+      {/* <View style={{flex:1, flexDirection:"row", justifyContent:"space-between"}}>
+                        <DropDownPicker
+                                    open={open}
+                                    value=""
+                                    items={schoolList}
+                                    setOpen={setOpen}
+                                    setValue=""
+                                    style={[styles.dropdown, { backgroundColor:"#fff" }]}
+                                    labelStyle={{
+                                      color: "white"
+                                    }}
+                                    dropDownStyle={{ backgroundColor: "#fafafa" }}
+                                    dropDownContainerStyle={styles.dropdownContainer}
+                                    dropDownMaxHeight={150}
+                                    dropDownDirection="BOTTOM"
+                                    listItemContainerStyle={{ height: 30 }}
+                                    listItemLabelStyle={{ fontSize: 14 }}
+                                  /> 
+                        <DropDownPicker
+                          open={open}
+                          value=""
+                          items={roomList}
+                          setOpen={setOpen}
+                          setValue=""
+                          style={[styles.dropdown, { backgroundColor:"#fff" }]}
+                          labelStyle={{
+                            color: "white"
+                          }}
+                          dropDownStyle={{ backgroundColor: "#fafafa" }}
+                          dropDownContainerStyle={styles.dropdownContainer}
+                          dropDownMaxHeight={150}
+                          dropDownDirection="BOTTOM"
+                          listItemContainerStyle={{ height: 30 }}
+                          listItemLabelStyle={{ fontSize: 14 }}
+                         /> 
+                        <DropDownPicker
+                          open={open}
+                          value=""
+                          items={schoolList}
+                          setOpen={setOpen}
+                          setValue=""
+                          style={[styles.dropdown, { backgroundColor:"#fff" }]}
+                          labelStyle={{
+                            color: "white"
+                          }}
+                          dropDownStyle={{ backgroundColor: "#fafafa" }}
+                          dropDownContainerStyle={styles.dropdownContainer}
+                          dropDownMaxHeight={150}
+                          dropDownDirection="BOTTOM"
+                          listItemContainerStyle={{ height: 30 }}
+                          listItemLabelStyle={{ fontSize: 14 }}
+                        /> 
+                </View> */}
+          <RNPickerSelect
+            onValueChange={(value) => setSchoolFilter(value)}
+            items={schoolList}
+            placeholder={{ label: 'Select School', value: '' }}
+            // style={pickerSelectStyles}   
+            style={{
+          inputIOS: pickerSelectStyles.inputIOS,
+          inputAndroid: pickerSelectStyles.inputAndroid,
+          inputWeb: pickerSelectStyles.inputWeb,
+          chevron: pickerSelectStyles.chevron,
+          placeholder: pickerSelectStyles.placeholder,
+          viewContainer: pickerSelectStyles.viewContainer,
+          modalViewBottom: pickerSelectStyles.modalViewBottom,
+        }}
+          />
+          <RNPickerSelect
+            onValueChange={(value) => setRoomFilter(value)}
+            items={roomList}
+            placeholder={{ label: 'Select Room', value: '' }}
+            style={pickerSelectStyles}
+          />
+          <RNPickerSelect
+            onValueChange={(value) => setShiftFilter(value)}
+            items={shiftList}
+            placeholder={{ label: 'Select Shift', value: '' }}
+            style={pickerSelectStyles}
+          />
+      </View>
+
+
       {/* <ScrollView horizontal={true}>
         <View>
           <Table borderStyle={styles.tableBorder}>
@@ -374,55 +441,56 @@ const ReportScreen = () => {
         pageSize={pageSize}
         onPageChange={setCurrentPage}
       /> */}
+          <ScrollView horizontal={true}>
+          <DataTable style={styles.table}>
+                <DataTable.Header style={styles.tablheader}>
+                  <DataTable.Title textStyle={styles.headerText} >System Id</DataTable.Title>
+                  <DataTable.Title textStyle={styles.headerText}>Roll Number</DataTable.Title>
+                  <DataTable.Title textStyle={styles.headerText}>Name</DataTable.Title>
+                  <DataTable.Title textStyle={styles.headerText}>Copy</DataTable.Title>
+                  <DataTable.Title textStyle={styles.headerText}>Room</DataTable.Title>
+                  <DataTable.Title textStyle={styles.headerText}>Seat</DataTable.Title>
+                  <DataTable.Title textStyle={styles.headerText}>Status</DataTable.Title>
+                  <DataTable.Title textStyle={styles.headerText}>School</DataTable.Title>
+                  <DataTable.Title textStyle={styles.headerText}>Graduation</DataTable.Title>
+                  <DataTable.Title textStyle={styles.headerText}>Stream</DataTable.Title>
+                  <DataTable.Title textStyle={styles.headerText}>Catelog Number</DataTable.Title>
+                  <DataTable.Title textStyle={styles.headerText}>Exam Date</DataTable.Title>
+                  <DataTable.Title textStyle={styles.headerText}>Exam Time</DataTable.Title>
+                </DataTable.Header>
 
-<DataTable>
-      <DataTable.Header>
-        <DataTable.Title >System Id</DataTable.Title>
-        <DataTable.Title>Roll Number</DataTable.Title>
-        <DataTable.Title>Name</DataTable.Title>
-        <DataTable.Title>Copy</DataTable.Title>
-        <DataTable.Title>Room</DataTable.Title>
-        <DataTable.Title>Seat</DataTable.Title>
-        <DataTable.Title>Status</DataTable.Title>
-        <DataTable.Title>School</DataTable.Title>
-        <DataTable.Title>Graduation</DataTable.Title>
-        <DataTable.Title>Stream</DataTable.Title>
-        <DataTable.Title>Catelog Number</DataTable.Title>
-        <DataTable.Title>Exam Date</DataTable.Title>
-        <DataTable.Title>Exam Time</DataTable.Title>
-      </DataTable.Header>
+                {filteredData.slice(from, to).map((item) => (
+                  <DataTable.Row style={{color:"#000"}}    key={item.EMPLID}>
+                    <DataTable.Cell textStyle={styles.tabledataText}>{item.ADM_APPL_NBR}</DataTable.Cell>
+                    <DataTable.Cell textStyle={styles.tabledataText}>{item.NAME_FORMAL}</DataTable.Cell>
+                    <DataTable.Cell textStyle={styles.tabledataText}>{item.copyData?.map((item, index) => `Copy Number ${index + 1}: ${item.copyNumber}`).join(', ')}</DataTable.Cell>
+                    <DataTable.Cell textStyle={styles.tabledataText}>{item.ROOM_NBR}</DataTable.Cell>
+                    <DataTable.Cell textStyle={styles.tabledataText}>{item.PTP_SEQ_CHAR}</DataTable.Cell>
+                    <DataTable.Cell textStyle={styles.tabledataText}>{item.Status}</DataTable.Cell>
+                    <DataTable.Cell textStyle={styles.tabledataText}>{item.DESCR}</DataTable.Cell>
+                    <DataTable.Cell textStyle={styles.tabledataText}>{item.DESCR2}</DataTable.Cell>
+                    <DataTable.Cell textStyle={styles.tabledataText}>{item.DESCR3}</DataTable.Cell>          
+                    <DataTable.Cell textStyle={styles.tabledataText}>{item.CATALOG_NBR}</DataTable.Cell>
+                    <DataTable.Cell textStyle={styles.tabledataText}>{item.EXAM_DT}</DataTable.Cell>
+                    <DataTable.Cell textStyle={styles.tabledataText}>{item.EXAM_START_TIME}</DataTable.Cell>
+                  </DataTable.Row>
+                ))}
 
-      {filteredData.slice(from, to).map((item) => (
-        <DataTable.Row key={item.EMPLID}>
-          <DataTable.Cell>{item.ADM_APPL_NBR}</DataTable.Cell>
-          <DataTable.Cell>{item.NAME_FORMAL}</DataTable.Cell>
-          <DataTable.Cell>{item.copyData?.map((item, index) => `Copy Number ${index + 1}: ${item.copyNumber}`).join(', ')}</DataTable.Cell>
-          <DataTable.Cell>{item.ROOM_NBR}</DataTable.Cell>
-          <DataTable.Cell>{item.PTP_SEQ_CHAR}</DataTable.Cell>
-          <DataTable.Cell>{item.Status}</DataTable.Cell>
-          <DataTable.Cell>{item.DESCR}</DataTable.Cell>
-          <DataTable.Cell>{item.DESCR2}</DataTable.Cell>
-          <DataTable.Cell>{item.DESCR3}</DataTable.Cell>          
-          <DataTable.Cell>{item.CATALOG_NBR}</DataTable.Cell>
-          <DataTable.Cell>{item.EXAM_DT}</DataTable.Cell>
-          <DataTable.Cell>{item.EXAM_START_TIME}</DataTable.Cell>
-        </DataTable.Row>
-      ))}
-
-      <DataTable.Pagination
-        page={page}
-        numberOfPages={Math.ceil(filteredData.length / itemsPerPage)}
-        onPageChange={(page) => setPage(page)}
-        label={`${from + 1}-${to} of ${filteredData.length}`}
-        numberOfItemsPerPageList={numberOfItemsPerPageList}
-        numberOfItemsPerPage={itemsPerPage}
-        onItemsPerPageChange={onItemsPerPageChange}
-        showFastPaginationControls
-        selectPageDropdownLabel={'Rows per page'}
-      />
-    </DataTable>
-
-
+                <DataTable.Pagination
+                  page={page}
+                  numberOfPages={Math.ceil(filteredData.length / itemsPerPage)}
+                  onPageChange={(page) => setPage(page)}
+                  label={`${from + 1}-${to} of ${filteredData.length}`}
+                  numberOfItemsPerPageList={numberOfItemsPerPageList}
+                  numberOfItemsPerPage={itemsPerPage}
+                  onItemsPerPageChange={onItemsPerPageChange}
+                  showFastPaginationControls
+                  selectPageDropdownLabel={'Rows per page'}
+                  style={styles.pagination}
+              
+                />
+          </DataTable>
+          </ScrollView>
       {/* <Button icon="download" mode="contained" onPress={exportToCSV}>
         Export CSV
       </Button> */}
@@ -431,11 +499,88 @@ const ReportScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff' },
+  datesWrap:{
+    flexDirection:"row",
+    justifyContent:"space-between",
+    alignItems:"center",
+     marginBottom:15,
+  },
+  searchicons:{
+     padding:"10px",
+     alignSelf:"center",
+     flexDirection:"row",
+     marginRight:"10px",
+  },
+  dates: {
+    width:'auto',
+    backgroundColor: "#ffffff",
+    borderBottomWidth: 1,
+    borderBottomColor: "#dddedf",
+    borderTopWidth: 0,
+    marginTop: 0,
+  },
+  dateItem: {
+    padding: 10,
+    minWidth: 60,
+    alignItems: "center",
+  },
+  dateNumber: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  dateDay: {
+    fontSize: 12,
+    marginBottom: 3,
+  },
+  dateMonth: {
+    fontSize: 12,
+    marginTop: 3,
+  },
+    activebox: {
+      backgroundColor: "#0cb551",
+      color: "#fff",
+      
+    },
+    activeText: {
+      color: "#fff",
+    },
+    inactivetext: {
+    color: "#fff",
+    },
+    inactivebox: {
+    backgroundColor: "#e50d0d",
+    },
+  container: { flex: 1, padding:10, },
   head: { height: 40, backgroundColor: '#f1f8ff' },
+  // Header:{backgroundColor:"#000", color:"#fff"},
   text: { margin: 6 },
-  tableBorder: { borderWidth: 2, borderColor: '#c8e1ff' },
-  searchBar: { marginBottom: 10 }
+  // tableBorder: { borderWidth: 2, borderColor: '#c8e1ff' },
+  searchBar: { marginBottom: 10, backgroundColor:"#fff", borderWidth:1, borderColor:"#ccc"},
+  dropdownWrap: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+
+  headerText:{
+    color:"#fff",
+  },
+  tablheader:{
+    backgroundColor:"rgb(17, 65, 102)",
+    border:0,
+ 
+  },
+  tabledataText:{
+    color:"#000",
+  },
+  pagination:{
+   backgroundColor:"rgb(46 44 44)",
+   borderRadius:40,
+   margin:8,
+  //  width:"40%",
+   alignSelf:"flex-start"
+  // justifyContent:"center"
+  }
 });
 
 const pickerSelectStyles = StyleSheet.create({
@@ -445,76 +590,97 @@ const pickerSelectStyles = StyleSheet.create({
     paddingHorizontal: 10,
     borderWidth: 1,
     borderColor: 'gray',
-    borderRadius: 4,
+    borderRadius: 8,
     color: 'black',
     paddingRight: 30,
-    marginBottom: 10
+    marginBottom: 10,
+    backgroundColor: 'white',
   },
+ 
   inputAndroid: {
     fontSize: 16,
     paddingHorizontal: 10,
     paddingVertical: 8,
-    borderWidth: 0.5,
-    borderColor: 'purple',
+    borderWidth: 1,
+    borderColor: 'gray',
     borderRadius: 8,
     color: 'black',
     paddingRight: 30,
-    marginBottom: 10
-  }
+    marginBottom: 10,
+    backgroundColor: 'white',
+ 
+  },
+  
+ 
+  inputWeb:{
+    padding:8,
+    borderRadius:4,
+  },
+  modalViewBottom:{
+  backgroundColor:"red",
+  },
+  iconContainer:{
+    backgroundColor:"red",
+    color:"green",
+    padding:40,
+  },
+
+
 });
 
-const dateSelectStyles = StyleSheet.create({
-datesWrap:{
-  flexDirection:"row",
-  justifyContent:"space-between",
-  alignItems:"center",
-   marginBottom:15,
-},
-searchicons:{
-   padding:"10px",
-   alignSelf:"center",
-   flexDirection:"row",
-   marginRight:"10px",
-},
-dates: {
-  width:'auto',
-  backgroundColor: "#ffffff",
-  borderBottomWidth: 1,
-  borderBottomColor: "#dddedf",
-  borderTopWidth: 0,
-  marginTop: 0,
-},
-dateItem: {
-  padding: 10,
-  minWidth: 60,
-  alignItems: "center",
-},
-dateNumber: {
-  fontSize: 16,
-  fontWeight: 'bold',
-},
-dateDay: {
-  fontSize: 12,
-  marginBottom: 3,
-},
-dateMonth: {
-  fontSize: 12,
-  marginTop: 3,
-},
-  activebox: {
-    backgroundColor: "#0cb551",
-    color: "#fff",
+// const dateSelectStyles = StyleSheet.create({
+// datesWrap:{
+//   flexDirection:"row",
+//   justifyContent:"space-between",
+//   alignItems:"center",
+//    marginBottom:15,
+// },
+// searchicons:{
+//    padding:"10px",
+//    alignSelf:"center",
+//    flexDirection:"row",
+//    marginRight:"10px",
+// },
+// dates: {
+//   width:'auto',
+//   backgroundColor: "#ffffff",
+//   borderBottomWidth: 1,
+//   borderBottomColor: "#dddedf",
+//   borderTopWidth: 0,
+//   marginTop: 0,
+// },
+// dateItem: {
+//   padding: 10,
+//   minWidth: 60,
+//   alignItems: "center",
+// },
+// dateNumber: {
+//   fontSize: 16,
+//   fontWeight: 'bold',
+// },
+// dateDay: {
+//   fontSize: 12,
+//   marginBottom: 3,
+// },
+// dateMonth: {
+//   fontSize: 12,
+//   marginTop: 3,
+// },
+//   activebox: {
+//     backgroundColor: "#0cb551",
+//     color: "#fff",
     
-  },
-  activeText: {
-    color: "#fff",
-  },
-  inactivetext: {
-  color: "#fff",
-  },
-  inactivebox: {
-  backgroundColor: "#e50d0d",
-  },
-});
+//   },
+//   activeText: {
+//     color: "#fff",
+//   },
+//   inactivetext: {
+//   color: "#fff",
+//   },
+//   inactivebox: {
+//   backgroundColor: "#e50d0d",
+//   },
+  
+// });
 
 export default ReportScreen;
