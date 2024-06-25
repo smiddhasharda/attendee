@@ -24,8 +24,7 @@
       },
       "permissions": [
         "android.permission.RECORD_AUDIO",
-        "android.permission.CAMERA",
-        "INTERNET"
+        "android.permission.CAMERA"
       ],
       "package": "com.dev.saxena.attendee"
     },

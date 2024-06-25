@@ -539,11 +539,11 @@ const StudentInfo = ({ navigation }) => {
           borderColor:'red',
           color: 'white',
           marginRight: 54,
-          paddingTop: 5,
-          PaddingBottom: 5,
-          paddingLeft: 10,
-          paddingRight: 10,
-          maxWidth: 100
+          padding: 6,
+          maxWidth: 100,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center"
         };
       case 'Not Defined':
         return {
@@ -552,10 +552,7 @@ const StudentInfo = ({ navigation }) => {
           borderColor:'grey',
           color: 'white',
           marginRight: 54,
-          paddingTop: 5,
-          PaddingBottom: 5,
-          paddingLeft: 10,
-          paddingRight: 10,
+          padding: 6,
           maxWidth: 100
         };    
       default:
@@ -565,10 +562,7 @@ const StudentInfo = ({ navigation }) => {
           borderColor:'green',
           color: 'white',
           marginRight: 54,
-          paddingTop: 5,
-          PaddingBottom: 5,
-          paddingLeft: 10,
-          paddingRight: 10,
+          padding: 6,
           maxWidth: 100
         };
     }
@@ -710,17 +704,17 @@ const StudentInfo = ({ navigation }) => {
                   {attendenceStatus}
                 </Text>
               </View>
-              <View style={[styles.infoItem,]}>
+              <View style={[styles.infoItem, styles.studStatus]}>
                 <Text style={[styles.label]}>Status</Text>
-                <View style={styles.section}>
-                <CheckBox value={status === "Present"} onValueChange={(item) =>setStatus("Present")} color={getStatuscolor()} disabled={(!isActive || !(userAccess?.label === "Admin"))}/>
-                <Text style={styles.value}> Present</Text>
+                <View style={styles.attStatus}>
+                  <CheckBox value={status === "Present"} onValueChange={(item) =>setStatus("Present")} color={getStatuscolor()} disabled={(!isActive || !(userAccess?.label === "Admin"))} />                
+                  <Text style={styles.value}> Present</Text>
                 </View>
-                <View style={styles.section}>
+                <View style={styles.attStatus}>
                 <CheckBox value={status === "Absent"} onValueChange={() => setStatus("Absent")} color={getStatuscolor()} disabled={(!isActive || !(userAccess?.label === "Admin"))} />
                 <Text style={styles.value}> Absent</Text>
                 </View>
-                <View style={styles.section}>
+                <View style={styles.attStatus}>
                 <CheckBox value={status === "UFM"} onValueChange={() => setStatus("UFM")} color={getStatuscolor()} disabled={(!isActive || !(userAccess?.label === "Admin"))} />
                 <Text style={styles.value}> UFM</Text>
                 </View>
@@ -1175,19 +1169,20 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   infoItem: {
+    flex: 1,
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
     marginBottom: 10,
   },
   label: {
     fontWeight: "bold",
     color: "#333",
-    width: "50%",
+    width: "42%",
     display: "inline-block"
   },
   value: {
     color: "#555",
-    width: "50%",
+    width: "58%",
   },
   // table: {
   //   // borderWidth: 1,
@@ -1483,6 +1478,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     display: "flex",
     justifyContent: 'center'
+  },
+    // studStatus: {
+    //   // flexDirection: "row",
+    //   // justifyContent: "space-between"
+    // },
+  attStatus: {
+    width: 90,
+    flexDirection: "row",
   }
-
 });
