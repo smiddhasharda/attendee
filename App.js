@@ -11,7 +11,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import DrawerNavigator from "./src/globalComponent/DrawerNavigatior/DrawerNavigatior";
 import ReportScreen from "./src/component/Report/ReportScreen";
 import InvigilatorScreen from "./src/component/Invigilator/InvigilatorScreen";
-import PieChart from "./src/component/Dashboard/PieChart";
 import StudentInfo from "./src/component/Student/StudentInfo";
 import RoomDetail from "./src/component/Room/RoomDetail";
 import TopHeader from "./src/globalComponent/Header/TopHeader";
@@ -109,11 +108,6 @@ const App = () => {
               <Stack.Screen
                 name="InvigilatorScreen"
                 component={InvigilatorScreen}
-                options={TopHeaderCommonConfig}
-              />
-              <Stack.Screen
-                name="PieChart"
-                component={PieChart}
                 options={TopHeaderCommonConfig}
               />
             </Stack.Navigator>

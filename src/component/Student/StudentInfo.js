@@ -1130,7 +1130,7 @@ const StudentInfo = ({ navigation }) => {
           </View>
 
  <View style={styles.buttonWrap}>
- {(((copiesData?.length > 0 || status === "Absent") && isActive && attendenceStatus != 'Debarred' ) || userAccess?.label === "Admin") && (<Pressable style={styles.submitButton} onPress={reportId ? handleStudentInfoUpdate : handleStudentInfoSubmit} >
+ {((copiesData?.length > 0 || status === "Absent") && ((isActive && attendenceStatus != 'Debarred') || userAccess?.label === "Admin") ) && (<Pressable style={styles.submitButton} onPress={reportId ? handleStudentInfoUpdate : handleStudentInfoSubmit} >
      <Text style={styles.addButtonText}> {" "} {reportId ? "Update" : "Submit"} </Text>
    </Pressable>) }
    
