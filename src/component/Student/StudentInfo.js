@@ -558,12 +558,14 @@ const StudentInfo = ({ navigation }) => {
       default:
         return {
           backgroundColor:'green',
-          borderRadius:4,
+          borderRadius:50,
+          height: 30,
+          textAlign: "center",
           borderColor:'green',
           color: 'white',
           marginRight: 54,
-          padding: 6,
-          maxWidth: 100
+          padding: 4,
+          width: 75
         };
     }
   }
