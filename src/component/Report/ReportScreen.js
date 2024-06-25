@@ -9,7 +9,7 @@ import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetch,view } from "../../AuthService/AuthService";
 import { parse, format } from 'date-fns';
-
+import DropDownPicker from "react-native-dropdown-picker";
 import { DataTable } from 'react-native-paper';
 
 
@@ -27,7 +27,7 @@ const ReportScreen = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [examDates, setExamDates] = useState([]);
   const [examSelectedDate, setExamSelectedDate] = useState("");
-  
+  const [open, setOpen] = useState(false);
   const pageSize = 10;
   const { addToast } = useToast();
 
@@ -318,18 +318,18 @@ const ReportScreen = () => {
               const normalizedDate = parseAndFormatDate(item.EXAM_DT);
               return (
                  <Pressable onPress={() => handleDateClick(item.EXAM_DT)}>
-      <View style={[styles.dateItem, isActiveItem && styles.activebox]}>
-        <Text style={[styles.dateDay, isActiveItem && styles.activeText]}>
-          {normalizedDate.toString().split(' ')[0]}
-        </Text>
-        <Text style={[styles.dateNumber, isActiveItem && styles.activeText]}>
-          {normalizedDate.getDate()}
-        </Text>
-        <Text style={[styles.dateMonth, isActiveItem && styles.activeText]}>
-          {normalizedDate.toString().split(' ')[1]}
-        </Text>
-      </View>
-    </Pressable>
+                      <View style={[styles.dateItem, isActiveItem && styles.activebox]}>
+                        <Text style={[styles.dateDay, isActiveItem && styles.activeText]}>
+                          {normalizedDate.toString().split(' ')[0]}
+                        </Text>
+                        <Text style={[styles.dateNumber, isActiveItem && styles.activeText]}>
+                          {normalizedDate.getDate()}
+                        </Text>
+                        <Text style={[styles.dateMonth, isActiveItem && styles.activeText]}>
+                          {normalizedDate.toString().split(' ')[1]}
+                        </Text>
+                      </View>
+                </Pressable>
               );
             }}
             horizontal
@@ -344,7 +344,59 @@ const ReportScreen = () => {
         style={styles.searchBar}
       />
       <View style={styles.dropdownWrap}>
-      
+      {/* <View style={{flex:1, flexDirection:"row", justifyContent:"space-between"}}>
+                        <DropDownPicker
+                                    open={open}
+                                    value=""
+                                    items={schoolList}
+                                    setOpen={setOpen}
+                                    setValue=""
+                                    style={[styles.dropdown, { backgroundColor:"#fff" }]}
+                                    labelStyle={{
+                                      color: "white"
+                                    }}
+                                    dropDownStyle={{ backgroundColor: "#fafafa" }}
+                                    dropDownContainerStyle={styles.dropdownContainer}
+                                    dropDownMaxHeight={150}
+                                    dropDownDirection="BOTTOM"
+                                    listItemContainerStyle={{ height: 30 }}
+                                    listItemLabelStyle={{ fontSize: 14 }}
+                                  /> 
+                        <DropDownPicker
+                          open={open}
+                          value=""
+                          items={roomList}
+                          setOpen={setOpen}
+                          setValue=""
+                          style={[styles.dropdown, { backgroundColor:"#fff" }]}
+                          labelStyle={{
+                            color: "white"
+                          }}
+                          dropDownStyle={{ backgroundColor: "#fafafa" }}
+                          dropDownContainerStyle={styles.dropdownContainer}
+                          dropDownMaxHeight={150}
+                          dropDownDirection="BOTTOM"
+                          listItemContainerStyle={{ height: 30 }}
+                          listItemLabelStyle={{ fontSize: 14 }}
+                         /> 
+                        <DropDownPicker
+                          open={open}
+                          value=""
+                          items={schoolList}
+                          setOpen={setOpen}
+                          setValue=""
+                          style={[styles.dropdown, { backgroundColor:"#fff" }]}
+                          labelStyle={{
+                            color: "white"
+                          }}
+                          dropDownStyle={{ backgroundColor: "#fafafa" }}
+                          dropDownContainerStyle={styles.dropdownContainer}
+                          dropDownMaxHeight={150}
+                          dropDownDirection="BOTTOM"
+                          listItemContainerStyle={{ height: 30 }}
+                          listItemLabelStyle={{ fontSize: 14 }}
+                        /> 
+                </View> */}
           <RNPickerSelect
             onValueChange={(value) => setSchoolFilter(value)}
             items={schoolList}
@@ -389,56 +441,56 @@ const ReportScreen = () => {
         pageSize={pageSize}
         onPageChange={setCurrentPage}
       /> */}
-<ScrollView horizontal={true}>
-<DataTable style={styles.table}>
-      <DataTable.Header style={styles.tablheader}>
-        <DataTable.Title textStyle={styles.headerText} >System Id</DataTable.Title>
-        <DataTable.Title textStyle={styles.headerText}>Roll Number</DataTable.Title>
-        <DataTable.Title textStyle={styles.headerText}>Name</DataTable.Title>
-        <DataTable.Title textStyle={styles.headerText}>Copy</DataTable.Title>
-        <DataTable.Title textStyle={styles.headerText}>Room</DataTable.Title>
-        <DataTable.Title textStyle={styles.headerText}>Seat</DataTable.Title>
-        <DataTable.Title textStyle={styles.headerText}>Status</DataTable.Title>
-        <DataTable.Title textStyle={styles.headerText}>School</DataTable.Title>
-        <DataTable.Title textStyle={styles.headerText}>Graduation</DataTable.Title>
-        <DataTable.Title textStyle={styles.headerText}>Stream</DataTable.Title>
-        <DataTable.Title textStyle={styles.headerText}>Catelog Number</DataTable.Title>
-        <DataTable.Title textStyle={styles.headerText}>Exam Date</DataTable.Title>
-        <DataTable.Title textStyle={styles.headerText}>Exam Time</DataTable.Title>
-      </DataTable.Header>
+          <ScrollView horizontal={true}>
+          <DataTable style={styles.table}>
+                <DataTable.Header style={styles.tablheader}>
+                  <DataTable.Title textStyle={styles.headerText} >System Id</DataTable.Title>
+                  <DataTable.Title textStyle={styles.headerText}>Roll Number</DataTable.Title>
+                  <DataTable.Title textStyle={styles.headerText}>Name</DataTable.Title>
+                  <DataTable.Title textStyle={styles.headerText}>Copy</DataTable.Title>
+                  <DataTable.Title textStyle={styles.headerText}>Room</DataTable.Title>
+                  <DataTable.Title textStyle={styles.headerText}>Seat</DataTable.Title>
+                  <DataTable.Title textStyle={styles.headerText}>Status</DataTable.Title>
+                  <DataTable.Title textStyle={styles.headerText}>School</DataTable.Title>
+                  <DataTable.Title textStyle={styles.headerText}>Graduation</DataTable.Title>
+                  <DataTable.Title textStyle={styles.headerText}>Stream</DataTable.Title>
+                  <DataTable.Title textStyle={styles.headerText}>Catelog Number</DataTable.Title>
+                  <DataTable.Title textStyle={styles.headerText}>Exam Date</DataTable.Title>
+                  <DataTable.Title textStyle={styles.headerText}>Exam Time</DataTable.Title>
+                </DataTable.Header>
 
-      {filteredData.slice(from, to).map((item) => (
-        <DataTable.Row style={{color:"#000"}}    key={item.EMPLID}>
-          <DataTable.Cell textStyle={styles.tabledataText}>{item.ADM_APPL_NBR}</DataTable.Cell>
-          <DataTable.Cell textStyle={styles.tabledataText}>{item.NAME_FORMAL}</DataTable.Cell>
-          <DataTable.Cell textStyle={styles.tabledataText}>{item.copyData?.map((item, index) => `Copy Number ${index + 1}: ${item.copyNumber}`).join(', ')}</DataTable.Cell>
-          <DataTable.Cell textStyle={styles.tabledataText}>{item.ROOM_NBR}</DataTable.Cell>
-          <DataTable.Cell textStyle={styles.tabledataText}>{item.PTP_SEQ_CHAR}</DataTable.Cell>
-          <DataTable.Cell textStyle={styles.tabledataText}>{item.Status}</DataTable.Cell>
-          <DataTable.Cell textStyle={styles.tabledataText}>{item.DESCR}</DataTable.Cell>
-          <DataTable.Cell textStyle={styles.tabledataText}>{item.DESCR2}</DataTable.Cell>
-          <DataTable.Cell textStyle={styles.tabledataText}>{item.DESCR3}</DataTable.Cell>          
-          <DataTable.Cell textStyle={styles.tabledataText}>{item.CATALOG_NBR}</DataTable.Cell>
-          <DataTable.Cell textStyle={styles.tabledataText}>{item.EXAM_DT}</DataTable.Cell>
-          <DataTable.Cell textStyle={styles.tabledataText}>{item.EXAM_START_TIME}</DataTable.Cell>
-        </DataTable.Row>
-      ))}
+                {filteredData.slice(from, to).map((item) => (
+                  <DataTable.Row style={{color:"#000"}}    key={item.EMPLID}>
+                    <DataTable.Cell textStyle={styles.tabledataText}>{item.ADM_APPL_NBR}</DataTable.Cell>
+                    <DataTable.Cell textStyle={styles.tabledataText}>{item.NAME_FORMAL}</DataTable.Cell>
+                    <DataTable.Cell textStyle={styles.tabledataText}>{item.copyData?.map((item, index) => `Copy Number ${index + 1}: ${item.copyNumber}`).join(', ')}</DataTable.Cell>
+                    <DataTable.Cell textStyle={styles.tabledataText}>{item.ROOM_NBR}</DataTable.Cell>
+                    <DataTable.Cell textStyle={styles.tabledataText}>{item.PTP_SEQ_CHAR}</DataTable.Cell>
+                    <DataTable.Cell textStyle={styles.tabledataText}>{item.Status}</DataTable.Cell>
+                    <DataTable.Cell textStyle={styles.tabledataText}>{item.DESCR}</DataTable.Cell>
+                    <DataTable.Cell textStyle={styles.tabledataText}>{item.DESCR2}</DataTable.Cell>
+                    <DataTable.Cell textStyle={styles.tabledataText}>{item.DESCR3}</DataTable.Cell>          
+                    <DataTable.Cell textStyle={styles.tabledataText}>{item.CATALOG_NBR}</DataTable.Cell>
+                    <DataTable.Cell textStyle={styles.tabledataText}>{item.EXAM_DT}</DataTable.Cell>
+                    <DataTable.Cell textStyle={styles.tabledataText}>{item.EXAM_START_TIME}</DataTable.Cell>
+                  </DataTable.Row>
+                ))}
 
-      <DataTable.Pagination
-        page={page}
-        numberOfPages={Math.ceil(filteredData.length / itemsPerPage)}
-        onPageChange={(page) => setPage(page)}
-        label={`${from + 1}-${to} of ${filteredData.length}`}
-        numberOfItemsPerPageList={numberOfItemsPerPageList}
-        numberOfItemsPerPage={itemsPerPage}
-        onItemsPerPageChange={onItemsPerPageChange}
-        showFastPaginationControls
-        selectPageDropdownLabel={'Rows per page'}
-        style={styles.pagination}
-    
-      />
-</DataTable>
-</ScrollView>
+                <DataTable.Pagination
+                  page={page}
+                  numberOfPages={Math.ceil(filteredData.length / itemsPerPage)}
+                  onPageChange={(page) => setPage(page)}
+                  label={`${from + 1}-${to} of ${filteredData.length}`}
+                  numberOfItemsPerPageList={numberOfItemsPerPageList}
+                  numberOfItemsPerPage={itemsPerPage}
+                  onItemsPerPageChange={onItemsPerPageChange}
+                  showFastPaginationControls
+                  selectPageDropdownLabel={'Rows per page'}
+                  style={styles.pagination}
+              
+                />
+          </DataTable>
+          </ScrollView>
       {/* <Button icon="download" mode="contained" onPress={exportToCSV}>
         Export CSV
       </Button> */}
@@ -508,10 +560,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 16,
- 
-
   },
- 
+
   headerText:{
     color:"#fff",
   },
@@ -524,7 +574,9 @@ const styles = StyleSheet.create({
     color:"#000",
   },
   pagination:{
-   backgroundColor:"rgb(165 163 163)",
+   backgroundColor:"rgb(46 44 44)",
+   borderRadius:40,
+   margin:8,
   //  width:"40%",
    alignSelf:"flex-start"
   // justifyContent:"center"
@@ -558,7 +610,7 @@ const pickerSelectStyles = StyleSheet.create({
     backgroundColor: 'white',
  
   },
-
+  
  
   inputWeb:{
     padding:8,
@@ -571,7 +623,8 @@ const pickerSelectStyles = StyleSheet.create({
     backgroundColor:"red",
     color:"green",
     padding:40,
-  }
+  },
+
 
 });
 
