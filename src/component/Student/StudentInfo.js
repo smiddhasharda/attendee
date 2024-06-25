@@ -471,7 +471,7 @@ const StudentInfo = ({ navigation }) => {
           data: "",
           conditionString: "",
           checkAvailability: "",
-          customQuery: `SELECT DISTINCT CATALOG_NBR, DESCR100 FROM PS_S_PRD_EX_TME_VW WHERE CATALOG_NBR = '${catlog_Nbr}'`,
+          customQuery: `SELECT DISTINCT CATALOG_NBR, DESCR100,EXAM_TIME_CODE FROM PS_S_PRD_EX_TME_VW WHERE CATALOG_NBR = '${catlog_Nbr}'`,
           viewType: 'Campus_View'
         },
         authToken
@@ -650,7 +650,7 @@ const StudentInfo = ({ navigation }) => {
               <View style={styles.infoItem}>
                 <Text style={styles.label}>Roll No:</Text>
                 <Text style={styles.value}>
-                  {studentDetails.ADM_APPL_NBR || ""}
+                  {studentDetails.CAMPUS_ID || ""}
                 </Text>
               </View>
               <View style={styles.infoItem}>
@@ -679,7 +679,7 @@ const StudentInfo = ({ navigation }) => {
               <View style={styles.infoItem}>
                 <Text style={styles.label}>Paper Id:</Text>
                 <Text style={styles.value}>
-                  {courseDetails.SU_PAPER_ID || ""}
+                  {courseDetails.EXAM_TIME_CODE || ""}
                 </Text>
               </View>
               <View style={styles.infoItem}>
