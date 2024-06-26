@@ -435,7 +435,7 @@ const styles = StyleSheet.create({
       height:30,
       alignItems: "center",
       justifyContent: "center",
-      backgroundColor: "#969595",
+      backgroundColor: "#ea4242",
     },
     countbg3:{
       borderRadius:3,
@@ -443,7 +443,7 @@ const styles = StyleSheet.create({
       height:30,
       alignItems: "center",
       justifyContent: "center",
-      backgroundColor: "#ea4242",
+      backgroundColor: "#fdbf48",
     },
     countbg4:{
       borderRadius:3,
