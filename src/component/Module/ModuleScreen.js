@@ -247,6 +247,7 @@ const ModuleScreen = ({ userAccess }) => {
       </Pressable>
     </View>
   )}
+  <View style={{height:"80%"}}>
   <FlatList
     data={moduleList}
     style={styles.modulesTbl}
@@ -277,7 +278,9 @@ const ModuleScreen = ({ userAccess }) => {
         </View>
       </View>
     )}
+    stickyHeaderIndices={[0]} 
   />
+  </View>
 </View>
 
       )}

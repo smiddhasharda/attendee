@@ -364,6 +364,7 @@ const RoleScreen = ({userAccess}) => {
             }
           />
           <Text style={styles.header}> Module List : </Text>
+          <View style={{height:"50%",}}>
           <FlatList
             data={moduleList}
             keyExtractor={(item) => item?.PK_ModuleId?.toString()}
@@ -388,7 +389,9 @@ const RoleScreen = ({userAccess}) => {
               </View>
             )}
             renderItem={({ item }) => renderModuleCheckboxes(item)}
+             stickyHeaderIndices={[0]} 
           />
+          </View>
         <View style={styles.buttonContainer}>    
               <Pressable style={styles.addbtnWrap} onPress={() => roleData.roleId ?  handleUpdateRole() : handleAddRole()} >
                     <Text style={styles.addbtntext } numberOfLines={1}>{roleData.roleId ?  "Update Role" : "Add New Role"}</Text>
