@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { StyleSheet, View, Image, Animated } from "react-native";
-import icon from "../../../assets/Splash_logo.png";
+import icon from "../../../assets/Splash_img.png";
 
 export default function SplashScreen() {
   const fadeAnimation = useRef(new Animated.Value(0)).current;

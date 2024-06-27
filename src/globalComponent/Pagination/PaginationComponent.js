@@ -1,22 +1,22 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
 
 const Pagination = ({ total, currentPage, pageSize, onPageChange }) => {
   const totalPages = Math.ceil(total / pageSize);
 
   return (
     <View style={styles.pagination}>
-      <TouchableOpacity onPress={() => onPageChange(currentPage - 1)} disabled={currentPage === 1}>
+      <Pressable onPress={() => onPageChange(currentPage - 1)} disabled={currentPage === 1}>
         <Text style={styles.pageNumber}>Previous</Text>
-      </TouchableOpacity>
+      </Pressable>
       {Array.from({ length: totalPages }, (_, index) => (
-        <TouchableOpacity key={index} onPress={() => onPageChange(index + 1)} disabled={currentPage === index + 1}>
+        <Pressable key={index} onPress={() => onPageChange(index + 1)} disabled={currentPage === index + 1}>
           <Text style={[styles.pageNumber, currentPage === index + 1 && styles.currentPage]}>{index + 1}</Text>
-        </TouchableOpacity>
+        </Pressable>
       ))}
-      <TouchableOpacity onPress={() => onPageChange(currentPage + 1)} disabled={currentPage === totalPages}>
+      <Pressable onPress={() => onPageChange(currentPage + 1)} disabled={currentPage === totalPages}>
         <Text style={styles.pageNumber}>Next</Text>
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 };
