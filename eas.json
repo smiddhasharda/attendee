@@ -5,12 +5,23 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "API_URL": "http://3.111.185.105:3502/api"
+      }
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "API_URL": "http://3.111.185.105:3502/api"
+      }
     },
-    "production": {}
+    "production": {
+      "env": {
+        "API_URL": "http://3.111.185.105:3502/api",
+        "OTHER_ENV_VAR": "value"
+      }
+    }
   },
   "submit": {
     "production": {}

@@ -119,7 +119,8 @@ const App = () => {
   );
 
   return  <View style={styles.container}>
-  {isShowSplashScreen ? <SplashScreen /> : loading ? renderLoading() : renderRouting()}
+  {/* {isShowSplashScreen ? <SplashScreen /> : loading ? renderLoading() : renderRouting()} */}
+  { loading ? renderLoading() : renderRouting()}
 </View> 
 };
 
