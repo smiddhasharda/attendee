@@ -4,10 +4,10 @@
     "slug": "attendee",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/Attendee_icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/Splash_img.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -50,6 +50,14 @@
           "cameraPermission": "Allow attendee to access your camera",
           "microphonePermission": "Allow attendee to access your microphone",
           "recordAudioAndroid": true
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
         }
       ]
     ],
