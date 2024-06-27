@@ -254,22 +254,22 @@ const ModuleScreen = ({ userAccess }) => {
     keyExtractor={item => item.PK_ModuleId.toString()}
     ListHeaderComponent={() => (
       <View style={styles.tableHeader}>
-        <Text style={[styles.tableHeaderText, styles.columnModule]} numberOfLines={1}>Module</Text>
+        <Text style={[styles.tableHeaderText, styles.columnModule,{width:"60%"}]} numberOfLines={1}>Module</Text>
         {/* <Text style={[styles.tableHeaderText, styles.columnDescription]} numberOfLines={1}>Description</Text> */}
-        <Text style={[styles.tableHeaderText, styles.columnStatus]} numberOfLines={1}>Status</Text>
-        <Text style={[styles.tableHeaderText, styles.columnAction]} numberOfLines={1}>Actions</Text>
+        <Text style={[styles.tableHeaderText, styles.columnStatus,{width:"20%"}]} numberOfLines={1}>Status</Text>
+        <Text style={[styles.tableHeaderText, styles.columnAction,{width:"20%"},{textAlign:"center"}]} numberOfLines={1}>Actions</Text>
       </View>
     )}
     renderItem={({ item }) => (
       <View style={styles.listItem}>
-        <Text style={[styles.listItemText, styles.columnModule]} numberOfLines={1}>{item.moduleName}</Text>
+        <Text style={[styles.listItemText, styles.columnModule,{width:"60%"}]} numberOfLines={1}>{item.moduleName}</Text>
         {/* <Text style={[styles.listItemText, styles.columnDescription]} numberOfLines={1}>{item.description}</Text> */}
-        <Pressable onPress={() => userAccessForModule?.update === 1 && handleModuleStatus(item.PK_ModuleId, item.isActive)}>
+        <Pressable style={{width:"20%"}} onPress={() => userAccessForModule?.update === 1 && handleModuleStatus(item.PK_ModuleId, item.isActive)}>
           <Text style={[styles.listItemText, item.isActive ? styles.listItemActiveStatus : styles.listItemInactiveStatus, styles.columnStatus]} numberOfLines={1}>
             {item.isActive ? "Active" : "Inactive"}
           </Text>
         </Pressable>
-        <View style={[styles.listItemActionContainer, styles.columnAction]}>
+        <View style={[styles.listItemActionContainer, styles.columnAction,{width:"20%"},{alignItems:"center"}]}>
           {userAccessForModule?.update === 1 ? (
             <Pressable style={styles.listItemEditButton} onPress={() => handleEditModule(item)}>
               <Feather name="edit" size={16} color="#0C7C62" />

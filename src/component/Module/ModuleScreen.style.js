@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgb(237, 52, 52)",
     padding: 10,
     borderRadius: 5,
-    textAlign: "left",
+    textAlign: "center",
     color: "#fff",
   },
   modulists: {
