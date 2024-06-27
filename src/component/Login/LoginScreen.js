@@ -11,7 +11,7 @@ const LoginScreen = ({ navigation }) => {
   const { addToast } = useToast();
   const [loginData, setLoginData] = useState({
     email: '',
-    OTP: null,
+    OTP: '',
     password: ''
   });
   const [activeUserType, setActiveUserType] = useState('Faculty');
@@ -28,7 +28,6 @@ const LoginScreen = ({ navigation }) => {
     } else {
       setLoginData({ ...loginData, [field]: value });
     }
-    // setLoginData({ ...loginData, [field]: value });
   };
 
   const validateEmail = () => {
@@ -54,6 +53,7 @@ const LoginScreen = ({ navigation }) => {
   const loginUser = async () => {
     try {
       await login('tbl_user_master', `email_id = '${loginData.email}' AND OTP = ${loginData.OTP} AND isActive = 1`);
+
       const userRoleArray = await AsyncStorage.getItem('userRolePermission') || [];
       const userRolePermission = JSON.parse(userRoleArray) || [];
       navigation.replace('PostLogin', { userRolePermission });
@@ -93,7 +93,7 @@ const LoginScreen = ({ navigation }) => {
 
   const handleLoginError = (error) => {
     if (error.message === 'Invalid credentials') {
-      addToast('Invalid email or OTP', 'error');
+      addToast('Incorrect OTP', 'error');
     } else if (error.message === 'Token has expired') {
       addToast('Token has expired, please log in again', 'error');
       navigation.replace('Login');
@@ -163,7 +163,7 @@ const LoginScreen = ({ navigation }) => {
               onChangeText={(text) => handleInputChange('email', text)}
               autoCapitalize="none"
               onFocus={() => setEmailTooltipVisible(false)}
-              editable={isOTPInputDisabled}
+              readOnly={!isOTPInputDisabled}
             />
             {activeUserType === 'Faculty' ? (
               <View>

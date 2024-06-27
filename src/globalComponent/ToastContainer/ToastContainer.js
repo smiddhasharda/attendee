@@ -1,6 +1,6 @@
 // ToastContainer.js
 import React, { useEffect, useState } from 'react';
-import { View, Text, Animated, TouchableOpacity } from 'react-native';
+import { View, Text, Animated, Pressable } from 'react-native';
 import ToastContainerStyle from './ToastContainer.style';
 import { useToast } from './ToastUtils';
 
@@ -17,7 +17,7 @@ const NativeToast = ({ id, message, type }) => {
   }, [progress]);
 
   return (
-    <TouchableOpacity onPress={() => removeToast(id)}>
+    <Pressable onPress={() => removeToast(id)}>
     <View
       style={[
         ToastContainerStyle.toastContainer,
@@ -30,7 +30,7 @@ const NativeToast = ({ id, message, type }) => {
         outputRange: ['0%', '100%'],
       }) }]} />
     </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 

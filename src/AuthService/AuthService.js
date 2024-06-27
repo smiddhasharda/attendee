@@ -1,9 +1,8 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { API_URL } from '@env';
 
 // const API_URL = 'http://localhost:3502/api';
-const API_URL = 'http://3.111.185.105:3502/api';
 
 
 const request = async (method, endpoint, data, authToken,params) => {
@@ -37,7 +36,8 @@ const request = async (method, endpoint, data, authToken,params) => {
   } catch (error) {
     if (axios.isAxiosError(error)) {
       if (error.response) {
-        throw new Error(error.response?.data?.message || 'Request failed');
+        console.log(error)
+        throw new Error(error.response?.data?.error || 'Request failed');
       } else if (error.request) {
         throw new Error('No response received from the server');
       }
