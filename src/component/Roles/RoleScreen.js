@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, Text, TextInput, FlatList, Pressable } from "react-native";
+import { View, Text, TextInput, FlatList, Pressable ,} from "react-native";
 import { insert, fetch, update } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CheckBox from "expo-checkbox";
 import styles from "./RoleScreen.style";
 import { Ionicons,Feather} from "@expo/vector-icons";
+import { ScrollView } from "react-native-gesture-handler";
 const RoleScreen = ({userAccess}) => {
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 2 );
   const { addToast } = useToast();
@@ -364,6 +365,7 @@ const RoleScreen = ({userAccess}) => {
             }
           />
           <Text style={styles.header}> Module List : </Text>
+          {/* <ScrollView horizontal={true} style={{maxWidth:"90%"}}>    </ScrollView> */}
           <View style={{height:"50%",}}>
           <FlatList
             data={moduleList}
@@ -392,6 +394,7 @@ const RoleScreen = ({userAccess}) => {
              stickyHeaderIndices={[0]} 
           />
           </View>
+      
         <View style={styles.buttonContainer}>    
               <Pressable style={styles.addbtnWrap} onPress={() => roleData.roleId ?  handleUpdateRole() : handleAddRole()} >
                     <Text style={styles.addbtntext } numberOfLines={1}>{roleData.roleId ?  "Update Role" : "Add New Role"}</Text>
@@ -418,28 +421,30 @@ const RoleScreen = ({userAccess}) => {
         keyExtractor={(item) => item.PK_RoleId.toString()}
           ListHeaderComponent={() => (
             <View style={styles.tableHeader}>
-              <Text  numberOfLines={1} style={[styles.tableHeaderText, styles.columnRole]}>Role Name</Text>
+              <Text  numberOfLines={1} style={[styles.tableHeaderText, styles.columnRole,{width:"50%"}]}>Role Name</Text>
               {/* <Text style={[styles.tableHeaderText,]}>
                 Description
               </Text> */}
-              <Text style={[styles.tableHeaderText, styles.columnStatus]}>Status</Text>
-              <Text style={[styles.tableHeaderText, styles.columnAction]}>Actions</Text>
+              <Text style={[styles.tableHeaderText, styles.columnStatus ,{width:"30%"}]}>Status</Text>
+              <Text style={[styles.tableHeaderText, styles.columnAction,{width:"20%"},{textAlign:"center"}]}>Actions</Text>
             </View>
           )}
           renderItem={({ item }) => (
             <View style={[styles.listItem]}>
-              <Text style={[styles.listItemText, styles.columnRole]}>
+              <Text style={[styles.listItemText, styles.columnRole,{width:"50%"}]}>
                 {item.roleName}
               </Text>
               {/* <Text style={[styles.listItemText,]}>
                 {item.description}
               </Text> */}
-              <Pressable
-                onPress={() => UserAccess?.update === 1 ? handleRoleStatus(item.PK_RoleId, item?.isActive) : ''}
+              <Pressable 
+                style={{ width: "30%" }} 
+                onPress={() => UserAccess?.update === 1 ? handleRoleStatus(item.PK_RoleId, item?.isActive) : ''} 
               >
                 <Text
                   style={[
                     styles.listItemText, styles.columnStatus,
+                   
                     item.isActive
                       ? styles.listItemActiveStatus
                       : styles.listItemInactiveStatus,
@@ -448,10 +453,11 @@ const RoleScreen = ({userAccess}) => {
                   {item.isActive ? "Active" : "Inactive"}
                 </Text>
               </Pressable>
-              <View >
+              <View style={ { width: "20%", alignItems:"center"}}>
                 {UserAccess?.update === 1 ?
-                 (<Pressable style={[styles.listItemEditButton]} onPress={() => handleEditRole(item)}>
-                     <Text style={[styles.listItemEditText, styles.columnAction]}><Feather name="edit" size={16} color="#0C7C62" /></Text>
+                 (<Pressable style={[styles.listItemEditButton,] } 
+                 onPress={() => handleEditRole(item)}>
+                     <Text style={[styles.listItemEditText, styles.columnAction,]}><Feather name="edit" size={16} color="#0C7C62" /></Text>
                   </Pressable>) : (<Text>-</Text>)}
               </View>
             </View>

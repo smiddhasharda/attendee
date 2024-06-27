@@ -34,7 +34,8 @@ import {
       fontSize: 18,
       fontWeight: "bold",
       //marginBottom:10,
-      clear: "both"
+      clear: "both",
+      marginBottom:10
     },
     
     tableHeader: {
@@ -48,13 +49,14 @@ import {
       borderRadius:5,
     },
     tableHeaderText: {
-      fontSize: 16, 
+      fontSize: 13, 
       fontWeight: 'bold', 
       // paddingHorizontal: 5,
       color:"#fff",
       textAlign:"left",
       alignItems:"center",
       flexShrink: 1,
+ 
     },
     listItem: {
       // flexDirection: "row",
@@ -64,6 +66,7 @@ import {
       // borderBottomColor: "#ddd",
       // paddingVertical: 10,
       // paddingHorizontal: 15,
+    
      flexDirection: 'row',
     //paddingTop: 15,
     padding: 10,
@@ -72,14 +75,14 @@ import {
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
     alignItems: 'center',
-    justifyContent: "space-between"
+    // justifyContent: "space-between"
     },
-    // listItemText: {
-    //    flex: 1,
-    // },
+    listItemText: {
+     fontSize:13, 
+    },
     listItemActiveStatus: {
       //color: "green",
-      textAlign: 'center',
+      // textAlign: 'center',
     },
     listItemInactiveStatus: {
       //color: "red",
