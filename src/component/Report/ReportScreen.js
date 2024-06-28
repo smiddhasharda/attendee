@@ -13,6 +13,7 @@ import DropDownPicker from "react-native-dropdown-picker";
 import { DataTable, Provider as PaperProvider, DarkTheme as PaperDarkTheme, DefaultTheme as PaperDefaultTheme  } from 'react-native-paper';
 import { DarkTheme } from '@react-navigation/native';
 
+
 let WebTable;
 if (Platform.OS === 'web') {
   WebTable = require('../../globalComponent/Tables/WebTable').default;
@@ -25,6 +26,7 @@ if (Platform.OS === 'web') {
 // const IOSTable = React.lazy(() => import('material-react-table'));
 
 const ReportScreen = () => {
+  let CurrentDate = new Date().toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-');
   const [tableHead, setTableHead] = useState(['System Id', 'Roll Number', 'Name','Copy','Room','Seat','Status','School','Graduation','Stream','Catelog Number','Exam Date','Exam Time']);
   const [tableData, setTableData] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -375,12 +377,94 @@ const ReportScreen = () => {
     [],
   );
 
+     // Export CSV File
 
+     const csvOptions = {
+       fieldSeparator: ',',
+       quoteStrings: '"',
+       decimalSeparator: '.',
+       showLabels: true,
+       useBom: true,
+       useKeysAsHeaders: false,
+       filename: `Report-${CurrentDate}`,
+       headers: tableHead
+     };
+     const handleExportData = () => {
+      const headers = Object.keys(tableHead).map((key) => tableHead[key]);
+      const csvData = [headers,...tableData.map((row) => [
+        row.EMPLID || '-', 
+        row.ADM_APPL_NBR || '-', 
+        row.NAME_FORMAL || '-', 
+        row.ROOM_NBR || '-', 
+        row.PTP_SEQ_CHAR || '-', 
+        row.Status || '-', 
+        row.Attendece_Status || '-', 
+        row.DESCR || '-', 
+        row.DESCR2 || '-', 
+        row.DESCR3 || '-', 
+        row.CATALOG_NBR || '-', 
+        row.EXAM_DT || '-', 
+        row.EXAM_START_TIME || '-', 
+      ])];
+    
+      const csvRows = csvData.map((row, index) => {
+        if (index === 0) { // header row
+          return row.map((cell) => `"${cell}"`).join(csvOptions.fieldSeparator);
+        } else {
+          return row.map((cell) => `"${cell}"`).join(csvOptions.fieldSeparator);
+        }
+      });
+    
+      const csvString = csvRows.join('\n');
+    
+      const blob = new Blob([csvString], { type: 'application/vnd.ms-excel' });
+      const csvFile = new File([blob], `${csvOptions.filename}.xls`, {
+        lastModified: new Date().getTime(),
+      });
+    
+      saveAs(csvFile);
+    };
+    
+    const handleExportRows = (rows) => {
+      const headers = Object.keys(rows[0].original).map((key) => rows[0].original[key]);
+      const csvData = [headers,...rows.map(({ original }) => [
+        original.EMPLID || '-', 
+        original.ADM_APPL_NBR || '-', 
+        original.NAME_FORMAL || '-', 
+        original.ROOM_NBR || '-', 
+        original.PTP_SEQ_CHAR || '-', 
+        original.Status || '-', 
+        original.Attendece_Status || '-', 
+        original.DESCR || '-', 
+        original.DESCR2 || '-', 
+        original.DESCR3 || '-', 
+        original.CATALOG_NBR || '-', 
+        original.EXAM_DT || '-', 
+        original.EXAM_START_TIME || '-', 
+      ])];
+    
+      const csvRows = csvData.map((row, index) => {
+        if (index === 0) { // header row
+          return row.map((cell) => `"${cell}"`).join(csvOptions.fieldSeparator);
+        } else {
+          return row.map((cell) => `"${cell}"`).join(csvOptions.fieldSeparator);
+        }
+      });
+    
+      const csvString = csvRows.join('\n');
+    
+      const blob = new Blob([csvString], { type: 'application/vnd.ms-excel' });
+      const csvFile = new File([blob], `${csvOptions.filename}.xls`, {
+        lastModified: new Date().getTime(),
+      });
+    
+      saveAs(csvFile);
+    };
   const renderTable = () => {
     if (Platform.OS === 'web') {
       return (
         <React.Suspense fallback={<Text>Loading...</Text>}>
-          <WebTable data={tableData} columns={WebColumns}/* web-specific props */ />
+          <WebTable data={tableData} columns={WebColumns} exportHead={tableHead} handleExportData={() => handleExportData()} handleExportRows={(rows)=> handleExportRows(rows)}/>
         </React.Suspense>
       );
     } else if (Platform.OS === 'android') {
