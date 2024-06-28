@@ -395,7 +395,7 @@ const RoleScreen = ({userAccess}) => {
           />
           </View>
       
-        <View style={styles.buttonContainer}>    
+        <View style={[styles.buttonContainer,{marginTop:40}]}>    
               <Pressable style={styles.addbtnWrap} onPress={() => roleData.roleId ?  handleUpdateRole() : handleAddRole()} >
                     <Text style={styles.addbtntext } numberOfLines={1}>{roleData.roleId ?  "Update Role" : "Add New Role"}</Text>
                   </Pressable>
@@ -415,6 +415,7 @@ const RoleScreen = ({userAccess}) => {
           </Pressable> 
           </View>
         }
+        <View style={{height:"60%"}}>
       <FlatList
         data={roleList}
         style={styles.rolesTbl}
@@ -463,6 +464,7 @@ const RoleScreen = ({userAccess}) => {
             </View>
           )}
       />
+      </View>
         </View>)
         }
     </View>
