@@ -9,8 +9,13 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
     "@expo/metro-runtime": "~3.2.1",
     "@expo/vector-icons": "^14.0.0",
+    "@mui/icons-material": "^5.15.20",
+    "@mui/material": "^5.15.20",
+    "@mui/x-date-pickers": "^7.7.1",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-community/masked-view": "^0.1.11",
     "@react-native-picker/picker": "2.7.5",
@@ -31,6 +36,7 @@
     "expo-image-picker": "~15.0.5",
     "expo-status-bar": "~1.12.1",
     "file-saver": "^2.0.5",
+    "material-react-table": "^2.13.0",
     "react": "18.2.0",
     "react-datepicker": "^6.4.0",
     "react-dom": "18.2.0",
