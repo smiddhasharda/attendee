@@ -525,6 +525,7 @@ const UserScreen = ({userAccess}) => {
     return(
         <View>
         <Text style={styles.header}> Role List : </Text>
+        <View style={{height:"55%"}}>
         <FlatList
           data={roleList}
           keyExtractor={(item) => item?.PK_RoleId?.toString()}
@@ -539,7 +540,9 @@ const UserScreen = ({userAccess}) => {
             </View>
           )}
           renderItem={({ item }) => renderRoleCheckboxes(item)}
+          stickyHeaderIndices={[0]} 
         />
+        </View>
         </View>
     )
   }
@@ -594,20 +597,20 @@ const UserScreen = ({userAccess}) => {
           keyExtractor={(item) => item.user_id.toString()}
           ListHeaderComponent={() => (
             <View style={styles.tableHeader}>
-              <Text style={[styles.tableHeaderText, ]}>User Name</Text>
-              <Text style={[styles.tableHeaderText, ]}>Contact No</Text>
-              <Text style={[styles.tableHeaderText, ]}>Status</Text>
-              <Text style={[styles.tableHeaderText,]}>Actions</Text>
+              <Text style={[styles.tableHeaderText,{width:"25%"}, ]}>User Name</Text>
+              <Text style={[styles.tableHeaderText, {width:"25%"} ]}>Contact No</Text>
+              <Text style={[styles.tableHeaderText,{width:"25%"}  ]}>Status</Text>
+              <Text style={[styles.tableHeaderText, {width:"25%"}]}>Actions</Text>
             </View>
           )}
           renderItem={({ item }) => (
             <View style={styles.listItem}>
-              <Text style={[styles.listItemText, ]}>{item.name}</Text>
-              <Text style={[styles.listItemText, ]}>{item.contact_number}</Text>
-                <Pressable onPress={() =>UserAccess?.update === 1 ? handleUserStatus(item.user_id, item?.isActive) : ''}>
+              <Text style={[styles.listItemText,{width:"25%"}  ]}>{item.name}</Text>
+              <Text style={[styles.listItemText, {width:"25%"} ]}>{item.contact_number}</Text>
+                <Pressable style={{width:"25%"} } onPress={() =>UserAccess?.update === 1 ? handleUserStatus(item.user_id, item?.isActive) : ''}>
               <Text style={[styles.listItemText, { flex: 1 }, item.isActive ? styles.listItemActiveStatus : styles.listItemInactiveStatus]}>{item.isActive ? "Active" : "Inactive"}</Text>
               </Pressable>          
-              <View>
+              <View style={{width:"25%",alignItems:"center"} }>
               {UserAccess?.update === 1 ? 
               (<Pressable style={styles.listItemEditButton} onPress={() => handleEditUser(item)}>
                     <Text style={styles.listItemEditText} ><Feather name="edit" size={16} color="#0C7C62" /></Text>
@@ -669,6 +672,10 @@ const styles = StyleSheet.create({
     color:"#fff",
     textAlign:"left",
     alignItems:"center",
+    flexShrink:1,
+    fontSize:13,
+    
+  
   },
   listItem: {
     flexDirection: 'row',
@@ -678,9 +685,10 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ccc',
     alignItems: 'center',   
   },
-  // listItemText: {
-  //   flex: 1,
-  // },
+  listItemText: {
+    fontSize:12,
+    // textWrap:"noWrap"
+  },
   listItemActiveStatus: {
     //color: 'green',
   },
