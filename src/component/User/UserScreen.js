@@ -592,6 +592,7 @@ const UserScreen = ({userAccess}) => {
                     </Text>
                   </Pressable>) }
           </View>
+          <View style={{height:"60%"}}>
         <FlatList 
           data={userList}
           keyExtractor={(item) => item.user_id.toString()}
@@ -619,6 +620,7 @@ const UserScreen = ({userAccess}) => {
             </View>
           )}
          />
+         </View>
       </View>)
       }
       </View>     
@@ -674,8 +676,6 @@ const styles = StyleSheet.create({
     alignItems:"center",
     flexShrink:1,
     fontSize:13,
-    
-  
   },
   listItem: {
     flexDirection: 'row',
