@@ -272,11 +272,11 @@ const windowWidth = Dimensions.get("window").width;
             listItemLabelStyle={{ fontSize: 14 }}
           />
           <View style={styles.buttonContainer}>
-            <Pressable onPress={() => invigilatorData.PK_InvigilatorDutyId ? handleUpdateInvigilator() : handleAddInvigilator()}>
-              <Text>{invigilatorData.PK_InvigilatorDutyId ? "Update Invigilator Duty" : "Add New Invigilator Duty"}</Text>
+            <Pressable  style={[styles.addbtnWrap, {width:180},{alignItems:"center"}]} onPress={() => invigilatorData.PK_InvigilatorDutyId ? handleUpdateInvigilator() : handleAddInvigilator()}>
+              <Text style={styles.addbtntext}>{invigilatorData.PK_InvigilatorDutyId ? "Update Invigilator Duty" : "Add New Invigilator Duty"}</Text>
             </Pressable>
-            <Pressable onPress={() => handleClose()}>
-              <Text style={styles.cancelbtn}>Cancel</Text>
+            <Pressable style={styles.cancelbtn} onPress={() => handleClose()}>
+              <Text style={styles.cancelbtntext}>Cancel</Text>
             </Pressable>
           </View>
         </View>
@@ -298,35 +298,37 @@ const windowWidth = Dimensions.get("window").width;
 )
         }
         </View>
-      <FlatList 
-        data={invigilatorList}
-        keyExtractor={(item) => item.PK_InvigilatorDutyId.toString()}
-            ListHeaderComponent={() => (
-              <View style={styles.tableHeader}>
-                <Text style={[styles.tableHeaderText, ]}>Duty Id</Text>
-                <Text style={[styles.tableHeaderText, ]}>Employee Id</Text>
-                <Text style={[styles.tableHeaderText,]}>Invigilator Name</Text>
-                <Text style={[styles.tableHeaderText, ]}>Room</Text>
-                <Text style={[styles.tableHeaderText,]}>Date</Text>
-                <Text style={[styles.tableHeaderText,]}>Shift</Text>
-                <Text style={[styles.tableHeaderText, ]}>Duty Status</Text>
-                <Text style={[styles.tableHeaderText,]}>Actions </Text>
-              </View>
-      )} renderItem={({ item }) => (          
-        <View style={styles.listItem}>
-          <Text style={[styles.listItemText, ]}>{item.PK_InvigilatorDutyId}</Text>
-          <Text style={[styles.listItemText, ]}>{item.employeeId}</Text>
-          <Text style={[styles.listItemText, ]}>{item.invigilatorName}</Text>
-          <Text style={[styles.listItemText, ]}>{item.room}</Text>
-          <Text style={[styles.listItemText, ]}>{item.date}</Text>
-          <Text style={[styles.listItemText,]}>{item.shift}</Text>
-          <Text style={[styles.listItemText, ]}>{item.duty_status}</Text>    
-          {UserAccess?.update === 1 ? <Pressable style={styles.listItemEditButton} onPress={() => handleEditInvigilator(item)}>
-           <Text style={styles.listItemEditText}><Feather name="edit" size={16} color="white" /></Text>
-            </Pressable> : (<Text>-</Text>)}  
-        </View>
-        )}
-      />
+        <View style={{height:"56%"}}>
+          <FlatList 
+            data={invigilatorList}
+            keyExtractor={(item) => item.PK_InvigilatorDutyId.toString()}
+                ListHeaderComponent={() => (
+                  <View style={styles.tableHeader}>
+                    <Text style={[styles.tableHeaderText, ]}>Duty Id</Text>
+                    <Text style={[styles.tableHeaderText, ]}>Employee Id</Text>
+                    <Text style={[styles.tableHeaderText,]}>Invigilator Name</Text>
+                    <Text style={[styles.tableHeaderText, ]}>Room</Text>
+                    <Text style={[styles.tableHeaderText,]}>Date</Text>
+                    <Text style={[styles.tableHeaderText,]}>Shift</Text>
+                    <Text style={[styles.tableHeaderText, ]}>Duty Status</Text>
+                    <Text style={[styles.tableHeaderText,]}>Actions </Text>
+                  </View>
+          )} renderItem={({ item }) => (          
+            <View style={styles.listItem}>
+              <Text style={[styles.listItemText, ]}>{item.PK_InvigilatorDutyId}</Text>
+              <Text style={[styles.listItemText, ]}>{item.employeeId}</Text>
+              <Text style={[styles.listItemText, ]}>{item.invigilatorName}</Text>
+              <Text style={[styles.listItemText, ]}>{item.room}</Text>
+              <Text style={[styles.listItemText, ]}>{item.date}</Text>
+              <Text style={[styles.listItemText,]}>{item.shift}</Text>
+              <Text style={[styles.listItemText, ]}>{item.duty_status}</Text>    
+              {UserAccess?.update === 1 ? <Pressable style={styles.listItemEditButton} onPress={() => handleEditInvigilator(item)}>
+              <Text style={styles.listItemEditText}><Feather name="edit" size={16} color="white" /></Text>
+                </Pressable> : (<Text>-</Text>)}  
+            </View>
+            )}
+          />
+      </View>
     </View>
    ))
     }
@@ -505,7 +507,8 @@ const windowWidth = Dimensions.get("window").width;
    marginBottom:10,
   },
   addbtntext:{
-    color:"#fff"
+    color:"#fff",
+    textAlign:"center"
   },
   addbtnWrap:{
     width:100,
@@ -517,5 +520,19 @@ const windowWidth = Dimensions.get("window").width;
     marginRight:10,
     
   },
+  cancelbtn:{
+    width:100,
+    marginBottom:10,
+    backgroundColor:"rgb(237, 52, 52)",
+    padding:10,
+    borderRadius:5,
+    textAlign:"center",
+    color:"#fff"
+  },
+  cancelbtntext:{
+    color:"#fff",
+    textAlign:"center"
+
+  }
 });
   
