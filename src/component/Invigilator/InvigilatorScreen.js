@@ -5,7 +5,7 @@
  import { insert, update, fetch } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Ionicons,AntDesign,Feather} from "@expo/vector-icons";
+import { Ionicons,AntDesign,Feather,FontAwesome5,FontAwesome,MaterialIcons ,FontAwesome6} from "@expo/vector-icons";
 const windowWidth = Dimensions.get("window").width;
 
  const InvigilatorScreen = ({userAccess}) => {
@@ -282,53 +282,64 @@ const windowWidth = Dimensions.get("window").width;
         </View>
    ): (
     <View style={styles.userListWrap}>
+    <View style={{flexDirection:"row", justifyContent:"space-between",alignItems:"center"}}>
       <Text style={styles.header}>Invigilator Duty List :</Text>      
       <View style={styles.addWrap}>
         {UserAccess?.create === 1 &&    
           ( <Text >
-           <View style={{flexDirection:"row",justifyContent:"space-between"}} >
-            <Pressable style={styles.addbtnWrap} onPress={() => setIsBulkuploadInvigilater(true)}>
-            <Text style={styles.addbtntext}>BulkUpload</Text>
-          </Pressable>
-          <Pressable style={styles.addbtnWrap} onPress={() => handleAddButton()}>
-          <Text style={styles.addbtntext}>Add</Text>
+          
+           <View style={{flexDirection:"row",justifyContent:"space-between",}} >
+        
+          <Pressable  style={{marginRight:20}}  onPress={() => handleAddButton()}>
+          <Text ><FontAwesome5 name="download" size={20} color="purple" /></Text>
         </Pressable>
+        <Pressable style={{marginRight:20}} onPress={() => setIsBulkuploadInvigilater(true)}>
+            <Text ><FontAwesome name="upload" size={20} color="purple" /></Text>
+          </Pressable>
+          <Pressable  onPress={() => handleAddButton()}>
+          <Text style={styles.addbtntext}><FontAwesome6 name="add" size={20} color="purple" /></Text>
+        </Pressable>
+       
         </View>
    </Text>
 )
         }
         </View>
-        <View style={{height:"56%"}}>
+        </View>
+        <ScrollView horizontal>
+        <View style={{minHeight:"56%", width: '100%' ,}}>
           <FlatList 
             data={invigilatorList}
             keyExtractor={(item) => item.PK_InvigilatorDutyId.toString()}
                 ListHeaderComponent={() => (
                   <View style={styles.tableHeader}>
-                    <Text style={[styles.tableHeaderText, ]}>Duty Id</Text>
-                    <Text style={[styles.tableHeaderText, ]}>Employee Id</Text>
-                    <Text style={[styles.tableHeaderText,]}>Invigilator Name</Text>
-                    <Text style={[styles.tableHeaderText, ]}>Room</Text>
-                    <Text style={[styles.tableHeaderText,]}>Date</Text>
-                    <Text style={[styles.tableHeaderText,]}>Shift</Text>
-                    <Text style={[styles.tableHeaderText, ]}>Duty Status</Text>
-                    <Text style={[styles.tableHeaderText,]}>Actions </Text>
+                    <Text style={[styles.tableHeaderText,{width:100} ]}>Id</Text>
+                    <Text style={[styles.tableHeaderText, {width:200}]}>EmpId</Text>
+                    <Text style={[styles.tableHeaderText,{width:200} ]}>Name</Text>
+                    <Text style={[styles.tableHeaderText,{width:200}  ]}>Room</Text>
+                    <Text style={[styles.tableHeaderText,{width:200} ]}>Date</Text>
+                    <Text style={[styles.tableHeaderText,{width:200} ]}>Shift</Text>
+                    <Text style={[styles.tableHeaderText,{width:100}  ]}>Status</Text>
+                    <Text style={[styles.tableHeaderText,{width:60} ]}>Actions </Text>
+                    
                   </View>
           )} renderItem={({ item }) => (          
             <View style={styles.listItem}>
-              <Text style={[styles.listItemText, ]}>{item.PK_InvigilatorDutyId}</Text>
-              <Text style={[styles.listItemText, ]}>{item.employeeId}</Text>
-              <Text style={[styles.listItemText, ]}>{item.invigilatorName}</Text>
-              <Text style={[styles.listItemText, ]}>{item.room}</Text>
-              <Text style={[styles.listItemText, ]}>{item.date}</Text>
-              <Text style={[styles.listItemText,]}>{item.shift}</Text>
-              <Text style={[styles.listItemText, ]}>{item.duty_status}</Text>    
-              {UserAccess?.update === 1 ? <Pressable style={styles.listItemEditButton} onPress={() => handleEditInvigilator(item)}>
-              <Text style={styles.listItemEditText}><Feather name="edit" size={16} color="white" /></Text>
+              <Text style={[styles.listItemText,{width:100}  ]}>{item.PK_InvigilatorDutyId}</Text>
+              <Text style={[styles.listItemText, {width:200} ]}>{item.employeeId}</Text>
+              <Text style={[styles.listItemText,{width:200}  ]}>{item.invigilatorName}</Text>
+              <Text style={[styles.listItemText,{width:200} ]}>{item.room}</Text>
+              <Text style={[styles.listItemText,{width:200}  ]}>{item.date}</Text>
+              <Text style={[styles.listItemText,{width:200} ]}>{item.shift}</Text>
+              <Text style={[styles.listItemText, {width:100} ]}>{item.duty_status}</Text>    
+              {UserAccess?.update === 1 ? <Pressable style={[{width:60} ,{alignItems:"center"}]} onPress={() => handleEditInvigilator(item)}>
+              <Text style={styles.listItemEditText}><Feather name="edit" size={16} color="green" /></Text>
                 </Pressable> : (<Text>-</Text>)}  
             </View>
             )}
           />
       </View>
+      </ScrollView>
     </View>
    ))
     }
@@ -384,8 +395,8 @@ const windowWidth = Dimensions.get("window").width;
       fontWeight: 'bold', 
       // paddingHorizontal: 5,
       color:"#fff",
-      textAlign:"center",
-      alignItems:"center",
+      textAlign:"",
+      // alignItems:"center",
   },
   listItem: {
     flexDirection: 'row',
@@ -395,10 +406,11 @@ const windowWidth = Dimensions.get("window").width;
     borderBottomColor: '#ddd',
     paddingVertical: 10,
     paddingHorizontal: 15,
-    textAlign:"center",
+    // textAlign:"center",
   },
   listItemText: {
-    flex: 1,
+    // flex: 1,
+
   },
   listItemActiveStatus: {
     color: 'green',

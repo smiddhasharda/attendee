@@ -525,7 +525,7 @@ const UserScreen = ({userAccess}) => {
     return(
         <View>
         <Text style={styles.header}> Role List : </Text>
-        <View style={{height:"55%"}}>
+        <View style={{minHeight:"55%"}}>
         <FlatList
           data={roleList}
           keyExtractor={(item) => item?.PK_RoleId?.toString()}
@@ -592,7 +592,7 @@ const UserScreen = ({userAccess}) => {
                     </Text>
                   </Pressable>) }
           </View>
-          <View style={{height:"60%"}}>
+          <View style={{minHeight:"80%"}}>
         <FlatList 
           data={userList}
           keyExtractor={(item) => item.user_id.toString()}
