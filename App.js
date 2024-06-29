@@ -9,7 +9,6 @@ import { RoleProvider } from "./src/component/Roles/RoleContext";
 import LoginScreen from "./src/component/Login/LoginScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DrawerNavigator from "./src/globalComponent/DrawerNavigatior/DrawerNavigatior";
-import ReportScreen from "./src/component/Report/ReportScreen";
 import InvigilatorScreen from "./src/component/Invigilator/InvigilatorScreen";
 import StudentInfo from "./src/component/Student/StudentInfo";
 import RoomDetail from "./src/component/Room/RoomDetail";
@@ -99,11 +98,6 @@ const App = () => {
                 name="TopHeader"
                 component={TopHeader}
                 options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="ReportScreen"
-                component={ReportScreen}
-                options={TopHeaderCommonConfig}
               />
               <Stack.Screen
                 name="InvigilatorScreen"
