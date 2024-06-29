@@ -263,7 +263,7 @@ const StudentInfo = ({ navigation }) => {
               item.alternateCopyNumber6,
             ].filter(Boolean),
           }));
-        setCopiesData(CopyFetchDetails);
+        setCopiesData(CopyFetchDetails || []);
         let TempcopyList = response?.data?.receivedData?.[0]?.ReportData?.[0]?.copyData?.map(
           (item) => item.PK_CopyId
         );
@@ -600,7 +600,7 @@ const StudentInfo = ({ navigation }) => {
       if (now.getTime() >= start && now.getTime() <= end) {
         setIsActive(true);
       } else {
-        // setIsActive(false);
+        setIsActive(false);
       }
     }, 1000);
 
@@ -989,6 +989,7 @@ const StudentInfo = ({ navigation }) => {
             <View
               style={{ flexDirection: "row", justifyContent: "space-between" }}
             >
+              {console.log(copiesData?.length, isActive , attendenceStatus)}
               <Text style={styles.addAnsheading}> AnswerSheet </Text>
               {((copiesData?.length < 4 && isActive && attendenceStatus != 'Debarred')) && (
                 <AntDesign style={styles.addicon} name="pluscircleo" size={24} color="black" onPress={handleAddCopy} />
