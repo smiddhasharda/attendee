@@ -1,12 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Platform, Text, Pressable, View } from 'react-native';
 
-// For web, you might need to use a different date picker library or implement your own.
 let DatePickerComponent;
 if (Platform.OS === 'web') {
-  // Example: Using react-datepicker library for web
   DatePickerComponent = require('react-datepicker').default;
-  // require("react-datepicker/dist/react-datepicker.css");
+  require("react-datepicker/dist/react-datepicker.css");
 } else {
   DatePickerComponent = require('react-native-datepicker').default;
 }
@@ -19,17 +17,14 @@ const CustomDateTimePicker = (props) => {
 
   const renderDatePicker = () => {
     if (Platform.OS === 'ios') {
-      // For iOS, use the native DatePickerIOS component
       return <DatePickerComponent date={props.date} onDateChange={date => props.handelChangeDate(date)} mode="datetime" />;
     } else if (Platform.OS === 'android') {
-      // For Android, you can use a custom implementation
       return (
         <Pressable onPress={showAndroidDatePicker}>
           <Text>{props.date.toDateString()}</Text>
         </Pressable>
       );
     } else {
-      // For web, render a web-compatible date picker
       return (
         <DatePickerComponent
           selected={props.date}
@@ -47,4 +42,3 @@ const CustomDateTimePicker = (props) => {
 };
 
 export default CustomDateTimePicker;
-
