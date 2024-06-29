@@ -9,7 +9,7 @@ import {
   const styles = StyleSheet.create({
     container: {
       //flex: 1,
-      padding: 10,
+      padding: 20,
     },
     formContainer: {
       marginBottom: 20,
@@ -113,7 +113,7 @@ import {
     addBtn: {
       alignItems:"flex-end", 
       position: "relative", 
-      bottom: 24,
+      bottom: 35,
       //minHeight: 40
     },
     rolesTbl:{

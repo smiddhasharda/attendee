@@ -415,7 +415,7 @@ const RoleScreen = ({userAccess}) => {
           </Pressable> 
           </View>
         }
-        <View style={{height:"60%"}}>
+        <View style={{height:"90%"}}>
       <FlatList
         data={roleList}
         style={styles.rolesTbl}
