@@ -166,7 +166,7 @@ const StudentInfo = ({ navigation }) => {
     try {
       const CopyEmptyValues = copiesData?.length > 0 ? copiesData.some(data => data.mainCopy === "" || data.alternateCopies.includes("")) : true;
       if (CopyEmptyValues && status !== "Absent") {
-        addToast("Please Fill CopyData First!", "error");
+        addToast("Enter the copy details!", "error");
       }
       else {
         const authToken = await checkAuthToken();
@@ -222,7 +222,7 @@ const StudentInfo = ({ navigation }) => {
             authToken
           );
           if (NewResponse) {
-            addToast("Student Details Add Successful", "success");
+            addToast("Student details are updated successfully!", "success");
             navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation: navigation, userAccess });
           }
         }
@@ -277,7 +277,7 @@ const StudentInfo = ({ navigation }) => {
     try {
       const CopyEmptyValues = copiesData?.length > 0 ? copiesData.some(data => data.mainCopy === "" || data.alternateCopies.includes("")) : true;
       if (CopyEmptyValues) {
-        addToast("Please Fill CopyData First!", "error");
+        addToast("Please enter the copy details!", "error");
       }
       else {
         const authToken = await checkAuthToken();
@@ -346,7 +346,7 @@ const StudentInfo = ({ navigation }) => {
               authToken
             );
             if (NewResponse) {
-              addToast("Student Details Update Successful", "success");
+              addToast("Student details are updated successfully!", "success");
               navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation: navigation, userAccess });
             }
           }
@@ -360,16 +360,16 @@ const StudentInfo = ({ navigation }) => {
   const handleAuthErrors = (error) => {
     switch (error.message) {
       case "Invalid credentials":
-        addToast("Invalid authentication credentials", "error");
+        addToast("Invalid authentication credentials!", "error");
         break;
       case "Data already exists":
-        addToast("Student Info with the same name already exists", "error");
+        addToast("Student details already exists!", "error");
         break;
       case "No response received from the server":
         addToast("No response received from the server", "error");
         break;
       default:
-        addToast("Student Info Operation Failed", "error");
+        addToast("Student details operation failed", "error");
     }
   };
 
@@ -987,7 +987,7 @@ const StudentInfo = ({ navigation }) => {
               style={{ flexDirection: "row", justifyContent: "space-between" }}
             >
               <Text style={styles.addAnsheading}> AnswerSheet </Text>
-              {((copiesData?.length < 6 && isActive && attendenceStatus != 'Debarred') || userAccess?.label === "Admin") && (
+              {((copiesData?.length < 4 && isActive && attendenceStatus != 'Debarred') || userAccess?.label === "Admin") && (
                 <AntDesign style={styles.addicon} name="pluscircleo" size={24} color="black" onPress={handleAddCopy} />
               )}
             </View>

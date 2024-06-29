@@ -66,7 +66,7 @@ const LoginScreen = ({ navigation }) => {
     try {
       const response = await emailVerify('tbl_user_master', `email_id = '${loginData.email}' `,'PS_SU_PSFT_COEM_VW',`EMAILID = '${loginData.email}'`);
       if (response) {
-        addToast(`OTP Sent Successfully to ${loginData.email}`, 'success');
+        addToast(`OTP is sent successfully on your registered email ${loginData.email}`, 'success');
         setOTPInputDiasbled(false);
       }
     } catch (error) {
@@ -95,7 +95,7 @@ const LoginScreen = ({ navigation }) => {
     if (error.message === 'Invalid credentials') {
       addToast('Incorrect OTP', 'error');
     } else if (error.message === 'Token has expired') {
-      addToast('Token has expired, please log in again', 'error');
+      addToast('Token is expired, please log in again', 'error');
       navigation.replace('Login');
     } else {
       console.error('Login Failed', error);
@@ -108,11 +108,11 @@ const LoginScreen = ({ navigation }) => {
       addToast('Invalid Email Id', 'error');
     } 
     else if (error.message === 'Email Id Not Allowed'){
-      addToast('Not Allowed, Contact Admin', 'error');
+      addToast('Not Authorized kindly contact admin!', 'error');
     }
     else {
       console.error('Email Verification Failed', error);
-      addToast('Email verification failed, please try again later', 'error');
+      addToast('Email verification is failed, please try again later', 'error');
     }
   };
 

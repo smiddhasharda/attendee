@@ -34,7 +34,7 @@ const { parse, format } = require('date-fns');
     const authToken = await AsyncStorage.getItem("authToken");
 
     if (!authToken) {
-      addToast("Authentication token not available", "error");
+      addToast("Authentication token is not available", "error");
       throw new Error("Authentication token not available");
     }
 
@@ -101,7 +101,7 @@ const { parse, format } = require('date-fns');
       );
 
       if (response) {
-        addToast("Invigilator Add Successful", "success");
+        addToast("Invigilator duty is added successfully!", "success");
         await handleClose();
         handleGetInigilatorDuty();
       }
@@ -143,7 +143,7 @@ const { parse, format } = require('date-fns');
       );
 
       if (response) {
-        addToast("Invigilator Update Successful", "success");
+        addToast("Invigilator duty is updated successfully!", "success");
         await handleClose();
         handleGetInigilatorDuty();
       }
@@ -200,7 +200,7 @@ const { parse, format } = require('date-fns');
         addToast("Invalid authentication credentials", "error");
         break;
       case "Data already exists":
-        addToast("Module with the same name already exists", "error");
+        addToast("Module name already exists!", "error");
         break;
       case "No response received from the server":
         addToast("No response received from the server", "error");
