@@ -42,8 +42,8 @@ const CustomDrawerContent = ({ ...props }) => {
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
     if (!authToken) {
-      addToast("Authentication token not available", "error");
-      throw new Error("Authentication token not available");
+      addToast("Authentication token is not available", "error");
+      throw new Error("Authentication token is not available");
     }
     return authToken;
   }, [addToast]);
@@ -99,7 +99,7 @@ const CustomDrawerContent = ({ ...props }) => {
       if (response) {
         await AsyncStorage.removeItem("userData");
         await handleGetUserData();
-        addToast(`User Profile Update Successful`, "success");
+        addToast(`User profile is updated successfully!`, "success");
       }
     } catch (error) {
       handleAuthErrors(error);
@@ -109,10 +109,10 @@ const CustomDrawerContent = ({ ...props }) => {
   const handleAuthErrors = (error) => {
     switch (error.message) {
       case "Invalid credentials":
-        addToast("Invalid authentication credentials", "error");
+        addToast("Invalid authentication credentials!", "error");
         break;
       case "Data already exists":
-        addToast("Module with the same name already exists", "error");
+        addToast("Module already exists!", "error");
         break;
       case "No response received from the server":
         addToast("No response received from the server", "error");

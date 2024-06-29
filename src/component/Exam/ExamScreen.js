@@ -19,8 +19,8 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
     if (!authToken) {
-      addToast("Authentication token not available", "error");
-      throw new Error("Authentication token not available");
+      addToast("Authentication token is not available", "error");
+      throw new Error("Authentication token is not available");
     }
     return authToken;
   }, [addToast]);
@@ -36,8 +36,8 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
           data: '',
           conditionString: '',
           checkAvailability: '',
-          customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW WHERE EXAM_DT >= '${CurrentDate}' ORDER BY EXAM_DT ASC`,
-          // customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW Where STRM = '2302' ORDER BY EXAM_DT ASC`,
+          // customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW WHERE EXAM_DT >= '${CurrentDate}' ORDER BY EXAM_DT ASC`,
+          customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW Where STRM = '2302' ORDER BY EXAM_DT ASC`,
 
           viewType:'Campus_View'
         },

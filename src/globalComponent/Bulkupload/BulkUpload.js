@@ -42,8 +42,8 @@ const BulkUpload = (props) => {
       }
       setExcelData(content);
     } catch (error) {
-      console.error('Error reading file:', error);
-      addToast('Error reading file.', 'error');
+      console.error('Error in reading file:', error);
+      addToast('Error in reading file.', 'error');
     }
   };
 
@@ -79,13 +79,13 @@ const BulkUpload = (props) => {
         setExcelData(parseExcelData(content));
       };
       reader.onerror = (error) => {
-        console.error('Error reading file:', error);
-        addToast('Error reading file.', 'error');
+        console.error('Error in reading file:', error);
+        addToast('Error in reading file.', 'error');
       };
       reader.readAsBinaryString(blob);
     } catch (error) {
-      console.error('Error reading file:', error);
-      addToast('Error reading file.', 'error');
+      console.error('Error in reading file:', error);
+      addToast('Error in reading file.', 'error');
     }
   };
 
@@ -99,8 +99,8 @@ const BulkUpload = (props) => {
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
     if (!authToken) {
-      addToast("Authentication token not available", "error");
-      throw new Error("Authentication token not available");
+      addToast("Authentication token is not available", "error");
+      throw new Error("Authentication is token not available");
     }
     return authToken;
   }, [addToast]);
@@ -142,13 +142,13 @@ const BulkUpload = (props) => {
         addToast("Invalid authentication credentials", "error");
         break;
       case "Data already exists":
-        addToast("Data with the same name already exists", "error");
+        addToast("Data already exists!", "error");
         break;
       case "No response received from the server":
         addToast("No response received from the server", "error");
         break;
       default:
-        addToast("Bulkupload Operation Failed", "error");
+        addToast("Bulk Upload Operation Failed", "error");
     }
   };
 
