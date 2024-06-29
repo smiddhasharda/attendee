@@ -185,7 +185,7 @@ const BulkUpload = (props) => {
                 </View>
               )}
             />
-            <View style={styles.buttonContainer}>
+            <View style={[styles.buttonContainer,]}>
               <Pressable style={styles.uploadButton} onPress={() => handleBulkInvigiltor()}>
                 <Text style={styles.buttonText}>Upload</Text>
               </Pressable>
@@ -197,7 +197,7 @@ const BulkUpload = (props) => {
         </ScrollView>
       )}
       {props?.handleClose && (
-        <Pressable style={styles.cancelButton} onPress={() => props?.handleClose()}>
+        <Pressable style={[styles.cancelButton,]} onPress={() => props?.handleClose()}>
           <Text style={styles.buttonText}>Back</Text>
         </Pressable>
       )}
@@ -208,13 +208,16 @@ const BulkUpload = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    // alignItems: 'center',
+    // justifyContent: 'center',
   },
   pickFileButton: {
     padding: 10,
-    backgroundColor: '#6200ea',
+    backgroundColor:'#0C7C62',
     borderRadius: 5,
+    marginBottom:5,
+    width:120,
+    alignSelf:"center",
   },
   buttonText: {
     color: 'white',
@@ -243,6 +246,8 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     marginTop: 10,
+    justifyContent:"space-between",
+    
   },
   uploadButton: {
     padding: 10,
@@ -254,6 +259,8 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: '#f44336',
     borderRadius: 5,
+    width:100,
+    alignSelf:"flex-end",
   },
   header: {
     fontSize: 18,
