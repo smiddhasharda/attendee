@@ -25,8 +25,8 @@ function RoomDetail({navigation}) {
     const authToken = await AsyncStorage.getItem("authToken");
 
     if (!authToken) {
-      addToast("Authentication token not available", "error");
-      throw new Error("Authentication token not available");
+      addToast("Authentication token is not available", "error");
+      throw new Error("Authentication token is not available");
     }
 
     return authToken;
@@ -48,7 +48,7 @@ function RoomDetail({navigation}) {
     navigation.navigate("StudentInfo", { room_Nbr: studentData.ROOM_NBR ,exam_Dt: studentData.EXAM_DT,catlog_Nbr: studentData.CATALOG_NBR ,system_Id:studentData.EMPLID, seat_Nbr: studentData.PTP_SEQ_CHAR ,startTime: startTime,current_Term:studentData.STRM,reportId: presentStudentList?.filter((item)=>item.EMPLID === Number(studentData.EMPLID))?.[0]?.PK_Report_Id ,userAccess });
    }
    else{
-    addToast("User Not Belong In This Room !", "error");
+    addToast("User not available!", "error");
     handleCancel();
    }
   
@@ -119,13 +119,13 @@ function RoomDetail({navigation}) {
         addToast("Invalid authentication credentials", "error");
         break;
       case "Data already exists":
-        addToast("Student Info with the same name already exists", "error");
+        addToast("Student details already exists!", "error");
         break;
       case "No response received from the server":
         addToast("No response received from the server", "error");
         break;
       default:
-        addToast("Student Info Operation Failed", "error");
+        addToast("Student Info Operation Failed!", "error");
     }
   };
 

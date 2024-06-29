@@ -36,7 +36,7 @@ const UserScreen = ({userAccess}) => {
     const authToken = await AsyncStorage.getItem("authToken");
 
     if (!authToken) {
-      addToast("Authentication token not available", "error");
+      addToast("Authentication token is not available", "error");
       throw new Error("Authentication token not available");
     }
 
@@ -91,12 +91,12 @@ const UserScreen = ({userAccess}) => {
             authToken
           );
 
-          addToast("User Add Successful", "success");
+          addToast("User is created successfully!", "success");
           await handleClose();
           handleGetUserList();
         }
         else {
-          addToast("User Add Successful", "success");
+          addToast("User is created successfully!", "success");
           await handleClose();
           handleGetUserList();
         }
@@ -158,12 +158,12 @@ const UserScreen = ({userAccess}) => {
             authToken
           );
 
-          addToast("User Update Successful", "success");
+          addToast("User is updated successfully!", "success");
           await handleClose();
           handleGetUserList();
         }
         else {
-          addToast("User Update Successful", "success");
+          addToast("User is updated successfully!", "success");
           await handleClose();
           handleGetUserList();
         }
@@ -243,7 +243,7 @@ const UserScreen = ({userAccess}) => {
         addToast("Invalid authentication credentials", "error");
         break;
       case "Data already exists":
-        addToast("User with the same name already exists", "error");
+        addToast("User already exists!", "error");
         break;
       case "No response received from the server":
         addToast("No response received from the server", "error");
