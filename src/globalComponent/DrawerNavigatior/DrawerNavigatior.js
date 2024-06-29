@@ -336,7 +336,8 @@ const DrawerNavigator = ({ navigation }) => {
           (module) =>
             module?.read === 1 &&
             module?.moduleMaster[0]?.moduleName !== "StudentInfo" &&
-            module?.moduleMaster[0]?.moduleName !== "RoomDetail"
+            module?.moduleMaster[0]?.moduleName !== "RoomDetail" &&
+            module?.moduleMaster[0]?.moduleName !== "ReportScreen"
         )
         .map((module, index) => (
     //       <Drawer.Screen  options={{
