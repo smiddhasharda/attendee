@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { View, Text, Pressable ,Image} from "react-native";
+import { View, Text, Pressable ,Image,PermissionsAndroid } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   createDrawerNavigator,
@@ -23,7 +23,7 @@ import { Ionicons,Feather } from '@expo/vector-icons';
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import InvigilatorScreen from "../../component/Invigilator/InvigilatorScreen";
-import ReportScreen from "../../component/Report/ReportScreen";
+// import ReportScreen from "../../component/Report/ReportScreen";
 
 // Screen components
 const RoleComponent = ({ userAccess }) => <RoleScreen userAccess={userAccess} />;
@@ -39,6 +39,26 @@ const CustomDrawerContent = ({ ...props }) => {
   const { addToast } = useToast();
   const [file, setFile] = useState("");
   const [open, setOpen] = useState(false);
+
+  async function requestPermissions() {
+    try {
+      const granted = await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+      ]);
+      if (
+        granted[PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE] !== PermissionsAndroid.RESULTS.GRANTED ||
+        granted[PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE] !== PermissionsAndroid.RESULTS.GRANTED ||
+        granted[PermissionsAndroid.PERMISSIONS.CAMERA] !== PermissionsAndroid.RESULTS.GRANTED
+      ) {
+        throw new Error('Permission denied');
+      }
+    } catch (err) {
+      console.warn(err);
+      throw err;
+    }
+  }
 
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
@@ -83,6 +103,8 @@ const CustomDrawerContent = ({ ...props }) => {
 
   const handleProfilePic = async () => {
     try {
+      await requestPermissions();
+
       const authToken = await checkAuthToken();
       const formData = new FormData();
       formData.append("tblName", "tbl_user_master");
@@ -264,7 +286,7 @@ const DrawerNavigator = ({ navigation }) => {
       UserScreen: focused ? 'person' : 'person-outline',
       ExamScreen: focused ? 'book' : 'book-outline',
       InvigilatorScreen: focused ? 'people' : 'people-outline',
-      ReportScreen: focused ? 'bookmark' : 'bookmarks',
+      // ReportScreen: focused ? 'bookmark' : 'bookmarks',
 
 
       // Add more mappings as needed
@@ -361,8 +383,8 @@ const DrawerNavigator = ({ navigation }) => {
             return "Exam";
           case "InvigilatorScreen":
             return "Invigilator Permission";
-          case "ReportScreen":
-            return "Report";
+          // case "ReportScreen":
+          //   return "Report";
           // Add more cases as needed
           default:
             return module?.moduleMaster[0]?.moduleName;
@@ -392,8 +414,8 @@ const DrawerNavigator = ({ navigation }) => {
                   return <ExamComponent {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData} />;
                 case "InvigilatorScreen":
                   return <InvigilatorScreen {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData} />;  
-                case "ReportScreen":
-                  return <ReportScreen {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} />;
+                // case "ReportScreen":
+                //   return <ReportScreen {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} />;
                   
                   default:
                   return null;
