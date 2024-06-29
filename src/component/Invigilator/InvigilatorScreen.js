@@ -429,7 +429,7 @@ const { parse, format } = require('date-fns');
    ): (
     <View style={styles.userListWrap}>
     <View style={{flexDirection:"row", justifyContent:"space-between",alignItems:"center"}}>
-      <Text style={styles.header}>Invigilator Duty List :</Text>      
+      <Text style={styles.header}>Invigilator Duties:</Text>      
       <View style={styles.addWrap}>
         {UserAccess?.create === 1 &&    
           ( <Text >
@@ -440,7 +440,7 @@ const { parse, format } = require('date-fns');
           <Text ><FontAwesome5 name="download" size={20} color="purple" /></Text>
         </Pressable>
         <Pressable style={{marginRight:20}} onPress={() => setIsBulkuploadInvigilater(true)}>
-            <Text ><FontAwesome name="upload" size={20} color="purple" /></Text>
+            <Text ><FontAwesome name="upload" size={23} color="purple" /></Text>
           </Pressable>
           <Pressable  onPress={() => handleAddButton()}>
           <Text style={styles.addbtntext}><FontAwesome6 name="add" size={20} color="purple" /></Text>
