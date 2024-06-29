@@ -12,6 +12,7 @@ import { parse, format } from 'date-fns';
 import DropDownPicker from "react-native-dropdown-picker";
 import { DataTable, Provider as PaperProvider, DarkTheme as PaperDarkTheme, DefaultTheme as PaperDefaultTheme  } from 'react-native-paper';
 import { DarkTheme } from '@react-navigation/native';
+import CustomDateTimePicker from '../../globalComponent/DateTimePicker/CustomDateTimePicker';
 
 
 let WebTable;
@@ -25,8 +26,14 @@ if (Platform.OS === 'web') {
 // const AndroidTable = React.lazy(() => import('material-react-table'));
 // const IOSTable = React.lazy(() => import('material-react-table'));
 
-const ReportScreen = () => {
-  let CurrentDate = new Date().toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-');
+const ReportScreen = ({userAccess}) => {
+  // let CurrentDate = new Date().toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-');  const currentDate = new Date();
+  const currentDate = new Date();
+  const pastMonthDate = new Date();
+  pastMonthDate.setMonth(currentDate.getMonth() - 1);
+
+  const [startDate, setStartDate] = useState(pastMonthDate);
+  const [endDate, setEndDate] = useState(currentDate);
   const [tableHead, setTableHead] = useState(['System Id', 'Roll Number', 'Name','Copy','Room','Seat','Status','School','Graduation','Stream','Catelog Number','Exam Date','Exam Time']);
   const [tableData, setTableData] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -39,6 +46,9 @@ const ReportScreen = () => {
   const [shiftFilter, setShiftFilter] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [examDates, setExamDates] = useState([]);
+  // const [startDate, setStartDate] = useState(CurrentDate?.setMonth(CurrentDate?.getMonth() - 1) || '');
+  // const [endDate,setEndDate] =useState(CurrentDate || ''); 
+
   const [examSelectedDate, setExamSelectedDate] = useState("");
   const [open, setOpen] = useState(false);
   const pageSize = 10;
@@ -51,7 +61,6 @@ const ReportScreen = () => {
   useEffect(() => {
     filterData();
   }, [searchQuery, schoolFilter, shiftFilter,roomFilter]);
-
 
   const filterData = () => {
     let data = tableData;
@@ -79,7 +88,6 @@ const ReportScreen = () => {
     const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, 'report.csv');
   };
-
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
     
@@ -101,7 +109,7 @@ const ReportScreen = () => {
     data: "",
     conditionString: "",
     checkAvailability: "",
-    customQuery: "SELECT DISTINCT EXAM_DT FROM tbl_report_master",
+    customQuery: `SELECT DISTINCT EXAM_DT FROM tbl_report_master WHERE EXAM_DT >= '${startDate.toISOString()}' AND EXAM_DT <= '${endDate.toISOString()}'`,
     },
     authToken
     );
@@ -205,7 +213,7 @@ const ReportScreen = () => {
     conditionString:"",
     checkAvailability: "",
     // customQuery: `select JSON_ARRAYAGG(json_object('PK_Report_Id',p.PK_Report_Id,'EMPLID',EMPLID,'EXAM_DT',p.EXAM_DT,'ROOM_NBR',p.ROOM_NBR,'EXAM_START_TIME',p.EXAM_START_TIME,'STRM',p.STRM,'CATALOG_NBR',p.CATALOG_NBR,'PTP_SEQ_CHAR',p.PTP_SEQ_CHAR,'NAME_FORMAL',p.NAME_FORMAL,'ADM_APPL_NBR',p.ADM_APPL_NBR,'DESCR',p.DESCR,'DESCR2',p.DESCR2,'DESCR3',p.DESCR3,'Status',p.Status,'isActive',p.isActive,'copyData',( SELECT CAST( CONCAT('[', GROUP_CONCAT( JSON_OBJECT( 'PK_CopyId',q.PK_CopyId,'FK_ReportId',q.FK_ReportId,'EMPLID',q.EMPLID,'copyNumber',q.copyNumber,'alternateCopyNumber1',q.alternateCopyNumber1,'alternateCopyNumber2',q.alternateCopyNumber2,'alternateCopyNumber3',q.alternateCopyNumber3,'alternateCopyNumber4',q.alternateCopyNumber4,'alternateCopyNumber5',q.alternateCopyNumber5,'alternateCopyNumber6',q.alternateCopyNumber6,'isActive',q.isActive) ), ']') AS JSON ) FROM tbl_copy_master q WHERE q.FK_ReportId = p.PK_Report_Id ))) AS ReportMaster from tbl_report_master p where EXAM_DT = '${date}' AND ROOM_NBR = '${room}' AND EXAM_START_TIME = '${shift}'`,
-    customQuery: `select JSON_ARRAYAGG(json_object('PK_Report_Id',p.PK_Report_Id,'EMPLID',EMPLID,'EXAM_DT',p.EXAM_DT,'ROOM_NBR',p.ROOM_NBR,'EXAM_START_TIME',p.EXAM_START_TIME,'STRM',p.STRM,'CATALOG_NBR',p.CATALOG_NBR,'PTP_SEQ_CHAR',p.PTP_SEQ_CHAR,'NAME_FORMAL',p.NAME_FORMAL,'ADM_APPL_NBR',p.ADM_APPL_NBR,'DESCR',p.DESCR,'DESCR2',p.DESCR2,'DESCR3',p.DESCR3,'Status',p.Status,'isActive',p.isActive,'copyData',( SELECT CAST( CONCAT('[', GROUP_CONCAT( JSON_OBJECT( 'PK_CopyId',q.PK_CopyId,'FK_ReportId',q.FK_ReportId,'EMPLID',q.EMPLID,'copyNumber',q.copyNumber,'alternateCopyNumber1',q.alternateCopyNumber1,'alternateCopyNumber2',q.alternateCopyNumber2,'alternateCopyNumber3',q.alternateCopyNumber3,'alternateCopyNumber4',q.alternateCopyNumber4,'alternateCopyNumber5',q.alternateCopyNumber5,'alternateCopyNumber6',q.alternateCopyNumber6,'isActive',q.isActive) ), ']') AS JSON ) FROM tbl_copy_master q WHERE q.FK_ReportId = p.PK_Report_Id ))) AS ReportMaster from tbl_report_master p where EXAM_DT = '${date}'`,
+    customQuery: `select JSON_ARRAYAGG(json_object('PK_Report_Id',p.PK_Report_Id,'EMPLID',EMPLID,'EXAM_DT',p.EXAM_DT,'ROOM_NBR',p.ROOM_NBR,'EXAM_START_TIME',p.EXAM_START_TIME,'STRM',p.STRM,'CATALOG_NBR',p.CATALOG_NBR,'PTP_SEQ_CHAR',p.PTP_SEQ_CHAR,'NAME_FORMAL',p.NAME_FORMAL,'ADM_APPL_NBR',p.ADM_APPL_NBR,'DESCR',p.DESCR,'DESCR2',p.DESCR2,'DESCR3',p.DESCR3,'Status',p.Status,'Attendece_Status',p.Attendece_Status,'isActive',p.isActive,'copyData',( SELECT CAST( CONCAT('[', GROUP_CONCAT( JSON_OBJECT( 'PK_CopyId',q.PK_CopyId,'FK_ReportId',q.FK_ReportId,'EMPLID',q.EMPLID,'copyNumber',q.copyNumber,'alternateCopyNumber1',q.alternateCopyNumber1,'alternateCopyNumber2',q.alternateCopyNumber2,'alternateCopyNumber3',q.alternateCopyNumber3,'alternateCopyNumber4',q.alternateCopyNumber4,'alternateCopyNumber5',q.alternateCopyNumber5,'alternateCopyNumber6',q.alternateCopyNumber6,'isActive',q.isActive) ), ']') AS JSON ) FROM tbl_copy_master q WHERE q.FK_ReportId = p.PK_Report_Id ))) AS ReportMaster from tbl_report_master p where EXAM_DT = '${date}'`,
 
   },
     authToken
@@ -301,84 +309,189 @@ const ReportScreen = () => {
       </Text>
     </Tooltip>
   );
-  const WebColumns = useMemo(
-    () => [
-      {
-        accessorKey: 'EMPLID',
-        header: 'System Id',
-        size: 150,
-      },
-      {
-        accessorKey: 'ADM_APPL_NBR',
-        header: 'Roll Number',
-        size: 150,
-      },
-      {
-        accessorKey: 'NAME_FORMAL',
-        header: 'Name',
-        size: 200,
-      },
-      // {
-      //   accessorKey: '{item.copyData?.map((item, index) => `Copy Number ${index + 1}: ${item.copyNumber}`).join(', ')}',
-      //   header: 'Copy',
-      //   size: 150,
-      // },
-      {
-        accessorKey: 'ROOM_NBR',
-        header: 'Room',
-        size: 150,
-      },
-      {
-        accessorKey: 'PTP_SEQ_CHAR',
-        header: 'Seat',
-        size: 150,
-      },
-      {
-        accessorKey: 'Status',
-        header: 'Status',
-        size: 150,
-      },
-      {
-        accessorKey: 'Attendece_Status',
-        header: 'Attendece Status',
-        size: 150,
-      },
-      {
-        accessorKey: 'DESCR',
-        header: 'School',
-        size: 150,
-      },
-      {
-        accessorKey: 'DESCR2',
-        header: 'Graduation',
-        size: 150,
-      },
-      {
-        accessorKey: 'DESCR3',
-        header: 'Stream',
-        size: 150,
-      },
-      {
-        accessorKey: 'CATALOG_NBR',
-        header: 'Catelog Number',
-        size: 150,
-      },
-      {
-        accessorKey: 'EXAM_DT',
-        header: 'Exam Date',
-        size: 150,
-      },
-      {
-        accessorKey: 'EXAM_START_TIME',
-        header: 'Exam Time',
-        size: 150,
-      },
-    ],
-    [],
-  );
+
+  const convertedTime = (StartTime) => {
+    const date = new Date(StartTime);
+    const hours = date.getHours();
+    const minutes = date.getMinutes().toString().padStart(2, '0'); // Pad minutes with leading 0
+  
+    const amPm = hours >= 12 ? 'PM' : 'AM';
+    const adjustedHours = hours % 12 || 12; // Convert to 12-hour format
+  
+    return `${adjustedHours}:${minutes}${amPm}`;
+  }
+  const statusList = ["Present", "Absent", "UFM"]; 
+ const attendenceStatusList = ["Debarred","Eligible","Not Defined"]
+  
+ const WebColumns = useMemo(() => [
+  {
+    accessorKey: 'EMPLID',
+    header: 'System Id',
+    size: 150,
+  },
+  {
+    accessorKey: 'ADM_APPL_NBR',
+    header: 'Roll Number',
+    size: 150,
+  },
+  {
+    accessorKey: 'NAME_FORMAL',
+    header: 'Name',
+    size: 200,
+  },
+  {
+    accessorFn: (row) => row?.copyData?.[0]?.copyNumber || "-",
+    header: "Copy 1 Data"
+  },
+  {
+    accessorFn: (row) => row?.copyData?.[1]?.copyNumber || "-",
+    header: "Copy 2 Data"
+  },
+  {
+    accessorFn: (row) => row?.copyData?.[2]?.copyNumber || "-",
+    header: "Copy 3 Data"
+  },
+  {
+    accessorFn: (row) => row?.copyData?.[3]?.copyNumber || "-",
+    header: "Copy 4 Data"
+  },
+  {
+    accessorKey: 'ROOM_NBR',
+    header: 'Room',
+    size: 150,
+  },
+  {
+    accessorKey: 'PTP_SEQ_CHAR',
+    header: 'Seat',
+    size: 150,
+  },
+  {
+    accessorKey: "Status",
+    header: "Status",
+    accessorFn: (row) => row?.Status || "-",
+    Cell: ({ cell }) => (
+      <View
+        style={{
+          backgroundColor:
+          cell?.row?.original?.Status === "Present"
+          ? 'green'
+          : cell?.row?.original?.Status === "Absent"
+          ? 'yellow'
+          : cell?.row?.original?.Status === "UFM"
+          ? 'red'
+          : 'blue',
+          borderRadius: 22,
+          color: "#fff",
+          minWidth: 75,
+          maxWidth: "auto",
+          paddingVertical: 2,
+          paddingHorizontal: 7.5,
+          textAlign: "center",
+        }}
+      >
+        <Text style={{ color: "#fff" }}>
+          {cell?.row?.original?.Status || "-"}
+        </Text>
+      </View>
+    ),
+    filterVariant: "select",
+    filterSelectOptions: statusList
+  },
+  {
+    accessorKey: "Attendece_Status",
+    header: "Attendance Status",
+    accessorFn: (row) => row?.Attendece_Status || "-",
+    Cell: ({ cell }) => (
+      <View
+        style={{
+          backgroundColor:
+          cell?.row?.original?.Attendece_Status === "Eligible"
+            ? 'green'
+            : cell?.row?.original?.Attendece_Status === "Not Defined"
+            ? 'yellow'
+            : cell?.row?.original?.Attendece_Status === "Debarred"
+            ? 'red'
+            : 'blue',           
+          borderRadius: 22,
+          color: "#fff",
+          minWidth: 75,
+          maxWidth: "auto",
+          paddingVertical: 2,
+          paddingHorizontal: 7.5,
+          textAlign: "center",
+        }}
+      >
+        <Text style={{ color: "#fff" }}>
+          {cell?.row?.original?.Attendece_Status || "-"}
+        </Text>
+      </View>
+    ),
+    filterVariant: "select",
+    filterSelectOptions: attendenceStatusList
+  },
+  {
+    accessorKey: 'DESCR',
+    header: 'School',
+    size: 150,
+  },
+  {
+    accessorKey: 'DESCR2',
+    header: 'Graduation',
+    size: 150,
+  },
+  {
+    accessorKey: 'DESCR3',
+    header: 'Stream',
+    size: 150,
+  },
+  {
+    accessorKey: 'CATALOG_NBR',
+    header: 'Catalog Number',
+    size: 150,
+  },
+  {
+    accessorKey: "EXAM_DT",
+    id: "EXAM_DT",
+    header: "Exam Date",
+    accessorFn: (row) => row?.EXAM_DT || "-",
+    Cell: ({ cell }) =>
+      cell?.row?.original?.EXAM_DT
+        ? new Date(cell?.row?.original?.EXAM_DT)?.toLocaleDateString("en-GB")
+        : "-",
+    filterFn: "lessThanOrEqualTo",
+    sortingFn: "datetime",
+    // Uncomment if you need the date filter
+    // Filter: ({ column }) => (
+    //   <LocalizationProvider dateAdapter={AdapterDayjs}>
+    //     <DatePicker
+    //       onChange={(newValue) => {
+    //         column?.setFilterValue(newValue);
+    //       }}
+    //       slotProps={{
+    //         textField: {
+    //           helperText: 'Filter Mode: Less Than',
+    //           sx: { minWidth: '120px' },
+    //           variant: 'standard',
+    //         },
+    //       }}
+    //       value={column?.getFilterValue()}
+    //     />
+    //   </LocalizationProvider>
+    // ),
+  },
+  {
+    accessorKey: "EXAM_START_TIME",
+    id: "EXAM_START_TIME",
+    header: "Exam Start Time / Shift",
+    accessorFn: (row) => row?.EXAM_START_TIME || "-",
+    Cell: ({ cell }) =>
+      cell?.row?.original?.EXAM_START_TIME
+        ? convertedTime(cell?.row?.original?.EXAM_START_TIME)
+        : "-",
+  },
+], []);
 
      // Export CSV File
-
      const csvOptions = {
        fieldSeparator: ',',
        quoteStrings: '"',
@@ -386,7 +499,7 @@ const ReportScreen = () => {
        showLabels: true,
        useBom: true,
        useKeysAsHeaders: false,
-       filename: `Report-${CurrentDate}`,
+       filename: `Report-${currentDate}`,
        headers: tableHead
      };
      const handleExportData = () => {
@@ -636,11 +749,12 @@ const ReportScreen = () => {
   useEffect(() => {
     setPage(0);
   }, [itemsPerPage]);
-
+console.log(tableData)
   return (
     <View style={styles.container}>
           <View style={styles.datesWrap}>
         <View style={styles.dates}>
+          {examDates?.length > 0 ?  
           <FlatList
             data={examDates}
             renderItem={({ item }) => {
@@ -664,83 +778,16 @@ const ReportScreen = () => {
             }}
             horizontal
             keyExtractor={(item) => item.EXAM_DT}
-          />
+          /> : <Text>There is no Dates Available Between {startDate.toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-')} to {endDate.toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-')}</Text>}
         </View>
       </View>
+      <View style={styles.dropdownWrap}>
+      <CustomDateTimePicker date={startDate} handelChangeDate={setStartDate} /> 
+      <CustomDateTimePicker date={endDate} handelChangeDate={setEndDate} />   
+      <Pressable onPress={handleGetExamDateList}><Text>Search</Text></Pressable>
+    </View>
+
       
-
-
-      {/* <ScrollView horizontal={true}>
-        <View>
-          <Table borderStyle={styles.tableBorder}>
-            <Row data={tableHead} style={styles.head} textStyle={styles.text} />
-            <Rows data={filteredDataPaginated} textStyle={styles.text} />
-          </Table>
-        </View>
-      </ScrollView>
-      <Pagination
-        total={filteredData.length}
-        currentPage={currentPage}
-        pageSize={pageSize}
-        onPageChange={setCurrentPage}
-      /> */}
-
-
-       {/* <View style={styles.tableWrap}>
-          <ScrollView horizontal={true}>
-                <DataTable style={styles.table}>
-                <DataTable.Header style={styles.tablheader}>
-                  <DataTable.Title textStyle={[styles.headerText,styles.headerWidth]} >System Id</DataTable.Title>
-                  <DataTable.Title textStyle={[styles.headerText,styles.headerWidth]}>Roll Number</DataTable.Title>
-                  <DataTable.Title textStyle={[styles.headerText,styles.headerWidth]}>Name</DataTable.Title>
-                  <DataTable.Title textStyle={[styles.headerText,styles.headerWidth]}>Copy</DataTable.Title>
-                  <DataTable.Title textStyle={[styles.headerText,styles.headerWidth]}>Room</DataTable.Title>
-                  <DataTable.Title textStyle={[styles.headerText,styles.headerWidth]}>Seat</DataTable.Title>
-                  <DataTable.Title textStyle={[styles.headerText,styles.headerWidth]}>Status</DataTable.Title>
-                  <DataTable.Title textStyle={[styles.headerText,styles.headerWidth]}>School</DataTable.Title>
-                  <DataTable.Title textStyle={[styles.headerText,styles.headerWidth]}>Graduation</DataTable.Title>
-                  <DataTable.Title textStyle={[styles.headerText,styles.headerWidth]}>Stream</DataTable.Title>
-                  <DataTable.Title textStyle={[styles.headerText,styles.headerWidth]}>Catelog Number</DataTable.Title>
-                  <DataTable.Title textStyle={[styles.headerText,styles.headerWidth]}>Exam Date</DataTable.Title>
-                  <DataTable.Title textStyle={[styles.headerText,styles.headerWidth]}>Exam Time</DataTable.Title>
-                </DataTable.Header>
-
-                {filteredData.slice(from, to).map((item) => (
-                  <DataTable.Row style={{color:"#000"}}    key={item.EMPLID}>
-                  <DataTable.Cell   textStyle={[styles.tabledataText, {flex:1.5}]}>{item.EMPLID}</DataTable.Cell>
-                    <DataTable.Cell textStyle={styles.tabledataText}>{item.ADM_APPL_NBR}</DataTable.Cell>
-                    <DataTable.Cell textStyle={styles.tabledataText}>{item.NAME_FORMAL}</DataTable.Cell>
-                    <DataTable.Cell textStyle={styles.tabledataText}>{item.copyData?.map((item, index) => `Copy Number ${index + 1}: ${item.copyNumber}`).join(', ')}</DataTable.Cell>
-                    <DataTable.Cell textStyle={styles.tabledataText}>{item.ROOM_NBR}</DataTable.Cell>
-                    <DataTable.Cell textStyle={styles.tabledataText}>{item.PTP_SEQ_CHAR}</DataTable.Cell>
-                    <DataTable.Cell  textStyle={styles.tabledataText}>{item.Status}</DataTable.Cell>
-                    <DataTable.Cell textStyle={styles.tabledataText}>{item.DESCR}</DataTable.Cell>
-                    <DataTable.Cell textStyle={styles.tabledataText}>{item.DESCR2}</DataTable.Cell>
-                    <DataTable.Cell textStyle={styles.tabledataText} >{item.DESCR3}</DataTable.Cell>          
-                    <DataTable.Cell textStyle={styles.tabledataText}>{item.CATALOG_NBR}</DataTable.Cell>
-                    <DataTable.Cell textStyle={styles.tabledataText}>{item.EXAM_DT}</DataTable.Cell>
-                    <DataTable.Cell textStyle={styles.tabledataText}>{item.EXAM_START_TIME}</DataTable.Cell>
-                  </DataTable.Row>
-                ))}
-                </DataTable>
-                </ScrollView>
-                <DataTable.Pagination
-                  page={page}
-                  numberOfPages={Math.ceil(filteredData.length / itemsPerPage)}
-                  onPageChange={(page) => setPage(page)}
-                  label={`${from + 1}-${to} of ${filteredData.length}`}
-                  numberOfItemsPerPageList={numberOfItemsPerPageList}
-                  numberOfItemsPerPage={itemsPerPage}
-                  onItemsPerPageChange={onItemsPerPageChange}
-                  showFastPaginationControls
-                  selectPageDropdownLabel={'Rows per page'}
-                  style={styles.pagination}
-                  labelStyle={styles.paginationText}
-                  selectPageDropdownStyle={styles.paginationDropdown}
-                  theme={DarkTheme}
-                />   
-          </View> */}
-
 {renderTable()}
 
       {/* <Button icon="download" mode="contained" onPress={exportToCSV}>
