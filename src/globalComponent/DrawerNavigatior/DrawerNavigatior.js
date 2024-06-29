@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { View, Text, Pressable ,Image,PermissionsAndroid } from "react-native";
+import { View, Text, Pressable ,Image} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   createDrawerNavigator,
@@ -39,26 +39,6 @@ const CustomDrawerContent = ({ ...props }) => {
   const { addToast } = useToast();
   const [file, setFile] = useState("");
   const [open, setOpen] = useState(false);
-
-  async function requestPermissions() {
-    try {
-      const granted = await PermissionsAndroid.requestMultiple([
-        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-        PermissionsAndroid.PERMISSIONS.CAMERA,
-      ]);
-      if (
-        granted[PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE] !== PermissionsAndroid.RESULTS.GRANTED ||
-        granted[PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE] !== PermissionsAndroid.RESULTS.GRANTED ||
-        granted[PermissionsAndroid.PERMISSIONS.CAMERA] !== PermissionsAndroid.RESULTS.GRANTED
-      ) {
-        throw new Error('Permission denied');
-      }
-    } catch (err) {
-      console.warn(err);
-      throw err;
-    }
-  }
 
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
@@ -103,8 +83,6 @@ const CustomDrawerContent = ({ ...props }) => {
 
   const handleProfilePic = async () => {
     try {
-      await requestPermissions();
-
       const authToken = await checkAuthToken();
       const formData = new FormData();
       formData.append("tblName", "tbl_user_master");
