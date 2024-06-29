@@ -1,12 +1,13 @@
  import React,{useEffect,useCallback, useState} from 'react';
- import { View, Text, StyleSheet, Dimensions,ScrollView,FlatList,Pressable,TextInput } from 'react-native';
+ import { View, Text, StyleSheet, Dimensions,ScrollView,FlatList,Pressable,TextInput,Linking } from 'react-native';
  import Bulkpload from '../../globalComponent/Bulkupload/BulkUpload';
  import DropDownPicker from "react-native-dropdown-picker";
- import { insert, update, fetch } from "../../AuthService/AuthService";
+ import { insert, update, fetch,view } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Ionicons,AntDesign,Feather,FontAwesome5,FontAwesome,MaterialIcons ,FontAwesome6} from "@expo/vector-icons";
-const windowWidth = Dimensions.get("window").width;
+import { Feather,FontAwesome5,FontAwesome ,FontAwesome6} from "@expo/vector-icons";
+const { parse, format } = require('date-fns');
+
 
  const InvigilatorScreen = ({userAccess}) => {
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 4 );
@@ -14,7 +15,7 @@ const windowWidth = Dimensions.get("window").width;
   const [invigilatorList, setInvigilatorList] = useState([]);
   const [isBulkuploadInvigilater, setIsBulkuploadInvigilater] = useState(false);
   const [invigilatorContainerVisible, setInvigilatorContainerVisible] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(0);
   const [invigilatorData, setInvigilatorData] = useState({
     PK_InvigilatorDutyId: "",
     employeeId: "",
@@ -25,7 +26,9 @@ const windowWidth = Dimensions.get("window").width;
     duty_status:"primary",
     isActive: 1,
   });
+  const [searchedEmployee , setSearchedEmployee] = useState('');
   const StatusList = [{label: "primary" ,value :"primary" },{label:"secondary",value :"secondary"}]
+  const [examDates, setExamDates] = useState([]);
 
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
@@ -67,6 +70,18 @@ const windowWidth = Dimensions.get("window").width;
   
   const handleAddInvigilator = async () => {
     try {
+      if(!invigilatorData?.employeeId || !invigilatorData?.invigilatorName){
+      return addToast("Please set Invigilator","error");
+      }
+      else if(!invigilatorData?.date ){
+        return addToast("Please select exam date","error");
+        }
+      else if(!invigilatorData?.room.replace(/\s+/g, '') === "" ){
+        return addToast("Please enter room detials","error");
+        }
+      else if(!invigilatorData?.shift.replace(/\s+/g, '') === "" ){
+        return addToast("Please enter shift details","error");
+        }
       const authToken = await checkAuthToken();
       const response = await insert(
         {
@@ -97,6 +112,18 @@ const windowWidth = Dimensions.get("window").width;
 
   const handleUpdateInvigilator = async () => {
     try {
+      if(!invigilatorData?.employeeId || !invigilatorData?.invigilatorName){
+        return addToast("Please set Invigilator","error");
+        }
+        else if(!invigilatorData?.date ){
+          return addToast("Please select exam date","error");
+          }
+        else if(!invigilatorData?.room.replace(/\s+/g, '') === "" ){
+          return addToast("Please enter room detials","error");
+          }
+        else if(!invigilatorData?.shift.replace(/\s+/g, '') === "" ){
+          return addToast("Please enter shift details","error");
+          }
       const authToken = await checkAuthToken();
       const response = await update(
         {
@@ -198,10 +225,101 @@ const windowWidth = Dimensions.get("window").width;
     });
   };
 
+  const handleDownload = () => {
+    const url = global.SERVER_URL + "/invigilatorDoc/invgilator_bulkupload.xlsx";
+    Linking.openURL(url);
+  };
+
+  const handleGetEmployeeSearch = async () => {
+    try {
+      const authToken = await checkAuthToken();
+      const response = await view(
+        {
+          operation: "custom",
+          tblName: "PS_SU_PSFT_COEM_VW",
+          data: '',
+          conditionString: '',
+          checkAvailability: '',
+          customQuery: `SELECT DISPLAY_NAME, EMPLID FROM PS_SU_PSFT_COEM_VW WHERE EMPLID = '${searchedEmployee}'`,
+          viewType: 'HRMS_View'
+        },
+        authToken
+      );
+  
+      if (response) {
+        let EmployeeData = response?.data?.receivedData?.[0]
+        setInvigilatorData({ ...invigilatorData, invigilatorName: EmployeeData?.DISPLAY_NAME,employeeId:EmployeeData?.EMPLID })
+        // let EmployeeData = response?.data?.receivedData?.map((item) => ({
+        //   label: `${item?.DISPLAY_NAME} (${item?.EMPLID})`,
+        //   value: `${item?.DISPLAY_NAME} !#! ${item?.EMPLID}`,
+        // }));
+        // console.log(EmployeeData);
+        // setEmployeesList(EmployeeData);
+      }
+    } catch (error) {
+      handleAuthErrors(error);
+    }
+  };
+    
+  const parseAndFormatDate = (dateString) => {
+    const possibleFormats = [
+      "yyyy-MM-dd'T'HH:mm:ss.SSSX", // ISO format
+      "dd-MMMM-yyyy",               // e.g., 03-July-2023
+      "MM/dd/yyyy",                 // e.g., 07/03/2023
+      "yyyy-MM-dd",                 // e.g., 2023-07-03
+    ];
+  
+    let parsedDate;
+    for (let formatString of possibleFormats) {
+      try {
+        parsedDate = parse(dateString, formatString, new Date());
+        if (!isNaN(parsedDate)) break;
+      } catch (error) {
+        continue;
+      }
+    }
+  
+    if (!parsedDate || isNaN(parsedDate)) {
+      console.error('Invalid date format:', dateString);
+      return null;
+    }
+  
+    const formattedDate = format(parsedDate, 'dd-MMMM-yyyy');
+    return formattedDate;
+  };
+
+  const handleGetDateView = async () => {
+    let CurrentDate = new Date().toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-');
+    try {
+      const authToken = await checkAuthToken();
+      const response = await view(
+        {
+          operation: "custom",
+          tblName: "PS_S_PRD_EX_TME_VW",
+          data: '',
+          conditionString: '',
+          checkAvailability: '',
+          customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW WHERE EXAM_DT >= '${CurrentDate}' ORDER BY EXAM_DT ASC`,
+          // customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW ORDER BY EXAM_DT ASC`,
+          viewType:'Campus_View'
+        },
+        authToken
+      );
+ 
+      if (response) {
+        let ExamDates = response?.data?.receivedData?.map((item) => ({label : `${parseAndFormatDate(item?.EXAM_DT)}` , value : parseAndFormatDate(item?.EXAM_DT)}));
+        setExamDates(ExamDates);
+      }
+    } catch (error) {
+      setLoading(false);
+      handleAuthErrors(error);
+    }
+  };
+
   useEffect(() => {
     handleGetInigilatorDuty();
+    handleGetDateView();
   }, [UserAccess]);
-
    return (
     <View style={styles.container}>
       {isBulkuploadInvigilater ? (<Bulkpload handleClose={() => handleClose()} renderData={    <View style={styles.tableHeader}>
@@ -214,30 +332,58 @@ const windowWidth = Dimensions.get("window").width;
                 </View>} />) : 
         (invigilatorContainerVisible ? (
         <View style={styles.formContainer}>
+            <TextInput
+            style={styles.input}
+            placeholder="Search By Employee Id"
+            value={searchedEmployee}
+            onChangeText={(text) => setSearchedEmployee(text) }
+          />
+          <Pressable onPress={handleGetEmployeeSearch}><Text>Search</Text></Pressable>
           <TextInput
             style={styles.input}
             placeholder="Employee Id"
             value={invigilatorData.employeeId}
-            onChangeText={(text) =>
-              setInvigilatorData({ ...invigilatorData, employeeId: text })
-            }
+            // onChangeText={(text) =>
+            //   setInvigilatorData({ ...invigilatorData, employeeId: text })
+            // }
+            disabled
           />
           <TextInput
             style={styles.input}
             placeholder="Employee Name"
             value={invigilatorData.invigilatorName}
-            onChangeText={(text) =>
-              setInvigilatorData({ ...invigilatorData, invigilatorName: text })
-            }
+            // onChangeText={(text) =>
+            //   setInvigilatorData({ ...invigilatorData, invigilatorName: text })
+            // }
+            disabled
           />
-          <TextInput
+
+      <DropDownPicker
+            open={open === 1}
+            value={invigilatorData.date}
+            items={examDates}
+            setOpen={() => setOpen(open === 1 ? 0 : 1)}
+            setValue={(callback) => setInvigilatorData((prevState) => ({
+              ...prevState,
+              date: callback(invigilatorData.date)
+            }))}
+            placeholder='Select Exam Date'
+            style={styles.dropdown}
+            dropDownStyle={{ backgroundColor: "#fafafa"}}
+            dropDownMaxHeight={150}
+            dropDownDirection="TOP"
+            containerStyle={styles.rolePicker}
+            listItemContainerStyle={{ height: 40}} 
+            listItemLabelStyle={{ fontSize: 14 }}
+          />
+          {/* <TextInput
             style={styles.input}
             placeholder="Date"
             value={invigilatorData.date}
             onChangeText={(text) =>
               setInvigilatorData({ ...invigilatorData, date: text })
             }
-          />
+          /> */}
           <TextInput
             style={styles.input}
             placeholder="Room"
@@ -255,10 +401,10 @@ const windowWidth = Dimensions.get("window").width;
             }
           />
           <DropDownPicker
-            open={open}
+            open={open === 2}
             value={invigilatorData.duty_status}
             items={StatusList}
-            setOpen={setOpen}
+            setOpen={() => setOpen(open === 2 ? 0 : 2)} 
             setValue={(callback) => setInvigilatorData((prevState) => ({
               ...prevState,
               duty_status: callback(invigilatorData.duty_status)
@@ -290,7 +436,7 @@ const windowWidth = Dimensions.get("window").width;
           
            <View style={{flexDirection:"row",justifyContent:"space-between",}} >
         
-          <Pressable  style={{marginRight:20}}  onPress={() => handleAddButton()}>
+          <Pressable  style={{marginRight:20}}  onPress={() => handleDownload()}>
           <Text ><FontAwesome5 name="download" size={20} color="purple" /></Text>
         </Pressable>
         <Pressable style={{marginRight:20}} onPress={() => setIsBulkuploadInvigilater(true)}>
