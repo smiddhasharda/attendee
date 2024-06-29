@@ -27,6 +27,7 @@ const StudentInfo = ({ navigation }) => {
   const [isScanning, setIsScanning] = useState(false);
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState('Present');
+  const [disabledStatus, setDisabledStatus] = useState('Present');
   const [attendenceStatus, setAttendenceStatus] = useState('Not Defined');
   const [currentTime, setCurrentTime] = useState(new Date()?.getTime()); // Added current time state
   const [isActive, setIsActive] = useState(false); // Added active status state
@@ -504,6 +505,8 @@ const StudentInfo = ({ navigation }) => {
         let AttendenceDetials = response?.data?.receivedData?.[0] || ''
         let AttendenceStatus = AttendenceDetials ? AttendenceDetials.PERCENTAGE >= AttendenceDetials.PERCENTCHG ? "Eligible" : "Debarred" : "Not Defined";
         setAttendenceStatus(AttendenceStatus);
+        setStatus(AttendenceStatus === "Debarred" ? "Absent" : "Present");
+        setDisabledStatus(AttendenceStatus === "Debarred" ? "Absent" : "Present");
         setLoading(false);
       }
     } catch (error) {
@@ -597,7 +600,7 @@ const StudentInfo = ({ navigation }) => {
       if (now.getTime() >= start && now.getTime() <= end) {
         setIsActive(true);
       } else {
-        setIsActive(false);
+        // setIsActive(false);
       }
     }, 1000);
 
@@ -709,15 +712,15 @@ const StudentInfo = ({ navigation }) => {
               <View style={[styles.infoItem, styles.studStatus]}>
                 <Text style={[styles.label]}>Status</Text>
                 <View style={styles.attStatus}>
-                  <CheckBox value={status === "Present"} onValueChange={(item) =>setStatus("Present")} color={getStatuscolor()} disabled={(!isActive && !(userAccess?.label === "Admin"))} />                
+                  <CheckBox value={status === "Present"} onValueChange={(item) =>setStatus("Present")} color={getStatuscolor()} disabled={((!isActive && !(userAccess?.label === "Admin")) || disabledStatus === "Absent")} />                
                   <Text style={[styles.value, styles.customValue]}> Present</Text>
                 </View>
                 <View style={styles.attStatus}>
-                <CheckBox value={status === "Absent"} onValueChange={() => setStatus("Absent")} color={getStatuscolor()} disabled={(!isActive && !(userAccess?.label === "Admin"))} />
+                <CheckBox value={status === "Absent"} onValueChange={() => setStatus("Absent")} color={getStatuscolor()} disabled={((!isActive && !(userAccess?.label === "Admin"))) || disabledStatus === "Absent"} />
                 <Text style={[styles.value, styles.customValue]}> Absent</Text>
                 </View>
                 <View style={styles.attStatus}>
-                <CheckBox value={status === "UFM"} onValueChange={() => setStatus("UFM")} color={getStatuscolor()} disabled={(!isActive && !(userAccess?.label === "Admin"))} />
+                <CheckBox value={status === "UFM"} onValueChange={() => setStatus("UFM")} color={getStatuscolor()} disabled={((!isActive && !(userAccess?.label === "Admin"))) || disabledStatus === "Absent"} />
                 <Text style={[styles.value, styles.customValue]}> UFM</Text>
                 </View>
                 
@@ -987,7 +990,7 @@ const StudentInfo = ({ navigation }) => {
               style={{ flexDirection: "row", justifyContent: "space-between" }}
             >
               <Text style={styles.addAnsheading}> AnswerSheet </Text>
-              {((copiesData?.length < 4 && isActive && attendenceStatus != 'Debarred') || userAccess?.label === "Admin") && (
+              {((copiesData?.length < 4 && isActive && attendenceStatus != 'Debarred')) && (
                 <AntDesign style={styles.addicon} name="pluscircleo" size={24} color="black" onPress={handleAddCopy} />
               )}
             </View>
@@ -1132,7 +1135,7 @@ const StudentInfo = ({ navigation }) => {
           </View>
 
  <View style={styles.buttonWrap}>
- {((copiesData?.length > 0 || status === "Absent") && ((isActive && attendenceStatus != 'Debarred') || userAccess?.label === "Admin") ) && (<Pressable style={styles.submitButton} onPress={reportId ? handleStudentInfoUpdate : handleStudentInfoSubmit} >
+ {((copiesData?.length > 0 || status === "Absent") && ((isActive) || userAccess?.label === "Admin") ) && (<Pressable style={styles.submitButton} onPress={reportId ? handleStudentInfoUpdate : handleStudentInfoSubmit} >
      <Text style={styles.addButtonText}> {" "} {reportId ? "Update" : "Submit"} </Text>
    </Pressable>) }
    

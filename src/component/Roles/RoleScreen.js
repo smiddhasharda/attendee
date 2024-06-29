@@ -366,7 +366,7 @@ const RoleScreen = ({userAccess}) => {
           />
           <Text style={styles.header}> Module List : </Text>
           {/* <ScrollView horizontal={true} style={{maxWidth:"90%"}}>    </ScrollView> */}
-          <View style={{height:"50%",}}>
+          <View style={{height:"40%"}}>
           <FlatList
             data={moduleList}
             keyExtractor={(item) => item?.PK_ModuleId?.toString()}
@@ -458,7 +458,7 @@ const RoleScreen = ({userAccess}) => {
                 {UserAccess?.update === 1 ?
                  (<Pressable style={[styles.listItemEditButton,] } 
                  onPress={() => handleEditRole(item)}>
-                     <Text style={[styles.listItemEditText, styles.columnAction,]}><Feather name="edit" size={16} color="#0C7C62" /></Text>
+                     <Text style={[styles.listItemEditText, styles.columnAction,]}><Feather name="edit" size={20} color="#0C7C62" /></Text>
                   </Pressable>) : (<Text>-</Text>)}
               </View>
             </View>
