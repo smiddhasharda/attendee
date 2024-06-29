@@ -66,7 +66,7 @@ const LoginScreen = ({ navigation }) => {
     try {
       const response = await emailVerify('tbl_user_master', `email_id = '${loginData.email}' `,'PS_SU_PSFT_COEM_VW',`EMAILID = '${loginData.email}'`);
       if (response) {
-        addToast(`OTP is sent successfully on your registered email ${loginData.email}`, 'success');
+        addToast(`OTP is sent successfully on your registered email address!`, 'success');
         setOTPInputDiasbled(false);
       }
     } catch (error) {

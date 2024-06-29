@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     height: 280, // Adjust this to the desired height
     resizeMode: 'contain', // or 'contain' depending on your requirement
     position: "relative",
-    top: 30,
+    top: 40,
     right: 15,
     justifyContent: "center",
     alignItems: "center"
