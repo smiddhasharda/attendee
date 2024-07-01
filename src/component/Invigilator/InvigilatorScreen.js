@@ -453,7 +453,7 @@ const { parse, format } = require('date-fns');
         </View>
         </View>
         <ScrollView horizontal>
-        <View style={{minHeight:"56%", width: '100%' ,}}>
+        <View style={{minHeight:"90%", width: '100%' ,}}>
           <FlatList 
             data={invigilatorList}
             keyExtractor={(item) => item.PK_InvigilatorDutyId.toString()}
