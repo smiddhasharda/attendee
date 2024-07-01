@@ -3,7 +3,7 @@ import { View, ScrollView, StyleSheet, Alert,FlatList ,Pressable,Text, Tooltip,P
 // import { Table, Row, Rows } from 'react-native-table-component';
 import { Searchbar, Button } from 'react-native-paper';
 import RNPickerSelect from 'react-native-picker-select';
-// import { saveAs } from 'file-saver';
+import { saveAs } from 'file-saver';
 // import Pagination from '../../globalComponent/Pagination/PaginationComponent';
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -580,7 +580,8 @@ const ReportScreen = ({userAccess}) => {
           <WebTable data={tableData} columns={WebColumns} exportHead={tableHead} handleExportData={() => handleExportData()} handleExportRows={(rows)=> handleExportRows(rows)}/>
         </React.Suspense>
       );
-    } else if (Platform.OS === 'android') {
+    } 
+    else if (Platform.OS === 'android') {
       return (
         <View>
           <Searchbar
@@ -749,7 +750,6 @@ const ReportScreen = ({userAccess}) => {
   useEffect(() => {
     setPage(0);
   }, [itemsPerPage]);
-console.log(tableData)
   return (
     <View style={styles.container}>
           <View style={styles.datesWrap}>

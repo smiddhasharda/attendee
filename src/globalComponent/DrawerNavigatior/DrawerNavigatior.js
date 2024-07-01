@@ -336,7 +336,7 @@ const DrawerNavigator = ({ navigation }) => {
           (module) =>
             module?.read === 1 &&
             module?.moduleMaster[0]?.moduleName !== "StudentInfo" &&
-            module?.moduleMaster[0]?.moduleName !== "RoomDetail"
+            module?.moduleMaster[0]?.moduleName !== "RoomDetail" 
         )
         .map((module, index) => (
     //       <Drawer.Screen  options={{
@@ -363,7 +363,6 @@ const DrawerNavigator = ({ navigation }) => {
             return "Invigilator Permission";
           case "ReportScreen":
             return "Report";
-          // Add more cases as needed
           default:
             return module?.moduleMaster[0]?.moduleName;
         }
