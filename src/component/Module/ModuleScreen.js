@@ -29,8 +29,8 @@ const ModuleScreen = ({ userAccess }) => {
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
     if (!authToken) {
-      addToast("Authentication token not available", "error");
-      throw new Error("Authentication token not available");
+      addToast("Authentication token is not available", "error");
+      throw new Error("Authentication token is not available");
     }
     return authToken;
   }, [addToast]);
@@ -59,7 +59,7 @@ const ModuleScreen = ({ userAccess }) => {
 
   const handleAddModule = useCallback(() => {
     if (moduleData.moduleName.replace(/\s+/g, '') === "") {
-      addToast("Please enter module name first !", "error");
+      addToast("Enter the module name!", "error");
     }
     else {
       handleModuleOperation('insert', { moduleName: moduleData.moduleName, description: moduleData.moduleDescription, isActive: moduleData.moduleStatus, }, "Module Add Successful");
@@ -68,7 +68,7 @@ const ModuleScreen = ({ userAccess }) => {
 
   const handleUpdateModule = useCallback(() => {
     if (moduleData.moduleName.replace(/\s+/g, '') === "") {
-      addToast("Please enter module name first !", "error");
+      addToast("Enter the module name!", "error");
     }
     else {
       handleModuleOperation('update', { moduleName: moduleData.moduleName, description: moduleData.moduleDescription, isActive: moduleData.moduleStatus, }, "Module Update Successful", `PK_ModuleId = ${moduleData.moduleId}`);

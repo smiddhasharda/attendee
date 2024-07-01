@@ -1,20 +1,39 @@
-import React, { useState, useEffect,useCallback  } from 'react';
-import { View, ScrollView, StyleSheet, Alert,FlatList ,Pressable,Text, Tooltip } from 'react-native';
+import React, { useState, useEffect,useCallback,useMemo  } from 'react';
+import { View, ScrollView, StyleSheet, Alert,FlatList ,Pressable,Text, Tooltip,Platform } from 'react-native';
 // import { Table, Row, Rows } from 'react-native-table-component';
 import { Searchbar, Button } from 'react-native-paper';
 import RNPickerSelect from 'react-native-picker-select';
-// import { saveAs } from 'file-saver';
+import { saveAs } from 'file-saver';
 // import Pagination from '../../globalComponent/Pagination/PaginationComponent';
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { fetch,view } from "../../AuthService/AuthService";
+import { fetch, view } from "../../AuthService/AuthService";
 import { parse, format } from 'date-fns';
 import DropDownPicker from "react-native-dropdown-picker";
-import { DataTable,Provider as PaperProvider, DarkTheme as PaperDarkTheme, DefaultTheme as PaperDefaultTheme  } from 'react-native-paper';
+import { DataTable, Provider as PaperProvider, DarkTheme as PaperDarkTheme, DefaultTheme as PaperDefaultTheme  } from 'react-native-paper';
 import { DarkTheme } from '@react-navigation/native';
+import CustomDateTimePicker from '../../globalComponent/DateTimePicker/CustomDateTimePicker';
 
 
-const ReportScreen = () => {
+let WebTable;
+if (Platform.OS === 'web') {
+  WebTable = require('../../globalComponent/Tables/WebTable').default;
+} else {
+  WebTable = DataTable; // or some other table component for mobile
+}
+// const WebTable = require('../../globalComponent/Tables/WebTable')?.default;
+// const WebTable = lazy(() => import('../../globalComponent/Tables/WebTable'));
+// const AndroidTable = React.lazy(() => import('material-react-table'));
+// const IOSTable = React.lazy(() => import('material-react-table'));
+
+const ReportScreen = ({userAccess}) => {
+  // let CurrentDate = new Date().toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-');  const currentDate = new Date();
+  const currentDate = new Date();
+  const pastMonthDate = new Date();
+  pastMonthDate.setMonth(currentDate.getMonth() - 1);
+
+  const [startDate, setStartDate] = useState(pastMonthDate);
+  const [endDate, setEndDate] = useState(currentDate);
   const [tableHead, setTableHead] = useState(['System Id', 'Roll Number', 'Name','Copy','Room','Seat','Status','School','Graduation','Stream','Catelog Number','Exam Date','Exam Time']);
   const [tableData, setTableData] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -27,6 +46,9 @@ const ReportScreen = () => {
   const [shiftFilter, setShiftFilter] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [examDates, setExamDates] = useState([]);
+  // const [startDate, setStartDate] = useState(CurrentDate?.setMonth(CurrentDate?.getMonth() - 1) || '');
+  // const [endDate,setEndDate] =useState(CurrentDate || ''); 
+
   const [examSelectedDate, setExamSelectedDate] = useState("");
   const [open, setOpen] = useState(false);
   const pageSize = 10;
@@ -39,29 +61,6 @@ const ReportScreen = () => {
   useEffect(() => {
     filterData();
   }, [searchQuery, schoolFilter, shiftFilter,roomFilter]);
-
-  // const filterData = () => {
-  //   let data = tableData;
-  //   console.log(data)
-  //   if (roomFilter) {
-  //     data = data.filter(item => item[4] === roomFilter);
-  //   }
-  //   if (schoolFilter) {
-  //     data = data.filter(item => item[7] === schoolFilter);
-  //   }
-  //   if (shiftFilter) {
-  //     data = data.filter(item => item[12] === shiftFilter);
-  //   }
-  //   if (searchQuery) {
-  //     data = data.filter(item =>
-  //       item.some(field => field.toLowerCase().includes(searchQuery.toLowerCase()))
-  //     );
-  //   }
-
-  //   setFilteredData(data);
-  //   setCurrentPage(1); // Reset to first page after filtering
-  // };
-
 
   const filterData = () => {
     let data = tableData;
@@ -89,7 +88,6 @@ const ReportScreen = () => {
     const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, 'report.csv');
   };
-
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
     
@@ -111,7 +109,7 @@ const ReportScreen = () => {
     data: "",
     conditionString: "",
     checkAvailability: "",
-    customQuery: "SELECT DISTINCT EXAM_DT FROM tbl_report_master",
+    customQuery: `SELECT DISTINCT EXAM_DT FROM tbl_report_master WHERE EXAM_DT >= '${startDate.toISOString()}' AND EXAM_DT <= '${endDate.toISOString()}'`,
     },
     authToken
     );
@@ -183,27 +181,27 @@ const ReportScreen = () => {
       handleAuthErrors(error);
       }
       };
-      const handleGetShiftList = async (date) => {
-        try {
-        const authToken = await checkAuthToken();
-        const response = await fetch(
-        {
-        operation: "custom",
-        tblName: "tbl_report_master",
-        data: "",
-        conditionString: "",
-        checkAvailability: "",
-        customQuery:`SELECT JSON_ARRAYAGG(room) AS ShiftData FROM ( SELECT JSON_OBJECT( 'label', EXAM_START_TIME, 'value', EXAM_START_TIME ) AS room FROM tbl_report_master WHERE EXAM_DT = '${date}' GROUP BY EXAM_START_TIME ) AS rooms` ,
-        },
-        authToken
-        );
-        if (response) {
-        setShiftList(response?.data?.receivedData?.[0]?.ShiftData);
-        }
-        } catch (error) {
-        handleAuthErrors(error);
-        }
-        };
+    const handleGetShiftList = async (date) => {
+      try {
+      const authToken = await checkAuthToken();
+      const response = await fetch(
+      {
+      operation: "custom",
+      tblName: "tbl_report_master",
+      data: "",
+      conditionString: "",
+      checkAvailability: "",
+      customQuery:`SELECT JSON_ARRAYAGG(room) AS ShiftData FROM ( SELECT JSON_OBJECT( 'label', EXAM_START_TIME, 'value', EXAM_START_TIME ) AS room FROM tbl_report_master WHERE EXAM_DT = '${date}' GROUP BY EXAM_START_TIME ) AS rooms` ,
+      },
+      authToken
+      );
+      if (response) {
+      setShiftList(response?.data?.receivedData?.[0]?.ShiftData);
+      }
+      } catch (error) {
+      handleAuthErrors(error);
+      }
+      };
     const handleGetExamReport = async (date, room, shift) => {
     try {
     const authToken = await checkAuthToken();
@@ -215,7 +213,7 @@ const ReportScreen = () => {
     conditionString:"",
     checkAvailability: "",
     // customQuery: `select JSON_ARRAYAGG(json_object('PK_Report_Id',p.PK_Report_Id,'EMPLID',EMPLID,'EXAM_DT',p.EXAM_DT,'ROOM_NBR',p.ROOM_NBR,'EXAM_START_TIME',p.EXAM_START_TIME,'STRM',p.STRM,'CATALOG_NBR',p.CATALOG_NBR,'PTP_SEQ_CHAR',p.PTP_SEQ_CHAR,'NAME_FORMAL',p.NAME_FORMAL,'ADM_APPL_NBR',p.ADM_APPL_NBR,'DESCR',p.DESCR,'DESCR2',p.DESCR2,'DESCR3',p.DESCR3,'Status',p.Status,'isActive',p.isActive,'copyData',( SELECT CAST( CONCAT('[', GROUP_CONCAT( JSON_OBJECT( 'PK_CopyId',q.PK_CopyId,'FK_ReportId',q.FK_ReportId,'EMPLID',q.EMPLID,'copyNumber',q.copyNumber,'alternateCopyNumber1',q.alternateCopyNumber1,'alternateCopyNumber2',q.alternateCopyNumber2,'alternateCopyNumber3',q.alternateCopyNumber3,'alternateCopyNumber4',q.alternateCopyNumber4,'alternateCopyNumber5',q.alternateCopyNumber5,'alternateCopyNumber6',q.alternateCopyNumber6,'isActive',q.isActive) ), ']') AS JSON ) FROM tbl_copy_master q WHERE q.FK_ReportId = p.PK_Report_Id ))) AS ReportMaster from tbl_report_master p where EXAM_DT = '${date}' AND ROOM_NBR = '${room}' AND EXAM_START_TIME = '${shift}'`,
-    customQuery: `select JSON_ARRAYAGG(json_object('PK_Report_Id',p.PK_Report_Id,'EMPLID',EMPLID,'EXAM_DT',p.EXAM_DT,'ROOM_NBR',p.ROOM_NBR,'EXAM_START_TIME',p.EXAM_START_TIME,'STRM',p.STRM,'CATALOG_NBR',p.CATALOG_NBR,'PTP_SEQ_CHAR',p.PTP_SEQ_CHAR,'NAME_FORMAL',p.NAME_FORMAL,'ADM_APPL_NBR',p.ADM_APPL_NBR,'DESCR',p.DESCR,'DESCR2',p.DESCR2,'DESCR3',p.DESCR3,'Status',p.Status,'isActive',p.isActive,'copyData',( SELECT CAST( CONCAT('[', GROUP_CONCAT( JSON_OBJECT( 'PK_CopyId',q.PK_CopyId,'FK_ReportId',q.FK_ReportId,'EMPLID',q.EMPLID,'copyNumber',q.copyNumber,'alternateCopyNumber1',q.alternateCopyNumber1,'alternateCopyNumber2',q.alternateCopyNumber2,'alternateCopyNumber3',q.alternateCopyNumber3,'alternateCopyNumber4',q.alternateCopyNumber4,'alternateCopyNumber5',q.alternateCopyNumber5,'alternateCopyNumber6',q.alternateCopyNumber6,'isActive',q.isActive) ), ']') AS JSON ) FROM tbl_copy_master q WHERE q.FK_ReportId = p.PK_Report_Id ))) AS ReportMaster from tbl_report_master p where EXAM_DT = '${date}'`,
+    customQuery: `select JSON_ARRAYAGG(json_object('PK_Report_Id',p.PK_Report_Id,'EMPLID',EMPLID,'EXAM_DT',p.EXAM_DT,'ROOM_NBR',p.ROOM_NBR,'EXAM_START_TIME',p.EXAM_START_TIME,'STRM',p.STRM,'CATALOG_NBR',p.CATALOG_NBR,'PTP_SEQ_CHAR',p.PTP_SEQ_CHAR,'NAME_FORMAL',p.NAME_FORMAL,'ADM_APPL_NBR',p.ADM_APPL_NBR,'DESCR',p.DESCR,'DESCR2',p.DESCR2,'DESCR3',p.DESCR3,'Status',p.Status,'Attendece_Status',p.Attendece_Status,'isActive',p.isActive,'copyData',( SELECT CAST( CONCAT('[', GROUP_CONCAT( JSON_OBJECT( 'PK_CopyId',q.PK_CopyId,'FK_ReportId',q.FK_ReportId,'EMPLID',q.EMPLID,'copyNumber',q.copyNumber,'alternateCopyNumber1',q.alternateCopyNumber1,'alternateCopyNumber2',q.alternateCopyNumber2,'alternateCopyNumber3',q.alternateCopyNumber3,'alternateCopyNumber4',q.alternateCopyNumber4,'alternateCopyNumber5',q.alternateCopyNumber5,'alternateCopyNumber6',q.alternateCopyNumber6,'isActive',q.isActive) ), ']') AS JSON ) FROM tbl_copy_master q WHERE q.FK_ReportId = p.PK_Report_Id ))) AS ReportMaster from tbl_report_master p where EXAM_DT = '${date}'`,
 
   },
     authToken
@@ -311,41 +309,282 @@ const ReportScreen = () => {
       </Text>
     </Tooltip>
   );
-  useEffect(() => {
-    setPage(0);
-  }, [itemsPerPage]);
 
-  return (
-    <View style={styles.container}>
-          <View style={styles.datesWrap}>
-        <View style={styles.dates}>
-          <FlatList
-            data={examDates}
-            renderItem={({ item }) => {
-              const isActiveItem = item.EXAM_DT === examSelectedDate;
-              const normalizedDate = parseAndFormatDate(item.EXAM_DT);
-              return (
-                 <Pressable onPress={() => handleDateClick(item.EXAM_DT)}>
-                      <View style={[styles.dateItem, isActiveItem && styles.activebox]}>
-                        <Text style={[styles.dateDay, isActiveItem && styles.activeText]}>
-                          {normalizedDate.toString().split(' ')[0]}
-                        </Text>
-                        <Text style={[styles.dateNumber, isActiveItem && styles.activeText]}>
-                          {normalizedDate.getDate()}
-                        </Text>
-                        <Text style={[styles.dateMonth, isActiveItem && styles.activeText]}>
-                          {normalizedDate.toString().split(' ')[1]}
-                        </Text>
-                      </View>
-                </Pressable>
-              );
-            }}
-            horizontal
-            keyExtractor={(item) => item.EXAM_DT}
-          />
-        </View>
+  const convertedTime = (StartTime) => {
+    const date = new Date(StartTime);
+    const hours = date.getHours();
+    const minutes = date.getMinutes().toString().padStart(2, '0'); // Pad minutes with leading 0
+  
+    const amPm = hours >= 12 ? 'PM' : 'AM';
+    const adjustedHours = hours % 12 || 12; // Convert to 12-hour format
+  
+    return `${adjustedHours}:${minutes}${amPm}`;
+  }
+  const statusList = ["Present", "Absent", "UFM"]; 
+ const attendenceStatusList = ["Debarred","Eligible","Not Defined"]
+  
+ const WebColumns = useMemo(() => [
+  {
+    accessorKey: 'EMPLID',
+    header: 'System Id',
+    size: 150,
+  },
+  {
+    accessorKey: 'ADM_APPL_NBR',
+    header: 'Roll Number',
+    size: 150,
+  },
+  {
+    accessorKey: 'NAME_FORMAL',
+    header: 'Name',
+    size: 200,
+  },
+  {
+    accessorFn: (row) => row?.copyData?.[0]?.copyNumber || "-",
+    header: "Copy 1 Data"
+  },
+  {
+    accessorFn: (row) => row?.copyData?.[1]?.copyNumber || "-",
+    header: "Copy 2 Data"
+  },
+  {
+    accessorFn: (row) => row?.copyData?.[2]?.copyNumber || "-",
+    header: "Copy 3 Data"
+  },
+  {
+    accessorFn: (row) => row?.copyData?.[3]?.copyNumber || "-",
+    header: "Copy 4 Data"
+  },
+  {
+    accessorKey: 'ROOM_NBR',
+    header: 'Room',
+    size: 150,
+  },
+  {
+    accessorKey: 'PTP_SEQ_CHAR',
+    header: 'Seat',
+    size: 150,
+  },
+  {
+    accessorKey: "Status",
+    header: "Status",
+    accessorFn: (row) => row?.Status || "-",
+    Cell: ({ cell }) => (
+      <View
+        style={{
+          backgroundColor:
+          cell?.row?.original?.Status === "Present"
+          ? 'green'
+          : cell?.row?.original?.Status === "Absent"
+          ? 'yellow'
+          : cell?.row?.original?.Status === "UFM"
+          ? 'red'
+          : 'blue',
+          borderRadius: 22,
+          color: "#fff",
+          minWidth: 75,
+          maxWidth: "auto",
+          paddingVertical: 2,
+          paddingHorizontal: 7.5,
+          textAlign: "center",
+        }}
+      >
+        <Text style={{ color: "#fff" }}>
+          {cell?.row?.original?.Status || "-"}
+        </Text>
       </View>
-      <Searchbar
+    ),
+    filterVariant: "select",
+    filterSelectOptions: statusList
+  },
+  {
+    accessorKey: "Attendece_Status",
+    header: "Attendance Status",
+    accessorFn: (row) => row?.Attendece_Status || "-",
+    Cell: ({ cell }) => (
+      <View
+        style={{
+          backgroundColor:
+          cell?.row?.original?.Attendece_Status === "Eligible"
+            ? 'green'
+            : cell?.row?.original?.Attendece_Status === "Not Defined"
+            ? 'yellow'
+            : cell?.row?.original?.Attendece_Status === "Debarred"
+            ? 'red'
+            : 'blue',           
+          borderRadius: 22,
+          color: "#fff",
+          minWidth: 75,
+          maxWidth: "auto",
+          paddingVertical: 2,
+          paddingHorizontal: 7.5,
+          textAlign: "center",
+        }}
+      >
+        <Text style={{ color: "#fff" }}>
+          {cell?.row?.original?.Attendece_Status || "-"}
+        </Text>
+      </View>
+    ),
+    filterVariant: "select",
+    filterSelectOptions: attendenceStatusList
+  },
+  {
+    accessorKey: 'DESCR',
+    header: 'School',
+    size: 150,
+  },
+  {
+    accessorKey: 'DESCR2',
+    header: 'Graduation',
+    size: 150,
+  },
+  {
+    accessorKey: 'DESCR3',
+    header: 'Stream',
+    size: 150,
+  },
+  {
+    accessorKey: 'CATALOG_NBR',
+    header: 'Catalog Number',
+    size: 150,
+  },
+  {
+    accessorKey: "EXAM_DT",
+    id: "EXAM_DT",
+    header: "Exam Date",
+    accessorFn: (row) => row?.EXAM_DT || "-",
+    Cell: ({ cell }) =>
+      cell?.row?.original?.EXAM_DT
+        ? new Date(cell?.row?.original?.EXAM_DT)?.toLocaleDateString("en-GB")
+        : "-",
+    filterFn: "lessThanOrEqualTo",
+    sortingFn: "datetime",
+    // Uncomment if you need the date filter
+    // Filter: ({ column }) => (
+    //   <LocalizationProvider dateAdapter={AdapterDayjs}>
+    //     <DatePicker
+    //       onChange={(newValue) => {
+    //         column?.setFilterValue(newValue);
+    //       }}
+    //       slotProps={{
+    //         textField: {
+    //           helperText: 'Filter Mode: Less Than',
+    //           sx: { minWidth: '120px' },
+    //           variant: 'standard',
+    //         },
+    //       }}
+    //       value={column?.getFilterValue()}
+    //     />
+    //   </LocalizationProvider>
+    // ),
+  },
+  {
+    accessorKey: "EXAM_START_TIME",
+    id: "EXAM_START_TIME",
+    header: "Exam Start Time / Shift",
+    accessorFn: (row) => row?.EXAM_START_TIME || "-",
+    Cell: ({ cell }) =>
+      cell?.row?.original?.EXAM_START_TIME
+        ? convertedTime(cell?.row?.original?.EXAM_START_TIME)
+        : "-",
+  },
+], []);
+
+     // Export CSV File
+     const csvOptions = {
+       fieldSeparator: ',',
+       quoteStrings: '"',
+       decimalSeparator: '.',
+       showLabels: true,
+       useBom: true,
+       useKeysAsHeaders: false,
+       filename: `Report-${currentDate}`,
+       headers: tableHead
+     };
+     const handleExportData = () => {
+      const headers = Object.keys(tableHead).map((key) => tableHead[key]);
+      const csvData = [headers,...tableData.map((row) => [
+        row.EMPLID || '-', 
+        row.ADM_APPL_NBR || '-', 
+        row.NAME_FORMAL || '-', 
+        row.ROOM_NBR || '-', 
+        row.PTP_SEQ_CHAR || '-', 
+        row.Status || '-', 
+        row.Attendece_Status || '-', 
+        row.DESCR || '-', 
+        row.DESCR2 || '-', 
+        row.DESCR3 || '-', 
+        row.CATALOG_NBR || '-', 
+        row.EXAM_DT || '-', 
+        row.EXAM_START_TIME || '-', 
+      ])];
+    
+      const csvRows = csvData.map((row, index) => {
+        if (index === 0) { // header row
+          return row.map((cell) => `"${cell}"`).join(csvOptions.fieldSeparator);
+        } else {
+          return row.map((cell) => `"${cell}"`).join(csvOptions.fieldSeparator);
+        }
+      });
+    
+      const csvString = csvRows.join('\n');
+    
+      const blob = new Blob([csvString], { type: 'application/vnd.ms-excel' });
+      const csvFile = new File([blob], `${csvOptions.filename}.xls`, {
+        lastModified: new Date().getTime(),
+      });
+    
+      saveAs(csvFile);
+    };
+    
+    const handleExportRows = (rows) => {
+      const headers = Object.keys(rows[0].original).map((key) => rows[0].original[key]);
+      const csvData = [headers,...rows.map(({ original }) => [
+        original.EMPLID || '-', 
+        original.ADM_APPL_NBR || '-', 
+        original.NAME_FORMAL || '-', 
+        original.ROOM_NBR || '-', 
+        original.PTP_SEQ_CHAR || '-', 
+        original.Status || '-', 
+        original.Attendece_Status || '-', 
+        original.DESCR || '-', 
+        original.DESCR2 || '-', 
+        original.DESCR3 || '-', 
+        original.CATALOG_NBR || '-', 
+        original.EXAM_DT || '-', 
+        original.EXAM_START_TIME || '-', 
+      ])];
+    
+      const csvRows = csvData.map((row, index) => {
+        if (index === 0) { // header row
+          return row.map((cell) => `"${cell}"`).join(csvOptions.fieldSeparator);
+        } else {
+          return row.map((cell) => `"${cell}"`).join(csvOptions.fieldSeparator);
+        }
+      });
+    
+      const csvString = csvRows.join('\n');
+    
+      const blob = new Blob([csvString], { type: 'application/vnd.ms-excel' });
+      const csvFile = new File([blob], `${csvOptions.filename}.xls`, {
+        lastModified: new Date().getTime(),
+      });
+    
+      saveAs(csvFile);
+    };
+  const renderTable = () => {
+    if (Platform.OS === 'web') {
+      return (
+        <React.Suspense fallback={<Text>Loading...</Text>}>
+          <WebTable data={tableData} columns={WebColumns} exportHead={tableHead} handleExportData={() => handleExportData()} handleExportRows={(rows)=> handleExportRows(rows)}/>
+        </React.Suspense>
+      );
+    } 
+    else if (Platform.OS === 'android') {
+      return (
+        <View>
+          <Searchbar
         placeholder="Search"
         onChangeText={query => setSearchQuery(query)}
         value={searchQuery}
@@ -439,23 +678,7 @@ const ReportScreen = () => {
             style={pickerSelectStyles}
           /> */}
       </View>
-
-
-      {/* <ScrollView horizontal={true}>
-        <View>
-          <Table borderStyle={styles.tableBorder}>
-            <Row data={tableHead} style={styles.head} textStyle={styles.text} />
-            <Rows data={filteredDataPaginated} textStyle={styles.text} />
-          </Table>
-        </View>
-      </ScrollView>
-      <Pagination
-        total={filteredData.length}
-        currentPage={currentPage}
-        pageSize={pageSize}
-        onPageChange={setCurrentPage}
-      /> */}
-       <View style={styles.tableWrap}>
+      <View style={styles.tableWrap}>
           <ScrollView horizontal={true}>
                 <DataTable style={styles.table}>
                 <DataTable.Header style={styles.tablheader}>
@@ -466,6 +689,7 @@ const ReportScreen = () => {
                   <DataTable.Title textStyle={[styles.headerText,styles.headerWidth]}>Room</DataTable.Title>
                   <DataTable.Title textStyle={[styles.headerText,styles.headerWidth]}>Seat</DataTable.Title>
                   <DataTable.Title textStyle={[styles.headerText,styles.headerWidth]}>Status</DataTable.Title>
+                  <DataTable.Title textStyle={[styles.headerText,styles.headerWidth]}>Attendece Status</DataTable.Title>                  
                   <DataTable.Title textStyle={[styles.headerText,styles.headerWidth]}>School</DataTable.Title>
                   <DataTable.Title textStyle={[styles.headerText,styles.headerWidth]}>Graduation</DataTable.Title>
                   <DataTable.Title textStyle={[styles.headerText,styles.headerWidth]}>Stream</DataTable.Title>
@@ -483,6 +707,7 @@ const ReportScreen = () => {
                     <DataTable.Cell textStyle={styles.tabledataText}>{item.ROOM_NBR}</DataTable.Cell>
                     <DataTable.Cell textStyle={styles.tabledataText}>{item.PTP_SEQ_CHAR}</DataTable.Cell>
                     <DataTable.Cell  textStyle={styles.tabledataText}>{item.Status}</DataTable.Cell>
+                    <DataTable.Cell  textStyle={styles.tabledataText}>{item.Attendece_Status}</DataTable.Cell>
                     <DataTable.Cell textStyle={styles.tabledataText}>{item.DESCR}</DataTable.Cell>
                     <DataTable.Cell textStyle={styles.tabledataText}>{item.DESCR2}</DataTable.Cell>
                     <DataTable.Cell textStyle={styles.tabledataText} >{item.DESCR3}</DataTable.Cell>          
@@ -509,6 +734,62 @@ const ReportScreen = () => {
                   theme={DarkTheme}
                 />   
           </View>
+        </View>
+       
+      );
+    } else if (Platform.OS === 'ios') {
+      // return (
+      //   <React.Suspense fallback={<Text>Loading...</Text>}>
+      //     <IOSTable /* ios-specific props */ />
+      //   </React.Suspense>
+      // );
+    } else {
+      return <Text>Unsupported Platform</Text>;
+    }
+  };
+  useEffect(() => {
+    setPage(0);
+  }, [itemsPerPage]);
+  return (
+    <View style={styles.container}>
+          <View style={styles.datesWrap}>
+        <View style={styles.dates}>
+          {examDates?.length > 0 ?  
+          <FlatList
+            data={examDates}
+            renderItem={({ item }) => {
+              const isActiveItem = item.EXAM_DT === examSelectedDate;
+              const normalizedDate = parseAndFormatDate(item.EXAM_DT);
+              return (
+                 <Pressable onPress={() => handleDateClick(item.EXAM_DT)}>
+                      <View style={[styles.dateItem, isActiveItem && styles.activebox]}>
+                        <Text style={[styles.dateDay, isActiveItem && styles.activeText]}>
+                          {normalizedDate.toString().split(' ')[0]}
+                        </Text>
+                        <Text style={[styles.dateNumber, isActiveItem && styles.activeText]}>
+                          {normalizedDate.getDate()}
+                        </Text>
+                        <Text style={[styles.dateMonth, isActiveItem && styles.activeText]}>
+                          {normalizedDate.toString().split(' ')[1]}
+                        </Text>
+                      </View>
+                </Pressable>
+              );
+            }}
+            horizontal
+            keyExtractor={(item) => item.EXAM_DT}
+          /> : <Text>There is no Dates Available Between {startDate.toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-')} to {endDate.toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-')}</Text>}
+        </View>
+      </View>
+      <View style={styles.dropdownWrap}>
+      <CustomDateTimePicker date={startDate} handelChangeDate={setStartDate} /> 
+      <CustomDateTimePicker date={endDate} handelChangeDate={setEndDate} />   
+      <Pressable onPress={handleGetExamDateList}><Text>Search</Text></Pressable>
+    </View>
+
+      
+{renderTable()}
+
       {/* <Button icon="download" mode="contained" onPress={exportToCSV}>
         Export CSV
       </Button> */}

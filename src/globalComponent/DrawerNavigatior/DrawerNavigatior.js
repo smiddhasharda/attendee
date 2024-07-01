@@ -23,6 +23,7 @@ import { Ionicons,Feather } from '@expo/vector-icons';
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import InvigilatorScreen from "../../component/Invigilator/InvigilatorScreen";
+import ReportScreen from "../../component/Report/ReportScreen";
 
 // Screen components
 const RoleComponent = ({ userAccess }) => <RoleScreen userAccess={userAccess} />;
@@ -42,8 +43,8 @@ const CustomDrawerContent = ({ ...props }) => {
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
     if (!authToken) {
-      addToast("Authentication token not available", "error");
-      throw new Error("Authentication token not available");
+      addToast("Authentication token is not available", "error");
+      throw new Error("Authentication token is not available");
     }
     return authToken;
   }, [addToast]);
@@ -99,7 +100,7 @@ const CustomDrawerContent = ({ ...props }) => {
       if (response) {
         await AsyncStorage.removeItem("userData");
         await handleGetUserData();
-        addToast(`User Profile Update Successful`, "success");
+        addToast(`User profile is updated successfully!`, "success");
       }
     } catch (error) {
       handleAuthErrors(error);
@@ -109,10 +110,10 @@ const CustomDrawerContent = ({ ...props }) => {
   const handleAuthErrors = (error) => {
     switch (error.message) {
       case "Invalid credentials":
-        addToast("Invalid authentication credentials", "error");
+        addToast("Invalid authentication credentials!", "error");
         break;
       case "Data already exists":
-        addToast("Module with the same name already exists", "error");
+        addToast("Module already exists!", "error");
         break;
       case "No response received from the server":
         addToast("No response received from the server", "error");
@@ -263,6 +264,8 @@ const DrawerNavigator = ({ navigation }) => {
       UserScreen: focused ? 'person' : 'person-outline',
       ExamScreen: focused ? 'book' : 'book-outline',
       InvigilatorScreen: focused ? 'people' : 'people-outline',
+      ReportScreen: focused ? 'bookmark' : 'bookmarks',
+
 
       // Add more mappings as needed
     };
@@ -333,7 +336,7 @@ const DrawerNavigator = ({ navigation }) => {
           (module) =>
             module?.read === 1 &&
             module?.moduleMaster[0]?.moduleName !== "StudentInfo" &&
-            module?.moduleMaster[0]?.moduleName !== "RoomDetail"
+            module?.moduleMaster[0]?.moduleName !== "RoomDetail" 
         )
         .map((module, index) => (
     //       <Drawer.Screen  options={{
@@ -356,9 +359,10 @@ const DrawerNavigator = ({ navigation }) => {
             return "Manage User";
           case "ExamScreen":
             return "Exam";
-            case "InvigilatorScreen":
-              return "Invigilator Permission";
-          // Add more cases as needed
+          case "InvigilatorScreen":
+            return "Invigilator Permission";
+          case "ReportScreen":
+            return "Report";
           default:
             return module?.moduleMaster[0]?.moduleName;
         }
@@ -387,6 +391,9 @@ const DrawerNavigator = ({ navigation }) => {
                   return <ExamComponent {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData} />;
                 case "InvigilatorScreen":
                   return <InvigilatorScreen {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData} />;  
+                case "ReportScreen":
+                  return <ReportScreen {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} />;
+                  
                   default:
                   return null;
               }

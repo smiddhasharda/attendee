@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TextInput, StyleSheet ,ScrollView,} from 'react-native';
+import { View, Text, TextInput, StyleSheet ,ScrollView, Image, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; 
 import { useNavigation } from '@react-navigation/native'; 
 const DashboardScreen = () => {
@@ -15,14 +15,14 @@ const { navigate } = useNavigation();
 
     <View style={styles.container}>
       <Text style={styles.heading}>Welcome to Attendance Portal</Text>      
-          <TextInput
+          {/* <TextInput
             style={styles.searchBox}
             placeholder="Search..."          
-          />          
-            <View style={styles.subtext}>
+          />           */}
+            {/* <View style={styles.subtext}>
               <Text  style={styles.taskheading}>Navigation</Text>
-            </View>
-            <ScrollView vertical>        
+            </View> */}
+            {/* <ScrollView vertical>        
             <View style={[styles.boxcontainer,]}>            
                 <View style={[styles.box, styles.activebox]} >
                 <Ionicons style={styles.icons} name="book" size={24} color="#fff"   />
@@ -36,15 +36,18 @@ const { navigate } = useNavigation();
                   <Text onPress={handleReportPress}>Report</Text>
                   </View>
               </View>
-              {/* <View style={styles.box}>
+              <View style={styles.box}>
               <Ionicons   style={styles.icons} name="book" onPress={()=> navigate('TopHeader')} size={24} color="rgb(71 75 78)" />
                    <View  style={styles.boxtext}>
                   <Text>Setting</Text>
                   </View>
-              </View>   */}
+              </View>  
                
             </View>
-            </ScrollView>
+            </ScrollView> */}
+           
+              <Image style={styles.homeBG} source={require("../../local-assets/home-img.png")} />
+            
     </View> 
   );
 };
@@ -59,8 +62,18 @@ const styles = StyleSheet.create({
   activebox:{
   //  backgroundColor:"green",
   backgroundColor:"rgb(58 195 87)"
-
   },
+  homeBG: {
+    width: Dimensions.get('window').width, // Full width of the screen
+    height: 280, // Adjust this to the desired height
+    resizeMode: 'contain', // or 'contain' depending on your requirement
+    position: "relative",
+    top: 40,
+    right: 15,
+    justifyContent: "center",
+    alignItems: "center"
+
+},
   activeboxtext:{
     color:"#fff"
   },

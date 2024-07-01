@@ -26,8 +26,8 @@ const RoleScreen = ({userAccess}) => {
     const authToken = await AsyncStorage.getItem("authToken");
 
     if (!authToken) {
-      addToast("Authentication token not available", "error");
-      throw new Error("Authentication token not available");
+      addToast("Authentication token is not available", "error");
+      throw new Error("Authentication token is not available");
     }
 
     return authToken;
@@ -73,12 +73,12 @@ const RoleScreen = ({userAccess}) => {
             authToken
           );
 
-          addToast("Role Add Successful", "success");
+          addToast("Role is created successfully!", "success");
           await handleClose();
           handleGetRoleList();
         }
         else {
-          addToast("Role Add Successful", "success");
+          addToast("Role is created successfully!", "success");
           await handleClose();
           handleGetRoleList();
         }
@@ -131,7 +131,7 @@ const RoleScreen = ({userAccess}) => {
             authToken
           );
 
-          addToast("Role Update Successful", "success");
+          addToast("Role is updated successfully!", "success");
           await handleClose();
           handleGetRoleList();
         }
@@ -240,7 +240,7 @@ const RoleScreen = ({userAccess}) => {
         addToast("Invalid authentication credentials", "error");
         break;
       case "Data already exists":
-        addToast("Role with the same name already exists", "error");
+        addToast("Role name already exists!", "error");
         break;
       case "No response received from the server":
         addToast("No response received from the server", "error");
@@ -366,7 +366,7 @@ const RoleScreen = ({userAccess}) => {
           />
           <Text style={styles.header}> Module List : </Text>
           {/* <ScrollView horizontal={true} style={{maxWidth:"90%"}}>    </ScrollView> */}
-          <View style={{height:"50%",}}>
+          <View style={{height:"40%"}}>
           <FlatList
             data={moduleList}
             keyExtractor={(item) => item?.PK_ModuleId?.toString()}
@@ -415,7 +415,7 @@ const RoleScreen = ({userAccess}) => {
           </Pressable> 
           </View>
         }
-        <View style={{height:"60%"}}>
+        <View style={{height:"90%"}}>
       <FlatList
         data={roleList}
         style={styles.rolesTbl}
@@ -458,7 +458,7 @@ const RoleScreen = ({userAccess}) => {
                 {UserAccess?.update === 1 ?
                  (<Pressable style={[styles.listItemEditButton,] } 
                  onPress={() => handleEditRole(item)}>
-                     <Text style={[styles.listItemEditText, styles.columnAction,]}><Feather name="edit" size={16} color="#0C7C62" /></Text>
+                     <Text style={[styles.listItemEditText, styles.columnAction,]}><Feather name="edit" size={20} color="#0C7C62" /></Text>
                   </Pressable>) : (<Text>-</Text>)}
               </View>
             </View>
