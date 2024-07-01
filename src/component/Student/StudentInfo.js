@@ -409,7 +409,7 @@ const StudentInfo = ({ navigation }) => {
           conditionString: `EMPLID = '${system_Id}'`,
           checkAvailability: "",
           customQuery: "",
-          viewType: 'FCM_View'
+          viewType: 'CAMPUS2_View'
         },
         authToken
       );
@@ -519,7 +519,7 @@ const StudentInfo = ({ navigation }) => {
     await handleGetStudentInfo();
     await handleGetStudentCouseInfo();
     await handleGetStudentAttendenceInfo();
-    await handleGetStudentPicture();
+    // await handleGetStudentPicture();
     (await reportId) ? handleGetCopyData() : "";
   };
   const getStatuscolor = () => {
@@ -989,7 +989,6 @@ const StudentInfo = ({ navigation }) => {
             <View
               style={{ flexDirection: "row", justifyContent: "space-between" }}
             >
-              {console.log(copiesData?.length, isActive , attendenceStatus)}
               <Text style={styles.addAnsheading}> AnswerSheet </Text>
               {((copiesData?.length < 4 && isActive && attendenceStatus != 'Debarred')) && (
                 <AntDesign style={styles.addicon} name="pluscircleo" size={24} color="black" onPress={handleAddCopy} />
