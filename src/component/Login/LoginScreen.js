@@ -52,11 +52,12 @@ const LoginScreen = ({ navigation }) => {
 
   const loginUser = async () => {
     try {
-      await login('tbl_user_master', `email_id = '${loginData.email}' AND OTP = ${loginData.OTP} AND isActive = 1`);
-
-      const userRoleArray = await AsyncStorage.getItem('userRolePermission') || [];
-      const userRolePermission = JSON.parse(userRoleArray) || [];
-      navigation.replace('PostLogin', { userRolePermission });
+      const result =  await login('tbl_user_master', `email_id = '${loginData.email.replace(/\s+/g, '').trim()}' AND OTP = ${loginData.OTP.replace(/\s+/g, '').trim()} AND isActive = 1`);
+      if (result.length > 0) {
+        const userRoleArray = await AsyncStorage.getItem('userRolePermission') || '[]';
+        const userRolePermission = JSON.parse(userRoleArray);
+        navigation.replace('PostLogin', { userRolePermission });
+      }
     } catch (error) {
       handleLoginError(error);
     }
@@ -64,7 +65,7 @@ const LoginScreen = ({ navigation }) => {
 
   const verifyEmail = async () => {
     try {
-      const response = await emailVerify('tbl_user_master', `email_id = '${loginData.email}' `,'PS_SU_PSFT_COEM_VW',`EMAILID = '${loginData.email}'`);
+      const response = await emailVerify('tbl_user_master', `email_id = '${loginData.email.replace(/\s+/g, '').trim()}' `,'PS_SU_PSFT_COEM_VW',`EMAILID = '${loginData.email.replace(/\s+/g, '').trim()}'`);
       if (response) {
         addToast(`OTP is sent successfully on your registered email address!`, 'success');
         setOTPInputDiasbled(false);
@@ -81,12 +82,14 @@ const LoginScreen = ({ navigation }) => {
       setPasswordTooltipVisible(true);
     } else {
       try {
-        await login('tbl_user_master', `email_id = '${loginData.email}' AND Password = '${loginData.password}'`);
-        const userRoleArray = await AsyncStorage.getItem('userRolePermission') || [];
-        const userRolePermission = JSON.parse(userRoleArray) || [];
-        navigation.replace('PostLogin', { userRolePermission });
+        const result = await login('tbl_user_master', `email_id = '${loginData.email.replace(/\s+/g, '').trim()}' AND Password = '${loginData.password.replace(/\s+/g, '').trim()}'`);;
+        if (result.length > 0) {
+          const userRoleArray = await AsyncStorage.getItem('userRolePermission') || [];
+          const userRolePermission = JSON.parse(userRoleArray) || [];
+          navigation.replace('PostLogin', { userRolePermission });
+        }
       } catch (error) {
-        handleLoginError(error);
+        handleAdminLoginError(error);
       }
     }
   };
@@ -94,6 +97,17 @@ const LoginScreen = ({ navigation }) => {
   const handleLoginError = (error) => {
     if (error.message === 'Invalid credentials') {
       addToast('Incorrect OTP', 'error');
+    } else if (error.message === 'Token has expired') {
+      addToast('Token is expired, please log in again', 'error');
+      navigation.replace('Login');
+    } else {
+      console.error('Login Failed', error);
+      addToast('Login failed, please try again later', 'error');
+    }
+  };
+  const handleAdminLoginError = (error) => {
+    if (error.message === 'Invalid credentials') {
+      addToast('Invalid Credential', 'error');
     } else if (error.message === 'Token has expired') {
       addToast('Token is expired, please log in again', 'error');
       navigation.replace('Login');
