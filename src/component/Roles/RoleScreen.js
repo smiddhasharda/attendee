@@ -303,34 +303,34 @@ const RoleScreen = ({userAccess}) => {
   const renderModuleCheckboxes = (item) => {
     return (
       <View style={styles.listItem} key={item?.PK_ModuleId}>
-        <Text style={[styles.listItemText, { flex: 2 }]}>
+        <Text style={[styles.listItemText, { width:250},{alignItems:"flex-start"}]}>
           {item?.moduleName}
         </Text>
-        <View style={[styles.checkboxContainer, { flex: 1 } ]}>
+        <View style={[styles.checkboxContainer, { width:250 } ]}>
           <CheckBox
             value={getModulePermission(item, "create")}
             onValueChange={() => handleUpdatePermissions(item, "create")}
           />
         </View>
-        <View style={[styles.checkboxContainer, { flex: 1 }]}>
+        <View style={[styles.checkboxContainer, { width:200}]}>
           <CheckBox
             value={getModulePermission(item, "read")}
             onValueChange={() => handleUpdatePermissions(item, "read")}
           />
         </View>
-        <View style={[styles.checkboxContainer, { flex: 1 }]}>
+        <View style={[styles.checkboxContainer, { width:200}]}>
           <CheckBox
             value={getModulePermission(item, "update")}
             onValueChange={() => handleUpdatePermissions(item, "update")}
           />
         </View>
-        <View style={[styles.checkboxContainer, { flex: 1 }]}>
+        <View style={[styles.checkboxContainer, {width:200}]}>
           <CheckBox
             value={getModulePermission(item, "delete")}
             onValueChange={() => handleUpdatePermissions(item, "delete")}
           />
         </View>
-        <View style={[styles.checkboxContainer, { flex: 1 }]}>
+        <View style={[styles.checkboxContainer, {width:200}]}>
           <CheckBox
             value={getModulePermission(item, "special")}
             onValueChange={() => handleUpdatePermissions(item, "special")}
@@ -364,28 +364,28 @@ const RoleScreen = ({userAccess}) => {
               setRoleData({ ...roleData, roleDescription: text })
             }
           />
-          <Text style={styles.header}> Module List : </Text>
-          {/* <ScrollView horizontal={true} style={{maxWidth:"90%"}}>    </ScrollView> */}
-          <View style={{height:"40%"}}>
+          <Text style={styles.header}> Module List : </Text>  
+          <ScrollView horizontal>
+          <View style={{height:"64%",width:"100%"}}>
           <FlatList
             data={moduleList}
             keyExtractor={(item) => item?.PK_ModuleId?.toString()}
             ListHeaderComponent={() => (
               <View style={styles.tableHeader}>
-                <Text style={[styles.tableHeaderText, {flex:2} ,{textAlign:"left"}]}>
+                <Text style={[styles.tableHeaderText, {width:250} ,]}>
                   Module  
                 </Text>
-                <Text style={[styles.tableHeaderText,{flex:1} ,{textAlign:"center",}]}>
+                <Text style={[styles.tableHeaderText,{width:250} ,]}>
                   Create
                 </Text>
-                <Text style={[styles.tableHeaderText, {flex:1} ,{textAlign:"center"}]}>Read</Text>
-                <Text style={[styles.tableHeaderText, {flex:1},{textAlign:"center"}]}>
+                <Text style={[styles.tableHeaderText, {width:200} ,]}>Read</Text>
+                <Text style={[styles.tableHeaderText, {width:200},]}>
                   Update
                 </Text>
-                <Text style={[styles.tableHeaderText,{flex:1},{textAlign:"center"} ]}>
+                <Text style={[styles.tableHeaderText,{width:200},]}>
                   Delete
                 </Text>
-                <Text style={[styles.tableHeaderText, {flex:1},{textAlign:"center"}]}>
+                <Text style={[styles.tableHeaderText, {width:200},]}>
                   Special
                 </Text>
               </View>
@@ -394,7 +394,8 @@ const RoleScreen = ({userAccess}) => {
              stickyHeaderIndices={[0]} 
           />
           </View>
-      
+          </ScrollView>  
+          
         <View style={[styles.buttonContainer,{marginTop:40}]}>    
               <Pressable style={styles.addbtnWrap} onPress={() => roleData.roleId ?  handleUpdateRole() : handleAddRole()} >
                     <Text style={styles.addbtntext } numberOfLines={1}>{roleData.roleId ?  "Update Role" : "Add New Role"}</Text>

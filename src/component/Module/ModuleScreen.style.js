@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   tableHeaderText: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "bold",
     color: "#fff",
     textAlign: "left",
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   listItemText: {
-    fontSize: 16,
+    fontSize: 14,
     flexShrink: 1,
     //marginRight: 12,
   },
