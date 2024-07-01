@@ -3,7 +3,7 @@ import { View, ScrollView, StyleSheet,FlatList ,Pressable,Text,Platform } from '
 import { saveAs } from 'file-saver';
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { fetch, view } from "../../AuthService/AuthService";
+import { fetch } from "../../AuthService/AuthService";
 import { parse, format } from 'date-fns';
 import { DataTable, Provider as PaperProvider, DarkTheme as PaperDarkTheme, DefaultTheme as PaperDefaultTheme  } from 'react-native-paper';
 import CustomDateTimePicker from '../../globalComponent/DateTimePicker/CustomDateTimePicker';
@@ -89,12 +89,13 @@ const ReportScreen = ({userAccess}) => {
     data: "",
     conditionString: "",
     checkAvailability: "",
-    customQuery:`SELECT JSON_ARRAYAGG(room) AS ReportData FROM ( SELECT JSON_OBJECT( 'ROOM_NBR', ROOM_NBR, 'shifts', JSON_ARRAYAGG( JSON_OBJECT('EXAM_START_TIME', EXAM_START_TIME) ) ) AS room FROM tbl_report_master WHERE EXAM_DT = '${date}' GROUP BY ROOM_NBR,EXAM_START_TIME ) AS rooms` ,
+    customQuery: `SELECT Distinct ROOM_NBR FROM tbl_report_master WHERE EXAM_DT = '${date}'`,
     },
     authToken
     );
     if (response) {
-    setRoomList(response?.data?.receivedData?.[0]?.ReportData);
+    let RoomList = response?.data?.receivedData?.map((item) => item.ROOM_NBR) || [];
+    setRoomList(RoomList);
     }
     } catch (error) {
     handleAuthErrors(error);
@@ -118,9 +119,6 @@ const ReportScreen = ({userAccess}) => {
     
         if (response) {
           let SchoolList = response?.data?.receivedData?.map((item) => item.DESCR) || [];
-          console.log(typeof(SchoolList));
-          console.log(typeof(statusList));
-
           setSchoolList(SchoolList);
         }
       } catch (error) {
@@ -139,11 +137,11 @@ const ReportScreen = ({userAccess}) => {
       conditionString: "",
       checkAvailability: "",
       customQuery:`SELECT JSON_ARRAYAGG(room) AS ShiftData FROM ( SELECT JSON_OBJECT( 'label', EXAM_START_TIME, 'value', EXAM_START_TIME ) AS room FROM tbl_report_master WHERE EXAM_DT = '${date}' GROUP BY EXAM_START_TIME ) AS rooms` ,
-      },
+    },
       authToken
       );
       if (response) {
-      setShiftList(response?.data?.receivedData?.[0]?.ShiftData);
+        setShiftList(response?.data?.receivedData?.[0]?.ShiftData || []);
       }
       } catch (error) {
       handleAuthErrors(error);
@@ -275,6 +273,8 @@ const ReportScreen = ({userAccess}) => {
     accessorKey: 'ROOM_NBR',
     header: 'Room',
     size: 150,
+    filterVariant: "multi-select",
+    filterSelectOptions: roomList,
   },
   {
     accessorKey: 'PTP_SEQ_CHAR',
@@ -310,7 +310,7 @@ const ReportScreen = ({userAccess}) => {
         </Text>
       </View>
     ),
-    filterVariant: "select",
+    filterVariant: "multi-select",
     filterSelectOptions: statusList
   },
   {
@@ -342,14 +342,14 @@ const ReportScreen = ({userAccess}) => {
         </Text>
       </View>
     ),
-    filterVariant: "select",
+    filterVariant: "multi-select",
     filterSelectOptions: attendenceStatusList
   },
   {
     accessorKey: 'DESCR',
     header: 'School',
     size: 150,
-    filterVariant: "select",
+    filterVariant: "multi-select",
     filterSelectOptions: schoolList,
   },
   {
@@ -378,24 +378,6 @@ const ReportScreen = ({userAccess}) => {
         : "-",
     filterFn: "lessThanOrEqualTo",
     sortingFn: "datetime",
-    // Uncomment if you need the date filter
-    // Filter: ({ column }) => (
-    //   <LocalizationProvider dateAdapter={AdapterDayjs}>
-    //     <DatePicker
-    //       onChange={(newValue) => {
-    //         column?.setFilterValue(newValue);
-    //       }}
-    //       slotProps={{
-    //         textField: {
-    //           helperText: 'Filter Mode: Less Than',
-    //           sx: { minWidth: '120px' },
-    //           variant: 'standard',
-    //         },
-    //       }}
-    //       value={column?.getFilterValue()}
-    //     />
-    //   </LocalizationProvider>
-    // ),
   },
   {
     accessorKey: "EXAM_START_TIME",
@@ -406,8 +388,13 @@ const ReportScreen = ({userAccess}) => {
       cell?.row?.original?.EXAM_START_TIME
         ? convertedTime(cell?.row?.original?.EXAM_START_TIME)
         : "-",
+    filterVariant:"multi-select",
+    filterSelectOptions: shiftList.map(shift => ({
+      label: convertedTime(shift.label),
+      value: shift.value,
+    })),
   },
-], []);
+], [schoolList,roomList,shiftList]);
 
      // Export CSV File
      const csvOptions = {
@@ -479,7 +466,7 @@ const ReportScreen = ({userAccess}) => {
     if (Platform.OS === 'web') {
       return (
         <React.Suspense fallback={<Text>Loading...</Text>}>
-          <WebTable data={tableData} columns={WebColumns} exportHead={tableHead} handleExportData={() => handleExportData()} handleExportRows={(rows)=> handleExportRows(rows)}/>
+          <WebTable data={tableData} columns={WebColumns} exportHead={tableHead} handleExportData={() => handleExportData()} handleExportRows={(rows)=> handleExportRows(rows)} handleRefreshData={()=>handleDateClick(examSelectedDate)}/>
         </React.Suspense>
       );
     } else {
@@ -523,13 +510,7 @@ const ReportScreen = ({userAccess}) => {
       <CustomDateTimePicker date={endDate} handelChangeDate={setEndDate} />   
       <Pressable onPress={handleGetExamDateList}><Text>Search</Text></Pressable>
     </View>
-
-      
 {renderTable()}
-
-      {/* <Button icon="download" mode="contained" onPress={exportToCSV}>
-        Export CSV
-      </Button> */}
     </View>
   );
 };
@@ -588,39 +569,26 @@ const styles = StyleSheet.create({
     },
   container: { flex: 1, padding:10, },
   head: { height: 40, backgroundColor: '#f1f8ff' },
-  // Header:{backgroundColor:"#000", color:"#fff"},
   text: { margin: 6 },
-  // tableBorder: { borderWidth: 2, borderColor: '#c8e1ff' },
   searchBar: { marginBottom: 10, backgroundColor:"#fff", borderWidth:1, borderColor:"#ccc"},
     dropdownWrap: {
       flexDirection: 'row',
       justifyContent: "space-between",
       marginBottom: 24,
-      // alignItems: 'center',
-      // padding: 10,
     },
     headerWidth:{
      flex:1
     },
 
     dropdown:{
-      // width:250,
-      // minHeight:40,
-      // margin: "auto",
-      // textAlign: "center"
       width:"100%",
       },
       dropdownContainer:{
         flex:1,
         marginRight:5,
-        // width:250,
         zIndex:9999,
- 
-        // padding: [10, 5],
-        // height: "auto"
       },
       drawerItemLabel:{
-        // marginLeft:10,
       },
     table:{
     clear:"both"
@@ -638,7 +606,6 @@ const styles = StyleSheet.create({
     tabledataText:{
       color:"#000",
       textWrap:"noWrap",
-      // marginRight:40,
   
  
     },
@@ -647,7 +614,6 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       justifyContent: 'space-between',
       paddingHorizontal: 10,
-    // justifyContent:"center"
     },
   paginationText:{
     color:"#000",
@@ -655,103 +621,5 @@ const styles = StyleSheet.create({
  
  
 });
-
-const pickerSelectStyles = StyleSheet.create({
-  inputIOS: {
-    fontSize: 16,
-    paddingVertical: 12,
-    paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: 'gray',
-    borderRadius: 8,
-    color: 'black',
-    paddingRight: 30,
-    marginBottom: 10,
-    backgroundColor: 'white',
-  },
- 
-  inputAndroid: {
-    fontSize: 16,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    borderWidth: 1,
-    borderColor: 'gray',
-    borderRadius: 8,
-    color: 'black',
-    paddingRight: 30,
-    marginBottom: 10,
-    backgroundColor: 'white',
-  },
-  inputWeb:{
-    padding:8,
-    borderRadius:4,
-    marginRight:10,
-  },
-  modalViewBottom:{
-  backgroundColor:"red",
-  },
-  iconContainer:{
-    backgroundColor:"red",
-    color:"green",
-    padding:40,
-  },
-
-
-});
-
-// const dateSelectStyles = StyleSheet.create({
-// datesWrap:{
-//   flexDirection:"row",
-//   justifyContent:"space-between",
-//   alignItems:"center",
-//    marginBottom:15,
-// },
-// searchicons:{
-//    padding:"10px",
-//    alignSelf:"center",
-//    flexDirection:"row",
-//    marginRight:"10px",
-// },
-// dates: {
-//   width:'auto',
-//   backgroundColor: "#ffffff",
-//   borderBottomWidth: 1,
-//   borderBottomColor: "#dddedf",
-//   borderTopWidth: 0,
-//   marginTop: 0,
-// },
-// dateItem: {
-//   padding: 10,
-//   minWidth: 60,
-//   alignItems: "center",
-// },
-// dateNumber: {
-//   fontSize: 16,
-//   fontWeight: 'bold',
-// },
-// dateDay: {
-//   fontSize: 12,
-//   marginBottom: 3,
-// },
-// dateMonth: {
-//   fontSize: 12,
-//   marginTop: 3,
-// },
-//   activebox: {
-//     backgroundColor: "#0cb551",
-//     color: "#fff",
-    
-//   },
-//   activeText: {
-//     color: "#fff",
-//   },
-//   inactivetext: {
-//   color: "#fff",
-//   },
-//   inactivebox: {
-//   backgroundColor: "#e50d0d",
-//   },
-  
-// });
 
 export default ReportScreen;

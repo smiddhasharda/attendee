@@ -3,7 +3,7 @@ import { MaterialReactTable } from 'material-react-table';
 import { View, Pressable, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; 
 
-const WebTable = ({ columns, data,handleExportRows,handleExportData }) => {
+const WebTable = ({ columns, data,handleExportRows,handleExportData,handleRefreshData }) => {
 
   return (
     <MaterialReactTable
@@ -12,7 +12,7 @@ const WebTable = ({ columns, data,handleExportRows,handleExportData }) => {
     enableRowSelection
     renderTopToolbarCustomActions={({ table }) => (
       <View style={{ flexDirection: 'row', gap: '1rem', padding: '0.5rem', flexWrap: 'wrap' }}>
-        <Pressable onPress={() => ''}>
+        <Pressable onPress={() => handleRefreshData()}>
           <Text style={{ marginRight: 10 }}>
             <Ionicons name='refresh' size={20} /> Refresh Data
           </Text>
