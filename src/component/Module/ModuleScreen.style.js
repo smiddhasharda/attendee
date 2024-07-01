@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#fff",
     textAlign: "left",
-    flexShrink: 1,
+    // flexShrink: 1,
     // marginRight: 12,
   },
   // moduleListContainer: {
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
   },
   listItemText: {
     fontSize: 14,
-    flexShrink: 1,
+    // flexShrink: 1,
     //marginRight: 12,
   },
   listItemActiveStatus: {
