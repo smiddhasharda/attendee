@@ -3,7 +3,7 @@ import { MaterialReactTable } from 'material-react-table';
 import { View, Pressable, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; 
 
-const WebTable = ({ columns, data,handleExportRows,handleExportData,handleRefreshData }) => {
+const WebTable = ({ columns, data,handleExportRows,handleExportData,handleRefreshData,style, }) => {
 
   return (
     <MaterialReactTable
@@ -12,30 +12,36 @@ const WebTable = ({ columns, data,handleExportRows,handleExportData,handleRefres
     enableRowSelection
     renderTopToolbarCustomActions={({ table }) => (
       <View style={{ flexDirection: 'row', gap: '1rem', padding: '0.5rem', flexWrap: 'wrap' }}>
-        <Pressable onPress={() => handleRefreshData()}>
-          <Text style={{ marginRight: 10 }}>
-            <Ionicons name='refresh' size={20} /> Refresh Data
+        <Pressable onPress={() => handleRefreshData()} style={style}>
+          <Text style={{ marginRight: 10 ,color:"#fff" ,textAlign:"center"  ,fontSize:14}}>
+            {/* <Ionicons name='refresh' size={16} color="#fff"  textAlign="center" marginTop="5px" /> */}
+             Refresh Data
           </Text>
         </Pressable>
-        <Pressable onPress={handleExportData}>
-          <Text>
-            <Ionicons name='download' size={20} /> Export All Data
+        <Pressable onPress={handleExportData} style={style}>
+          <Text style={{ color:"#fff" ,textAlign:"center"}}>
+            {/* <Ionicons name='download' size={20}  color="#fff"  textAlign="center"/>  */}
+            Export All Data
           </Text>
         </Pressable>
         <Pressable
           disabled={table.getRowModel().rows.length === 0}
           onPress={() => handleExportRows(table.getRowModel().rows)}
+          style={style}
         >
-          <Text>
-            <Ionicons name='download' size={20} /> Export Page Rows
+          <Text style={{ color:"#fff", textAlign:"center" }}>
+            {/* <Ionicons name='download' size={20} color="#fff"  textAlign="center" />  */}
+            Export Page Rows
           </Text>
         </Pressable>
         <Pressable
           disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
           onPress={() => handleExportRows(table.getSelectedRowModel().rows)}
+          style={style}
         >
-          <Text>
-            <Ionicons name='download' size={20} /> Export Selected Rows
+          <Text style={{ color:"#fff",textAlign:"center"}}>
+            {/* <Ionicons name='download' size={20}  color="#fff"  textAlign="center"/> */}
+             Export Selected Rows
           </Text>
         </Pressable>
       </View>

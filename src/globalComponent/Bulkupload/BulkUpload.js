@@ -76,7 +76,11 @@ const BulkUpload = (props) => {
       const reader = new FileReader();
       reader.onload = () => {
         const content = reader.result;
-        setExcelData(parseExcelData(content));
+        const parsedExcelData =parseExcelData(content); 
+         // Remove empty rows from parsedExcelData
+      const filteredExcelData = parsedExcelData.filter(row => row.length > 0 && row.some(value => value !== ""));
+  
+        setExcelData(filteredExcelData);
       };
       reader.onerror = (error) => {
         console.error('Error in reading file:', error);
@@ -109,6 +113,10 @@ const BulkUpload = (props) => {
     try {
       if (!selectedFile) {
         addToast('Please select a file to upload.', "error");
+        return;
+      }
+      else if(excelData?.length  < 2){
+        addToast('Please check the file data is empty.', "error");
         return;
       } else {
         const authToken = await checkAuthToken();
@@ -156,7 +164,6 @@ const BulkUpload = (props) => {
     setSelectedFile(null);
     setExcelData([]);
   };
-
   return (
     <View style={styles.container}>
       <Pressable style={styles.pickFileButton} onPress={() => pickFile()}>
@@ -167,15 +174,17 @@ const BulkUpload = (props) => {
           <View style={styles.fileDetails}>
             <Text style={styles.fileName}>Selected File: {selectedFile.name}</Text>
             <Text style={styles.previewTitle}>Preview:</Text>
+            <ScrollView horizontal={true} vertical={true}>
             <FlatList
-              data={excelData}
+              data={excelData?.slice(1)}
               keyExtractor={(item, index) => index.toString()}
               ListHeaderComponent={props?.renderData}
               renderItem={({ item }) => (
                 <View style={styles.listItem}>
-                  {item?.map((data)=>(
-                  <Text style={styles.listItemText}>{data}</Text>
+                {item?.map((data, index) => (
+                    <Text key={index} style={styles.listItemText}>{data}</Text>
                   ))}
+
                   {/* <Text style={styles.listItemText}>{item?.[0]}</Text>
                   <Text style={styles.listItemText}>{item?.[1]}</Text>
                   <Text style={styles.listItemText}>{item?.[2]}</Text>
@@ -185,6 +194,7 @@ const BulkUpload = (props) => {
                 </View>
               )}
             />
+            </ScrollView>
             <View style={[styles.buttonContainer,]}>
               <Pressable style={styles.uploadButton} onPress={() => handleBulkInvigiltor()}>
                 <Text style={styles.buttonText}>Upload</Text>
@@ -297,7 +307,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   listItemText: {
-    flex: 1,
+
+    width:220,
   },
   listItemActiveStatus: {
     color: "green",

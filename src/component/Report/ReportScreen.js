@@ -466,7 +466,12 @@ const ReportScreen = ({userAccess}) => {
     if (Platform.OS === 'web') {
       return (
         <React.Suspense fallback={<Text>Loading...</Text>}>
-          <WebTable data={tableData} columns={WebColumns} exportHead={tableHead} handleExportData={() => handleExportData()} handleExportRows={(rows)=> handleExportRows(rows)} handleRefreshData={()=>handleDateClick(examSelectedDate)}/>
+          <WebTable data={tableData} columns={WebColumns} 
+          exportHead={tableHead} handleExportData={() => handleExportData()}
+           handleExportRows={(rows)=> handleExportRows(rows)}
+            handleRefreshData={()=>handleDateClick(examSelectedDate)}
+            style={[styles.tablebtn,]}
+           />
         </React.Suspense>
       );
     } else {
@@ -476,6 +481,13 @@ const ReportScreen = ({userAccess}) => {
 
   return (
     <View style={styles.container}>
+     <View style={styles.dropdownWrap}>
+      <CustomDateTimePicker  date={startDate} handelChangeDate={setStartDate} inputStyle={styles.inputStyle} datePickerStyle={styles.datePickerStyle}   /> 
+      <CustomDateTimePicker date={endDate} handelChangeDate={setEndDate} />   
+      <Pressable onPress={handleGetExamDateList} style={styles.searchbtn}>
+      <Text style={styles.searchtext}>Search</Text>
+      </Pressable>
+    </View>
           <View style={styles.datesWrap}>
         <View style={styles.dates}>
           {examDates?.length > 0 ?  
@@ -502,14 +514,10 @@ const ReportScreen = ({userAccess}) => {
             }}
             horizontal
             keyExtractor={(item) => item.EXAM_DT}
-          /> : <Text>There is no Dates Available Between {startDate.toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-')} to {endDate.toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-')}</Text>}
+          /> : <Text style={styles.nodatestext}>There is no Dates Available Between {startDate.toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-')} to {endDate.toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-')}</Text>}
         </View>
       </View>
-      <View style={styles.dropdownWrap}>
-      <CustomDateTimePicker date={startDate} handelChangeDate={setStartDate} /> 
-      <CustomDateTimePicker date={endDate} handelChangeDate={setEndDate} />   
-      <Pressable onPress={handleGetExamDateList}><Text>Search</Text></Pressable>
-    </View>
+     
 {renderTable()}
     </View>
   );
@@ -575,6 +583,9 @@ const styles = StyleSheet.create({
       flexDirection: 'row',
       justifyContent: "space-between",
       marginBottom: 24,
+      zIndex:9999,
+     position:"relative",
+      left:26
     },
     headerWidth:{
      flex:1
@@ -619,7 +630,35 @@ const styles = StyleSheet.create({
     color:"#000",
   },
  
+  searchbtn:{
+    backgroundColor:"green",
+    padding:10,
+    borderRadius:6,
+    marginRight:24,
+  },
+  searchtext:{
+    color:"#fff"
+  },
+  tablebtn:{
+    backgroundColor:"rgb(17, 65, 102)",
+    padding:10,
+    borderRadius:8,
+    flexDirection:"row",
+    justifyContent:"center",
+    alignItems:"center"
  
+  },
+  btnicon:{
+    textAlign:"center",
+    color:"#fff"
+  },
+ 
+  nodatestext:{
+    padding:14,
+    borderRadius:5,
+ 
+  }
+  
 });
 
 export default ReportScreen;
