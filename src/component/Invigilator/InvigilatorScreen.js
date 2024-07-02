@@ -66,6 +66,7 @@ const { parse, format } = require('date-fns');
 
   const handleAddButton = async() =>{
     setInvigilatorContainerVisible(true);
+    await handleGetDateView();
   }
   
   const handleAddInvigilator = async () => {
@@ -223,6 +224,7 @@ const { parse, format } = require('date-fns');
     duty_status:"primary",
     isActive: 1,
     });
+    setSearchedEmployee('');
   };
 
   const handleDownload = () => {
@@ -248,13 +250,7 @@ const { parse, format } = require('date-fns');
   
       if (response) {
         let EmployeeData = response?.data?.receivedData?.[0]
-        setInvigilatorData({ ...invigilatorData, invigilatorName: EmployeeData?.DISPLAY_NAME,employeeId:EmployeeData?.EMPLID })
-        // let EmployeeData = response?.data?.receivedData?.map((item) => ({
-        //   label: `${item?.DISPLAY_NAME} (${item?.EMPLID})`,
-        //   value: `${item?.DISPLAY_NAME} !#! ${item?.EMPLID}`,
-        // }));
-        // console.log(EmployeeData);
-        // setEmployeesList(EmployeeData);
+        setInvigilatorData({ ...invigilatorData, invigilatorName: EmployeeData?.DISPLAY_NAME,employeeId:EmployeeData?.EMPLID });
       }
     } catch (error) {
       handleAuthErrors(error);
@@ -311,16 +307,15 @@ const { parse, format } = require('date-fns');
         setExamDates(ExamDates);
       }
     } catch (error) {
-      setLoading(false);
       handleAuthErrors(error);
     }
   };
 
   useEffect(() => {
     handleGetInigilatorDuty();
-    handleGetDateView();
   }, [UserAccess]);
    return (
+    
     <View style={styles.container}>
       {isBulkuploadInvigilater ? (<Bulkpload handleClose={() => handleClose()} renderData={    <View style={styles.tableHeader}>
                   <Text style={styles.tableHeaderText}>Employee Id</Text>
