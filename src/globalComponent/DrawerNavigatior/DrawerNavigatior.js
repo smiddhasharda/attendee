@@ -23,7 +23,7 @@ import { Ionicons,Feather } from '@expo/vector-icons';
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import InvigilatorScreen from "../../component/Invigilator/InvigilatorScreen";
-import ReportScreen from "../../component/Report/ReportScreen";
+// import ReportScreen from "../../component/Report/ReportScreen";
 
 // Screen components
 const RoleComponent = ({ userAccess }) => <RoleScreen userAccess={userAccess} />;
@@ -264,7 +264,7 @@ const DrawerNavigator = ({ navigation }) => {
       UserScreen: focused ? 'person' : 'person-outline',
       ExamScreen: focused ? 'book' : 'book-outline',
       InvigilatorScreen: focused ? 'people' : 'people-outline',
-      ReportScreen: focused ? 'bookmark' : 'bookmarks',
+      // ReportScreen: focused ? 'bookmark' : 'bookmarks',
 
 
       // Add more mappings as needed
@@ -337,6 +337,7 @@ const DrawerNavigator = ({ navigation }) => {
             module?.read === 1 &&
             module?.moduleMaster[0]?.moduleName !== "StudentInfo" &&
             module?.moduleMaster[0]?.moduleName !== "RoomDetail" 
+            &&  module?.moduleMaster[0]?.moduleName !== "ReportScreen" 
         )
         .map((module, index) => (
     //       <Drawer.Screen  options={{
@@ -361,8 +362,8 @@ const DrawerNavigator = ({ navigation }) => {
             return "Exam";
           case "InvigilatorScreen":
             return "Invigilator Permission";
-          case "ReportScreen":
-            return "Report";
+          // case "ReportScreen":
+          //   return "Report";
           default:
             return module?.moduleMaster[0]?.moduleName;
         }
@@ -391,8 +392,8 @@ const DrawerNavigator = ({ navigation }) => {
                   return <ExamComponent {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData} />;
                 case "InvigilatorScreen":
                   return <InvigilatorScreen {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData} />;  
-                case "ReportScreen":
-                  return <ReportScreen {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} />;
+                // case "ReportScreen":
+                //   return <ReportScreen {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} />;
                   
                   default:
                   return null;
