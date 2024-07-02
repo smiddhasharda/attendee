@@ -482,7 +482,7 @@ const ReportScreen = ({userAccess}) => {
   return (
     <View style={styles.container}>
      <View style={styles.dropdownWrap}>
-      <CustomDateTimePicker date={startDate} handelChangeDate={setStartDate} inputStyle={styles.inputStyle} datePickerStyle={styles.datePickerStyle}   /> 
+      <CustomDateTimePicker  date={startDate} handelChangeDate={setStartDate} inputStyle={styles.inputStyle} datePickerStyle={styles.datePickerStyle}   /> 
       <CustomDateTimePicker date={endDate} handelChangeDate={setEndDate} />   
       <Pressable onPress={handleGetExamDateList} style={styles.searchbtn}>
       <Text style={styles.searchtext}>Search</Text>
@@ -584,6 +584,8 @@ const styles = StyleSheet.create({
       justifyContent: "space-between",
       marginBottom: 24,
       zIndex:9999,
+     position:"relative",
+      left:26
     },
     headerWidth:{
      flex:1
@@ -631,7 +633,8 @@ const styles = StyleSheet.create({
   searchbtn:{
     backgroundColor:"green",
     padding:10,
-    borderRadius:6
+    borderRadius:6,
+    marginRight:24,
   },
   searchtext:{
     color:"#fff"
