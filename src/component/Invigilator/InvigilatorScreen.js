@@ -317,14 +317,16 @@ const { parse, format } = require('date-fns');
    return (
     
     <View style={styles.container}>
-      {isBulkuploadInvigilater ? (<Bulkpload handleClose={() => handleClose()} renderData={    <View style={styles.tableHeader}>
-                  <Text style={styles.tableHeaderText}>Employee Id</Text>
-                  <Text style={styles.tableHeaderText}>Name</Text>
-                  <Text style={styles.tableHeaderText}>Date</Text>
-                  <Text style={styles.tableHeaderText}>Shift</Text>
-                  <Text style={styles.tableHeaderText}>Room</Text>
-                  <Text style={styles.tableHeaderText}>Duty Status</Text>
-                </View>} />) : 
+      {isBulkuploadInvigilater ? (<Bulkpload handleClose={() => handleClose()} renderData={   
+         <View style={styles.tableHeader}>
+                  <Text style={[styles.tableHeaderText ,{width:220}]  }>Employee Id</Text>
+                  <Text style={[styles.tableHeaderText ,{width:220}]  }>Name</Text>
+                  <Text style={[styles.tableHeaderText ,{width:220}]  }>Date</Text>
+                  <Text style={[styles.tableHeaderText ,{width:220}]  }>Shift</Text>
+                  <Text style={[styles.tableHeaderText ,{width:220}]  }>Room</Text>
+                  <Text style={[styles.tableHeaderText ,{width:220}]  }>Duty Status</Text>
+                </View>} />
+                ) : 
         (invigilatorContainerVisible ? (
         <View style={styles.formContainer}>
             <TextInput

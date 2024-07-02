@@ -174,6 +174,7 @@ const BulkUpload = (props) => {
           <View style={styles.fileDetails}>
             <Text style={styles.fileName}>Selected File: {selectedFile.name}</Text>
             <Text style={styles.previewTitle}>Preview:</Text>
+            <ScrollView horizontal={true} vertical={true}>
             <FlatList
               data={excelData?.slice(1)}
               keyExtractor={(item, index) => index.toString()}
@@ -193,6 +194,7 @@ const BulkUpload = (props) => {
                 </View>
               )}
             />
+            </ScrollView>
             <View style={[styles.buttonContainer,]}>
               <Pressable style={styles.uploadButton} onPress={() => handleBulkInvigiltor()}>
                 <Text style={styles.buttonText}>Upload</Text>
@@ -305,7 +307,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   listItemText: {
-    flex: 1,
+
+    width:220,
   },
   listItemActiveStatus: {
     color: "green",
