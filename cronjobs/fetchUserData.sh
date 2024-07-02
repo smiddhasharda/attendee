@@ -1,7 +1,7 @@
 const mysql = require('mysql2');
 const moment = require('moment');
 
-// Local MySQL database connection
+## Local MySQL database connection
 const con = mysql.createConnection({
     host: "localhost",
     user: "root",
@@ -9,7 +9,7 @@ const con = mysql.createConnection({
     database: "attendence_db"
 });
 
-// View MySQL database connection
+## View MySQL database connection
 const viewCon = mysql.createConnection({
     host: "35.154.115.237",
     user: "examshedule",
@@ -17,7 +17,7 @@ const viewCon = mysql.createConnection({
     database: "SHARDA"
 });
 
-// Function to fetch data from the view
+## Function to fetch data from the view
 function fetchDataFromView() {
     return new Promise((resolve, reject) => {
         viewCon.query('SELECT * FROM your_view', (err, result) => {
@@ -30,7 +30,7 @@ function fetchDataFromView() {
     });
 }
 
-// Function to query local database
+## Function to query local database
 function queryLocalDatabase() {
     return new Promise((resolve, reject) => {
         con.query('SELECT * FROM tbl_user_master', (err, result) => {
@@ -43,7 +43,7 @@ function queryLocalDatabase() {
     });
 }
 
-// Function to update record in local database
+## Function to update record in local database
 function updateRecord(item) {
     return new Promise((resolve, reject) => {
         con.query('UPDATE tbl_user_master SET name = ?, contact_number=?, email_id = ?,isActive=? WHERE username = ?', [item.NAME_PREFIX || '' + item.FIRST_NAME || '' + item.MIDDLE_NAME || '' + item.LAST_NAME ,item.PHONE, item.EMAIL_ADDR, '1', item.EMPLID], (err, result) => {
@@ -56,7 +56,7 @@ function updateRecord(item) {
     });
 }
 
-// Function to update record status in local database
+## Function to update record status in local database
 function updateRecordStatus (item) {
     return new Promise((resolve, reject) => {
         con.query('UPDATE tbl_user_master SET isActive=? WHERE username = ?', ['1', item.EMPLID], (err, result) => {
@@ -69,7 +69,7 @@ function updateRecordStatus (item) {
     });
 }
 
-// Function to insert record into local database
+##Function to insert record into local database
 function insertRecord(item) {
     return new Promise((resolve, reject) => {
         con.query( `INSERT INTO tbl_user_master (username, name, contact_number, email_id) VALUES (?,?,?,?)`,[item.EMPLID, item.NAME_PREFIX || '' + item.FIRST_NAME || '' + item.MIDDLE_NAME || '' + item.LAST_NAME ,item.PHONE, item.EMAIL_ADDR] , (err, result) => {
@@ -87,30 +87,29 @@ function insertRecord(item) {
         });
     });
 }
-
-// Main function to execute the cron job
+#  Main function to execute the cron job
 async function executeCronJob() {
     try {
-        // Fetch data from the view
+        #Fetch data from the view
         const externalData = await fetchDataFromView();
 
-        // Query local database
+        #Query local database
         const localData = await queryLocalDatabase();
 
         for (const item of externalData) {
             const localItem = localData.find(localItem => localItem.username === item.username);
             if (localItem) {
-                // Check if data has changed
+                ##Check if data has changed
                 if (/* Logic to check if data has changed */) {
                     await updateRecord(item);
                 }
             } else {
-                // Data does not exist in the local database, insert it
+                ##Data does not exist in the local database, insert it
                 await insertRecord(item);
             }
         }
 
-        // Mark records in local as inactive if they're not in the view
+        #Mark records in local as inactive if they're not in the view
         for (const localItem of localData) {
             const externalItem = externalData.find(externalItem => externalItem.username === localItem.username);
             if (!externalItem) {
@@ -124,5 +123,5 @@ async function executeCronJob() {
     }
 }
 
-// Execute cron job
+##Execute cron job
 executeCronJob();
