@@ -10,7 +10,9 @@ import {
     container: {
       //flex: 1,
       padding: 20,
+  
     },
+
     formContainer: {
       marginBottom: 20,
       backgroundColor:"#fff",
@@ -55,7 +57,7 @@ import {
       color:"#fff",
       textAlign:"left",
       alignItems:"center",
-      flexShrink: 1,
+      // flexShrink: 0,
  
     },
     listItem: {
@@ -79,13 +81,15 @@ import {
     },
     listItemText: {
      fontSize:13, 
+     padding:6,
     },
     listItemActiveStatus: {
-      //color: "green",
+      color: "green",
       // textAlign: 'center',
     },
     listItemInactiveStatus: {
-      //color: "red",
+      color: "red",
+      // textAlign: 'center'
     },
     listItemEditButton: {
       //backgroundColor: "#0C7C62",
@@ -96,7 +100,7 @@ import {
       color: "#0C7C62",
     },
     checkboxContainer: {
-      marginTop: 12,
+      // marginTop: 12,
       alignItems: "center",
       justifyContent: "center",
     },

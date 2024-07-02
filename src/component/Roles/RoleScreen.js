@@ -7,6 +7,7 @@ import CheckBox from "expo-checkbox";
 import styles from "./RoleScreen.style";
 import { Ionicons,Feather} from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
+import { display } from "@mui/system";
 const RoleScreen = ({userAccess}) => {
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 2 );
   const { addToast } = useToast();
@@ -303,34 +304,34 @@ const RoleScreen = ({userAccess}) => {
   const renderModuleCheckboxes = (item) => {
     return (
       <View style={styles.listItem} key={item?.PK_ModuleId}>
-        <Text style={[styles.listItemText, { flex: 2 }]}>
+        <Text style={[styles.listItemText, { width:230},{textAlign:"left"},]}>
           {item?.moduleName}
         </Text>
-        <View style={[styles.checkboxContainer, { flex: 1 } ]}>
+        <View style={[styles.checkboxContainer, { width:230 },{textAlign:"center"} ]}>
           <CheckBox
             value={getModulePermission(item, "create")}
             onValueChange={() => handleUpdatePermissions(item, "create")}
           />
         </View>
-        <View style={[styles.checkboxContainer, { flex: 1 }]}>
+        <View style={[styles.checkboxContainer, { width:200},{textAlign:"center"}]}>
           <CheckBox
             value={getModulePermission(item, "read")}
             onValueChange={() => handleUpdatePermissions(item, "read")}
           />
         </View>
-        <View style={[styles.checkboxContainer, { flex: 1 }]}>
+        <View style={[styles.checkboxContainer, { width:200},{textAlign:"center"}]}>
           <CheckBox
             value={getModulePermission(item, "update")}
             onValueChange={() => handleUpdatePermissions(item, "update")}
           />
         </View>
-        <View style={[styles.checkboxContainer, { flex: 1 }]}>
+        <View style={[styles.checkboxContainer, {width:200},{textAlign:"center"}]}>
           <CheckBox
             value={getModulePermission(item, "delete")}
             onValueChange={() => handleUpdatePermissions(item, "delete")}
           />
         </View>
-        <View style={[styles.checkboxContainer, { flex: 1 }]}>
+        <View style={[styles.checkboxContainer, {width:200},{textAlign:"center"}]}>
           <CheckBox
             value={getModulePermission(item, "special")}
             onValueChange={() => handleUpdatePermissions(item, "special")}
@@ -364,28 +365,29 @@ const RoleScreen = ({userAccess}) => {
               setRoleData({ ...roleData, roleDescription: text })
             }
           />
-          <Text style={styles.header}> Module List : </Text>
-          {/* <ScrollView horizontal={true} style={{maxWidth:"90%"}}>    </ScrollView> */}
-          <View style={{height:"40%"}}>
+          <View style={{marginTop:15}}>
+          <Text style={styles.header}> Module List : </Text>  
+          <ScrollView horizontal>
+          <View style={{maxHeight: 300}}>
           <FlatList
             data={moduleList}
             keyExtractor={(item) => item?.PK_ModuleId?.toString()}
             ListHeaderComponent={() => (
               <View style={styles.tableHeader}>
-                <Text style={[styles.tableHeaderText, {flex:2} ,{textAlign:"left"}]}>
+                <Text style={[styles.tableHeaderText, {width:230} ,{textAlign:"left"}]}>
                   Module  
                 </Text>
-                <Text style={[styles.tableHeaderText,{flex:1} ,{textAlign:"center",}]}>
+                <Text style={[styles.tableHeaderText,{width:230} ,{textAlign:"center"}]}>
                   Create
                 </Text>
-                <Text style={[styles.tableHeaderText, {flex:1} ,{textAlign:"center"}]}>Read</Text>
-                <Text style={[styles.tableHeaderText, {flex:1},{textAlign:"center"}]}>
+                <Text style={[styles.tableHeaderText, {width:200} ,{textAlign:"center"}]}>Read</Text>
+                <Text style={[styles.tableHeaderText, {width:200},{textAlign:"center"}]}>
                   Update
                 </Text>
-                <Text style={[styles.tableHeaderText,{flex:1},{textAlign:"center"} ]}>
+                <Text style={[styles.tableHeaderText,{width:200},{textAlign:"center"}]}>
                   Delete
                 </Text>
-                <Text style={[styles.tableHeaderText, {flex:1},{textAlign:"center"}]}>
+                <Text style={[styles.tableHeaderText, {width:200},{textAlign:"center"}]}>
                   Special
                 </Text>
               </View>
@@ -394,8 +396,9 @@ const RoleScreen = ({userAccess}) => {
              stickyHeaderIndices={[0]} 
           />
           </View>
-      
-        <View style={[styles.buttonContainer,{marginTop:40}]}>    
+          </ScrollView> 
+          </View> 
+        <View style={[styles.buttonContainer,]}>    
               <Pressable style={styles.addbtnWrap} onPress={() => roleData.roleId ?  handleUpdateRole() : handleAddRole()} >
                     <Text style={styles.addbtntext } numberOfLines={1}>{roleData.roleId ?  "Update Role" : "Add New Role"}</Text>
                   </Pressable>
@@ -427,7 +430,7 @@ const RoleScreen = ({userAccess}) => {
                 Description
               </Text> */}
               <Text style={[styles.tableHeaderText, styles.columnStatus ,{width:"30%"}]}>Status</Text>
-              <Text style={[styles.tableHeaderText, styles.columnAction,{width:"20%"},{textAlign:"center"}]}>Actions</Text>
+              <Text style={[styles.tableHeaderText, styles.columnAction,{width:"20%"},]}>Actions</Text>
             </View>
           )}
           renderItem={({ item }) => (
@@ -438,8 +441,9 @@ const RoleScreen = ({userAccess}) => {
               {/* <Text style={[styles.listItemText,]}>
                 {item.description}
               </Text> */}
-              <Pressable 
-                style={{ width: "30%" }} 
+              <View style={{ width: "30%", display: "inline-block" }}>
+              <Pressable        
+               style={{ display: "inline-block" }}          
                 onPress={() => UserAccess?.update === 1 ? handleRoleStatus(item.PK_RoleId, item?.isActive) : ''} 
               >
                 <Text
@@ -454,11 +458,12 @@ const RoleScreen = ({userAccess}) => {
                   {item.isActive ? "Active" : "Inactive"}
                 </Text>
               </Pressable>
-              <View style={ { width: "20%", alignItems:"center"}}>
+              </View>
+              <View style={ { width: "20%", alignItems:"center" ,display:"inline-block"}}>
                 {UserAccess?.update === 1 ?
-                 (<Pressable style={[styles.listItemEditButton,] } 
+                 (<Pressable style={[styles.listItemEditButton,{display:"inline-block" }]  } 
                  onPress={() => handleEditRole(item)}>
-                     <Text style={[styles.listItemEditText, styles.columnAction,]}><Feather name="edit" size={20} color="#0C7C62" /></Text>
+                     <Text style={[styles.listItemEditText, styles.columnAction,]}><Feather name="edit" size={16} color="#0C7C62" /></Text>
                   </Pressable>) : (<Text>-</Text>)}
               </View>
             </View>
