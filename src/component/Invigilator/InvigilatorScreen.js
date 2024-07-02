@@ -338,7 +338,9 @@ const { parse, format } = require('date-fns');
             value={searchedEmployee}
             onChangeText={(text) => setSearchedEmployee(text) }
           />
-          <Pressable onPress={handleGetEmployeeSearch}><Text>Search</Text></Pressable>
+          <Pressable onPress={handleGetEmployeeSearch} style={styles.searchIcon}>
+            <Text ><FontAwesome name="search" size={23} color="purple" /></Text>
+          </Pressable>
           <TextInput
             style={styles.input}
             placeholder="Employee Id"
@@ -368,7 +370,7 @@ const { parse, format } = require('date-fns');
               date: callback(invigilatorData.date)
             }))}
             placeholder='Select Exam Date'
-            style={styles.dropdown}
+            style={[styles.dropdown, styles.dropdownExam]}
             dropDownStyle={{ backgroundColor: "#fafafa"}}
             dropDownMaxHeight={150}
             dropDownDirection="TOP"
@@ -453,7 +455,7 @@ const { parse, format } = require('date-fns');
         </View>
         </View>
         <ScrollView horizontal>
-        <View style={{minHeight:"56%", width: '100%' ,}}>
+        <View style={{minHeight:"90%", width: '100%' ,}}>
           <FlatList 
             data={invigilatorList}
             keyExtractor={(item) => item.PK_InvigilatorDutyId.toString()}
@@ -690,7 +692,16 @@ const { parse, format } = require('date-fns');
   cancelbtntext:{
     color:"#fff",
     textAlign:"center"
-
+  },
+  dropdownExam:{
+    marginBottom: 10,
+    minHeight: 45
+  },
+  searchIcon: {
+    marginRight: 20,
+    position: "absolute",
+    top: 27,
+    right: 15
   }
 });
   

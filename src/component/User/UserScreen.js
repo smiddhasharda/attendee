@@ -10,6 +10,7 @@ import Tooltip from "../../globalComponent/ToolTip/Tooltip";
 import CheckBox from "expo-checkbox";
 import { ScrollView } from "react-native-gesture-handler";
 import { Ionicons,AntDesign,Feather} from "@expo/vector-icons";
+import { display } from "@mui/system";
 
 const UserScreen = ({userAccess}) => { 
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 4 );
@@ -592,28 +593,31 @@ const UserScreen = ({userAccess}) => {
                     </Text>
                   </Pressable>) }
           </View>
+          <ScrollView horizontal>
           <View style={{minHeight:"80%"}}>
         <FlatList 
           data={userList}
           keyExtractor={(item) => item.user_id.toString()}
           ListHeaderComponent={() => (
             <View style={styles.tableHeader}>
-              <Text style={[styles.tableHeaderText,{width:"25%"}, ]}>User Name</Text>
-              <Text style={[styles.tableHeaderText, {width:"25%"} ]}>Contact No</Text>
-              <Text style={[styles.tableHeaderText,{width:"25%"}  ]}>Status</Text>
-              <Text style={[styles.tableHeaderText, {width:"25%"}]}>Actions</Text>
+              <Text style={[styles.tableHeaderText,{width:350}, ]}>Name</Text>
+              <Text style={[styles.tableHeaderText, {width:300} ]}>Mob.No</Text>
+              <Text style={[styles.tableHeaderText,{width:300}  ]}>Status</Text>
+              <Text style={[styles.tableHeaderText, {width:300}]}>Actions</Text>
             </View>
           )}
           renderItem={({ item }) => (
             <View style={styles.listItem}>
-              <Text style={[styles.listItemText,{width:"25%"}  ]}>{item.name}</Text>
-              <Text style={[styles.listItemText, {width:"25%"} ]}>{item.contact_number}</Text>
-                <Pressable style={{width:"25%"} } onPress={() =>UserAccess?.update === 1 ? handleUserStatus(item.user_id, item?.isActive) : ''}>
+              <Text style={[styles.listItemText,{width:350}  ]}>{item.name}</Text>
+              <Text style={[styles.listItemText, {width:300} ]}>{item.contact_number}</Text>
+              <View style={{display:"inline-block" , width:300}}>
+                <Pressable style={{display:"inline-block"} } onPress={() =>UserAccess?.update === 1 ? handleUserStatus(item.user_id, item?.isActive) : ''}>
               <Text style={[styles.listItemText, { flex: 1 }, item.isActive ? styles.listItemActiveStatus : styles.listItemInactiveStatus]}>{item.isActive ? "Active" : "Inactive"}</Text>
-              </Pressable>          
-              <View style={{width:"25%",alignItems:"center"} }>
+              </Pressable>     
+              </View>     
+              <View style={{width:300,display:"inline-block"} }>
               {UserAccess?.update === 1 ? 
-              (<Pressable style={styles.listItemEditButton} onPress={() => handleEditUser(item)}>
+              (<Pressable style={[styles.listItemEditButton ,{display:"inline-block"}]} onPress={() => handleEditUser(item)}>
                     <Text style={styles.listItemEditText} ><Feather name="edit" size={16} color="#0C7C62" /></Text>
                   </Pressable>) : (<Text>-</Text>)}
               </View>
@@ -621,6 +625,7 @@ const UserScreen = ({userAccess}) => {
           )}
          />
          </View>
+         </ScrollView>
       </View>)
       }
       </View>     
@@ -674,8 +679,8 @@ const styles = StyleSheet.create({
     color:"#fff",
     textAlign:"left",
     alignItems:"center",
-    flexShrink:1,
-    fontSize:13,
+    // flexShrink:1,
+    fontSize:14,
   },
   listItem: {
     flexDirection: 'row',
@@ -686,7 +691,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',   
   },
   listItemText: {
-    fontSize:12,
+    fontSize:14,
     // textWrap:"noWrap"
   },
   listItemActiveStatus: {
