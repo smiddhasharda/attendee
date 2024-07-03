@@ -19,6 +19,7 @@ const LoginScreen = ({ navigation }) => {
   const [isPasswordTooltipVisible, setPasswordTooltipVisible] = useState(false);
   const [isOTPTooltipVisible, setOTPTooltipVisible] = useState(false);
   const [isOTPInputDisabled, setOTPInputDiasbled] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleInputChange = (field, value) => {
     if (field === 'OTP') {
@@ -225,14 +226,26 @@ const LoginScreen = ({ navigation }) => {
                     </View>
                   </Tooltip>
                 )}
-                <TextInput
+                     <View style={{ position: 'relative' }}>                
+                      <TextInput
                   placeholder='Enter Your Password'
                   style={styles.input}
                   value={loginData.password}
                   onChangeText={(text) => handleInputChange('password', text)}
                   autoCapitalize="none"
+                  secureTextEntry={!showPassword}
                   onFocus={() => setPasswordTooltipVisible(false)}
                 />
+                 <Pressable
+                    style={styles.eyeButton}
+                    onPress={() => setShowPassword(!showPassword)}
+                  ><Text>  <Image
+                  source={showPassword ? require('../../local-assets/eye.png') : require('../../local-assets/eye-off.png')}
+                  style={styles.eyeIcon}
+                /></Text>
+                  
+                  </Pressable>
+                </View>
                 <Pressable
                   style={styles.loginButtonStyle}
                   onPress={loginAdmin}

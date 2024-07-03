@@ -127,6 +127,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#721c24',
   },
+  eyeButton: {
+    position: 'absolute',
+    top: 12,
+    right: 10,
+  },
+  eyeIcon: {
+    width: 20,
+    height: 20,
+  },
 });
 
 export default styles;

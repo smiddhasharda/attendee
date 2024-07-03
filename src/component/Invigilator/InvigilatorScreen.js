@@ -6,7 +6,7 @@
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Feather,FontAwesome5,FontAwesome ,FontAwesome6} from "@expo/vector-icons";
-const { parse, format } = require('date-fns');
+import { parse, format,parseISO } from 'date-fns';
 
 
  const InvigilatorScreen = ({userAccess}) => {
@@ -29,6 +29,10 @@ const { parse, format } = require('date-fns');
   const [searchedEmployee , setSearchedEmployee] = useState('');
   const StatusList = [{label: "primary" ,value :"primary" },{label:"secondary",value :"secondary"}]
   const [examDates, setExamDates] = useState([]);
+  const [roomList, setRoomList] = useState([]);
+  const [shiftList, setShiftList] = useState([]);
+
+
 
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
@@ -90,7 +94,7 @@ const { parse, format } = require('date-fns');
           tblName: "tbl_invigilator_duty",
           data: { employeeId: invigilatorData.employeeId,
           invigilatorName: invigilatorData.invigilatorName,
-          date:invigilatorData.date,
+          date:parseExcelDate(invigilatorData.date),
           shift:invigilatorData.shift,
           room:invigilatorData.room,
           duty_status:invigilatorData.duty_status,},
@@ -131,7 +135,7 @@ const { parse, format } = require('date-fns');
           operation: "update",
           tblName: "tbl_invigilator_duty",
           data: {
-            date:invigilatorData.date,
+            date:parseExcelDate(invigilatorData.date),
             shift:invigilatorData.shift,
             room:invigilatorData.room,
             duty_status:invigilatorData.duty_status,
@@ -153,6 +157,33 @@ const { parse, format } = require('date-fns');
     }
   };
 
+  const handleGetRoomView = async (SelectedDate) => {
+    try {
+      const authToken = await checkAuthToken();
+      const formattedDate = SelectedDate ? new Date(SelectedDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }).toUpperCase().replace(/ /g, '-') : '';
+      const customQuery = `SELECT DISTINCT ROOM_NBR FROM PS_S_PRD_EX_RME_VW WHERE EXAM_DT = '${formattedDate}'`;
+
+      const response = await view(
+        {
+          operation: "custom",
+          tblName: "PS_S_PRD_EX_RME_VW",
+          data: '',
+          conditionString: '',
+          checkAvailability: '',
+          customQuery: customQuery,
+          viewType:'Campus_View'
+        },
+        authToken
+      );
+
+      if (response) {
+        let RoomData = response?.data?.receivedData?.map((item) => ({label : item?.ROOM_NBR , value : item?.ROOM_NBR }));
+        setRoomList(RoomData);
+      }
+    } catch (error) {
+      handleAuthErrors(error);
+    }
+  };
 
   // const handleModuleStatus = async (moduleId, status) => {
   //   try {
@@ -180,6 +211,10 @@ const { parse, format } = require('date-fns');
   //     handleAuthErrors(error);
   //   }
   // };
+  const convertedTime = (startTime) => {
+    const date = parseISO(startTime); // Parse the UTC ISO string into a Date object
+    return format(date, 'h:mm a'); // Format the Date object into 'h:mm AM/PM' format
+  };
 
   const handleEditInvigilator = async (selectedData) => {
     setInvigilatorData({
@@ -225,10 +260,11 @@ const { parse, format } = require('date-fns');
     isActive: 1,
     });
     setSearchedEmployee('');
+    await handleGetInigilatorDuty();
   };
 
   const handleDownload = () => {
-    const url = global.SERVER_URL + "/invigilatorDoc/invgilator_bulkupload.xlsx";
+    const url = global.SERVER_URL + "/invigilatorDoc/invigilator_bulkupload.xlsx";
     Linking.openURL(url);
   };
 
@@ -283,6 +319,10 @@ const { parse, format } = require('date-fns');
     const formattedDate = format(parsedDate, 'dd-MMMM-yyyy');
     return formattedDate;
   };
+  const parseExcelDate = (SelectedDate) => {
+    return format(new Date(SelectedDate), 'yyyy-MM-dd');
+    // return `${year}-${month}-${day}`;
+  };
 
   const handleGetDateView = async () => {
     let CurrentDate = new Date().toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-');
@@ -303,7 +343,7 @@ const { parse, format } = require('date-fns');
       );
  
       if (response) {
-        let ExamDates = response?.data?.receivedData?.map((item) => ({label : `${parseAndFormatDate(item?.EXAM_DT)}` , value : parseAndFormatDate(item?.EXAM_DT)}));
+        let ExamDates = response?.data?.receivedData?.map((item) => ({label : `${parseAndFormatDate(item?.EXAM_DT)}` , value : item?.EXAM_DT}));
         setExamDates(ExamDates);
       }
     } catch (error) {
@@ -311,6 +351,30 @@ const { parse, format } = require('date-fns');
     }
   };
 
+  const handleGetShiftList = async (SelectedDate) => {
+    const formattedDate = SelectedDate ? new Date(SelectedDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }).toUpperCase().replace(/ /g, '-') : '';
+     
+    try {
+    const authToken = await checkAuthToken();
+    const response = await view(
+    {
+    operation: "custom",
+    tblName: "PS_S_PRD_EX_TME_VW",
+    data: "",
+    conditionString: "",
+    checkAvailability: "",
+    customQuery:`SELECT DISTINCT EXAM_START_TIME  FROM PS_S_PRD_EX_TME_VW WHERE EXAM_DT = '${formattedDate}'` ,
+  },
+    authToken
+    );
+    if (response) {
+      let ExamDates = response?.data?.receivedData?.map((item) => ({label : convertedTime(item.EXAM_START_TIME) , value : item.EXAM_START_TIME}));
+      setShiftList(ExamDates);
+    }
+    } catch (error) {
+    handleAuthErrors(error);
+    }
+    };
   useEffect(() => {
     handleGetInigilatorDuty();
   }, [UserAccess]);
@@ -362,10 +426,13 @@ const { parse, format } = require('date-fns');
             value={invigilatorData.date}
             items={examDates}
             setOpen={() => setOpen(open === 1 ? 0 : 1)}
-            setValue={(callback) => setInvigilatorData((prevState) => ({
-              ...prevState,
-              date: callback(invigilatorData.date)
-            }))}
+            setValue={(callback) => {
+              setInvigilatorData((prevState) => {
+                const newDate = callback(prevState.date);
+                handleGetRoomView(newDate);
+                return { ...prevState, date: newDate };
+              });
+            }}
             placeholder='Select Exam Date'
             style={[styles.dropdown, styles.dropdownExam]}
             dropDownStyle={{ backgroundColor: "#fafafa"}}
@@ -383,27 +450,69 @@ const { parse, format } = require('date-fns');
               setInvigilatorData({ ...invigilatorData, date: text })
             }
           /> */}
-          <TextInput
+          {/* <TextInput
             style={styles.input}
             placeholder="Room"
             value={invigilatorData.room}
             onChangeText={(text) =>
               setInvigilatorData({ ...invigilatorData, room: text })
             }
+          /> */}
+          <DropDownPicker
+            open={open === 2}
+            value={invigilatorData.room}
+            items={roomList}
+            setOpen={() => setOpen(open === 2 ? 0 : 2)}
+            setValue={(callback) => {
+              setInvigilatorData((prevState) => {
+                const roomData = callback(prevState.room);
+                handleGetShiftList(invigilatorData.date);
+                return { ...prevState, room: roomData };
+              });
+            }}
+            placeholder='Select Room'
+            style={[styles.dropdown, styles.dropdownExam]}
+            dropDownStyle={{ backgroundColor: "#fafafa"}}
+            dropDownMaxHeight={150}
+            dropDownDirection="TOP"
+            containerStyle={styles.rolePicker}
+            listItemContainerStyle={{ height: 40}} 
+            listItemLabelStyle={{ fontSize: 14 }}
           />
-          <TextInput
+
+<DropDownPicker
+            open={open === 3}
+            value={invigilatorData.shift}
+            items={shiftList}
+            setOpen={() => setOpen(open === 3 ? 0 : 3)}
+            setValue={(callback) => {
+              setInvigilatorData((prevState) => {
+                const shiftData = callback(prevState.shift);
+                return { ...prevState, shift: shiftData };
+              });
+            }}
+            placeholder='Select Shift (Start Time)'
+            style={[styles.dropdown, styles.dropdownExam]}
+            dropDownStyle={{ backgroundColor: "#fafafa"}}
+            dropDownMaxHeight={150}
+            dropDownDirection="TOP"
+            containerStyle={styles.rolePicker}
+            listItemContainerStyle={{ height: 40}} 
+            listItemLabelStyle={{ fontSize: 14 }}
+          />
+          {/* <TextInput
             style={styles.input}
             placeholder="Shift"
             value={invigilatorData.shift}
             onChangeText={(text) =>
               setInvigilatorData({ ...invigilatorData, shift: text })
             }
-          />
+          /> */}
           <DropDownPicker
-            open={open === 2}
+            open={open === 4}
             value={invigilatorData.duty_status}
             items={StatusList}
-            setOpen={() => setOpen(open === 2 ? 0 : 2)} 
+            setOpen={() => setOpen(open === 4 ? 0 : 4)} 
             setValue={(callback) => setInvigilatorData((prevState) => ({
               ...prevState,
               duty_status: callback(invigilatorData.duty_status)
@@ -474,8 +583,8 @@ const { parse, format } = require('date-fns');
               <Text style={[styles.listItemText, {width:200} ]}>{item.employeeId}</Text>
               <Text style={[styles.listItemText,{width:200}  ]}>{item.invigilatorName}</Text>
               <Text style={[styles.listItemText,{width:200} ]}>{item.room}</Text>
-              <Text style={[styles.listItemText,{width:200}  ]}>{item.date}</Text>
-              <Text style={[styles.listItemText,{width:200} ]}>{item.shift}</Text>
+              <Text style={[styles.listItemText,{width:200}  ]}>{parseAndFormatDate(item.date)}</Text>
+              <Text style={[styles.listItemText,{width:200} ]}>{convertedTime(item.shift)}</Text>
               <Text style={[styles.listItemText, {width:100} ]}>{item.duty_status}</Text>    
               {UserAccess?.update === 1 ? <Pressable style={[{width:60} ,{alignItems:"center"}]} onPress={() => handleEditInvigilator(item)}>
               <Text style={styles.listItemEditText}><Feather name="edit" size={16} color="green" /></Text>

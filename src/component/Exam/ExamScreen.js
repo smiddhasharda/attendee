@@ -3,7 +3,7 @@ import { View, Text, FlatList, StyleSheet, ScrollView, Pressable, ActivityIndica
 import { view, fetch } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { parse, format } from 'date-fns';
+import { parse, format,parseISO } from 'date-fns';
 
 const { width, height } = Dimensions.get('window');
 
@@ -57,7 +57,8 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
 
   const handleGetInvigilatorDutyDate = async () => {
 
-    let CurrentDate = new Date().toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-');    try {
+    let CurrentDate = new Date().toLocaleDateString('en-GB', { year: '2-digit', month: '2-digit', day: '2-digit' }).split('/').reverse().join('-');
+    try {
       const authToken = await checkAuthToken();
       const response = await fetch(
         {
@@ -135,17 +136,21 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
     handleGetRoomView(date, userAccess?.label !== "Admin" && RoomArray);
   };
 
-  const convertedTime = (StartTime) => {
-    const date = new Date(StartTime);
-    const hours = date.getHours();
-    const minutes = date.getMinutes().toString().padStart(2, '0'); // Pad minutes with leading 0
+  // const convertedTime = (StartTime) => {
+  //   const date = new Date(StartTime);
+  //   const hours = date.getHours();
+  //   const minutes = date.getMinutes().toString().padStart(2, '0'); // Pad minutes with leading 0
   
-    const amPm = hours >= 12 ? 'PM' : 'AM';
-    const adjustedHours = hours % 12 || 12; // Convert to 12-hour format
+  //   const amPm = hours >= 12 ? 'PM' : 'AM';
+  //   const adjustedHours = hours % 12 || 12; // Convert to 12-hour format
   
-    return `${adjustedHours}:${minutes}${amPm}`;
-  }
-  
+  //   return `${adjustedHours}:${minutes}${amPm}`;
+  // }
+
+  const convertedTime = (startTime) => {
+    const date = parseISO(startTime);
+    return format(date, 'h:mm a');
+  };
   const parseAndFormatDate = (dateString) => {
     const possibleFormats = [
       "yyyy-MM-dd'T'HH:mm:ss.SSSX", // ISO format
@@ -169,8 +174,8 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
       return null;
     }
   
-    return parsedDate;
-  };
+    // return parsedDate;
+    return format(parsedDate, 'dd$MMM,yy$EEE')  };
   
 
   useEffect(() => {
@@ -190,13 +195,13 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
                  <Pressable onPress={() => handleDateClick(item.EXAM_DT)}>
       <View style={[styles.dateItem, isActiveItem && styles.activebox]}>
         <Text style={[styles.dateDay, isActiveItem && styles.activeText]}>
-          {normalizedDate.toString().split(' ')[0]}
+          {normalizedDate?.split('$')[2]}
         </Text>
         <Text style={[styles.dateNumber, isActiveItem && styles.activeText]}>
-          {normalizedDate.getDate()}
+        {normalizedDate?.split('$')[0]}
         </Text>
         <Text style={[styles.dateMonth, isActiveItem && styles.activeText]}>
-          {normalizedDate.toString().split(' ')[1]}
+        {normalizedDate?.split('$')[1]}
         </Text>
       </View>
     </Pressable>

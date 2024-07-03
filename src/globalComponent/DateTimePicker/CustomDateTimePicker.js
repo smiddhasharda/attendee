@@ -11,7 +11,7 @@ if (Platform.OS === 'web') {
   DatePickerComponent = require('react-native-datepicker').default;
 }
 
-const CustomDateTimePicker = (props,inputStyle,datePickerStyle, icon) => {
+const CustomDateTimePicker = (props,inputStyle, icon) => {
 
   const showAndroidDatePicker = async () => {
     // Implementation for Android DatePicker
@@ -29,17 +29,17 @@ const CustomDateTimePicker = (props,inputStyle,datePickerStyle, icon) => {
     } else {
       return (
         <DatePickerComponent
-         style={[styles.datePicker, props.datePickerStyle]}
+        //  style={[styles.datePicker, props.datePickerStyle]}
           selected={props.date}
           onChange={date => props.handelChangeDate(date)}
-          showTimeSelect
-          timeFormat="HH:mm"
-          timeIntervals={15}
-          dateFormat="dd MM, yyyy h:mm aa"
+          // showTimeSelect
+          // timeFormat="HH:mm"
+          // timeIntervals={15}
+          // dateFormat="dd MM, yyyy h:mm aa"
+          dateFormat="dd MM, yyyy"
           customInput={<TextInput style={[styles.input, inputStyle]} />}
-          calendarIconClassname="custom-icon-class"
           // inline={true}
-          showIcon={true}
+          // showIcon={true}
       //     confirmBtnText="Confirm"
       // cancelBtnText="Cancel"
       // customStyles={{
@@ -67,13 +67,14 @@ const CustomDateTimePicker = (props,inputStyle,datePickerStyle, icon) => {
 };
 const styles = StyleSheet.create({
   input: {
-    width: "auto", 
+    width: 240, 
     color: 'black', 
     // borderColor: 'gray',
     // borderWidth: 1, 
     padding: 9, 
-    borderRadius:10,
-    backgroundColor:"white"
+    borderRadius:8,
+    backgroundColor:"white",
+    marginRight:10,
   
   },
   calendar:{
