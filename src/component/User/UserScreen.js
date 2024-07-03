@@ -21,6 +21,7 @@ const UserScreen = ({userAccess}) => {
     password: '',
     emailId:'',
     contactNumber:'',
+    username:'',
     status: 1,
     rolePermissions:[]
   });
@@ -30,6 +31,7 @@ const UserScreen = ({userAccess}) => {
   const [isPasswordVisible, setPasswordVisible] = useState(false);
   const [isEmailTooltipVisible, setEmailTooltipVisible] = useStateWithCallback(false);
   const [isNameTooltipVisible, setNameTooltipVisible] = useStateWithCallback(false);
+  const [isEmplyIdTooltipVisible, setEmplyIdTooltipVisible] = useStateWithCallback(false);
   const [isContactNumberTooltipVisible, setContactNumberTooltipVisible] = useStateWithCallback(false);
   const [isPasswordTooltipVisible, setPasswordTooltipVisible] = useStateWithCallback(false);
 
@@ -48,6 +50,7 @@ const UserScreen = ({userAccess}) => {
     try {
       const authToken = await checkAuthToken();
       if (!handleNameValidation()) return;
+      if (!handleEmployeeIdValidation()) return;
       if (!handlePasswordValidation()) return;
       if (!handleEmailValidation()) return;
       if (!handleContactNumberValidation()) return;
@@ -61,6 +64,7 @@ const UserScreen = ({userAccess}) => {
             password: userData.password,
             contact_number: userData.contactNumber,
             email_id: userData.emailId,
+            username:userData.username,
             isActive: userData.status,
             isVerified: 1
           },
@@ -112,6 +116,7 @@ const UserScreen = ({userAccess}) => {
     try {
       const authToken = await checkAuthToken();
       handleNameValidation();
+      handleEmailValidation();
       handlePasswordValidation();
       handleEmailValidation();
       handleContactNumberValidation();
@@ -124,6 +129,7 @@ const UserScreen = ({userAccess}) => {
             password: userData.password,
             contact_number: userData.contactNumber,
             email_id: userData.emailId,
+            username:userData.username,
             isActive: userData.status,
           },
           conditionString: `user_id = ${userData.userId}`,
@@ -231,6 +237,7 @@ const UserScreen = ({userAccess}) => {
         password: selectedUser.password,
         emailId: selectedUser.email_id,
         contactNumber: selectedUser.contact_number,
+        username: selectedUser.username,
         status: selectedUser.isActive,
         rolePermissions: selectedUser.rolePermission,
         
@@ -262,6 +269,7 @@ const UserScreen = ({userAccess}) => {
       password: '',
       emailId:'',
       contactNumber:'',
+      username:'',
       status: 1,
       rolePermissions:[]
     });
@@ -390,6 +398,33 @@ const UserScreen = ({userAccess}) => {
       </View>
     );
   };
+  const renderEmployeeId = () => {
+    const tooltipContent = () => (
+      <View style={styles.emailTooltipContainer}>
+        <Text style={styles.emailTooltipTextStyle}>
+          That
+          <Text style={styles.emailTooltipRedTextStyle}>EmployeeId</Text>
+          is required !
+        </Text>
+      </View>
+    );
+    return (
+      <View style={styles.nameTextInputContainer}>
+        <>
+          {isEmplyIdTooltipVisible && (
+            <Tooltip>{tooltipContent()}</Tooltip>
+          )}
+          <TextInput
+            style={styles.input}
+            placeholder="Employee Id"
+            value={userData.username}
+            onChangeText={handleEmployeeIdChange}
+            onFocus={() => setEmplyIdTooltipVisible(false)}
+          />
+        </>
+      </View>
+    );
+  };
   const handleNameValidation = () => {
     if (userData.name) {
       setNameTooltipVisible(false);
@@ -400,9 +435,24 @@ const UserScreen = ({userAccess}) => {
       return false;
     }
   };
+  const handleEmployeeIdValidation = () => {
+    if (userData.username) {
+      setEmplyIdTooltipVisible(false);
+      return true;
+    } else {
+      LayoutAnimation.spring();
+      setEmplyIdTooltipVisible(true);
+      return false;
+    }
+  };
   const handleNameChange = (text) => {
     isNameTooltipVisible && setNameTooltipVisible(false);
     setUserData({ ...userData, name: text });
+  };
+
+  const handleEmployeeIdChange = (text) => {
+    isEmailTooltipVisible && setEmplyIdTooltipVisible(false);
+    setUserData({ ...userData, username: text });
   };
 
   const renderContactNumberInput = () => {
@@ -556,6 +606,7 @@ const UserScreen = ({userAccess}) => {
       {userContainerVisible ? (
         <View style={styles.formContainer}>
           {renderNameInput()}
+          {renderEmployeeId()}
           {renderPasswordInput()}
           {renderEmailInput()}
           {renderContactNumberInput()}
@@ -600,6 +651,7 @@ const UserScreen = ({userAccess}) => {
           keyExtractor={(item) => item.user_id.toString()}
           ListHeaderComponent={() => (
             <View style={styles.tableHeader}>
+              <Text style={[styles.tableHeaderText,{width:120}, ]}>Employee Id</Text>
               <Text style={[styles.tableHeaderText,{width:120}, ]}>Name</Text>
               <Text style={[styles.tableHeaderText, {width:120} ]}>Mob.No</Text>
               <Text style={[styles.tableHeaderText,{width:120}  ]}>Status</Text>
@@ -608,6 +660,7 @@ const UserScreen = ({userAccess}) => {
           )}
           renderItem={({ item }) => (
             <View style={styles.listItem}>
+              <Text style={[styles.listItemText,{width:120}  ]}>{item.username}</Text>
               <Text style={[styles.listItemText,{width:120}  ]}>{item.name}</Text>
               <Text style={[styles.listItemText, {width:120} ]}>{item.contact_number}</Text>
               <View style={{display:"inline-block" , width:120}}>
@@ -695,10 +748,10 @@ const styles = StyleSheet.create({
     // textWrap:"noWrap"
   },
   listItemActiveStatus: {
-    //color: 'green',
+    color: 'green',
   },
   listItemInactiveStatus: {
-    //color: 'red',
+    color: 'red',
   },
   listItemEditButton: {
     //backgroundColor: "#0C7C62",
