@@ -7,7 +7,7 @@ import { fetch } from "../../AuthService/AuthService";
 import { parse, format } from 'date-fns';
 import { DataTable, Provider as PaperProvider, DarkTheme as PaperDarkTheme, DefaultTheme as PaperDefaultTheme  } from 'react-native-paper';
 import CustomDateTimePicker from '../../globalComponent/DateTimePicker/CustomDateTimePicker';
-
+import { Ionicons ,AntDesign} from '@expo/vector-icons'; 
 
 let WebTable;
 if (Platform.OS === 'web') {
@@ -485,7 +485,7 @@ const ReportScreen = ({userAccess}) => {
       <CustomDateTimePicker  date={startDate} handelChangeDate={setStartDate} inputStyle={styles.inputStyle} datePickerStyle={styles.datePickerStyle}   /> 
       <CustomDateTimePicker date={endDate} handelChangeDate={setEndDate} />   
       <Pressable onPress={handleGetExamDateList} style={styles.searchbtn}>
-      <Text style={styles.searchtext}>Search</Text>
+      <Text style={styles.searchtext}><AntDesign name="search1" size={20} color="white" /></Text>
       </Pressable>
     </View>
           <View style={styles.datesWrap}>
@@ -581,11 +581,11 @@ const styles = StyleSheet.create({
   searchBar: { marginBottom: 10, backgroundColor:"#fff", borderWidth:1, borderColor:"#ccc"},
     dropdownWrap: {
       flexDirection: 'row',
-      justifyContent: "space-between",
+      justifyContent: "flex-start",
       marginBottom: 24,
       zIndex:9999,
      position:"relative",
-      left:26
+      // left:26
     },
     headerWidth:{
      flex:1
@@ -632,9 +632,9 @@ const styles = StyleSheet.create({
  
   searchbtn:{
     backgroundColor:"green",
-    padding:10,
+    padding:7,
     borderRadius:6,
-    marginRight:24,
+    // marginRight:24,
   },
   searchtext:{
     color:"#fff"

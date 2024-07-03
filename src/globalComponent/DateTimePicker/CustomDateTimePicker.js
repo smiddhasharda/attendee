@@ -67,13 +67,14 @@ const CustomDateTimePicker = (props,inputStyle, icon) => {
 };
 const styles = StyleSheet.create({
   input: {
-    width: "auto", 
+    width: 240, 
     color: 'black', 
     // borderColor: 'gray',
     // borderWidth: 1, 
     padding: 9, 
-    borderRadius:10,
-    backgroundColor:"white"
+    borderRadius:8,
+    backgroundColor:"white",
+    marginRight:10,
   
   },
   calendar:{
