@@ -23,11 +23,11 @@ import { parse, format,parseISO } from 'date-fns';
     date:"",
     shift:"",
     room:"",
-    duty_status:"primary",
+    duty_status:"Primary",
     isActive: 1,
   });
   const [searchedEmployee , setSearchedEmployee] = useState('');
-  const StatusList = [{label: "primary" ,value :"primary" },{label:"secondary",value :"secondary"}]
+  const StatusList = [{label: "Primary" ,value :"Primary" },{label:"Secondary",value :"Secondary"}]
   const [examDates, setExamDates] = useState([]);
   const [roomList, setRoomList] = useState([]);
   const [shiftList, setShiftList] = useState([]);
@@ -256,7 +256,7 @@ import { parse, format,parseISO } from 'date-fns';
     date:"",
     shift:"",
     room:"",
-    duty_status:"primary",
+    duty_status:"Primary",
     isActive: 1,
     });
     setSearchedEmployee('');
@@ -526,10 +526,10 @@ import { parse, format,parseISO } from 'date-fns';
             listItemLabelStyle={{ fontSize: 14 }}
           />
           <View style={styles.buttonContainer}>
-            <Pressable  style={[styles.addbtnWrap, {width:180},{alignItems:"center"}]} onPress={() => invigilatorData.PK_InvigilatorDutyId ? handleUpdateInvigilator() : handleAddInvigilator()}>
-              <Text style={styles.addbtntext}>{invigilatorData.PK_InvigilatorDutyId ? "Update Invigilator Duty" : "Add New Invigilator Duty"}</Text>
+            <Pressable  style={[styles.addbtnWrap, {width:120, marginTop:10, alignItems:"center"}]} onPress={() => invigilatorData.PK_InvigilatorDutyId ? handleUpdateInvigilator() : handleAddInvigilator()}>
+              <Text style={styles.addbtntext}>{invigilatorData.PK_InvigilatorDutyId ? "Update Duty" : "Add Duty"}</Text>
             </Pressable>
-            <Pressable style={styles.cancelbtn} onPress={() => handleClose()}>
+            <Pressable style={[styles.cancelbtn, {width:120, marginTop:10, alignItems:"center"}]} onPress={() => handleClose()}>
               <Text style={styles.cancelbtntext}>Cancel</Text>
             </Pressable>
           </View>
@@ -545,13 +545,13 @@ import { parse, format,parseISO } from 'date-fns';
            <View style={{flexDirection:"row",justifyContent:"space-between",}} >
         
           <Pressable  style={{marginRight:20}}  onPress={() => handleDownload()}>
-          <Text ><FontAwesome5 name="download" size={20} color="purple" /></Text>
+          <Text title="Download Sample Data"><FontAwesome5 name="download" size={20} color="purple" /></Text>
         </Pressable>
         <Pressable style={{marginRight:20}} onPress={() => setIsBulkuploadInvigilater(true)}>
-            <Text ><FontAwesome name="upload" size={23} color="purple" /></Text>
+            <Text title="Upload Invigilator Data"><FontAwesome name="upload" size={23} color="purple" /></Text>
           </Pressable>
           <Pressable  onPress={() => handleAddButton()}>
-          <Text style={styles.addbtntext}><FontAwesome6 name="add" size={20} color="purple" /></Text>
+          <Text title="Add Invigilator Duty" style={styles.addbtntext}><FontAwesome6 name="add" size={20} color="purple" /></Text>
         </Pressable>
        
         </View>
@@ -567,26 +567,26 @@ import { parse, format,parseISO } from 'date-fns';
             keyExtractor={(item) => item.PK_InvigilatorDutyId.toString()}
                 ListHeaderComponent={() => (
                   <View style={styles.tableHeader}>
-                    <Text style={[styles.tableHeaderText,{width:100} ]}>Id</Text>
-                    <Text style={[styles.tableHeaderText, {width:200}]}>EmpId</Text>
-                    <Text style={[styles.tableHeaderText,{width:200} ]}>Name</Text>
-                    <Text style={[styles.tableHeaderText,{width:200}  ]}>Room</Text>
-                    <Text style={[styles.tableHeaderText,{width:200} ]}>Date</Text>
-                    <Text style={[styles.tableHeaderText,{width:200} ]}>Shift</Text>
-                    <Text style={[styles.tableHeaderText,{width:100}  ]}>Status</Text>
-                    <Text style={[styles.tableHeaderText,{width:60} ]}>Actions </Text>
+                    <Text style={[styles.tableHeaderText,{width:80} ]}>Id</Text>
+                    <Text style={[styles.tableHeaderText, {width:120}]}>Emp Id</Text>
+                    <Text style={[styles.tableHeaderText,{width:120} ]}>Name</Text>
+                    <Text style={[styles.tableHeaderText,{width:120}  ]}>Room</Text>
+                    <Text style={[styles.tableHeaderText,{width:120} ]}>Date</Text>
+                    <Text style={[styles.tableHeaderText,{width:120} ]}>Shift</Text>
+                    <Text style={[styles.tableHeaderText,{width:120}  ]}>Status</Text>
+                    <Text style={[styles.tableHeaderText,{width:80} ]}>Actions </Text>
                     
                   </View>
           )} renderItem={({ item }) => (          
             <View style={styles.listItem}>
-              <Text style={[styles.listItemText,{width:100}  ]}>{item.PK_InvigilatorDutyId}</Text>
-              <Text style={[styles.listItemText, {width:200} ]}>{item.employeeId}</Text>
-              <Text style={[styles.listItemText,{width:200}  ]}>{item.invigilatorName}</Text>
-              <Text style={[styles.listItemText,{width:200} ]}>{item.room}</Text>
-              <Text style={[styles.listItemText,{width:200}  ]}>{parseAndFormatDate(item.date)}</Text>
-              <Text style={[styles.listItemText,{width:200} ]}>{convertedTime(item.shift)}</Text>
-              <Text style={[styles.listItemText, {width:100} ]}>{item.duty_status}</Text>    
-              {UserAccess?.update === 1 ? <Pressable style={[{width:60} ,{alignItems:"center"}]} onPress={() => handleEditInvigilator(item)}>
+              <Text style={[styles.listItemText, {width:80}]}>{item.PK_InvigilatorDutyId}</Text>
+              <Text style={[styles.listItemText, {width:120}]}>{item.employeeId}</Text>
+              <Text style={[styles.listItemText, {width:120}]}>{item.invigilatorName}</Text>
+              <Text style={[styles.listItemText, {width:120}]}>{item.room}</Text>
+              <Text style={[styles.listItemText, {width:120}]}>{parseAndFormatDate(item.date)}</Text>
+              <Text style={[styles.listItemText, {width:120}]}>{convertedTime(item.shift)}</Text>
+              <Text style={[styles.listItemText, {width:120}]}>{item.duty_status}</Text>    
+              {UserAccess?.update === 1 ? <Pressable style={[{width:80}, {alignItems:"center"}]} onPress={() => handleEditInvigilator(item)}>
               <Text style={styles.listItemEditText}><Feather name="edit" size={16} color="green" /></Text>
                 </Pressable> : (<Text>-</Text>)}  
             </View>
