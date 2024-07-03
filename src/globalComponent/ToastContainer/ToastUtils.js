@@ -14,7 +14,7 @@ export const ToastProvider = ({ children }) => {
   const addToast = (message, type) => {
     const id = Date.now();
     setToasts([...toasts, { id, message, type }]);
-    setTimeout(() => removeToast(id), 10000); // Remove toast after 10 seconds
+    setTimeout(() => removeToast(id), 2000); // Remove toast after 2 seconds
   };
 
   const removeToast = (id) => {
