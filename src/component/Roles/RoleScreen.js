@@ -304,34 +304,34 @@ const RoleScreen = ({userAccess}) => {
   const renderModuleCheckboxes = (item) => {
     return (
       <View style={styles.listItem} key={item?.PK_ModuleId}>
-        <Text style={[styles.listItemText, { width:230},{textAlign:"left"},]}>
+        <Text style={[styles.listItemText, { width:120},{textAlign:"left"},]}>
           {item?.moduleName}
         </Text>
-        <View style={[styles.checkboxContainer, { width:230 },{textAlign:"center"} ]}>
+        <View style={[styles.checkboxContainer, {width:75 },{textAlign:"center"} ]}>
           <CheckBox
             value={getModulePermission(item, "create")}
             onValueChange={() => handleUpdatePermissions(item, "create")}
           />
         </View>
-        <View style={[styles.checkboxContainer, { width:200},{textAlign:"center"}]}>
+        <View style={[styles.checkboxContainer, {width:75},{textAlign:"center"}]}>
           <CheckBox
             value={getModulePermission(item, "read")}
             onValueChange={() => handleUpdatePermissions(item, "read")}
           />
         </View>
-        <View style={[styles.checkboxContainer, { width:200},{textAlign:"center"}]}>
+        <View style={[styles.checkboxContainer, {width:75},{textAlign:"center"}]}>
           <CheckBox
             value={getModulePermission(item, "update")}
             onValueChange={() => handleUpdatePermissions(item, "update")}
           />
         </View>
-        <View style={[styles.checkboxContainer, {width:200},{textAlign:"center"}]}>
+        <View style={[styles.checkboxContainer, {width:75},{textAlign:"center"}]}>
           <CheckBox
             value={getModulePermission(item, "delete")}
             onValueChange={() => handleUpdatePermissions(item, "delete")}
           />
         </View>
-        <View style={[styles.checkboxContainer, {width:200},{textAlign:"center"}]}>
+        <View style={[styles.checkboxContainer, {width:75},{textAlign:"center"}]}>
           <CheckBox
             value={getModulePermission(item, "special")}
             onValueChange={() => handleUpdatePermissions(item, "special")}
@@ -374,20 +374,20 @@ const RoleScreen = ({userAccess}) => {
             keyExtractor={(item) => item?.PK_ModuleId?.toString()}
             ListHeaderComponent={() => (
               <View style={styles.tableHeader}>
-                <Text style={[styles.tableHeaderText, {width:230} ,{textAlign:"left"}]}>
+                <Text style={[styles.tableHeaderText, {width:120} ,{textAlign:"left"}]}>
                   Module  
                 </Text>
-                <Text style={[styles.tableHeaderText,{width:230} ,{textAlign:"center"}]}>
+                <Text style={[styles.tableHeaderText,{width:75} ,{textAlign:"center"}]}>
                   Create
                 </Text>
-                <Text style={[styles.tableHeaderText, {width:200} ,{textAlign:"center"}]}>Read</Text>
-                <Text style={[styles.tableHeaderText, {width:200},{textAlign:"center"}]}>
+                <Text style={[styles.tableHeaderText, {width:75} ,{textAlign:"center"}]}>Read</Text>
+                <Text style={[styles.tableHeaderText, {width:75},{textAlign:"center"}]}>
                   Update
                 </Text>
-                <Text style={[styles.tableHeaderText,{width:200},{textAlign:"center"}]}>
+                <Text style={[styles.tableHeaderText,{width:75},{textAlign:"center"}]}>
                   Delete
                 </Text>
-                <Text style={[styles.tableHeaderText, {width:200},{textAlign:"center"}]}>
+                <Text style={[styles.tableHeaderText, {width:75},{textAlign:"center"}]}>
                   Special
                 </Text>
               </View>
@@ -463,7 +463,9 @@ const RoleScreen = ({userAccess}) => {
                 {UserAccess?.update === 1 ?
                  (<Pressable style={[styles.listItemEditButton,{display:"inline-block" }]  } 
                  onPress={() => handleEditRole(item)}>
-                     <Text style={[styles.listItemEditText, styles.columnAction,]}><Feather name="edit" size={16} color="#0C7C62" /></Text>
+                     <Text style={[styles.listItemEditText, styles.columnAction,]}>
+                     <Feather name="edit" size={16} color="#0C7C62" />
+                     </Text>
                   </Pressable>) : (<Text>-</Text>)}
               </View>
             </View>
