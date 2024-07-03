@@ -118,10 +118,10 @@ const styles = StyleSheet.create({
     //marginRight: 12,
   },
   listItemActiveStatus: {
-    //color: "green",
+    color: "green",
   },
   listItemInactiveStatus: {
-    //color: "red",
+    color: "red",
   },
   listItemEditButton: {
     //backgroundColor: "#0C7C62",
