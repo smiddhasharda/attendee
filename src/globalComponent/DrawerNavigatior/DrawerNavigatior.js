@@ -361,7 +361,7 @@ const DrawerNavigator = ({ navigation }) => {
           case "ExamScreen":
             return "Exam";
           case "InvigilatorScreen":
-            return "Invigilator Permission";
+            return "Invigilator Duties";
           case "ReportScreen":
             return "Report";
           default:

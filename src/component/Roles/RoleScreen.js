@@ -414,7 +414,7 @@ const RoleScreen = ({userAccess}) => {
         {UserAccess?.create === 1 &&
           <View style={styles.addBtn}>
             <Pressable onPress={() => setRoleContainerVisible(true)}>
-            <Ionicons style={styles.icons} name="add-circle-outline" size={24} color="black" />
+            <Ionicons style={styles.icons} name="add-circle-outline" size={28} color="black" />
           </Pressable> 
           </View>
         }
@@ -425,41 +425,37 @@ const RoleScreen = ({userAccess}) => {
         keyExtractor={(item) => item.PK_RoleId.toString()}
           ListHeaderComponent={() => (
             <View style={styles.tableHeader}>
-              <Text  numberOfLines={1} style={[styles.tableHeaderText, styles.columnRole,{width:"50%"}]}>Role Name</Text>
-              {/* <Text style={[styles.tableHeaderText,]}>
-                Description
-              </Text> */}
-              <Text style={[styles.tableHeaderText, styles.columnStatus ,{width:"30%"}]}>Status</Text>
-              <Text style={[styles.tableHeaderText, styles.columnAction,{width:"20%"},]}>Actions</Text>
+              <Text numberOfLines={1} style={[styles.tableHeaderText, {width:"50%", display: "inline-block"}]}>Role Name</Text>
+              <Text style={[styles.tableHeaderText, {width:"30%", display: "inline-block"}]}>Status</Text>
+              <Text style={[styles.tableHeaderText, {width:"20%", display: "inline-block"}]}>Actions</Text>
             </View>
           )}
           renderItem={({ item }) => (
             <View style={[styles.listItem]}>
-              <Text style={[styles.listItemText, styles.columnRole,{width:"50%"}]}>
-                {item.roleName}
-              </Text>
-              {/* <Text style={[styles.listItemText,]}>
-                {item.description}
-              </Text> */}
-              <View style={{ width: "30%", display: "inline-block" }}>
-              <Pressable        
-               style={{ display: "inline-block" }}          
-                onPress={() => UserAccess?.update === 1 ? handleRoleStatus(item.PK_RoleId, item?.isActive) : ''} 
-              >
-                <Text
-                  style={[
-                    styles.listItemText, styles.columnStatus,
-                   
-                    item.isActive
-                      ? styles.listItemActiveStatus
-                      : styles.listItemInactiveStatus,
-                  ]}
-                >
-                  {item.isActive ? "Active" : "Inactive"}
+              <View style={[styles.listItemText, {width:"50%", display: "inline-block"}]}>
+                <Text >
+                  {item.roleName}
                 </Text>
-              </Pressable>
               </View>
-              <View style={ { width: "20%", alignItems:"center" ,display:"inline-block"}}>
+              <View style={[styles.listItemText, {width:"30%", display: "inline-block"}]}>
+                <Pressable        
+                style={{ display: "inline-block" }}          
+                  onPress={() => UserAccess?.update === 1 ? handleRoleStatus(item.PK_RoleId, item?.isActive) : ''} 
+                >
+                  <Text
+                    style={[
+                      styles.listItemText, styles.columnStatus,
+                    
+                      item.isActive
+                        ? styles.listItemActiveStatus
+                        : styles.listItemInactiveStatus,
+                    ]}
+                  >
+                    {item.isActive ? "Active" : "Inactive"}
+                  </Text>
+                </Pressable>
+              </View>
+              <View style={[styles.listItemText, {width:"20%", alignItems: "center", display: "inline-block"}]}>
                 {UserAccess?.update === 1 ?
                  (<Pressable style={[styles.listItemEditButton,{display:"inline-block" }]  } 
                  onPress={() => handleEditRole(item)}>

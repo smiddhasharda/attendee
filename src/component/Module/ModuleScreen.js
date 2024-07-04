@@ -239,50 +239,49 @@ const ModuleScreen = ({ userAccess }) => {
 
         // </View>
         <View style={styles.moduleListContainer}>
-  <Text style={styles.header}>Manage Modules:</Text>
-  {userAccessForModule?.create === 1 && (
-    <View style={styles.addBtn}>
-      <Pressable onPress={() => setModuleContainerVisible(true)}>
-        <Ionicons name="add-circle-outline" size={24} color="black" />
-      </Pressable>
-    </View>
-  )}
-  <View style={{height:"80%"}}>
-  <FlatList
-    data={moduleList}
-    style={styles.modulesTbl}
-    keyExtractor={item => item.PK_ModuleId.toString()}
-    ListHeaderComponent={() => (
-      <View style={styles.tableHeader}>
-        <Text style={[styles.tableHeaderText, styles.columnModule,{width:"50%"}]} numberOfLines={1}>Module</Text>
-        {/* <Text style={[styles.tableHeaderText, styles.columnDescription]} numberOfLines={1}>Description</Text> */}
-        <Text style={[styles.tableHeaderText, styles.columnStatus,{width:"25%"}]} numberOfLines={1}>Status</Text>
-        <Text style={[styles.tableHeaderText, styles.columnAction,{width:"25%"},{textAlign:"center"}]} numberOfLines={1}>Actions</Text>
-      </View>
-    )}
-    renderItem={({ item }) => (
-      <View style={styles.listItem}>
-        <Text style={[styles.listItemText, styles.columnModule,{width:"50%"}]} numberOfLines={1}>{item.moduleName}</Text>
-        {/* <Text style={[styles.listItemText, styles.columnDescription]} numberOfLines={1}>{item.description}</Text> */}
-        <Pressable style={{width:"25%"}} onPress={() => userAccessForModule?.update === 1 && handleModuleStatus(item.PK_ModuleId, item.isActive)}>
-          <Text style={[styles.listItemText, item.isActive ? styles.listItemActiveStatus : styles.listItemInactiveStatus, styles.columnStatus]} numberOfLines={1}>
-            {item.isActive ? "Active" : "Inactive"}
-          </Text>
-        </Pressable>
-        <View style={[styles.listItemActionContainer, styles.columnAction,{width:"25%"},{alignItems:"center"}]}>
-          {userAccessForModule?.update === 1 ? (
-            <Pressable style={styles.listItemEditButton} onPress={() => handleEditModule(item)}>
-              <Feather name="edit" size={16} color="#0C7C62" />
-            </Pressable>
-          ) : (<Text>-</Text>)}
+          <Text style={styles.header}>Manage Modules:</Text>
+            {
+              userAccessForModule?.create === 1 && (
+                <View style={styles.addBtn}>
+                  <Pressable onPress={() => setModuleContainerVisible(true)}>
+                    <Ionicons name="add-circle-outline" size={28} color="black" />
+                  </Pressable>
+                </View>
+              )
+            }
+            <View style={{height:"80%"}}>
+              <FlatList
+                data={moduleList}
+                style={styles.modulesTbl}
+                keyExtractor={item => item.PK_ModuleId.toString()}
+                ListHeaderComponent={() => (
+                  <View style={styles.tableHeader}>
+                    <Text style={[styles.tableHeaderText, {width:"50%", display:"inline-block"}]} numberOfLines={1}>Module</Text>
+                    <Text style={[styles.tableHeaderText, {width:"30%", display:"inline-block"}]}numberOfLines={1}>Status</Text>
+                    <Text style={[styles.tableHeaderText, {width:"20%", display:"inline-block", textAlign: "center"}]} numberOfLines={1}>Actions</Text>
+                  </View>
+                )}
+                renderItem={({ item }) => (
+                  <View style={styles.listItem}>
+                    <Text style={[styles.listItemText, {width:"50%", display: "inline-block"}]} numberOfLines={1}>{item.moduleName}</Text>
+                    <Pressable style={[styles.listItemText, {width:"30%", display: "inline-block"}]} onPress={() => userAccessForModule?.update === 1 && handleModuleStatus(item.PK_ModuleId, item.isActive)}>
+                      <Text style={[styles.listItemText, item.isActive ? styles.listItemActiveStatus : styles.listItemInactiveStatus, styles.columnStatus]} numberOfLines={1}>
+                        {item.isActive ? "Active" : "Inactive"}
+                      </Text>
+                    </Pressable>
+                    <View style={[styles.listItemText, {width:"20%", display:"inline-block", alignItems:"center"}]}>
+                      {userAccessForModule?.update === 1 ? (
+                        <Pressable style={styles.listItemEditButton} onPress={() => handleEditModule(item)}>
+                          <Feather name="edit" size={16} color="#0C7C62" />
+                        </Pressable>
+                      ) : (<Text>-</Text>)}
+                    </View>
+                  </View>
+                )}
+                stickyHeaderIndices={[0]} 
+              />
+            </View>
         </View>
-      </View>
-    )}
-    stickyHeaderIndices={[0]} 
-  />
-  </View>
-</View>
-
       )}
     </View>
   );

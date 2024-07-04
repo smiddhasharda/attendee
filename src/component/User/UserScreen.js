@@ -640,7 +640,7 @@ const UserScreen = ({userAccess}) => {
           {UserAccess?.create === 1 &&    
          ( <Pressable onPress={() => setUserContainerVisible(true)}>
                     <Text style={styles.addBtn}> 
-                      <Ionicons name="add-circle-outline" size={24} color="black" style={styles.icons} />
+                      <Ionicons name="add-circle-outline" size={28} color="black" style={styles.icons} />
                     </Text>
                   </Pressable>) }
           </View>
@@ -651,7 +651,7 @@ const UserScreen = ({userAccess}) => {
           keyExtractor={(item) => item.user_id.toString()}
           ListHeaderComponent={() => (
             <View style={styles.tableHeader}>
-              <Text style={[styles.tableHeaderText,{width:120}, ]}>Employee Id</Text>
+              <Text style={[styles.tableHeaderText,{width:160}, ]}>Employee Id</Text>
               <Text style={[styles.tableHeaderText,{width:120}, ]}>Name</Text>
               <Text style={[styles.tableHeaderText, {width:120} ]}>Mob.No</Text>
               <Text style={[styles.tableHeaderText,{width:120}  ]}>Status</Text>
@@ -660,15 +660,15 @@ const UserScreen = ({userAccess}) => {
           )}
           renderItem={({ item }) => (
             <View style={styles.listItem}>
-              <Text style={[styles.listItemText,{width:120}  ]}>{item.username}</Text>
-              <Text style={[styles.listItemText,{width:120}  ]}>{item.name}</Text>
-              <Text style={[styles.listItemText, {width:120} ]}>{item.contact_number}</Text>
-              <View style={{display:"inline-block" , width:120}}>
+              <Text style={[styles.listItemText,{width:160}]}>{item.username}</Text>
+              <Text style={[styles.listItemText,{width:120}]}>{item.name}</Text>
+              <Text style={[styles.listItemText, {width:120}]}>{item.contact_number}</Text>
+              <View style={[styles.listItemText, {display:"inline-block", width:120}]}>
                 <Pressable style={{display:"inline-block"} } onPress={() =>UserAccess?.update === 1 ? handleUserStatus(item.user_id, item?.isActive) : ''}>
               <Text style={[styles.listItemText, { flex: 1 }, item.isActive ? styles.listItemActiveStatus : styles.listItemInactiveStatus]}>{item.isActive ? "Active" : "Inactive"}</Text>
               </Pressable>     
               </View>     
-              <View style={{width:60,display:"inline-block" ,alignItems:"center"} }>
+              <View style={{width:60, display:"inline-block", alignItems:"center"}}>
               {UserAccess?.update === 1 ? 
               (<Pressable style={[styles.listItemEditButton ,{display:"inline-block"}]} onPress={() => handleEditUser(item)}>
                     <Text style={styles.listItemEditText} ><Feather name="edit" size={16} color="#0C7C62" /></Text>

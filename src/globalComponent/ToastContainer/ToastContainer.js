@@ -11,7 +11,7 @@ const NativeToast = ({ id, message, type }) => {
   useEffect(() => {
     Animated.timing(progress, {
       toValue: 0,
-      duration: 3000, // 3 seconds
+      duration: 2000, // 2 seconds
       useNativeDriver: false,
     }).start();
   }, [progress]);
