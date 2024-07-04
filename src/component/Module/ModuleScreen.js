@@ -258,7 +258,7 @@ const ModuleScreen = ({ userAccess }) => {
                   <View style={styles.tableHeader}>
                     <Text style={[styles.tableHeaderText, {width:"50%", display:"inline-block"}]} numberOfLines={1}>Module</Text>
                     <Text style={[styles.tableHeaderText, {width:"30%", display:"inline-block"}]}numberOfLines={1}>Status</Text>
-                    <Text style={[styles.tableHeaderText, {width:"20%", display:"inline-block", textAlign: "center"}]} numberOfLines={1}>Actions</Text>
+                    <Text style={[styles.tableHeaderText, {width:"20%", display:"inline-block",}]} numberOfLines={1}>Actions</Text>
                   </View>
                 )}
                 renderItem={({ item }) => (

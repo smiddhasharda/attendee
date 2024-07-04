@@ -6,6 +6,7 @@ import * as XLSX from 'xlsx';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { bulkupload } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
+import { Ionicons ,FontAwesome5,AntDesign,Entypo ,MaterialCommunityIcons} from '@expo/vector-icons'; 
 
 const BulkUpload = (props) => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -166,13 +167,13 @@ const pickFile = async () => {
   };
   return (
     <View style={styles.container}>
-      <Pressable style={styles.pickFileButton} onPress={() => pickFile()}>
-        <Text style={styles.buttonText}>Pick Excel File</Text>
+      <Pressable style={[styles.pickFileButton,{position:"relative", top:"40%"}]} onPress={() => pickFile()}>
+        <Text style={styles.buttonText}>Browse File</Text>
       </Pressable>
       {selectedFile && (
         <ScrollView style={styles.fileContainer}>
           <View style={styles.fileDetails}>
-            <Text style={styles.fileName}>Selected File: {selectedFile.name}</Text>
+            <Text style={styles.fileName}>Selected File: <Text style={{color:"green"}}>{selectedFile.name}</Text></Text>
             <Text style={styles.previewTitle}>Preview:</Text>
             <ScrollView horizontal={true} vertical={true}>
             <FlatList
@@ -207,8 +208,13 @@ const pickFile = async () => {
         </ScrollView>
       )}
       {props?.handleClose && (
-        <Pressable style={[styles.cancelButton,]} onPress={() => props?.handleClose()}>
-          <Text style={styles.buttonText}>Back</Text>
+        <Pressable style={[styles.cancelButton,{position:"relative", top:-38}]} onPress={() => props?.handleClose()}>
+          <Text style={styles.buttonText}>Go Back
+
+          {/* <MaterialCommunityIcons name="keyboard-backspace" size={22} color="white" textAlign="center" /> */}
+          
+          </Text>
+     
         </Pressable>
       )}
     </View>
@@ -234,7 +240,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   fileContainer: {
-    marginTop: 20,
+    // marginTop: 20,
     width: '100%',
   },
   fileDetails: {
@@ -244,11 +250,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 10,
+    alignSelf:"flex-start",
   },
   previewTitle: {
     marginTop: 10,
     marginBottom: 5,
     fontWeight: 'bold',
+    alignSelf:"flex-start",
+    fontSize:20
   },
   cell: {
     padding: 5,
@@ -257,6 +266,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginTop: 10,
     justifyContent:"space-between",
+    alignSelf:"flex-end"
     
   },
   uploadButton: {
@@ -327,6 +337,15 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     alignItems: "center",
   },
+  backbtnWrap:{
+    backgroundColor:"red",
+    width:100,
+   borderRadius:5,
+   padding:4, 
+   position:"relative",
+   top:-38, 
+   alignSelf:"flex-end"
+  }
 });
 
 export default BulkUpload;
