@@ -390,7 +390,6 @@ const StudentInfo = ({ navigation }) => {
         authToken
       );
       if (response) {
-        console.log(response?.data?.receivedData)
         setStudentDetails(response?.data?.receivedData?.[0]);
         setLoading(false);
       }
