@@ -705,7 +705,7 @@ const StudentInfo = ({ navigation }) => {
               </View>
               <View style={styles.infoItem}>
                 <Text style={styles.label}>Attendance Status:</Text>
-                <Text style={[styles.value,getAttendenceStatuscolor()]}>
+                <Text style={[styles.value, {marginBottom: 10}, getAttendenceStatuscolor()]}>
                   {attendenceStatus}
                 </Text>
               </View>
@@ -1179,6 +1179,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-start",
     marginBottom: 10,
+    alignItems: "center" /** Additional Added  **/
   },
   label: {
     fontWeight: "bold",
