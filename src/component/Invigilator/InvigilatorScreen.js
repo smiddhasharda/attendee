@@ -517,6 +517,7 @@ import { parse, format,parseISO } from 'date-fns';
               ...prevState,
               duty_status: callback(invigilatorData.duty_status)
             }))}
+            placeholder='Select Duty'
             style={styles.dropdown}
             dropDownStyle={{ backgroundColor: "#fafafa"}}
             dropDownMaxHeight={150}
@@ -545,7 +546,7 @@ import { parse, format,parseISO } from 'date-fns';
            <View style={{flexDirection:"row",justifyContent:"space-between",}} >
         
           <Pressable  style={{marginRight:20}}  onPress={() => handleDownload()}>
-          <Text title="Download Sample Data"><FontAwesome5 name="download" size={20} color="purple" /></Text>
+          <Text><FontAwesome5 title="Download Sample Data" name="download" size={20} color="purple" /></Text>
         </Pressable>
         <Pressable style={{marginRight:20}} onPress={() => setIsBulkuploadInvigilater(true)}>
             <Text title="Upload Invigilator Data"><FontAwesome name="upload" size={23} color="purple" /></Text>
@@ -569,7 +570,7 @@ import { parse, format,parseISO } from 'date-fns';
                   <View style={styles.tableHeader}>
                     <Text style={[styles.tableHeaderText,{width:80} ]}>Id</Text>
                     <Text style={[styles.tableHeaderText, {width:120}]}>Emp Id</Text>
-                    <Text style={[styles.tableHeaderText,{width:120} ]}>Name</Text>
+                    <Text style={[styles.tableHeaderText,{width:180} ]}>Name</Text>
                     <Text style={[styles.tableHeaderText,{width:120}  ]}>Room</Text>
                     <Text style={[styles.tableHeaderText,{width:120} ]}>Date</Text>
                     <Text style={[styles.tableHeaderText,{width:120} ]}>Shift</Text>
@@ -581,7 +582,7 @@ import { parse, format,parseISO } from 'date-fns';
             <View style={styles.listItem}>
               <Text style={[styles.listItemText, {width:80}]}>{item.PK_InvigilatorDutyId}</Text>
               <Text style={[styles.listItemText, {width:120}]}>{item.employeeId}</Text>
-              <Text style={[styles.listItemText, {width:120}]}>{item.invigilatorName}</Text>
+              <Text style={[styles.listItemText, {width:180}]}>{item.invigilatorName}</Text>
               <Text style={[styles.listItemText, {width:120}]}>{item.room}</Text>
               <Text style={[styles.listItemText, {width:120}]}>{parseAndFormatDate(item.date)}</Text>
               <Text style={[styles.listItemText, {width:120}]}>{convertedTime(item.shift)}</Text>
