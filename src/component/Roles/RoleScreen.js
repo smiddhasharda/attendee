@@ -36,54 +36,60 @@ const RoleScreen = ({userAccess}) => {
 
   const handleAddRole = async () => {
     try {
-      const authToken = await checkAuthToken();
-      const response = await insert(
-        {
-          operation: "insert",
-          tblName: "tbl_role_master",
-          data: {
-            roleName: roleData.roleName,
-            description: roleData.roleDescription,
-            isActive: roleData.roleStatus,
-          },
-          conditionString: "",
-          checkAvailability: "",
-          customQuery: "",
-        },
-        authToken
-      );
-
-      if (response) {
-        if (roleData?.modulePermissions) {
-          const rolePermissionsWithId = roleData?.modulePermissions?.map(
-            (permissions) => ({
-              FK_RoleId: response?.data?.receivedData?.insertId,
-              ...permissions,
-            })
-          );
-
-          await insert(
-            {
-              operation: "insert",
-              tblName: "tbl_role_module_permission",
-              data: rolePermissionsWithId,
-              conditionString: "",
-              checkAvailability: "",
-              customQuery: "",
-            },
-            authToken
-          );
-
-          addToast("Role is created successfully!", "success");
-          await handleClose();
-          handleGetRoleList();
-        }
-        else {
-          addToast("Role is created successfully!", "success");
-          await handleClose();
-          handleGetRoleList();
-        }
+      if (roleData.roleName.replace(/\s+/g, '') === "") {
+        addToast("Enter the module name!", "error");
       }
+      else {
+        const authToken = await checkAuthToken();
+        const response = await insert(
+          {
+            operation: "insert",
+            tblName: "tbl_role_master",
+            data: {
+              roleName: roleData.roleName,
+              description: roleData.roleDescription,
+              isActive: roleData.roleStatus,
+            },
+            conditionString: "",
+            checkAvailability: "",
+            customQuery: "",
+          },
+          authToken
+        );
+  
+        if (response) {
+          if (roleData?.modulePermissions) {
+            const rolePermissionsWithId = roleData?.modulePermissions?.map(
+              (permissions) => ({
+                FK_RoleId: response?.data?.receivedData?.insertId,
+                ...permissions,
+              })
+            );
+  
+            await insert(
+              {
+                operation: "insert",
+                tblName: "tbl_role_module_permission",
+                data: rolePermissionsWithId,
+                conditionString: "",
+                checkAvailability: "",
+                customQuery: "",
+              },
+              authToken
+            );
+  
+            addToast("Role is created successfully!", "success");
+            await handleClose();
+            handleGetRoleList();
+          }
+          else {
+            addToast("Role is created successfully!", "success");
+            await handleClose();
+            handleGetRoleList();
+          }
+        }
+       }
+   
     } catch (error) {
       handleAuthErrors(error);
     }
@@ -91,6 +97,10 @@ const RoleScreen = ({userAccess}) => {
 
   const handleUpdateRole = async () => {
     try {
+      if (roleData.roleName.replace(/\s+/g, '') === "") {
+        addToast("Enter the module name!", "error");
+      }
+      else {
       const authToken = await checkAuthToken();
       const response = await update(
         {
@@ -137,6 +147,7 @@ const RoleScreen = ({userAccess}) => {
           handleGetRoleList();
         }
       }
+    }
     } catch (error) {
       handleAuthErrors(error);
     }
