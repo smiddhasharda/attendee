@@ -228,6 +228,10 @@ import { parse, format,parseISO } from 'date-fns';
     isActive: selectedData.isActive,
     });
     setInvigilatorContainerVisible(true);
+    await handleGetDateView(selectedData.date);
+    await handleGetRoomView(selectedData.date);
+    await handleGetShiftList(selectedData.date);
+
   };
 
   const handleAuthErrors = (error) => {
@@ -324,7 +328,7 @@ import { parse, format,parseISO } from 'date-fns';
     // return `${year}-${month}-${day}`;
   };
 
-  const handleGetDateView = async () => {
+  const handleGetDateView = async (date) => {
     let CurrentDate = new Date().toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-');
     try {
       const authToken = await checkAuthToken();
@@ -344,6 +348,7 @@ import { parse, format,parseISO } from 'date-fns';
  
       if (response) {
         let ExamDates = response?.data?.receivedData?.map((item) => ({label : `${parseAndFormatDate(item?.EXAM_DT)}` , value : item?.EXAM_DT}));
+        // let UpdatedDate = response?.data?.receivedData?.find((item)=>item?.EXAM_DT === date) ? ExamDates : ExamDates?.push({label :`${parseAndFormatDate(date)}` , value: date }); 
         setExamDates(ExamDates);
       }
     } catch (error) {
@@ -569,7 +574,7 @@ import { parse, format,parseISO } from 'date-fns';
                 ListHeaderComponent={() => (
                   <View style={styles.tableHeader}>
                     <Text style={[styles.tableHeaderText,{width:80} ]}>Id</Text>
-                    <Text style={[styles.tableHeaderText, {width:120}]}>Emp Id</Text>
+                    <Text style={[styles.tableHeaderText, {width:120}]}>EmplId</Text>
                     <Text style={[styles.tableHeaderText,{width:180} ]}>Name</Text>
                     <Text style={[styles.tableHeaderText,{width:120}  ]}>Room</Text>
                     <Text style={[styles.tableHeaderText,{width:120} ]}>Date</Text>
