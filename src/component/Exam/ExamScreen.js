@@ -197,6 +197,7 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
   return (
     <View style={styles.container}>
       <View style={styles.datesWrap}>
+      <ScrollView>
         <View style={styles.dates}>
           <FlatList
             data={examDates}
@@ -223,7 +224,9 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
             keyExtractor={(item) => item.EXAM_DT}
           />
         </View>
+        </ScrollView>
       </View>
+ 
       <View style={styles.roomNumber}>
       {loading ? (
         <ActivityIndicator size="large" color="#0000ff" />
