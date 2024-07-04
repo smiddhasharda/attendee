@@ -575,8 +575,8 @@ const UserScreen = ({userAccess}) => {
   const renderRoleList = () =>{
     return(
         <View>
-        <Text style={styles.header}> Role List : </Text>
-        <View style={{minHeight:"55%"}}>
+        <Text style={[styles.header,{marginTop:10}]}> Role List : </Text>
+        <View style={{minHeight:"45%"}}>
         <FlatList
           data={roleList}
           keyExtractor={(item) => item?.PK_RoleId?.toString()}
@@ -624,7 +624,7 @@ const UserScreen = ({userAccess}) => {
           ) : (
             <View style={styles.buttonContainer}>
               <Pressable style={styles.addbtnWrap} onPress={() => handleAddUser()}>
-                    <Text  numberOfLines={1} style={styles.addbtntext } >Add New User</Text>
+                    <Text  numberOfLines={1} style={styles.addbtntext } >Add User</Text>
                   </Pressable>
                   <Pressable onPress={() => handleClose()}>
                     <Text style={styles.cancelbtn}>Cancel</Text>
@@ -651,8 +651,8 @@ const UserScreen = ({userAccess}) => {
           keyExtractor={(item) => item.user_id.toString()}
           ListHeaderComponent={() => (
             <View style={styles.tableHeader}>
-              <Text style={[styles.tableHeaderText,{width:160}, ]}>Employee Id</Text>
-              <Text style={[styles.tableHeaderText,{width:120}, ]}>Name</Text>
+              <Text style={[styles.tableHeaderText,{width:120}, ]}>Employee Id</Text>
+              <Text style={[styles.tableHeaderText,{width:180}, ]}>Name</Text>
               <Text style={[styles.tableHeaderText, {width:120} ]}>Mob.No</Text>
               <Text style={[styles.tableHeaderText,{width:120}  ]}>Status</Text>
               <Text style={[styles.tableHeaderText, {width:60, textAlign:"center"} ]}>Actions</Text>
@@ -660,8 +660,8 @@ const UserScreen = ({userAccess}) => {
           )}
           renderItem={({ item }) => (
             <View style={styles.listItem}>
-              <Text style={[styles.listItemText,{width:160}]}>{item.username}</Text>
-              <Text style={[styles.listItemText,{width:120}]}>{item.name}</Text>
+              <Text style={[styles.listItemText,{width:120}]}>{item.username}</Text>
+              <Text style={[styles.listItemText,{width:180}]}>{item.name}</Text>
               <Text style={[styles.listItemText, {width:120}]}>{item.contact_number}</Text>
               <View style={[styles.listItemText, {display:"inline-block", width:120}]}>
                 <Pressable style={{display:"inline-block"} } onPress={() =>UserAccess?.update === 1 ? handleUserStatus(item.user_id, item?.isActive) : ''}>

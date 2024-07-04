@@ -351,7 +351,7 @@ const RoleScreen = ({userAccess}) => {
         <View style={styles.formContainer}>
           <TextInput
             style={styles.input}
-            placeholder="New Role Name"
+            placeholder="New Role Name*"
             value={roleData.roleName}
             onChangeText={(text) =>
               setRoleData({ ...roleData, roleName: text })

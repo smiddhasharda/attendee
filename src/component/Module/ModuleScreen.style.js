@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
   //   alignItems: "center",
   // },
   updatebtn: {
-    width: 100,
+    width: 120,
     backgroundColor: "#0C7C62",
     padding: 10,
     borderRadius: 5,
