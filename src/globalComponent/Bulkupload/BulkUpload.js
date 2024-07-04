@@ -12,7 +12,7 @@ const BulkUpload = (props) => {
   const [excelData, setExcelData] = useState([]);
   const { addToast } = useToast();
 
-  const pickFile = async () => {
+const pickFile = async () => {
     let result = await DocumentPicker.getDocumentAsync({
       type: Platform.OS === 'ios' || Platform.OS === 'android'
         ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel'
@@ -40,6 +40,7 @@ const BulkUpload = (props) => {
       } else {
         content = await readExcelFileMobile(fileUri);
       }
+      
       setExcelData(content);
     } catch (error) {
       console.error('Error in reading file:', error);
@@ -122,21 +123,20 @@ const BulkUpload = (props) => {
         const authToken = await checkAuthToken();
         const formData = new FormData();
         formData.append("tblName", "tbl_invigilator_duty");
-        formData.append("conditionString", "employeeId = ?");
-        formData.append("checkColumn", "employeeId");
+        formData.append("conditionString", "employeeId = ? AND date = ? AND room = ? AND shift = ?");
+        formData.append("checkColumn", JSON.stringify(["employeeId", "date", "room", "shift"]));
         formData.append("checkAvailability", true);
-        formData.append("bulkupload_doc", selectedFile);
         const { fileName, uri, mimeType } = selectedFile;
         const response1 = await fetch(uri);
         const blob = await response1.blob();
-        const ProfilePics = new File([blob], fileName, { type: mimeType });
-        formData.append("bulkupload_doc", ProfilePics);
+        const SelectedFile = new File([blob], fileName, { type: mimeType });
+        formData.append("bulkupload_doc", SelectedFile);
         
         const response = await bulkupload(formData, authToken);
   
         if (response) {
           setSelectedFile(null);
-          addToast(response.message, "success");
+          addToast(response?.data?.message, "success");
         }
       }    
     } catch (error) {

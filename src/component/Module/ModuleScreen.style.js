@@ -118,10 +118,10 @@ const styles = StyleSheet.create({
     //marginRight: 12,
   },
   listItemActiveStatus: {
-    //color: "green",
+    color: "green",
   },
   listItemInactiveStatus: {
-    //color: "red",
+    color: "red",
   },
   listItemEditButton: {
     //backgroundColor: "#0C7C62",
@@ -135,12 +135,12 @@ const styles = StyleSheet.create({
   //   alignItems: "center",
   // },
   updatebtn: {
-    width: 120,
+    width: 100,
     backgroundColor: "#0C7C62",
     padding: 10,
     borderRadius: 5,
     color: "#fff",
-    textAlign: "left",
+    textAlign: "center",
   },
   cancelbtn: {
     width: 100,
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
   addBtn: {
     alignItems: "flex-end", 
     position: "relative", 
-    bottom: 38
+    bottom: 35
   },
   // modulesTbl:{
   //   position: "relative",
