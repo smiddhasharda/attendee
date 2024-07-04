@@ -7,6 +7,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetch, view } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import { parse, format,parseISO } from 'date-fns';
+import { formatInTimeZone } from 'date-fns-tz';
+
 
 function RoomDetail({navigation}) {
   const [isScanning, setIsScanning] = useState(false);
@@ -84,20 +86,23 @@ function RoomDetail({navigation}) {
       handleAuthErrors(error);
     }
   };
+
   const formatShiftTime = (dateString) => {
     const date = parseISO(dateString);
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone; // Get the current timezone
+    const time = formatInTimeZone(date, timeZone ,'hh:mm' );
   
     // Format each part of the date as required
     // const day = format(date, 'dd');
     // const month = format(date, 'MMM').toUpperCase();
     // const year = format(date, 'yy');
-    const time = format(date, 'hh:mm');
   return time
     // return `${day}-${month}-${year} ${time}`;
   };
   const formatShiftTimePrefix = (dateString) => {
     const date = parseISO(dateString);
-    const prefix = format(date,'a');  
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone; // Get the current timezone
+    const prefix = formatInTimeZone(date, timeZone ,'a');
     return prefix;
   };
 
@@ -109,6 +114,7 @@ const year = selectedDate.getFullYear().toString().slice(-2);
 const formattedDate = `${day}-${month}-${year}`;
 
 const formattedShiftTime = formatShiftTime(startTime);
+const formattedShiftTimePrefix = formatShiftTimePrefix(startTime);
     try {
       const authToken = await checkAuthToken();
       const response = await view(
@@ -120,13 +126,14 @@ const formattedShiftTime = formatShiftTime(startTime);
           checkAvailability: '',
           // customQuery: ` SELECT DISTINCT PS_S_PRD_EX_RME_VW.EMPLID, PS_S_PRD_EX_RME_VW.STRM, PS_S_PRD_EX_RME_VW.CATALOG_NBR, PS_S_PRD_EX_RME_VW.EXAM_DT, PS_S_PRD_EX_RME_VW.ROOM_NBR, PS_S_PRD_EX_RME_VW.PTP_SEQ_CHAR FROM PS_S_PRD_EX_RME_VW JOIN PS_S_PRD_EX_TME_VW ON PS_S_PRD_EX_RME_VW.EXAM_DT = PS_S_PRD_EX_TME_VW.EXAM_DT AND PS_S_PRD_EX_RME_VW.CATALOG_NBR = PS_S_PRD_EX_TME_VW.CATALOG_NBR AND PS_S_PRD_EX_TME_VW.EXAM_START_TIME = '${startTime}' WHERE PS_S_PRD_EX_RME_VW.EXAM_DT = '${new Date(SelectedDate).toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-')}' AND PS_S_PRD_EX_RME_VW.ROOM_NBR = '${SelectedRoom}' ORDER BY CAST(PTP_SEQ_CHAR AS int) `,
           // customQuery: `SELECT DISTINCT PS_S_PRD_EX_RME_VW.EMPLID, PS_S_PRD_EX_RME_VW.STRM, PS_S_PRD_EX_RME_VW.CATALOG_NBR, PS_S_PRD_EX_RME_VW.EXAM_DT, PS_S_PRD_EX_RME_VW.ROOM_NBR, PS_S_PRD_EX_RME_VW.PTP_SEQ_CHAR FROM PS_S_PRD_EX_RME_VW JOIN PS_S_PRD_EX_TME_VW ON PS_S_PRD_EX_RME_VW.EXAM_DT = PS_S_PRD_EX_TME_VW.EXAM_DT AND PS_S_PRD_EX_RME_VW.CATALOG_NBR = PS_S_PRD_EX_TME_VW.CATALOG_NBR AND PS_S_PRD_EX_TME_VW.EXAM_START_TIME = '${startTime}' WHERE PS_S_PRD_EX_RME_VW.EXAM_DT = '${new Date(SelectedDate).toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-')}' AND PS_S_PRD_EX_RME_VW.ROOM_NBR = '${SelectedRoom}' ORDER BY CAST(PS_S_PRD_EX_RME_VW.PTP_SEQ_CHAR AS INT) `,
-          customQuery:`SELECT PS_S_PRD_EX_RME_VW.EMPLID,PS_S_PRD_EX_RME_VW.PTP_SEQ_CHAR,PS_S_PRD_EX_TME_VW.EXAM_START_TIME FROM PS_S_PRD_EX_RME_VW JOIN PS_S_PRD_EX_TME_VW ON PS_S_PRD_EX_RME_VW.EXAM_DT = PS_S_PRD_EX_TME_VW.EXAM_DT AND PS_S_PRD_EX_RME_VW.CATALOG_NBR = PS_S_PRD_EX_TME_VW.CATALOG_NBR  WHERE PS_S_PRD_EX_RME_VW.EXAM_DT = '${formattedDate}' AND PS_S_PRD_EX_RME_VW.ROOM_NBR = '${SelectedRoom}' AND TO_CHAR(PS_S_PRD_EX_TME_VW.EXAM_START_TIME, 'HH:MI') = '${formatShiftTime}' AND TO_CHAR(PS_S_PRD_EX_TME_VW.EXAM_START_TIME, '${formatShiftTimePrefix}') = '${formatShiftTimePrefix}') ORDER BY TO_NUMBER(PS_S_PRD_EX_RME_VW.PTP_SEQ_CHAR)`,         
+          customQuery:`SELECT PS_S_PRD_EX_RME_VW.EMPLID,PS_S_PRD_EX_RME_VW.ROOM_NBR,PS_S_PRD_EX_RME_VW.PTP_SEQ_CHAR,PS_S_PRD_EX_RME_VW.CATALOG_NBR,PS_S_PRD_EX_RME_VW.STRM, PS_S_PRD_EX_TME_VW.EXAM_START_TIME FROM PS_S_PRD_EX_RME_VW JOIN PS_S_PRD_EX_TME_VW ON PS_S_PRD_EX_RME_VW.EXAM_DT = PS_S_PRD_EX_TME_VW.EXAM_DT AND PS_S_PRD_EX_RME_VW.CATALOG_NBR = PS_S_PRD_EX_TME_VW.CATALOG_NBR WHERE PS_S_PRD_EX_RME_VW.EXAM_DT = '${formattedDate}' AND PS_S_PRD_EX_RME_VW.ROOM_NBR = '${SelectedRoom}' AND TO_CHAR(PS_S_PRD_EX_TME_VW.EXAM_START_TIME, 'HH:MI') = '${formattedShiftTime}' AND TO_CHAR(PS_S_PRD_EX_TME_VW.EXAM_START_TIME, '${formattedShiftTimePrefix}') = '${formattedShiftTimePrefix}' ORDER BY TO_NUMBER(PS_S_PRD_EX_RME_VW.PTP_SEQ_CHAR)`,         
           viewType:'Campus_View'
         },
         // AND PS_S_PRD_EX_TME_VW.EXAM_START_TIME ='${formattedShiftTime}'
         authToken
       );
       if (response) {
+        
        setStudentDetails(response?.data?.receivedData);
        setTempStudentDetails(response?.data?.receivedData);
         setLoading(false);
@@ -259,8 +266,7 @@ const formattedShiftTime = formatShiftTime(startTime);
               tempStudentDetails.map((studentData, index) => (             
                 <Pressable 
                   key={studentData.EMPLID}  // Use a unique identifier from studentData, such as EMPLID
-                  onPress={() => UserAccess?.create === 1 ?  navigation.navigate("StudentInfo", { room_Nbr: studentData.ROOM_NBR ,exam_Dt: studentData.EXAM_DT,catlog_Nbr: studentData.CATALOG_NBR ,system_Id:studentData.EMPLID, seat_Nbr: studentData.PTP_SEQ_CHAR ,startTime: startTime,current_Term:studentData.STRM,reportId: presentStudentList?.filter((item)=>item.EMPLID === Number(studentData.EMPLID))?.[0]?.PK_Report_Id ,userAccess }) : ''}
-                >
+                  onPress={() => UserAccess?.create === 1 ?  navigation.navigate("StudentInfo", { room_Nbr: studentData.ROOM_NBR ,exam_Dt: studentData.EXAM_DT,catlog_Nbr: studentData.CATALOG_NBR ,system_Id:studentData.EMPLID, seat_Nbr: studentData.PTP_SEQ_CHAR ,startTime: startTime,current_Term:studentData.STRM,reportId: presentStudentList?.filter((item)=>item.EMPLID === Number(studentData.EMPLID))?.[0]?.PK_Report_Id ,userAccess }) : ''} >
                   
                     <View style={[styles.box,getStatuscolor(presentStudentList?.filter((item) => item.EMPLID === Number(studentData.EMPLID))?.[0]?.Status)]} key={studentData.EMPLID}>
                       <View style={styles.boxtext}>
