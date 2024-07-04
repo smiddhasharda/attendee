@@ -390,6 +390,7 @@ const StudentInfo = ({ navigation }) => {
         authToken
       );
       if (response) {
+        console.log(response?.data?.receivedData)
         setStudentDetails(response?.data?.receivedData?.[0]);
         setLoading(false);
       }
@@ -643,35 +644,35 @@ const StudentInfo = ({ navigation }) => {
                 <Text style={styles.label}>Name:</Text>
                 <Text style={styles.value}>
                   {" "}
-                  {studentDetails.NAME_FORMAL || ""}{" "}
+                  {studentDetails?.NAME_FORMAL || ""}{" "}
                 </Text>
               </View>
               <View style={styles.infoItem}>
                 <Text style={styles.label}>System Id:</Text>
-                <Text style={styles.value}>{studentDetails.EMPLID || ""}</Text>
+                <Text style={styles.value}>{studentDetails?.EMPLID || ""}</Text>
               </View>
               <View style={styles.infoItem}>
                 <Text style={styles.label}>Roll No:</Text>
                 <Text style={styles.value}>
-                  {studentDetails.CAMPUS_ID || ""}
+                  {studentDetails?.CAMPUS_ID || ""}
                 </Text>
               </View>
               <View style={styles.infoItem}>
                 <Text style={styles.label}>School:</Text>
-                <Text style={styles.value}>{studentDetails.DESCR || ""}</Text>
+                <Text style={styles.value}>{studentDetails?.DESCR || ""}</Text>
               </View>
               <View style={styles.infoItem}>
                 <Text style={styles.label}>Program :</Text>
-                <Text style={styles.value}>{studentDetails.DESCR2 || ""}</Text>
+                <Text style={styles.value}>{studentDetails?.DESCR2 || ""}</Text>
               </View>
               <View style={styles.infoItem}>
                 <Text style={styles.label}>Branch :</Text>
-                <Text style={styles.value}>{studentDetails.DESCR3 || ""}</Text>
+                <Text style={styles.value}>{studentDetails?.DESCR3 || ""}</Text>
               </View>
               <View style={styles.infoItem}>
                 <Text style={styles.label}>Semester:</Text>
                 <Text style={styles.value}>
-                  {studentDetails.STRM?.split("")?.[3] || ""}
+                  {studentDetails?.ACAD_LEVEL_BOT || "0"}
                 </Text>
               </View>
             </View>
@@ -682,18 +683,18 @@ const StudentInfo = ({ navigation }) => {
               <View style={styles.infoItem}>
                 <Text style={styles.label}>Paper Id:</Text>
                 <Text style={styles.value}>
-                  {courseDetails.EXAM_TIME_CODE || ""}
+                  {courseDetails?.EXAM_TIME_CODE || ""}
                 </Text>
               </View>
               <View style={styles.infoItem}>
                 <Text style={styles.label}>Course Code:</Text>
                 <Text style={styles.value}>
-                  {courseDetails.CATALOG_NBR || ""}
+                  {courseDetails?.CATALOG_NBR || ""}
                 </Text>
               </View>
               <View style={styles.infoItem}>
                 <Text style={styles.label}>Course Name:</Text>
-                <Text style={styles.value}>{courseDetails.DESCR100 || ""}</Text>
+                <Text style={styles.value}>{courseDetails?.DESCR100 || ""}</Text>
               </View>
               <View style={styles.infoItem}>
                 <Text style={styles.label}>Room No:</Text>
