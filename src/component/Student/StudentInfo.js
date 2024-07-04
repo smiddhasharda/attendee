@@ -661,11 +661,11 @@ const StudentInfo = ({ navigation }) => {
                 <Text style={styles.value}>{studentDetails?.DESCR || ""}</Text>
               </View>
               <View style={styles.infoItem}>
-                <Text style={styles.label}>Program :</Text>
+                <Text style={styles.label}>Program:</Text>
                 <Text style={styles.value}>{studentDetails?.DESCR2 || ""}</Text>
               </View>
               <View style={styles.infoItem}>
-                <Text style={styles.label}>Branch :</Text>
+                <Text style={styles.label}>Branch:</Text>
                 <Text style={styles.value}>{studentDetails?.DESCR3 || ""}</Text>
               </View>
               <View style={styles.infoItem}>
@@ -713,15 +713,15 @@ const StudentInfo = ({ navigation }) => {
                 <Text style={[styles.label]}>Status</Text>
                 <View style={styles.attStatus}>
                   <CheckBox value={status === "Present"} onValueChange={(item) =>setStatus("Present")} color={getStatuscolor()} disabled={((!isActive && !(userAccess?.label === "Admin")) || disabledStatus === "Absent")} />                
-                  <Text style={[styles.value, styles.customValue]}> Present</Text>
+                  <Text style={[styles.value, styles.customValue]}>Present</Text>
                 </View>
                 <View style={styles.attStatus}>
                 <CheckBox value={status === "Absent"} onValueChange={() => setStatus("Absent")} color={getStatuscolor()} disabled={((!isActive && !(userAccess?.label === "Admin"))) || disabledStatus === "Absent"} />
-                <Text style={[styles.value, styles.customValue]}> Absent</Text>
+                <Text style={[styles.value, styles.customValue]}>Absent</Text>
                 </View>
                 <View style={styles.attStatus}>
                 <CheckBox value={status === "UFM"} onValueChange={() => setStatus("UFM")} color={getStatuscolor()} disabled={((!isActive && !(userAccess?.label === "Admin"))) || disabledStatus === "Absent"} />
-                <Text style={[styles.value, styles.customValue]}> UFM</Text>
+                <Text style={[styles.value, styles.customValue]}>UFM</Text>
                 </View>
                 
                 
