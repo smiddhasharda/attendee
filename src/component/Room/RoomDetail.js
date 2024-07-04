@@ -244,46 +244,46 @@ const formattedShiftTime = formatShiftTime(startTime);
               <Text style={styles.cotext}>Total</Text>
             </View>
         </View>
-
-        <View style={styles.studentWrapSec}>
-        {loading ? (
-          <ActivityIndicator size="large" color="#0000ff" />
-        ) : (
-          studentDetails?.length > 0 ? tempStudentDetails?.length > 0 ? (
-            tempStudentDetails.map((studentData, index) => (
-              
-              <Pressable 
-                key={studentData.EMPLID}  // Use a unique identifier from studentData, such as EMPLID
-                onPress={() => UserAccess?.create === 1 ?  navigation.navigate("StudentInfo", { room_Nbr: studentData.ROOM_NBR ,exam_Dt: studentData.EXAM_DT,catlog_Nbr: studentData.CATALOG_NBR ,system_Id:studentData.EMPLID, seat_Nbr: studentData.PTP_SEQ_CHAR ,startTime: startTime,current_Term:studentData.STRM,reportId: presentStudentList?.filter((item)=>item.EMPLID === Number(studentData.EMPLID))?.[0]?.PK_Report_Id ,userAccess }) : ''}
-              >
-                
-                  <View style={[styles.box,getStatuscolor(presentStudentList?.filter((item) => item.EMPLID === Number(studentData.EMPLID))?.[0]?.Status)]} key={studentData.EMPLID}>
-                    <View style={styles.boxtext}>
-                      {/* <View style={styles.imgWrap}></View> */}
-                      <View  style={styles.info}>
-                        {/* <Image source={user}  /> */}
-                        <FontAwesome name="user-circle" size={36}  color="black" style={styles.userimage} />
-                        <View style={styles.stuWrap}>
-                          <Text style={styles.examname }>{studentData.NAME}</Text>
-                          <Text style={styles.employeeid}>{studentData.EMPLID}</Text>
-                          </View>
-                      </View>
-                      <View style={styles.seqWrap}>
-                        <Text style={styles.seqnumber}>{studentData.PTP_SEQ_CHAR}</Text>
+        <ScrollView style={{height:600}}>
+          <View style={styles.studentWrapSec}>
+          {loading ? (
+            <ActivityIndicator size="large" color="#0000ff" />
+          ) : (
+            studentDetails?.length > 0 ? tempStudentDetails?.length > 0 ? (
+              tempStudentDetails.map((studentData, index) => (             
+                <Pressable 
+                  key={studentData.EMPLID}  // Use a unique identifier from studentData, such as EMPLID
+                  onPress={() => UserAccess?.create === 1 ?  navigation.navigate("StudentInfo", { room_Nbr: studentData.ROOM_NBR ,exam_Dt: studentData.EXAM_DT,catlog_Nbr: studentData.CATALOG_NBR ,system_Id:studentData.EMPLID, seat_Nbr: studentData.PTP_SEQ_CHAR ,startTime: startTime,current_Term:studentData.STRM,reportId: presentStudentList?.filter((item)=>item.EMPLID === Number(studentData.EMPLID))?.[0]?.PK_Report_Id ,userAccess }) : ''}
+                >
+                  
+                    <View style={[styles.box,getStatuscolor(presentStudentList?.filter((item) => item.EMPLID === Number(studentData.EMPLID))?.[0]?.Status)]} key={studentData.EMPLID}>
+                      <View style={styles.boxtext}>
+                        {/* <View style={styles.imgWrap}></View> */}
+                        <View  style={styles.info}>
+                          {/* <Image source={user}  /> */}
+                          <FontAwesome name="user-circle" size={36}  color="black" style={styles.userimage} />
+                          <View style={styles.stuWrap}>
+                            <Text style={styles.examname }>{studentData.NAME}</Text>
+                            <Text style={styles.employeeid}>{studentData.EMPLID}</Text>
+                            </View>
+                        </View>
+                        <View style={styles.seqWrap}>
+                          <Text style={styles.seqnumber}>{studentData.PTP_SEQ_CHAR}</Text>
+                        </View>
                       </View>
                     </View>
-                  </View>
+                  
+                </Pressable>
                 
-              </Pressable>
-              
-            ))
-          ) : (
-              <Text style={styles.centerText}>There is no student available in this room you searched for!</Text>
-          ) : (
-              <Text style={styles.centerText}>There are no records found!</Text>
-          )
-        )}
-        </View>
+              ))
+            ) : (
+                <Text style={styles.centerText}>There is no student available in this room you searched for!</Text>
+            ) : (
+                <Text style={styles.centerText}>There are no records found!</Text>
+            )
+          )}
+          </View>
+        </ScrollView>
           </ScrollView>
         </View>)
           }
@@ -490,9 +490,11 @@ const styles = StyleSheet.create({
       fontWeight:"600",
     },
     studentWrapSec: {
+ 
       overflowY:"scroll",
       // maxHeight: 330,
       minHeight:300,
+
       //maxHeight: 440,
       clear: "both"
     }
