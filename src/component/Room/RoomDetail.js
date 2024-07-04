@@ -1,13 +1,12 @@
 import React, { useState, useEffect,useCallback  } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TextInput, ActivityIndicator, Dimensions, Pressable } from 'react-native';
 import { Ionicons,FontAwesome, Entypo } from '@expo/vector-icons'
-import user from '../../local-assets/userimg.jpg'
 import { useRoute } from '@react-navigation/native';
 import CodeScanner from '../../globalComponent/CodeScanner/CodeScanner'; // Make sure to import CodeScanner properly
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetch, view } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
-import style from 'react-native-datepicker/style';
+import { parse, format,parseISO } from 'date-fns';
 
 function RoomDetail({navigation}) {
   const [isScanning, setIsScanning] = useState(false);
@@ -73,7 +72,7 @@ function RoomDetail({navigation}) {
           data: '',
           conditionString:'',
           checkAvailability: '',
-          customQuery: `select PK_Report_Id,EMPLID,Status from tbl_report_master where EXAM_DT = '${exam_Dt}' AND ROOM_NBR = '${room_Nbr}' AND EXAM_START_TIME = '${startTime}' `, 
+          customQuery: `select PK_Report_Id,EMPLID,Status,EXAM_START_TIME from tbl_report_master where EXAM_DT = '${exam_Dt}' AND ROOM_NBR = '${room_Nbr}' AND EXAM_START_TIME = '${startTime}' `, 
         },
         authToken
       );
@@ -82,27 +81,45 @@ function RoomDetail({navigation}) {
         setPresentStudentList(response?.data?.receivedData)
       }
     } catch (error) {
-      console.log(error);
       handleAuthErrors(error);
     }
   };
+  const formatShiftTime = (dateString) => {
+    const date = parseISO(dateString);
+  
+    // Format each part of the date as required
+    const day = format(date, 'dd');
+    const month = format(date, 'MMM').toUpperCase();
+    const year = format(date, 'yy');
+    const time = format(date, 'hh:mm:ss.SSSSSSSSS a');
+  
+    return `${day}-${month}-${year} ${time}`;
+  };
 
   const handleGetStudentView = async (SelectedDate,SelectedRoom) => {
+    const selectedDate = new Date(SelectedDate);
+const day = selectedDate.getDate().toString().padStart(2, '0');
+const month = selectedDate.toLocaleString('en-GB', { month: 'short' }).toUpperCase();
+const year = selectedDate.getFullYear().toString().slice(-2);
+const formattedDate = `${day}-${month}-${year}`;
+
+const formattedShiftTime = formatShiftTime(startTime);
     try {
       const authToken = await checkAuthToken();
       const response = await view(
         {
-          operation: "fetch",
+          operation: "custom",
           tblName: "PS_S_PRD_EX_RME_VW",
           data: '',
-          conditionString: `EXAM_DT = '${new Date(SelectedDate).toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-')}' AND ROOM_NBR = '${SelectedRoom}'`,
+          conditionString: `EXAM_DT = '${new Date(SelectedDate).toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-')}' AND ROOM_NBR = '${SelectedRoom}' ORDER BY CAST(PTP_SEQ_CHAR AS int)`,
           checkAvailability: '',
-          customQuery: '',
+          // customQuery: ` SELECT DISTINCT PS_S_PRD_EX_RME_VW.EMPLID, PS_S_PRD_EX_RME_VW.STRM, PS_S_PRD_EX_RME_VW.CATALOG_NBR, PS_S_PRD_EX_RME_VW.EXAM_DT, PS_S_PRD_EX_RME_VW.ROOM_NBR, PS_S_PRD_EX_RME_VW.PTP_SEQ_CHAR FROM PS_S_PRD_EX_RME_VW JOIN PS_S_PRD_EX_TME_VW ON PS_S_PRD_EX_RME_VW.EXAM_DT = PS_S_PRD_EX_TME_VW.EXAM_DT AND PS_S_PRD_EX_RME_VW.CATALOG_NBR = PS_S_PRD_EX_TME_VW.CATALOG_NBR AND PS_S_PRD_EX_TME_VW.EXAM_START_TIME = '${startTime}' WHERE PS_S_PRD_EX_RME_VW.EXAM_DT = '${new Date(SelectedDate).toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-')}' AND PS_S_PRD_EX_RME_VW.ROOM_NBR = '${SelectedRoom}' ORDER BY CAST(PTP_SEQ_CHAR AS int) `,
+          // customQuery: `SELECT DISTINCT PS_S_PRD_EX_RME_VW.EMPLID, PS_S_PRD_EX_RME_VW.STRM, PS_S_PRD_EX_RME_VW.CATALOG_NBR, PS_S_PRD_EX_RME_VW.EXAM_DT, PS_S_PRD_EX_RME_VW.ROOM_NBR, PS_S_PRD_EX_RME_VW.PTP_SEQ_CHAR FROM PS_S_PRD_EX_RME_VW JOIN PS_S_PRD_EX_TME_VW ON PS_S_PRD_EX_RME_VW.EXAM_DT = PS_S_PRD_EX_TME_VW.EXAM_DT AND PS_S_PRD_EX_RME_VW.CATALOG_NBR = PS_S_PRD_EX_TME_VW.CATALOG_NBR AND PS_S_PRD_EX_TME_VW.EXAM_START_TIME = '${startTime}' WHERE PS_S_PRD_EX_RME_VW.EXAM_DT = '${new Date(SelectedDate).toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-')}' AND PS_S_PRD_EX_RME_VW.ROOM_NBR = '${SelectedRoom}' ORDER BY CAST(PS_S_PRD_EX_RME_VW.PTP_SEQ_CHAR AS INT) `,
+          customQuery:`SELECT PS_S_PRD_EX_RME_VW.EMPLID,PS_S_PRD_EX_RME_VW.PTP_SEQ_CHAR FROM PS_S_PRD_EX_RME_VW JOIN PS_S_PRD_EX_TME_VW ON PS_S_PRD_EX_RME_VW.EXAM_DT = PS_S_PRD_EX_TME_VW.EXAM_DT AND PS_S_PRD_EX_RME_VW.CATALOG_NBR = PS_S_PRD_EX_TME_VW.CATALOG_NBR  WHERE PS_S_PRD_EX_RME_VW.EXAM_DT = '${formattedDate}' AND PS_S_PRD_EX_RME_VW.ROOM_NBR = '${SelectedRoom}' AND PS_S_PRD_EX_TME_VW.EXAM_START_TIME ='${formattedShiftTime}' `,         
           viewType:'Campus_View'
         },
         authToken
       );
-
       if (response) {
        setStudentDetails(response?.data?.receivedData);
        setTempStudentDetails(response?.data?.receivedData);
@@ -171,11 +188,12 @@ function RoomDetail({navigation}) {
     }
     
   }
+
   
   useEffect(() => {
     fetchStudentDetails(exam_Dt, room_Nbr);
     handleGetReportData();
-  }, [UserAccess,addToast]);
+  }, [UserAccess,navigation]);
   return (
     <View style={styles.container}>
         {isScanning ? (<CodeScanner onScannedData={ handleScannedData} onCancel={handleCancel} />) : 
@@ -472,8 +490,11 @@ const styles = StyleSheet.create({
       fontWeight:"600",
     },
     studentWrapSec: {
-      // overflowY:"scroll",
-      // minHeight: 330,
+ 
+      overflowY:"scroll",
+      // maxHeight: 330,
+      minHeight:300,
+
       //maxHeight: 440,
       clear: "both"
     }

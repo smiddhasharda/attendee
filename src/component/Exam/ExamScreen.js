@@ -4,6 +4,8 @@ import { view, fetch } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { parse, format,parseISO } from 'date-fns';
+import { formatInTimeZone } from 'date-fns-tz';
+
 
 const { width, height } = Dimensions.get('window');
 
@@ -56,7 +58,6 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
   };
 
   const handleGetInvigilatorDutyDate = async () => {
-
     let CurrentDate = new Date().toLocaleDateString('en-GB', { year: '2-digit', month: '2-digit', day: '2-digit' }).split('/').reverse().join('-');
     try {
       const authToken = await checkAuthToken();
@@ -67,31 +68,50 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
           data: '',
           conditionString: '',
           checkAvailability: '',
-          customQuery: `SELECT DISTINCT date, room FROM tbl_invigilator_duty WHERE employeeId = '${userData?.username}' AND  date >= '${CurrentDate}' ORDER BY date ASC`,
+          customQuery: `SELECT DISTINCT date, room, shift FROM tbl_invigilator_duty WHERE employeeId = '${userData?.username}' AND date >= '${CurrentDate}' ORDER BY date ASC`,
         },
         authToken
       );
-
+  
       if (response) {
         setInvigilatorData(response?.data?.receivedData);
         const ExamDateArray = response?.data?.receivedData.filter((item, index, self) => index === self.findIndex((t) => t.date === item.date)).map((item) => ({ EXAM_DT: item.date }));
         setExamDates(ExamDateArray);
         setExamSelectedDate(response?.data?.receivedData?.[0]?.date);
-        const RoomArray = response?.data?.receivedData.filter((item) => item.date === response?.data?.receivedData?.[0]?.date).map((item) => item.room);
+        const RoomArray = response?.data?.receivedData.filter((item) => item.date === response?.data?.receivedData?.[0]?.date).map((item) => ({ room: item.room, shift: item.shift }));
         handleGetRoomView(response?.data?.receivedData?.[0]?.date, RoomArray);
       }
     } catch (error) {
       handleAuthErrors(error);
     }
   };
+  
+
+  const formatShiftTime = (dateString) => {
+    const date = parseISO(dateString);
+  
+    // Format each part of the date as required
+    const day = format(date, 'dd');
+    const month = format(date, 'MMM').toUpperCase();
+    const year = format(date, 'yy');
+    const time = format(date, 'hh:mm:ss.SSSSSSSSS a');
+  
+    return `${day}-${month}-${year} ${time}`;
+  };
 
   const handleGetRoomView = async (SelectedDate, RoomArray) => {
     try {
       const authToken = await checkAuthToken();
       const formattedDate = SelectedDate ? new Date(SelectedDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }).toUpperCase().replace(/ /g, '-') : '';
-      const roomCondition = RoomArray && RoomArray.length > 0 ? `AND PS_S_PRD_EX_RME_VW.ROOM_NBR IN (${RoomArray.map(room => `'${room}'`).join(', ')})` : '';
-      const customQuery = `SELECT DISTINCT PS_S_PRD_EX_RME_VW.EXAM_DT, PS_S_PRD_EX_RME_VW.ROOM_NBR, PS_S_PRD_EX_TME_VW.EXAM_START_TIME FROM PS_S_PRD_EX_RME_VW JOIN PS_S_PRD_EX_TME_VW ON PS_S_PRD_EX_RME_VW.EXAM_DT = PS_S_PRD_EX_TME_VW.EXAM_DT WHERE PS_S_PRD_EX_RME_VW.EXAM_DT = '${formattedDate}' ${roomCondition}`;
-
+      
+      let roomShiftConditions = '';
+      if (RoomArray && RoomArray.length > 0) {
+        roomShiftConditions = RoomArray.map(({ room, shift }) => `(${shift ? `PS_S_PRD_EX_TME_VW.EXAM_START_TIME = '${formatShiftTime(shift)}' AND ` : ''}PS_S_PRD_EX_RME_VW.ROOM_NBR = '${room}')`).join(' OR ');
+        roomShiftConditions = `AND (${roomShiftConditions})`;
+      }
+      
+      const customQuery = `SELECT DISTINCT PS_S_PRD_EX_RME_VW.EXAM_DT, PS_S_PRD_EX_RME_VW.ROOM_NBR, PS_S_PRD_EX_TME_VW.EXAM_START_TIME FROM PS_S_PRD_EX_RME_VW JOIN PS_S_PRD_EX_TME_VW ON PS_S_PRD_EX_RME_VW.EXAM_DT = PS_S_PRD_EX_TME_VW.EXAM_DT AND PS_S_PRD_EX_RME_VW.CATALOG_NBR = PS_S_PRD_EX_TME_VW.CATALOG_NBR WHERE PS_S_PRD_EX_RME_VW.EXAM_DT = '${formattedDate}' ${roomShiftConditions}`;
+  
       const response = await view(
         {
           operation: "custom",
@@ -104,7 +124,7 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
         },
         authToken
       );
-
+  
       if (response) {
         setRoomDetails(response?.data?.receivedData);
         setLoading(false);
@@ -114,6 +134,7 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
       handleAuthErrors(error);
     }
   };
+  
 
   const handleAuthErrors = (error) => {
     const errorMessages = { "Invalid credentials": "Invalid authentication credentials", "Data already exists": "Module with the same name already exists", "No response received from the server": "No response received from the server", };
@@ -132,24 +153,15 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
   const handleDateClick = (date) => {
     setLoading(true);
     setExamSelectedDate(date);
-    const RoomArray = invigilatorData?.filter((item) => item.date === date)?.map((item) => item.room);
+    const RoomArray = invigilatorData?.filter((item) => item.date === date) ?.map((item) => ({ room: item.room, shift: item.shift }));
     handleGetRoomView(date, userAccess?.label !== "Admin" && RoomArray);
   };
 
-  // const convertedTime = (StartTime) => {
-  //   const date = new Date(StartTime);
-  //   const hours = date.getHours();
-  //   const minutes = date.getMinutes().toString().padStart(2, '0'); // Pad minutes with leading 0
-  
-  //   const amPm = hours >= 12 ? 'PM' : 'AM';
-  //   const adjustedHours = hours % 12 || 12; // Convert to 12-hour format
-  
-  //   return `${adjustedHours}:${minutes}${amPm}`;
-  // }
-
   const convertedTime = (startTime) => {
-    const date = parseISO(startTime);
-    return format(date, 'h:mm a');
+    const date = parseISO(startTime); // Parse the input ISO date string
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone; // Get the current timezone
+    const zonedDate = formatInTimeZone(date, timeZone ,'h:mm a' ); // Convert the date to the local timezone
+    return zonedDate;
   };
   const parseAndFormatDate = (dateString) => {
     const possibleFormats = [
