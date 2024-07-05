@@ -126,7 +126,7 @@ const formattedShiftTimePrefix = formatShiftTimePrefix(startTime);
           checkAvailability: '',
           // customQuery: ` SELECT DISTINCT PS_S_PRD_EX_RME_VW.EMPLID, PS_S_PRD_EX_RME_VW.STRM, PS_S_PRD_EX_RME_VW.CATALOG_NBR, PS_S_PRD_EX_RME_VW.EXAM_DT, PS_S_PRD_EX_RME_VW.ROOM_NBR, PS_S_PRD_EX_RME_VW.PTP_SEQ_CHAR FROM PS_S_PRD_EX_RME_VW JOIN PS_S_PRD_EX_TME_VW ON PS_S_PRD_EX_RME_VW.EXAM_DT = PS_S_PRD_EX_TME_VW.EXAM_DT AND PS_S_PRD_EX_RME_VW.CATALOG_NBR = PS_S_PRD_EX_TME_VW.CATALOG_NBR AND PS_S_PRD_EX_TME_VW.EXAM_START_TIME = '${startTime}' WHERE PS_S_PRD_EX_RME_VW.EXAM_DT = '${new Date(SelectedDate).toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-')}' AND PS_S_PRD_EX_RME_VW.ROOM_NBR = '${SelectedRoom}' ORDER BY CAST(PTP_SEQ_CHAR AS int) `,
           // customQuery: `SELECT DISTINCT PS_S_PRD_EX_RME_VW.EMPLID, PS_S_PRD_EX_RME_VW.STRM, PS_S_PRD_EX_RME_VW.CATALOG_NBR, PS_S_PRD_EX_RME_VW.EXAM_DT, PS_S_PRD_EX_RME_VW.ROOM_NBR, PS_S_PRD_EX_RME_VW.PTP_SEQ_CHAR FROM PS_S_PRD_EX_RME_VW JOIN PS_S_PRD_EX_TME_VW ON PS_S_PRD_EX_RME_VW.EXAM_DT = PS_S_PRD_EX_TME_VW.EXAM_DT AND PS_S_PRD_EX_RME_VW.CATALOG_NBR = PS_S_PRD_EX_TME_VW.CATALOG_NBR AND PS_S_PRD_EX_TME_VW.EXAM_START_TIME = '${startTime}' WHERE PS_S_PRD_EX_RME_VW.EXAM_DT = '${new Date(SelectedDate).toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-')}' AND PS_S_PRD_EX_RME_VW.ROOM_NBR = '${SelectedRoom}' ORDER BY CAST(PS_S_PRD_EX_RME_VW.PTP_SEQ_CHAR AS INT) `,
-          customQuery:`SELECT PS_S_PRD_EX_RME_VW.EMPLID,PS_S_PRD_EX_RME_VW.ROOM_NBR,PS_S_PRD_EX_RME_VW.PTP_SEQ_CHAR,PS_S_PRD_EX_RME_VW.CATALOG_NBR,PS_S_PRD_EX_RME_VW.STRM, PS_S_PRD_EX_TME_VW.EXAM_START_TIME FROM PS_S_PRD_EX_RME_VW JOIN PS_S_PRD_EX_TME_VW ON PS_S_PRD_EX_RME_VW.EXAM_DT = PS_S_PRD_EX_TME_VW.EXAM_DT AND PS_S_PRD_EX_RME_VW.CATALOG_NBR = PS_S_PRD_EX_TME_VW.CATALOG_NBR WHERE PS_S_PRD_EX_RME_VW.EXAM_DT = '${formattedDate}' AND PS_S_PRD_EX_RME_VW.ROOM_NBR = '${SelectedRoom}' AND TO_CHAR(PS_S_PRD_EX_TME_VW.EXAM_START_TIME, 'HH:MI') = '${formattedShiftTime}' AND TO_CHAR(PS_S_PRD_EX_TME_VW.EXAM_START_TIME, '${formattedShiftTimePrefix}') = '${formattedShiftTimePrefix}' ORDER BY TO_NUMBER(PS_S_PRD_EX_RME_VW.PTP_SEQ_CHAR)`,         
+          customQuery:`SELECT PS_S_PRD_EX_RME_VW.NAME,PS_S_PRD_EX_RME_VW.EMPLID,PS_S_PRD_EX_RME_VW.ROOM_NBR,PS_S_PRD_EX_RME_VW.PTP_SEQ_CHAR,PS_S_PRD_EX_RME_VW.CATALOG_NBR,PS_S_PRD_EX_RME_VW.STRM, PS_S_PRD_EX_TME_VW.EXAM_START_TIME FROM PS_S_PRD_EX_RME_VW JOIN PS_S_PRD_EX_TME_VW ON PS_S_PRD_EX_RME_VW.EXAM_DT = PS_S_PRD_EX_TME_VW.EXAM_DT AND PS_S_PRD_EX_RME_VW.CATALOG_NBR = PS_S_PRD_EX_TME_VW.CATALOG_NBR WHERE PS_S_PRD_EX_RME_VW.EXAM_DT = '${formattedDate}' AND PS_S_PRD_EX_RME_VW.ROOM_NBR = '${SelectedRoom}' AND TO_CHAR(PS_S_PRD_EX_TME_VW.EXAM_START_TIME, 'HH:MI') = '${formattedShiftTime}' AND TO_CHAR(PS_S_PRD_EX_TME_VW.EXAM_START_TIME, '${formattedShiftTimePrefix}') = '${formattedShiftTimePrefix}' ORDER BY TO_NUMBER(PS_S_PRD_EX_RME_VW.PTP_SEQ_CHAR)`,         
           viewType:'Campus_View'
         },
         // AND PS_S_PRD_EX_TME_VW.EXAM_START_TIME ='${formattedShiftTime}'
@@ -204,9 +204,17 @@ const formattedShiftTimePrefix = formatShiftTimePrefix(startTime);
 
   
   useEffect(() => {
+    console.log("useEffect triggered");
+    console.log("UserAccess:", UserAccess);
+    console.log("Navigation:", navigation);
+
     fetchStudentDetails(exam_Dt, room_Nbr);
     handleGetReportData();
-  }, [UserAccess,navigation]);
+
+    return () => {
+      console.log("Cleanup useEffect");
+    };
+  }, [UserAccess, navigation]);
   return (
     <View style={styles.container}>
         {isScanning ? (<CodeScanner onScannedData={ handleScannedData} onCancel={handleCancel} />) : 
