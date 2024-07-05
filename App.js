@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useContext } from "react";
 import { View, ActivityIndicator, StyleSheet, StatusBar, RefreshControl, SafeAreaView, ScrollView } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -6,6 +6,7 @@ import { Provider } from "react-redux";
 import store from "./src/redux/store";
 import { ToastProvider } from "./src/globalComponent/ToastContainer/ToastContext";
 import { RoleProvider } from "./src/component/Roles/RoleContext";
+import { RefreshProvider, RefreshContext } from "./src/globalComponent/Refresh/RefreshContext";
 import LoginScreen from "./src/component/Login/LoginScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DrawerNavigator from "./src/globalComponent/DrawerNavigatior/DrawerNavigatior";
@@ -15,16 +16,16 @@ import RoomDetail from "./src/component/Room/RoomDetail";
 import TopHeader from "./src/globalComponent/Header/TopHeader";
 import ToastContainer from './src/globalComponent/ToastContainer/ToastContainer'; 
 import { Provider as PaperProvider } from 'react-native-paper';
-import SplashScreen from "./src/component/Splash/SplashScreen";
 
 const Stack = createNativeStackNavigator();
 global.SERVER_URL = "http://3.111.185.105:3502";
 
-const App = () => {
+const AppContent = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [initialRoute, setInitialRoute] = useState("Login");
   const [loading, setLoading] = useState(true);
 
+  const { triggerRefresh } = useContext(RefreshContext);
   const TopHeaderCommonConfig = {
     headerStyle: {
       backgroundColor: "rgb(17, 65, 102)",
@@ -38,10 +39,11 @@ const App = () => {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
+    triggerRefresh(); // This will update the context state and trigger a re-render in all components consuming the refresh state
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
-  }, []);
+  }, [triggerRefresh]);
 
   useEffect(() => {
     const checkAuthStatus = async () => {
@@ -56,7 +58,6 @@ const App = () => {
     };
     checkAuthStatus();
   }, []);
-
 
   const renderLoading = () => (
     <View style={{ flex: 1, backgroundColor: "plum", padding: 60 }}>
@@ -116,17 +117,23 @@ const App = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView
+      {/* <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-      >
+      > */}
         {loading ? renderLoading() : renderRouting()}
-      </ScrollView>
+      {/* </ScrollView> */}
     </SafeAreaView>
   );
 };
+
+const App = () => (
+  <RefreshProvider>
+    <AppContent />
+  </RefreshProvider>
+);
 
 export default App;
 
