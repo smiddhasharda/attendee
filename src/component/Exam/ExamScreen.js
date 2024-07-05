@@ -39,7 +39,7 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
           conditionString: '',
           checkAvailability: '',
           customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW WHERE EXAM_DT >= '${CurrentDate}' ORDER BY EXAM_DT ASC`,
-          // customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW Where STRM = '2302' ORDER BY EXAM_DT ASC`,
+          // customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW ORDER BY EXAM_DT ASC`,
 
           viewType:'Campus_View'
         },
@@ -85,32 +85,50 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
       handleAuthErrors(error);
     }
   };
-  
 
+  
   const formatShiftTime = (dateString) => {
     const date = parseISO(dateString);
-  
-    // Format each part of the date as required
-    const day = format(date, 'dd');
-    const month = format(date, 'MMM').toUpperCase();
-    const year = format(date, 'yy');
-    const time = format(date, 'hh:mm:ss.SSSSSSSSS a');
-  
-    return `${day}-${month}-${year} ${time}`;
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone; // Get the current timezone
+    const time = formatInTimeZone(date, timeZone, 'hh:mm');
+    return time;
   };
-
+  
+  const formatShiftTimePrefix = (dateString) => {
+    const date = parseISO(dateString);
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone; // Get the current timezone
+    const prefix = formatInTimeZone(date, timeZone, 'a');
+    return prefix;
+  };
+  
   const handleGetRoomView = async (SelectedDate, RoomArray) => {
     try {
       const authToken = await checkAuthToken();
       const formattedDate = SelectedDate ? new Date(SelectedDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }).toUpperCase().replace(/ /g, '-') : '';
-      
+
       let roomShiftConditions = '';
+  
       if (RoomArray && RoomArray.length > 0) {
-        roomShiftConditions = RoomArray.map(({ room, shift }) => `(${shift ? `PS_S_PRD_EX_TME_VW.EXAM_START_TIME = '${formatShiftTime(shift)}' AND ` : ''}PS_S_PRD_EX_RME_VW.ROOM_NBR = '${room}')`).join(' OR ');
+        roomShiftConditions = RoomArray.map(({ room, shift }) => 
+          `(${shift 
+            ? `TO_CHAR(PS_S_PRD_EX_TME_VW.EXAM_START_TIME, 'HH:MI') = '${formatShiftTime(shift)}' 
+               AND TO_CHAR(PS_S_PRD_EX_TME_VW.EXAM_START_TIME, '${formatShiftTimePrefix(shift)}') = '${formatShiftTimePrefix(shift)}' 
+               AND ` 
+            : ''}PS_S_PRD_EX_RME_VW.ROOM_NBR = '${room}')`
+        ).join(' OR ');
+  
         roomShiftConditions = `AND (${roomShiftConditions})`;
       }
-      
-      const customQuery = `SELECT DISTINCT PS_S_PRD_EX_RME_VW.EXAM_DT, PS_S_PRD_EX_RME_VW.ROOM_NBR, PS_S_PRD_EX_TME_VW.EXAM_START_TIME FROM PS_S_PRD_EX_RME_VW JOIN PS_S_PRD_EX_TME_VW ON PS_S_PRD_EX_RME_VW.EXAM_DT = PS_S_PRD_EX_TME_VW.EXAM_DT AND PS_S_PRD_EX_RME_VW.CATALOG_NBR = PS_S_PRD_EX_TME_VW.CATALOG_NBR WHERE PS_S_PRD_EX_RME_VW.EXAM_DT = '${formattedDate}' ${roomShiftConditions}`;
+  
+      const customQuery = `SELECT DISTINCT 
+        PS_S_PRD_EX_RME_VW.EXAM_DT, 
+        PS_S_PRD_EX_RME_VW.ROOM_NBR, 
+        PS_S_PRD_EX_TME_VW.EXAM_START_TIME 
+        FROM PS_S_PRD_EX_RME_VW 
+        JOIN PS_S_PRD_EX_TME_VW 
+        ON PS_S_PRD_EX_RME_VW.EXAM_DT = PS_S_PRD_EX_TME_VW.EXAM_DT 
+        AND PS_S_PRD_EX_RME_VW.CATALOG_NBR = PS_S_PRD_EX_TME_VW.CATALOG_NBR 
+        WHERE PS_S_PRD_EX_RME_VW.EXAM_DT = '${formattedDate}' ${roomShiftConditions}`;
   
       const response = await view(
         {
@@ -120,20 +138,22 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
           conditionString: '',
           checkAvailability: '',
           customQuery: customQuery,
-          viewType:'Campus_View'
+          viewType: 'Campus_View'
         },
         authToken
       );
   
       if (response) {
         setRoomDetails(response?.data?.receivedData);
-        setLoading(false);
       }
+      setLoading(false);
     } catch (error) {
       setLoading(false);
+      console.error("Error executing custom query:", error); // Improved error logging
       handleAuthErrors(error);
     }
   };
+  
   
 
   const handleAuthErrors = (error) => {
