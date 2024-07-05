@@ -120,12 +120,14 @@ export default function CodeScanner({ onScannedData, onCancel }) {
     return (
       <View style={styles.container}>
         <Text style={{ textAlign: 'center' }}>We need your permission to show the camera</Text>
-        <Pressable style={styles.button} onPress={requestPermission}>
-        <Text style={styles.text}>Grant Permission</Text>
+        <View style={styles.grantWrap}>
+        <Pressable style={styles.grantbtn} onPress={requestPermission}>
+        <Text style={styles.text}>Allow Permission</Text>
         </Pressable>
         <Pressable style={styles.cancelButton} onPress={handleCancel}>
         <Text style={styles.text}>Cancel</Text>
         </Pressable>
+        </View>
       </View>
     );
   }
@@ -158,13 +160,19 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingBottom: 20,
   },
-  button: {
-    backgroundColor: 'white',
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        borderRadius: 5,
-        marginBottom: 10,
+  grantbtn:{
+        backgroundColor:"rgb(17, 65, 102)",
+        padding:10,
+        borderRadius:6,
+        marginRight:10,
+
   },
+      grantWrap:{
+      flexDirection:"row",
+      justifyContent:"center",
+      marginTop:10,
+      },
+
   text: {
     fontSize: 18,
     fontWeight: 'bold',
