@@ -411,7 +411,7 @@ const RoleScreen = ({userAccess,refresh}) => {
           </View> 
         <View style={[styles.buttonContainer,]}>    
               <Pressable style={styles.addbtnWrap} onPress={() => roleData.roleId ?  handleUpdateRole() : handleAddRole()} >
-                    <Text style={styles.addbtntext } numberOfLines={1}>{roleData.roleId ?  "Update Role" : "Add New Role"}</Text>
+                    <Text style={styles.addbtntext } numberOfLines={1}>{roleData.roleId ?  "Update Role" : "Add Role"}</Text>
                   </Pressable>
           <Pressable onPress={() => handleClose()}>
                     <Text style={styles.cancelbtn}>Cancel</Text>

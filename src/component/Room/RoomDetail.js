@@ -183,15 +183,15 @@ const formattedShiftTimePrefix = formatShiftTimePrefix(startTime);
         };
       case 'UFM':
         return {
-          backgroundColor: '#ea4242',
-          borderColor: "#ea4242",
+          backgroundColor: '#fdbf48',
+          borderColor: "#fdbf48",
           borderWidth: 1,
           color: "#fff"
         };
       case 'Absent':
         return {
-          backgroundColor: '#969595',
-          borderColor: "#969595",
+          backgroundColor: '#ea4242',
+          borderColor: "#ea4242",
           borderWidth: 1,
           color: "#fff"
         };
@@ -237,7 +237,7 @@ const formattedShiftTimePrefix = formatShiftTimePrefix(startTime);
           </View>
         
           </View>
-          <ScrollView style={styles.roomNumber}>
+          
           <View style={styles.countWrap}>
             <View style={styles.countMain}>
               <View style={styles.countbg1}>
@@ -264,7 +264,7 @@ const formattedShiftTimePrefix = formatShiftTimePrefix(startTime);
               <Text style={styles.cotext}>Total</Text>
             </View>
         </View>
-        <ScrollView style={{height:600}}>
+        <ScrollView style={{maxHeight:470}}>
           <View style={styles.studentWrapSec}>
           {loading ? (
             <ActivityIndicator size="large" color="#0000ff" />
@@ -282,7 +282,7 @@ const formattedShiftTimePrefix = formatShiftTimePrefix(startTime);
                           {/* <Image source={user}  /> */}
                           <FontAwesome name="user-circle" size={36}  color="black" style={styles.userimage} />
                           <View style={styles.stuWrap}>
-                            <Text style={styles.examname }>{studentData.NAME}</Text>
+                            <Text style={styles.examname} numberOfLines={1} ellipsizeMode='tail'>{studentData.NAME}</Text>
                             <Text style={styles.employeeid}>{studentData.EMPLID}</Text>
                             </View>
                         </View>
@@ -302,8 +302,7 @@ const formattedShiftTimePrefix = formatShiftTimePrefix(startTime);
             )
           )}
           </View>
-        </ScrollView>
-          </ScrollView>
+        </ScrollView>        
         </View>)
           }
            <View style={[styles.magnifying]}>
@@ -362,8 +361,13 @@ const styles = StyleSheet.create({
       // width: Dimensions.get("window").width / 1 - 20, 
       borderRadius: 6,
       marginBottom: 10,
-      padding: 10,
-      clear: "both"
+      paddingTop: 15,
+      paddingBottom:15,
+      paddingLeft: 10,
+      paddingRight: 10,
+      clear: "both",
+      marginLeft: 8,
+      marginRight: 8
       // overflow: "hidden"
     },
     boxtext:{
@@ -394,7 +398,9 @@ const styles = StyleSheet.create({
     },
     examname:{
       color:"#0c1e35",
-      fontWeight:"600"
+      fontWeight:"600",
+      width: 200,
+      overflow: 'hidden',
     },
     employeeid:{
       color:"#0c1e35",
@@ -510,9 +516,9 @@ const styles = StyleSheet.create({
     },
     studentWrapSec: {
  
-      overflowY:"scroll",
+      // overflowY:"scroll",
       // maxHeight: 330,
-      minHeight:300,
+      // minHeight:300,
 
       //maxHeight: 440,
       clear: "both"

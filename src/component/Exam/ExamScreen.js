@@ -144,8 +144,6 @@ const ExamScreen = ({ navigation, userAccess, userData,refresh }) => {
     }
   };
   
-  
-
   const handleAuthErrors = (error) => {
     const errorMessages = { "Invalid credentials": "Invalid authentication credentials", "Data already exists": "Module with the same name already exists", "No response received from the server": "No response received from the server", };
     addToast(errorMessages[error.message] || "Module Operation Failed", "error");
@@ -207,34 +205,34 @@ const ExamScreen = ({ navigation, userAccess, userData,refresh }) => {
   return (
     <View style={styles.container}>
       <View style={styles.datesWrap}>
-      <ScrollView>
-        <View style={styles.dates}>
-          <FlatList
-            data={examDates}
-            renderItem={({ item }) => {
-              const isActiveItem = item.EXAM_DT === examSelectedDate;
-              const normalizedDate = parseAndFormatDate(item.EXAM_DT);
-              return (
-                 <Pressable onPress={() => handleDateClick(item.EXAM_DT)}>
-      <View style={[styles.dateItem, isActiveItem && styles.activebox]}>
-        <Text style={[styles.dateDay, isActiveItem && styles.activeText]}>
-          {normalizedDate?.split('$')[2]}
-        </Text>
-        <Text style={[styles.dateNumber, isActiveItem && styles.activeText]}>
-        {normalizedDate?.split('$')[0]}
-        </Text>
-        <Text style={[styles.dateMonth, isActiveItem && styles.activeText]}>
-        {normalizedDate?.split('$')[1]}
-        </Text>
-      </View>
-    </Pressable>
-              );
-            }}
-            horizontal
-            keyExtractor={(item) => item.EXAM_DT}
-          />
-        </View>
-        </ScrollView>
+            <View style={{maxWidth:"100%"}}>
+            <View style={styles.dates}>
+              <FlatList
+                data={examDates}
+                renderItem={({ item }) => {
+                  const isActiveItem = item.EXAM_DT === examSelectedDate;
+                  const normalizedDate = parseAndFormatDate(item.EXAM_DT);
+                  return (
+                    <Pressable onPress={() => handleDateClick(item.EXAM_DT)}>
+                        <View style={[styles.dateItem, isActiveItem && styles.activebox]}>
+                          <Text style={[styles.dateDay, isActiveItem && styles.activeText]}>
+                            {normalizedDate?.split('$')[2]}
+                          </Text>
+                          <Text style={[styles.dateNumber, isActiveItem && styles.activeText]}>
+                          {normalizedDate?.split('$')[0]}
+                          </Text>
+                          <Text style={[styles.dateMonth, isActiveItem && styles.activeText]}>
+                          {normalizedDate?.split('$')[1]}
+                          </Text>
+                        </View>
+                   </Pressable>
+                  );
+                }}
+                horizontal
+                keyExtractor={(item) => item.EXAM_DT}
+              />
+            </View>
+            </View>
       </View>
  
       <View style={styles.roomNumber}>
@@ -324,7 +322,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   roomsListWrap:{
-    overflow: "auto",
+    // overflow: "auto",
     padding: 8
   },
   box: {

@@ -662,11 +662,11 @@ const StudentInfo = ({ navigation,refresh }) => {
                 <Text style={styles.value}>{studentDetails?.DESCR || ""}</Text>
               </View>
               <View style={styles.infoItem}>
-                <Text style={styles.label}>Program :</Text>
+                <Text style={styles.label}>Program:</Text>
                 <Text style={styles.value}>{studentDetails?.DESCR2 || ""}</Text>
               </View>
               <View style={styles.infoItem}>
-                <Text style={styles.label}>Branch :</Text>
+                <Text style={styles.label}>Branch:</Text>
                 <Text style={styles.value}>{studentDetails?.DESCR3 || ""}</Text>
               </View>
               <View style={styles.infoItem}>
@@ -706,7 +706,7 @@ const StudentInfo = ({ navigation,refresh }) => {
               </View>
               <View style={styles.infoItem}>
                 <Text style={styles.label}>Attendance Status:</Text>
-                <Text style={[styles.value,getAttendenceStatuscolor()]}>
+                <Text style={[styles.value, {marginBottom: 10}, getAttendenceStatuscolor()]}>
                   {attendenceStatus}
                 </Text>
               </View>
@@ -714,15 +714,15 @@ const StudentInfo = ({ navigation,refresh }) => {
                 <Text style={[styles.label]}>Status</Text>
                 <View style={styles.attStatus}>
                   <CheckBox value={status === "Present"} onValueChange={(item) =>setStatus("Present")} color={getStatuscolor()} disabled={((!isActive && !(userAccess?.label === "Admin")) || disabledStatus === "Absent")} />                
-                  <Text style={[styles.value, styles.customValue]}> Present</Text>
+                  <Text style={[styles.value, styles.customValue]}>Present</Text>
                 </View>
                 <View style={styles.attStatus}>
                 <CheckBox value={status === "Absent"} onValueChange={() => setStatus("Absent")} color={getStatuscolor()} disabled={((!isActive && !(userAccess?.label === "Admin"))) || disabledStatus === "Absent"} />
-                <Text style={[styles.value, styles.customValue]}> Absent</Text>
+                <Text style={[styles.value, styles.customValue]}>Absent</Text>
                 </View>
                 <View style={styles.attStatus}>
                 <CheckBox value={status === "UFM"} onValueChange={() => setStatus("UFM")} color={getStatuscolor()} disabled={((!isActive && !(userAccess?.label === "Admin"))) || disabledStatus === "Absent"} />
-                <Text style={[styles.value, styles.customValue]}> UFM</Text>
+                <Text style={[styles.value, styles.customValue]}>UFM</Text>
                 </View>
                 
                 
@@ -1180,6 +1180,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-start",
     marginBottom: 10,
+    alignItems: "center" /** Additional Added  **/
   },
   label: {
     fontWeight: "bold",
