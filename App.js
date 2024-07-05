@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, ActivityIndicator, StyleSheet, StatusBar } from "react-native";
+import React, { useEffect, useState, useCallback } from "react";
+import { View, ActivityIndicator, StyleSheet, StatusBar, RefreshControl, SafeAreaView, ScrollView } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Provider } from "react-redux";
@@ -15,28 +15,34 @@ import RoomDetail from "./src/component/Room/RoomDetail";
 import TopHeader from "./src/globalComponent/Header/TopHeader";
 import ToastContainer from './src/globalComponent/ToastContainer/ToastContainer'; 
 import { Provider as PaperProvider } from 'react-native-paper';
-
 import SplashScreen from "./src/component/Splash/SplashScreen";
 
 const Stack = createNativeStackNavigator();
-// global.SERVER_URL = `http://localhost:5000`;
 global.SERVER_URL = "http://3.111.185.105:3502";
 
 const App = () => {
+  const [refreshing, setRefreshing] = useState(false);
   const [initialRoute, setInitialRoute] = useState("Login");
   const [loading, setLoading] = useState(true);
-  const [isShowSplashScreen, setIsShowSplashScreen] = useState(true);
+
   const TopHeaderCommonConfig = {
     headerStyle: {
       backgroundColor: "rgb(17, 65, 102)",
     },
     headerTitleContainerStyle: {
-      // paddingLeft: 0, 
       marginLeft: 0,
-      marginRight:0,
+      marginRight: 0,
     },
     headerTintColor: "#fff",
   };
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
+
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {
@@ -51,71 +57,75 @@ const App = () => {
     checkAuthStatus();
   }, []);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setIsShowSplashScreen(false);
-    }, 3000);
-  });
 
   const renderLoading = () => (
     <View style={{ flex: 1, backgroundColor: "plum", padding: 60 }}>
       <ActivityIndicator size="large" color="#0000ff" />
     </View>
   );
+
   const renderRouting = () => (
     <Provider store={store}>
-        <PaperProvider>
-      <StatusBar   barStyle="light-content" backgroundColor="#6a51ae"  />
-      <ToastProvider>
-        <ToastContainer/>
-        <RoleProvider>
-          <NavigationContainer>
-            <Stack.Navigator initialRouteName={initialRoute}>
-              <Stack.Screen
-                name="Login"
-                component={LoginScreen}
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="PostLogin"
-                component={DrawerNavigator}
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="StudentInfo"
-                component={StudentInfo}
-                options={TopHeaderCommonConfig}
-              />
-              <Stack.Screen
-                name="RoomDetail"
-                component={RoomDetail}
-                options={({ route }) => ({
-                  title: `Room Info: ${route.params.room_Nbr}`,
-                  ...TopHeaderCommonConfig,
-                })}
-              />
-              <Stack.Screen
-                name="TopHeader"
-                component={TopHeader}
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="InvigilatorScreen"
-                component={InvigilatorScreen}
-                options={TopHeaderCommonConfig}
-              />
-            </Stack.Navigator>
-          </NavigationContainer>
-        </RoleProvider>
-      </ToastProvider>
+      <PaperProvider>
+        <StatusBar barStyle="light-content" backgroundColor="#6a51ae" />
+        <ToastProvider>
+          <ToastContainer />
+          <RoleProvider>
+            <NavigationContainer>
+              <Stack.Navigator initialRouteName={initialRoute}>
+                <Stack.Screen
+                  name="Login"
+                  component={LoginScreen}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="PostLogin"
+                  component={DrawerNavigator}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="StudentInfo"
+                  component={StudentInfo}
+                  options={TopHeaderCommonConfig}
+                />
+                <Stack.Screen
+                  name="RoomDetail"
+                  component={RoomDetail}
+                  options={({ route }) => ({
+                    title: `Room Info: ${route.params.room_Nbr}`,
+                    ...TopHeaderCommonConfig,
+                  })}
+                />
+                <Stack.Screen
+                  name="TopHeader"
+                  component={TopHeader}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="InvigilatorScreen"
+                  component={InvigilatorScreen}
+                  options={TopHeaderCommonConfig}
+                />
+              </Stack.Navigator>
+            </NavigationContainer>
+          </RoleProvider>
+        </ToastProvider>
       </PaperProvider>
     </Provider>
   );
 
-  return  <View style={styles.container}>
-  {/* {isShowSplashScreen ? <SplashScreen /> : loading ? renderLoading() : renderRouting()} */}
-  { loading ? renderLoading() : renderRouting()}
-</View> 
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        {loading ? renderLoading() : renderRouting()}
+      </ScrollView>
+    </SafeAreaView>
+  );
 };
 
 export default App;
