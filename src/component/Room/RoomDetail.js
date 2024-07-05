@@ -238,7 +238,7 @@ const formattedShiftTimePrefix = formatShiftTimePrefix(startTime);
           </View>
         
           </View>
-          <ScrollView style={styles.roomNumber}>
+          
           <View style={styles.countWrap}>
             <View style={styles.countMain}>
               <View style={styles.countbg1}>
@@ -265,7 +265,7 @@ const formattedShiftTimePrefix = formatShiftTimePrefix(startTime);
               <Text style={styles.cotext}>Total</Text>
             </View>
         </View>
-        <ScrollView style={{height:600}}>
+        <ScrollView style={{maxHeight:470}}>
           <View style={styles.studentWrapSec}>
           {loading ? (
             <ActivityIndicator size="large" color="#0000ff" />
@@ -303,8 +303,7 @@ const formattedShiftTimePrefix = formatShiftTimePrefix(startTime);
             )
           )}
           </View>
-        </ScrollView>
-          </ScrollView>
+        </ScrollView>        
         </View>)
           }
            <View style={[styles.magnifying]}>
@@ -511,9 +510,9 @@ const styles = StyleSheet.create({
     },
     studentWrapSec: {
  
-      overflowY:"scroll",
+      // overflowY:"scroll",
       // maxHeight: 330,
-      minHeight:300,
+      // minHeight:300,
 
       //maxHeight: 440,
       clear: "both"
