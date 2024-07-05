@@ -283,7 +283,7 @@ const formattedShiftTimePrefix = formatShiftTimePrefix(startTime);
                           {/* <Image source={user}  /> */}
                           <FontAwesome name="user-circle" size={36}  color="black" style={styles.userimage} />
                           <View style={styles.stuWrap}>
-                            <Text style={styles.examname }>{studentData.NAME}</Text>
+                            <Text style={styles.examname} numberOfLines={1} ellipsizeMode='tail'>{studentData.NAME}</Text>
                             <Text style={styles.employeeid}>{studentData.EMPLID}</Text>
                             </View>
                         </View>
@@ -362,8 +362,13 @@ const styles = StyleSheet.create({
       // width: Dimensions.get("window").width / 1 - 20, 
       borderRadius: 6,
       marginBottom: 10,
-      padding: 10,
-      clear: "both"
+      paddingTop: 15,
+      paddingBottom:15,
+      paddingLeft: 10,
+      paddingRight: 10,
+      clear: "both",
+      marginLeft: 8,
+      marginRight: 8
       // overflow: "hidden"
     },
     boxtext:{
@@ -394,7 +399,9 @@ const styles = StyleSheet.create({
     },
     examname:{
       color:"#0c1e35",
-      fontWeight:"600"
+      fontWeight:"600",
+      width: 200,
+      overflow: 'hidden',
     },
     employeeid:{
       color:"#0c1e35",
