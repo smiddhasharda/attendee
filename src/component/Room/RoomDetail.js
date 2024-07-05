@@ -1,7 +1,7 @@
 import React, { useState, useEffect,useCallback  } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TextInput, ActivityIndicator, Dimensions, Pressable } from 'react-native';
 import { Ionicons,FontAwesome, Entypo } from '@expo/vector-icons'
-import { useRoute } from '@react-navigation/native';
+import { useRoute,useFocusEffect } from '@react-navigation/native';
 import CodeScanner from '../../globalComponent/CodeScanner/CodeScanner'; // Make sure to import CodeScanner properly
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetch, view } from "../../AuthService/AuthService";
@@ -10,7 +10,7 @@ import { parse, format,parseISO } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 
 
-function RoomDetail({navigation}) {
+function RoomDetail({navigation,refresh}) {
   const [isScanning, setIsScanning] = useState(false);
   const route = useRoute();
   const { addToast } = useToast();
@@ -78,7 +78,6 @@ function RoomDetail({navigation}) {
         },
         authToken
       );
-
       if (response) {
         setPresentStudentList(response?.data?.receivedData)
       }
@@ -126,7 +125,7 @@ const formattedShiftTimePrefix = formatShiftTimePrefix(startTime);
           checkAvailability: '',
           // customQuery: ` SELECT DISTINCT PS_S_PRD_EX_RME_VW.EMPLID, PS_S_PRD_EX_RME_VW.STRM, PS_S_PRD_EX_RME_VW.CATALOG_NBR, PS_S_PRD_EX_RME_VW.EXAM_DT, PS_S_PRD_EX_RME_VW.ROOM_NBR, PS_S_PRD_EX_RME_VW.PTP_SEQ_CHAR FROM PS_S_PRD_EX_RME_VW JOIN PS_S_PRD_EX_TME_VW ON PS_S_PRD_EX_RME_VW.EXAM_DT = PS_S_PRD_EX_TME_VW.EXAM_DT AND PS_S_PRD_EX_RME_VW.CATALOG_NBR = PS_S_PRD_EX_TME_VW.CATALOG_NBR AND PS_S_PRD_EX_TME_VW.EXAM_START_TIME = '${startTime}' WHERE PS_S_PRD_EX_RME_VW.EXAM_DT = '${new Date(SelectedDate).toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-')}' AND PS_S_PRD_EX_RME_VW.ROOM_NBR = '${SelectedRoom}' ORDER BY CAST(PTP_SEQ_CHAR AS int) `,
           // customQuery: `SELECT DISTINCT PS_S_PRD_EX_RME_VW.EMPLID, PS_S_PRD_EX_RME_VW.STRM, PS_S_PRD_EX_RME_VW.CATALOG_NBR, PS_S_PRD_EX_RME_VW.EXAM_DT, PS_S_PRD_EX_RME_VW.ROOM_NBR, PS_S_PRD_EX_RME_VW.PTP_SEQ_CHAR FROM PS_S_PRD_EX_RME_VW JOIN PS_S_PRD_EX_TME_VW ON PS_S_PRD_EX_RME_VW.EXAM_DT = PS_S_PRD_EX_TME_VW.EXAM_DT AND PS_S_PRD_EX_RME_VW.CATALOG_NBR = PS_S_PRD_EX_TME_VW.CATALOG_NBR AND PS_S_PRD_EX_TME_VW.EXAM_START_TIME = '${startTime}' WHERE PS_S_PRD_EX_RME_VW.EXAM_DT = '${new Date(SelectedDate).toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-')}' AND PS_S_PRD_EX_RME_VW.ROOM_NBR = '${SelectedRoom}' ORDER BY CAST(PS_S_PRD_EX_RME_VW.PTP_SEQ_CHAR AS INT) `,
-          customQuery:`SELECT PS_S_PRD_EX_RME_VW.NAME,PS_S_PRD_EX_RME_VW.EMPLID,PS_S_PRD_EX_RME_VW.ROOM_NBR,PS_S_PRD_EX_RME_VW.PTP_SEQ_CHAR,PS_S_PRD_EX_RME_VW.CATALOG_NBR,PS_S_PRD_EX_RME_VW.STRM, PS_S_PRD_EX_TME_VW.EXAM_START_TIME FROM PS_S_PRD_EX_RME_VW JOIN PS_S_PRD_EX_TME_VW ON PS_S_PRD_EX_RME_VW.EXAM_DT = PS_S_PRD_EX_TME_VW.EXAM_DT AND PS_S_PRD_EX_RME_VW.CATALOG_NBR = PS_S_PRD_EX_TME_VW.CATALOG_NBR WHERE PS_S_PRD_EX_RME_VW.EXAM_DT = '${formattedDate}' AND PS_S_PRD_EX_RME_VW.ROOM_NBR = '${SelectedRoom}' AND TO_CHAR(PS_S_PRD_EX_TME_VW.EXAM_START_TIME, 'HH:MI') = '${formattedShiftTime}' AND TO_CHAR(PS_S_PRD_EX_TME_VW.EXAM_START_TIME, '${formattedShiftTimePrefix}') = '${formattedShiftTimePrefix}' ORDER BY TO_NUMBER(PS_S_PRD_EX_RME_VW.PTP_SEQ_CHAR)`,         
+          customQuery:`SELECT PS_S_PRD_EX_RME_VW.EXAM_DT,PS_S_PRD_EX_RME_VW.NAME,PS_S_PRD_EX_RME_VW.EMPLID,PS_S_PRD_EX_RME_VW.ROOM_NBR,PS_S_PRD_EX_RME_VW.PTP_SEQ_CHAR,PS_S_PRD_EX_RME_VW.CATALOG_NBR,PS_S_PRD_EX_RME_VW.STRM, PS_S_PRD_EX_TME_VW.EXAM_START_TIME FROM PS_S_PRD_EX_RME_VW JOIN PS_S_PRD_EX_TME_VW ON PS_S_PRD_EX_RME_VW.EXAM_DT = PS_S_PRD_EX_TME_VW.EXAM_DT AND PS_S_PRD_EX_RME_VW.CATALOG_NBR = PS_S_PRD_EX_TME_VW.CATALOG_NBR WHERE PS_S_PRD_EX_RME_VW.EXAM_DT = '${formattedDate}' AND PS_S_PRD_EX_RME_VW.ROOM_NBR = '${SelectedRoom}' AND TO_CHAR(PS_S_PRD_EX_TME_VW.EXAM_START_TIME, 'HH:MI') = '${formattedShiftTime}' AND TO_CHAR(PS_S_PRD_EX_TME_VW.EXAM_START_TIME, '${formattedShiftTimePrefix}') = '${formattedShiftTimePrefix}' ORDER BY TO_NUMBER(PS_S_PRD_EX_RME_VW.PTP_SEQ_CHAR)`,         
           viewType:'Campus_View'
         },
         // AND PS_S_PRD_EX_TME_VW.EXAM_START_TIME ='${formattedShiftTime}'
@@ -184,15 +183,15 @@ const formattedShiftTimePrefix = formatShiftTimePrefix(startTime);
         };
       case 'UFM':
         return {
-          backgroundColor: '#ea4242',
-          borderColor: "#ea4242",
+          backgroundColor: '#fdbf48',
+          borderColor: "#fdbf48",
           borderWidth: 1,
           color: "#fff"
         };
       case 'Absent':
         return {
-          backgroundColor: '#969595',
-          borderColor: "#969595",
+          backgroundColor: '#ea4242',
+          borderColor: "#ea4242",
           borderWidth: 1,
           color: "#fff"
         };
@@ -201,20 +200,30 @@ const formattedShiftTimePrefix = formatShiftTimePrefix(startTime);
     }
     
   }
-
+  const capitalizeName = (name) => {
+    if (!name) return ''; // Handle null, undefined, or empty string
   
-  useEffect(() => {
-    console.log("useEffect triggered");
-    console.log("UserAccess:", UserAccess);
-    console.log("Navigation:", navigation);
-
-    fetchStudentDetails(exam_Dt, room_Nbr);
-    handleGetReportData();
-
-    return () => {
-      console.log("Cleanup useEffect");
-    };
-  }, [UserAccess, navigation]);
+    const words = name.split(' ');
+    const capitalizedWords = words.map(word => {
+      if (word.length === 0) return ''; // Handle empty words (in case of multiple spaces)
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    });
+  
+    return capitalizedWords.join(' ');
+  };
+ 
+  
+  // useEffect(() => {
+  //   console.log("useEffect triggered");
+  //   fetchStudentDetails(exam_Dt, room_Nbr);
+  //   handleGetReportData();
+  // }, [UserAccess,refresh]);
+  useFocusEffect(
+    useCallback(() => {
+      fetchStudentDetails(exam_Dt, room_Nbr);
+      handleGetReportData();
+    }, [UserAccess, refresh])
+  );
   return (
     <View style={styles.container}>
         {isScanning ? (<CodeScanner onScannedData={ handleScannedData} onCancel={handleCancel} />) : 
@@ -283,7 +292,7 @@ const formattedShiftTimePrefix = formatShiftTimePrefix(startTime);
                           {/* <Image source={user}  /> */}
                           <FontAwesome name="user-circle" size={36}  color="black" style={styles.userimage} />
                           <View style={styles.stuWrap}>
-                            <Text style={styles.examname }>{studentData.NAME}</Text>
+                            <Text style={styles.examname} numberOfLines={1} ellipsizeMode='tail'>{capitalizeName(studentData?.NAME)}</Text>
                             <Text style={styles.employeeid}>{studentData.EMPLID}</Text>
                             </View>
                         </View>
@@ -362,8 +371,13 @@ const styles = StyleSheet.create({
       // width: Dimensions.get("window").width / 1 - 20, 
       borderRadius: 6,
       marginBottom: 10,
-      padding: 10,
-      clear: "both"
+      paddingTop: 15,
+      paddingBottom:15,
+      paddingLeft: 10,
+      paddingRight: 10,
+      clear: "both",
+      marginLeft: 8,
+      marginRight: 8
       // overflow: "hidden"
     },
     boxtext:{
@@ -394,7 +408,9 @@ const styles = StyleSheet.create({
     },
     examname:{
       color:"#0c1e35",
-      fontWeight:"600"
+      fontWeight:"600",
+      width: 200,
+      overflow: 'hidden',
     },
     employeeid:{
       color:"#0c1e35",

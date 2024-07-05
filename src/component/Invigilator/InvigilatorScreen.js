@@ -9,7 +9,7 @@ import { Feather,FontAwesome5,FontAwesome ,FontAwesome6} from "@expo/vector-icon
 import { parse, format,parseISO } from 'date-fns';
 
 
- const InvigilatorScreen = ({userAccess}) => {
+ const InvigilatorScreen = ({userAccess,refresh}) => {
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 4 );
   const { addToast } = useToast();
   const [invigilatorList, setInvigilatorList] = useState([]);
@@ -382,7 +382,7 @@ import { parse, format,parseISO } from 'date-fns';
     };
   useEffect(() => {
     handleGetInigilatorDuty();
-  }, [UserAccess]);
+  }, [UserAccess,refresh]);
    return (
     
     <View style={styles.container}>

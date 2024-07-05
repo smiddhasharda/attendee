@@ -10,13 +10,14 @@ import DropDownPicker from "react-native-dropdown-picker";
 import CheckBox from "expo-checkbox";
 
 
-const StudentInfo = ({ navigation }) => {
+const StudentInfo = ({ navigation,refresh }) => {
   const route = useRoute();
   const { addToast } = useToast();
   const [studentDetails, setStudentDetails] = useState({});
   const [studentPicture, setStudentPicture] = useState({});
   const [courseDetails, setCourseDetails] = useState({});
-  const { room_Nbr, catlog_Nbr, system_Id, seat_Nbr, exam_Dt, startTime, reportId, userAccess, current_Term, } = route.params;
+  const { room_Nbr, catlog_Nbr, system_Id, seat_Nbr, exam_Dt, startTime, reportId, userAccess, current_Term } = route.params;
+
   const UserAccess = userAccess?.module?.find((item) => item?.FK_ModuleId === 6);
   const [copiesData, setCopiesData] = useState([]);
   const [tempCopyNumber, setTempNumber] = useState("");
@@ -224,7 +225,7 @@ const StudentInfo = ({ navigation }) => {
           );
           if (NewResponse) {
             addToast("Student details are updated successfully!", "success");
-            navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation: navigation, userAccess });
+            navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation: navigation, userAccess,refresh });
           }
         }
       }
@@ -348,7 +349,7 @@ const StudentInfo = ({ navigation }) => {
             );
             if (NewResponse) {
               addToast("Student details are updated successfully!", "success");
-              navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation: navigation, userAccess });
+              navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation: navigation, userAccess,refresh });
             }
           }
         }
@@ -576,7 +577,7 @@ const StudentInfo = ({ navigation }) => {
 
   useEffect(() => {
     fetchData();
-  }, [UserAccess]);
+  }, [UserAccess,refresh]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -1030,8 +1031,9 @@ const StudentInfo = ({ navigation }) => {
                               {copy.mainCopy}
                             </Text>
                             <View style={styles.iconsWrap}>
-                              {!(( copy.alternateCopies.length > 0 || copy.alternateCopies?.includes("")) && isActive
-                              ) && (
+                              {/* {!(( copy.alternateCopies.length > 0 || copy.alternateCopies?.includes("")) && isActive */}
+                              {isActive
+                               && (
                                   <Entypo
                                     name="circle-with-cross"
                                     size={20}

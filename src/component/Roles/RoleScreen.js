@@ -8,7 +8,7 @@ import styles from "./RoleScreen.style";
 import { Ionicons,Feather} from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
 import { display } from "@mui/system";
-const RoleScreen = ({userAccess}) => {
+const RoleScreen = ({userAccess,refresh}) => {
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 2 );
   const { addToast } = useToast();
   const [roleData, setRoleData] = useState({
@@ -355,7 +355,7 @@ const RoleScreen = ({userAccess}) => {
   useEffect(() => {
     handleGetRoleList();
     handleGetModuleList();
-  }, [UserAccess]);
+  }, [UserAccess,refresh]);
   return (
     <View style={styles.container}>
       {roleContainerVisible ? (

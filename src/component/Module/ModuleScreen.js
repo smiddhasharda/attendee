@@ -12,7 +12,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import styles from "./ModuleScreen.style";
 import { Ionicons, Feather } from "@expo/vector-icons";
 
-const ModuleScreen = ({ userAccess }) => {
+const ModuleScreen = ({ userAccess,refresh }) => {
   const userAccessForModule = userAccess?.module?.find(item => item?.FK_ModuleId === 3);
   const { addToast } = useToast();
 
@@ -155,7 +155,7 @@ const ModuleScreen = ({ userAccess }) => {
   useEffect(() => {
     fetchModuleList();
     // handleGetSampleView();
-  }, [userAccessForModule]);
+  }, [userAccessForModule,refresh]);
 
   return (
     <View style={styles.container}>

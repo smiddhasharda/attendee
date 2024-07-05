@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback,useContext } from "react";
 import { View, Text, Pressable ,Image} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
@@ -21,17 +21,19 @@ import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import styles from "./DrawerNavigator.style";
 import { Ionicons,Feather } from '@expo/vector-icons'; 
 import { SafeAreaView } from "react-native-safe-area-context";
+import { RefreshContext } from "../../globalComponent/Refresh/RefreshContext";
+
 
 import InvigilatorScreen from "../../component/Invigilator/InvigilatorScreen";
 // import ReportScreen from "../../component/Report/ReportScreen";
 
 // Screen components
-const RoleComponent = ({ userAccess }) => <RoleScreen userAccess={userAccess} />;
-const ModuleComponent = ({ userAccess }) => <ModuleScreen userAccess={userAccess} />;
-const DashboardComponent = ({ userAccess }) => <DashboardScreen userAccess={userAccess} />;
-const UserComponent = ({ userAccess }) => <UserScreen userAccess={userAccess} />;
-const ExamComponent = ({ navigation, userAccess, userData }) => (
-  <ExamScreen navigation={navigation} userAccess={userAccess} userData={userData} />
+const RoleComponent = ({ userAccess,refresh }) => <RoleScreen userAccess={userAccess} refresh={refresh}/>;
+const ModuleComponent = ({ userAccess,refresh }) => <ModuleScreen userAccess={userAccess} refresh={refresh} />;
+const DashboardComponent = ({ userAccess,refresh }) => <DashboardScreen userAccess={userAccess} refresh={refresh} />;
+const UserComponent = ({ userAccess,refresh }) => <UserScreen userAccess={userAccess} refresh={refresh} />;
+const ExamComponent = ({ navigation, userAccess, userData,refresh }) => (
+  <ExamScreen navigation={navigation} userAccess={userAccess} userData={userData} refresh={refresh} />
 );
 const Drawer = createDrawerNavigator();
 
@@ -204,6 +206,7 @@ const CustomDrawerContent = ({ ...props }) => {
 };
 
 const DrawerNavigator = ({ navigation }) => {
+  const { refresh } = useContext(RefreshContext);
   const [userRolePermission, setUserRolePermission] = useState([]);
   const [userRoleList, setUserRoleList] = useState([]);
   const [userRoleIndex, setUserRoleIndex] = useState(0);
@@ -381,19 +384,19 @@ const DrawerNavigator = ({ navigation }) => {
             {(props) => {
               switch (module?.moduleMaster[0]?.moduleName) {
                 case "RoleScreen":
-                  return <RoleComponent {...props} userAccess={userRoleList?.[userRoleIndex]} />;
+                  return <RoleComponent {...props} userAccess={userRoleList?.[userRoleIndex]} refresh={refresh} />;
                 case "ModuleScreen":
-                  return <ModuleComponent {...props} userAccess={userRoleList?.[userRoleIndex]} />;
+                  return <ModuleComponent {...props} userAccess={userRoleList?.[userRoleIndex]} refresh={refresh}/>;
                 case "Dashboard":
-                  return <DashboardComponent {...props} userAccess={userRoleList?.[userRoleIndex]}   />;
+                  return <DashboardComponent {...props} userAccess={userRoleList?.[userRoleIndex]} refresh={refresh}  />;
                 case "UserScreen":
-                  return <UserComponent {...props} userAccess={userRoleList?.[userRoleIndex]} />;
+                  return <UserComponent {...props} userAccess={userRoleList?.[userRoleIndex]} refresh={refresh} />;
                 case "ExamScreen":
-                  return <ExamComponent {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData} />;
+                  return <ExamComponent {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData} refresh={refresh} />;
                 case "InvigilatorScreen":
-                  return <InvigilatorScreen {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData} />;  
+                  return <InvigilatorScreen {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData} refresh={refresh} />;  
                 // case "ReportScreen":
-                //   return <ReportScreen {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} />;
+                //   return <ReportScreen {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} refresh={refresh} />;
                   
                   default:
                   return null;
