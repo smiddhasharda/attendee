@@ -6,7 +6,7 @@ import * as XLSX from 'xlsx';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { bulkupload } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
-import { Ionicons ,FontAwesome5,AntDesign,Entypo ,MaterialCommunityIcons} from '@expo/vector-icons'; 
+import { FontAwesome} from '@expo/vector-icons'; 
 
 const BulkUpload = (props) => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -166,14 +166,13 @@ const pickFile = async () => {
     setExcelData([]);
   };
   return (
-    <View style={styles.container}>
-      <Pressable style={[styles.pickFileButton,{position:"relative", top:"40%"}]} onPress={() => pickFile()}>
-        <Text style={styles.buttonText}>Browse File</Text>
-      </Pressable>
-      {selectedFile && (
+    <View style={styles.container}>      
+      {selectedFile ? (
         <ScrollView style={styles.fileContainer}>
           <View style={styles.fileDetails}>
-            <Text style={styles.fileName}>Selected File: <Text style={{color:"green"}}>{selectedFile.name}</Text></Text>
+            <Text style={styles.fileName}>Selected File: <Text style={{color:"green"}}>{selectedFile.name}</Text> <Pressable onPress={() =>cancelUpload()}>
+            <FontAwesome name="remove" size={20} color="red" />
+              </Pressable></Text>
             <Text style={styles.previewTitle}>Preview:</Text>
             <ScrollView horizontal={true} vertical={true}>
             <FlatList
@@ -199,7 +198,9 @@ const pickFile = async () => {
             </View>
           </View>
         </ScrollView>
-      )}
+      ) : <Pressable style={[styles.pickFileButton,{position:"relative", top:"40%"}]} onPress={() => pickFile()}>
+      <Text style={styles.buttonText}>Browse File</Text>
+    </Pressable>}
       {props?.handleClose && (
         <Pressable style={[styles.cancelButton,{position:"relative", top:-38}]} onPress={() => props?.handleClose()}>
           <Text style={styles.buttonText}>Go Back
