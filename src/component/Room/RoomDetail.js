@@ -200,7 +200,17 @@ const formattedShiftTimePrefix = formatShiftTimePrefix(startTime);
     }
     
   }
-
+  const capitalizeName = (name) => {
+    if (!name) return ''; // Handle null, undefined, or empty string
+  
+    const words = name.split(' ');
+    const capitalizedWords = words.map(word => {
+      if (word.length === 0) return ''; // Handle empty words (in case of multiple spaces)
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    });
+  
+    return capitalizedWords.join(' ');
+  };
  
   
   // useEffect(() => {
@@ -282,7 +292,7 @@ const formattedShiftTimePrefix = formatShiftTimePrefix(startTime);
                           {/* <Image source={user}  /> */}
                           <FontAwesome name="user-circle" size={36}  color="black" style={styles.userimage} />
                           <View style={styles.stuWrap}>
-                            <Text style={styles.examname} numberOfLines={1} ellipsizeMode='tail'>{studentData.NAME}</Text>
+                            <Text style={styles.examname} numberOfLines={1} ellipsizeMode='tail'>{capitalizeName(studentData?.NAME)}</Text>
                             <Text style={styles.employeeid}>{studentData.EMPLID}</Text>
                             </View>
                         </View>

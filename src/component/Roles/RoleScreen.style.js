@@ -1,3 +1,4 @@
+import { padding } from "@mui/system";
 import {
     ViewStyle,
     ImageStyle,
@@ -84,12 +85,13 @@ import {
      padding:6,
     },
     listItemActiveStatus: {
-      color: "green",
-      // textAlign: 'center',
+      color: "#fff",
+      textAlign: 'center',
     },
     listItemInactiveStatus: {
-      color: "red",
-      // textAlign: 'center'
+      color: "white",
+      textAlign: 'center',
+      alignItems:"center"
     },
     listItemEditButton: {
       //backgroundColor: "#0C7C62",
@@ -133,7 +135,29 @@ import {
       borderRadius:5,
       
     },
-   
+    actionbtn:{
+     
+         backgroundColor:"green",
+         borderRadius:4,
+        //  minWidth:70,
+        width:60,
+         padding:6, 
+         color:"#fff",
+         textAlign:"center",
+         
+ 
+    },
+    inactivebtn:{
+      backgroundColor:"red",
+         borderRadius:4,
+        //  minWidth:70,
+         padding:6, 
+         width:60,
+         color:"#fff",
+         textAlign:"center"
+    },
+  
+
     addbtntext:{
      color:"#fff",
      textAlign:"center",

@@ -1031,8 +1031,9 @@ const StudentInfo = ({ navigation,refresh }) => {
                               {copy.mainCopy}
                             </Text>
                             <View style={styles.iconsWrap}>
-                              {!(( copy.alternateCopies.length > 0 || copy.alternateCopies?.includes("")) && isActive
-                              ) && (
+                              {/* {!(( copy.alternateCopies.length > 0 || copy.alternateCopies?.includes("")) && isActive */}
+                              {isActive
+                               && (
                                   <Entypo
                                     name="circle-with-cross"
                                     size={20}
