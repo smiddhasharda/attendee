@@ -625,7 +625,7 @@ const StudentInfo = ({ navigation }) => {
       ) : (
         <View>
           <View style={styles.studentInfoWrap}>
-            <Text style={styles.infoHeader}>Basic Info:</Text>
+            <Text style={styles.infoHeader}>Student Info:</Text>
             {/* <Text>Current Time: {currentTime}</Text> */}
             <View style={styles.infoContainer}>
               <View style={styles.userDetailWrap}>
@@ -677,7 +677,7 @@ const StudentInfo = ({ navigation }) => {
             </View>
           </View>
           <View style={styles.studentInfoWrap}>
-            <Text style={styles.infoHeader}>Additional Info:</Text>
+            <Text style={styles.infoHeader}>Exam Info:</Text>
             <View style={styles.infoContainer}>
               <View style={styles.infoItem}>
                 <Text style={styles.label}>Paper Id:</Text>
