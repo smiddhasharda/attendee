@@ -335,29 +335,29 @@ const pickFile = async () => {
             <FontAwesome name="remove" size={20} color="red" />
               </Pressable></Text>
               <Text style={styles.previewTitle}>Preview:</Text>
-            <ScrollView horizontal={true} vertical={true}>
-            <FlatList
-              data={paginatedData}
-              keyExtractor={(item, index) => index.toString()}
-              ListHeaderComponent={props?.renderData}
-              renderItem={({ item }) => (
-                <View style={styles.listItem}>
-                    <Text style={styles.listItemText}>{item.employeeId}</Text>
-                    <Text  style={styles.listItemText}>{item.invigilatorName}</Text>
-                    <Text  style={styles.listItemText}>{item.date}</Text>
-                    <Text  style={styles.listItemText}>{item.shift}</Text>
-                    <Text  style={styles.listItemText}>{item.room}</Text>
-                    <Text  style={styles.listItemText}>{item.duty_status}</Text>                 
-      </View>
-              )}
-            />
+              <ScrollView horizontal={true} vertical={true}>
+                <FlatList
+                  data={paginatedData}
+                  keyExtractor={(item, index) => index.toString()}
+                  ListHeaderComponent={props?.renderData}
+                  renderItem={({ item }) => (
+                    <View style={styles.listItem}>
+                        <Text style={styles.listItemText}>{item.employeeId}</Text>
+                        <Text  style={styles.listItemText}>{item.invigilatorName}</Text>
+                        <Text  style={styles.listItemText}>{item.date}</Text>
+                        <Text  style={styles.listItemText}>{item.shift}</Text>
+                        <Text  style={styles.listItemText}>{item.room}</Text>
+                        <Text  style={styles.listItemText}>{item.duty_status}</Text>                 
+          </View>
+                  )}
+                />
+              </ScrollView>
               <Pagination
-          totalItems={excelData.length}
-          pageSize={pageSize}
-          currentPage={currentPage}
-          onPageChange={handlePageChange}
-        />
-            </ScrollView>
+                    totalItems={excelData.length}
+                    pageSize={pageSize}
+                    currentPage={currentPage}
+                    onPageChange={handlePageChange}
+              />
             {duplicateData?.length > 0  && 
                 <View style={styles.fileDetails}>
                 <Text style={styles.previewTitle}>Duplicate Rows:</Text>
@@ -456,7 +456,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     justifyContent:"space-between",
     alignSelf:"flex-end"
-    
   },
   uploadButton: {
     padding: 10,
@@ -534,7 +533,10 @@ const styles = StyleSheet.create({
    position:"relative",
    top:-38, 
    alignSelf:"flex-end"
-  }
+  },
+  // paginationStyling: {
+  //   display: "block"
+  // }
 });
 
 export default BulkUpload;
