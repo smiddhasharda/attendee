@@ -257,28 +257,31 @@ const ModuleScreen = ({ userAccess }) => {
                 ListHeaderComponent={() => (
                   <View style={styles.tableHeader}>
                     <Text style={[styles.tableHeaderText, {width:"50%", display:"inline-block"}]} numberOfLines={1}>Module</Text>
-                    <Text style={[styles.tableHeaderText, {width:"30%", display:"inline-block"}]}numberOfLines={1}>Status</Text>
+                    <Text style={[styles.tableHeaderText, {width:"30%", display:"inline-block"}]} numberOfLines={1}>Status</Text>
                     <Text style={[styles.tableHeaderText, {width:"20%", display:"inline-block",}]} numberOfLines={1}>Actions</Text>
                   </View>
                 )}
                 renderItem={({ item }) => (
                   <View style={styles.listItem}>
                     <Text style={[styles.listItemText, {width:"50%", display: "inline-block"}]} numberOfLines={1}>{item.moduleName}</Text>
-                    <Pressable style={[styles.listItemText, {width:"30%", display: "inline-block"}]} onPress={() => userAccessForModule?.update === 1 && handleModuleStatus(item.PK_ModuleId, item.isActive)}>
-                      <Text style={[styles.listItemText, item.isActive ? styles.listItemActiveStatus : styles.listItemInactiveStatus, styles.columnStatus]} numberOfLines={1}>
+                   
+                    <View style={[styles.listItemText, {width:"30%", display: "inline-block"}]}> 
+                    <Pressable style={[ { display: "inline-block"}]} onPress={() => userAccessForModule?.update === 1 && handleModuleStatus(item.PK_ModuleId, item.isActive)}>
+                      <Text style={[styles.listItemText, item.isActive ? styles.actionbtn : styles.inactivebtn, styles.columnStatus,]} numberOfLines={1}>
                         {item.isActive ? "Active" : "Inactive"}
                       </Text>
                     </Pressable>
+                    </View>
                     <View style={[styles.listItemText, {width:"20%", display:"inline-block", alignItems:"center"}]}>
                       {userAccessForModule?.update === 1 ? (
-                        <Pressable style={styles.listItemEditButton} onPress={() => handleEditModule(item)}>
+                        <Pressable style={[styles.listItemEditButton, {display:"inline-block"}]}  onPress={() => handleEditModule(item)}>
                           <Feather name="edit" size={16} color="#0C7C62" />
                         </Pressable>
                       ) : (<Text>-</Text>)}
                     </View>
                   </View>
                 )}
-                stickyHeaderIndices={[0]} 
+                stickyHeaderIndices={[0]}  
               />
             </View>
         </View>
