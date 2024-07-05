@@ -183,15 +183,15 @@ const formattedShiftTimePrefix = formatShiftTimePrefix(startTime);
         };
       case 'UFM':
         return {
-          backgroundColor: '#ea4242',
-          borderColor: "#ea4242",
+          backgroundColor: '#fdbf48',
+          borderColor: "#fdbf48",
           borderWidth: 1,
           color: "#fff"
         };
       case 'Absent':
         return {
-          backgroundColor: '#969595',
-          borderColor: "#969595",
+          backgroundColor: '#ea4242',
+          borderColor: "#ea4242",
           borderWidth: 1,
           color: "#fff"
         };
