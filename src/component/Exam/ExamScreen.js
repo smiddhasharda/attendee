@@ -38,9 +38,8 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
           data: '',
           conditionString: '',
           checkAvailability: '',
-          customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW WHERE EXAM_DT >= '${CurrentDate}' ORDER BY EXAM_DT ASC`,
-          // customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW ORDER BY EXAM_DT ASC`,
-
+          // customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW WHERE EXAM_DT >= '${CurrentDate}' ORDER BY EXAM_DT ASC`,
+          customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW ORDER BY EXAM_DT ASC`,
           viewType:'Campus_View'
         },
         authToken
@@ -120,15 +119,7 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
         roomShiftConditions = `AND (${roomShiftConditions})`;
       }
   
-      const customQuery = `SELECT DISTINCT 
-        PS_S_PRD_EX_RME_VW.EXAM_DT, 
-        PS_S_PRD_EX_RME_VW.ROOM_NBR, 
-        PS_S_PRD_EX_TME_VW.EXAM_START_TIME 
-        FROM PS_S_PRD_EX_RME_VW 
-        JOIN PS_S_PRD_EX_TME_VW 
-        ON PS_S_PRD_EX_RME_VW.EXAM_DT = PS_S_PRD_EX_TME_VW.EXAM_DT 
-        AND PS_S_PRD_EX_RME_VW.CATALOG_NBR = PS_S_PRD_EX_TME_VW.CATALOG_NBR 
-        WHERE PS_S_PRD_EX_RME_VW.EXAM_DT = '${formattedDate}' ${roomShiftConditions}`;
+      const customQuery = `SELECT DISTINCT PS_S_PRD_EX_RME_VW.EXAM_DT, PS_S_PRD_EX_RME_VW.ROOM_NBR, PS_S_PRD_EX_TME_VW.EXAM_START_TIME FROM PS_S_PRD_EX_RME_VW JOIN PS_S_PRD_EX_TME_VW ON PS_S_PRD_EX_RME_VW.EXAM_DT = PS_S_PRD_EX_TME_VW.EXAM_DT AND PS_S_PRD_EX_RME_VW.CATALOG_NBR = PS_S_PRD_EX_TME_VW.CATALOG_NBR WHERE PS_S_PRD_EX_RME_VW.EXAM_DT = '${formattedDate}' ${roomShiftConditions} ORDER BY PS_S_PRD_EX_TME_VW.EXAM_START_TIME,PS_S_PRD_EX_RME_VW.ROOM_NBR`;
   
       const response = await view(
         {

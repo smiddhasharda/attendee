@@ -264,7 +264,7 @@ const DrawerNavigator = ({ navigation }) => {
       UserScreen: focused ? 'person' : 'person-outline',
       ExamScreen: focused ? 'book' : 'book-outline',
       InvigilatorScreen: focused ? 'people' : 'people-outline',
-      // ReportScreen: focused ? 'bookmark' : 'bookmarks',
+      ReportScreen: focused ? 'bookmark' : 'bookmarks',
 
 
       // Add more mappings as needed
@@ -337,7 +337,7 @@ const DrawerNavigator = ({ navigation }) => {
             module?.read === 1 &&
             module?.moduleMaster[0]?.moduleName !== "StudentInfo" &&
             module?.moduleMaster[0]?.moduleName !== "RoomDetail" 
-            &&  module?.moduleMaster[0]?.moduleName !== "ReportScreen" 
+            // &&  module?.moduleMaster[0]?.moduleName !== "ReportScreen" 
         )
         .map((module, index) => (
     //       <Drawer.Screen  options={{
@@ -362,8 +362,8 @@ const DrawerNavigator = ({ navigation }) => {
             return "Exam";
           case "InvigilatorScreen":
             return "Invigilator Duties";
-          // case "ReportScreen":
-          //   return "Report";
+          case "ReportScreen":
+            return "Report";
           default:
             return module?.moduleMaster[0]?.moduleName;
         }
