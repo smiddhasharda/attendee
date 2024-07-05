@@ -12,7 +12,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import { Ionicons,AntDesign,Feather} from "@expo/vector-icons";
 import { display } from "@mui/system";
 
-const UserScreen = ({userAccess}) => { 
+const UserScreen = ({userAccess,refresh}) => { 
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 4 );
   const { addToast } = useToast();
   const [userData, setUserData] = useState({
@@ -600,7 +600,7 @@ const UserScreen = ({userAccess}) => {
   useEffect(() => {
     handleGetUserList();
     handleGetRoleList();
-  }, [UserAccess]);
+  }, [UserAccess,refresh]);
     return (
       <View style={styles.container}>
       {userContainerVisible ? (

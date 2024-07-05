@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback,useContext } from 'react';
 import { View, Text, FlatList, StyleSheet, ScrollView, Pressable, ActivityIndicator, Dimensions } from 'react-native';
 import { view, fetch } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
@@ -6,10 +6,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { parse, format,parseISO } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 
-
 const { width, height } = Dimensions.get('window');
 
-const ExamScreen = ({ navigation, userAccess, userData }) => {
+const ExamScreen = ({ navigation, userAccess, userData,refresh }) => {
   const UserAccess = userAccess?.module?.find((item) => item?.FK_ModuleId === 5);
   const [examDates, setExamDates] = useState([]);
   const [roomDetails, setRoomDetails] = useState([]);
@@ -203,7 +202,7 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
 
   useEffect(() => {
     fetchRoomDetails(examSelectedDate);
-  }, [UserAccess]);
+  }, [UserAccess,refresh]);
 
   return (
     <View style={styles.container}>

@@ -185,13 +185,6 @@ const pickFile = async () => {
                 {item?.map((data, index) => (
                     <Text key={index} style={styles.listItemText}>{data}</Text>
                   ))}
-
-                  {/* <Text style={styles.listItemText}>{item?.[0]}</Text>
-                  <Text style={styles.listItemText}>{item?.[1]}</Text>
-                  <Text style={styles.listItemText}>{item?.[2]}</Text>
-                  <Text style={styles.listItemText}>{item?.[3]}</Text>
-                  <Text style={styles.listItemText}>{item?.[4]}</Text>
-                  <Text style={styles.listItemText}>{item?.[5]}</Text> */}
                 </View>
               )}
             />
