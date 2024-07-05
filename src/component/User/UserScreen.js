@@ -665,7 +665,7 @@ const UserScreen = ({userAccess,refresh}) => {
               <Text style={[styles.listItemText, {width:120}]}>{item.contact_number}</Text>
               <View style={[styles.listItemText, {display:"inline-block", width:120}]}>
                 <Pressable style={{display:"inline-block"} } onPress={() =>UserAccess?.update === 1 ? handleUserStatus(item.user_id, item?.isActive) : ''}>
-              <Text style={[styles.listItemText, { flex: 1 }, item.isActive ? styles.listItemActiveStatus : styles.listItemInactiveStatus]}>{item.isActive ? "Active" : "Inactive"}</Text>
+              <Text style={[styles.listItemText, { flex: 1 }, item.isActive ? styles.actionbtn : styles.inactivebtn,]}>{item.isActive ? "Active" : "Inactive"}</Text>
               </Pressable>     
               </View>     
               <View style={{width:60, display:"inline-block", alignItems:"center"}}>
@@ -879,7 +879,25 @@ const styles = StyleSheet.create({
     borderRadius:5,
     textAlign:"center",
     color:"#fff"
-  }
+  },
+  actionbtn:{
+     
+    backgroundColor:"green",
+    borderRadius:4,
+    width:60,
+    padding:5, 
+    color:"#fff",
+    textAlign:"center",
+
+},
+inactivebtn:{
+ backgroundColor:"red",
+    borderRadius:4,
+    width:60,
+    padding:5, 
+    color:"#fff",
+    textAlign:"center",
+},
 });
 
 export default UserScreen;

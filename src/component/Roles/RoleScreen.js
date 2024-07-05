@@ -437,7 +437,7 @@ const RoleScreen = ({userAccess,refresh}) => {
           ListHeaderComponent={() => (
             <View style={styles.tableHeader}>
               <Text numberOfLines={1} style={[styles.tableHeaderText, {width:"50%", display: "inline-block"}]}>Role Name</Text>
-              <Text style={[styles.tableHeaderText, {width:"30%", display: "inline-block"}]}>Status</Text>
+              <Text style={[styles.tableHeaderText, {width:"30%", display: "inline-block",}]}>Status</Text> 
               <Text style={[styles.tableHeaderText, {width:"20%", display: "inline-block"}]}>Actions</Text>
             </View>
           )}
@@ -448,9 +448,9 @@ const RoleScreen = ({userAccess,refresh}) => {
                   {item.roleName}
                 </Text>
               </View>
-              <View style={[styles.listItemText, {width:"30%", display: "inline-block"}]}>
+              <View style={[styles.listItemText, {width:"30%", display: "inline-block" ,}]}>
                 <Pressable        
-                style={{ display: "inline-block" }}          
+                style={[{ display: "inline-block" ,}]}          
                   onPress={() => UserAccess?.update === 1 ? handleRoleStatus(item.PK_RoleId, item?.isActive) : ''} 
                 >
                   <Text
@@ -458,8 +458,8 @@ const RoleScreen = ({userAccess,refresh}) => {
                       styles.listItemText, styles.columnStatus,
                     
                       item.isActive
-                        ? styles.listItemActiveStatus
-                        : styles.listItemInactiveStatus,
+                        ? styles.actionbtn
+                        : styles.inactivebtn,
                     ]}
                   >
                     {item.isActive ? "Active" : "Inactive"}
