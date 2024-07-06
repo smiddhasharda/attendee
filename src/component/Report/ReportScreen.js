@@ -166,7 +166,6 @@ const ReportScreen = ({userAccess,refresh}) => {
       setTableData(response?.data?.receivedData?.[0]?.ReportMaster || []);
     }
     } catch (error) {
-    console.log(error);
     handleAuthErrors(error);
     }
     };
