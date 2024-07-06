@@ -1,21 +1,21 @@
 import React, { useEffect, useState, useCallback, useContext } from "react";
-import { View, ActivityIndicator, StyleSheet, StatusBar, RefreshControl, SafeAreaView, ScrollView } from "react-native";
+import { View, ActivityIndicator, StyleSheet, StatusBar, RefreshControl, SafeAreaView } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { Provider as PaperProvider } from 'react-native-paper';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Provider } from "react-redux";
 import store from "./src/redux/store";
 import { ToastProvider } from "./src/globalComponent/ToastContainer/ToastContext";
 import { RoleProvider } from "./src/component/Roles/RoleContext";
 import { RefreshProvider, RefreshContext } from "./src/globalComponent/Refresh/RefreshContext";
 import LoginScreen from "./src/component/Login/LoginScreen";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import DrawerNavigator from "./src/globalComponent/DrawerNavigatior/DrawerNavigatior";
 import InvigilatorScreen from "./src/component/Invigilator/InvigilatorScreen";
 import StudentInfo from "./src/component/Student/StudentInfo";
 import RoomDetail from "./src/component/Room/RoomDetail";
 import TopHeader from "./src/globalComponent/Header/TopHeader";
 import ToastContainer from './src/globalComponent/ToastContainer/ToastContainer'; 
-import { Provider as PaperProvider } from 'react-native-paper';
 
 const Stack = createNativeStackNavigator();
 global.SERVER_URL = "http://3.111.185.105:3502";
@@ -26,6 +26,7 @@ const AppContent = () => {
   const [loading, setLoading] = useState(true);
 
   const { triggerRefresh } = useContext(RefreshContext);
+
   const TopHeaderCommonConfig = {
     headerStyle: {
       backgroundColor: "rgb(17, 65, 102)",
@@ -117,14 +118,8 @@ const AppContent = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* <ScrollView
-        contentContainerStyle={{ flexGrow: 1 }}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      > */}
-        {loading ? renderLoading() : renderRouting()}
-      {/* </ScrollView> */}
+      {/* <RefreshControl refreshing={refreshing} onRefresh={onRefresh} /> */}
+      {loading ? renderLoading() : renderRouting()}
     </SafeAreaView>
   );
 };
