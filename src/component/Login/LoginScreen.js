@@ -102,7 +102,6 @@ const LoginScreen = ({ navigation }) => {
       addToast('Token is expired, please log in again', 'error');
       navigation.replace('Login');
     } else {
-      console.error('Login Failed', error);
       addToast('Login failed, please try again later', 'error');
     }
   };
@@ -113,7 +112,6 @@ const LoginScreen = ({ navigation }) => {
       addToast('Token is expired, please log in again', 'error');
       navigation.replace('Login');
     } else {
-      console.error('Login Failed', error);
       addToast('Login failed, please try again later', 'error');
     }
   };
@@ -126,7 +124,6 @@ const LoginScreen = ({ navigation }) => {
       addToast('Not Authorized kindly contact admin!', 'error');
     }
     else {
-      console.error('Email Verification Failed', error);
       addToast('Email verification is failed, please try again later', 'error');
     }
   };

@@ -36,7 +36,6 @@ const pickFile = async () => {
       readExcelFile(result.assets[0].uri);
     }
   } catch (error) {
-      console.error('Error picking file:', error);
       addToast('Error picking file.', 'error');
     }
   };
@@ -57,7 +56,6 @@ const pickFile = async () => {
         addToast(validData.error, 'error');
       }
     } catch (error) {
-      console.error('Error in reading file:', error);
       addToast('Error in reading file.', 'error');
     }
   };
@@ -77,7 +75,6 @@ const pickFile = async () => {
         addToast('File does not exist or is not a file','error');
       }
     } catch (error) {
-      console.error('Error reading file:', error);
       throw error;
     }
   };
@@ -100,14 +97,12 @@ const pickFile = async () => {
           resolve(filteredExcelData);
         };
         reader.onerror = (error) => {
-          console.error('Error in reading file:', error);
           reject(error);
         };
   
         reader.readAsArrayBuffer(blob);
       });
     } catch (error) {
-      console.error('Error in reading file:', error);
       addToast('Error in reading file.','error');
     }
   };
@@ -208,7 +203,6 @@ const pickFile = async () => {
     }
     return authToken;
   } catch (error) {
-    console.error('Error fetching auth token:', error);
     addToast("Error fetching authentication token", "error");
   }
   }, [addToast]);
@@ -241,7 +235,6 @@ const pickFile = async () => {
         addToast(`The following employee IDs are incorrect: ${missingIdsString}`, 'error', false);
       }
     } catch (error) {
-      console.log(error)
       handleAuthErrors(error);
     }
   };
