@@ -29,7 +29,7 @@
       "package": "com.dev.saxena.attendee"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "bundler": "metro"
     },
     "plugins": [
       [
