@@ -21,6 +21,29 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
   },
+
+  actionbtn:{   
+    backgroundColor:"#0CB551",
+    borderRadius:4,
+    width:60,
+    // minWidth:70,
+    padding:5, 
+    color:"#fff",
+    textAlign:"center",
+
+},
+
+
+inactivebtn:{
+ backgroundColor:"red",
+    borderRadius:4,
+    width:60,
+  //  minWidth:70,
+    padding:5, 
+    color:"#fff",
+    textAlign:"center",
+},
+
   // header: {
   //   fontSize: 18,
   //   fontWeight: "bold",

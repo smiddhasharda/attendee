@@ -602,8 +602,8 @@ import { formatInTimeZone } from 'date-fns-tz';
             keyExtractor={(item) => item.PK_InvigilatorDutyId.toString()}
                 ListHeaderComponent={() => (
                   <View style={styles.tableHeader}>
-                    <Text style={[styles.tableHeaderText,{width:80} ]}>Id</Text>
-                    <Text style={[styles.tableHeaderText, {width:120}]}>EmplId</Text>
+                    <Text style={[styles.tableHeaderText,{width:90} ]}>Id</Text>
+                    <Text style={[styles.tableHeaderText, {width:180}]}>EmplId</Text>
                     <Text style={[styles.tableHeaderText,{width:180} ]}>Name</Text>
                     <Text style={[styles.tableHeaderText,{width:120}  ]}>Room</Text>
                     <Text style={[styles.tableHeaderText,{width:120} ]}>Date</Text>
@@ -614,8 +614,8 @@ import { formatInTimeZone } from 'date-fns-tz';
                   </View>
           )} renderItem={({ item }) => (          
             <View style={styles.listItem}>
-              <Text style={[styles.listItemText, {width:80}]}>{item.PK_InvigilatorDutyId}</Text>
-              <Text style={[styles.listItemText, {width:120}]}>{item.employeeId}</Text>
+              <Text style={[styles.listItemText, {width:90}]}>{item.PK_InvigilatorDutyId}</Text>
+              <Text style={[styles.listItemText, {width:180}]}>{item.employeeId}</Text>
               <Text style={[styles.listItemText, {width:180}]}>{item.invigilatorName}</Text>
               <Text style={[styles.listItemText, {width:120}]}>{item.room}</Text>
               <Text style={[styles.listItemText, {width:120}]}>{parseAndFormatDate(item.date)}</Text>
