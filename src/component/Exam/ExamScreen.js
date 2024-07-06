@@ -66,7 +66,8 @@ const ExamScreen = ({ navigation, userAccess, userData,refresh }) => {
           data: '',
           conditionString: '',
           checkAvailability: '',
-          customQuery: `SELECT DISTINCT date, room, shift FROM tbl_invigilator_duty WHERE employeeId = '${userData?.username}' AND date >= '${CurrentDate}' ORDER BY date ASC`,
+          customQuery: `SELECT DISTINCT date, room, shift FROM tbl_invigilator_duty WHERE employeeId = '${userData?.username}'  ORDER BY date ASC`,
+          // customQuery: `SELECT DISTINCT date, room, shift FROM tbl_invigilator_duty WHERE employeeId = '${userData?.username}' AND date >= '${CurrentDate}' ORDER BY date ASC`,
         },
         authToken
       );
