@@ -6,7 +6,7 @@
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Feather,FontAwesome5,FontAwesome ,FontAwesome6} from "@expo/vector-icons";
-import { parse, format,parseISO } from 'date-fns';
+import { parse, format,parseISO,isBefore } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 
  const InvigilatorScreen = ({userAccess,refresh}) => {
@@ -161,7 +161,7 @@ import { formatInTimeZone } from 'date-fns-tz';
     try {
       const authToken = await checkAuthToken();
       const formattedDate = SelectedDate ? new Date(SelectedDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }).toUpperCase().replace(/ /g, '-') : '';
-      const customQuery = `SELECT DISTINCT ROOM_NBR FROM PS_S_PRD_EX_RME_VW WHERE EXAM_DT = '${formattedDate}'`;
+      const customQuery = `SELECT DISTINCT ROOM_NBR FROM PS_S_PRD_EX_RME_VW WHERE EXAM_DT = '${formattedDate}' order by ROOM_NBR`;
 
       const response = await view(
         {
@@ -221,8 +221,8 @@ import { formatInTimeZone } from 'date-fns-tz';
   const handleEditInvigilator = async (selectedData) => {
     const selectedDate = parseISO(selectedData.date);
     const currentDate = new Date();
-  
-    if (isBefore(selectedDate, currentDate)) {
+    console.log("DATA : ",selectedDate, currentDate);
+    if (!isBefore(selectedDate, currentDate)) {
       // Prevent editing if the date is less than the current date
       addToast("You cannot edit past invigilator duties.", "error");
       return;
@@ -247,15 +247,7 @@ import { formatInTimeZone } from 'date-fns-tz';
 
   <Pressable
     style={[{ width: 80 }, { alignItems: "center" }]}
-    onPress={() => {
-      const selectedDate = parseISO(item.date);
-      const currentDate = new Date();
-      if (!isBefore(selectedDate, currentDate)) {
-        handleEditInvigilator(item);
-      } else {
-        addToast("You cannot edit past invigilator duties.", "error");
-      }
-    }}
+    onPress={() => handleEditInvigilator(item)}
   >
     <Text style={styles.listItemEditText}>
       <Feather name="edit" size={16} color="green" />

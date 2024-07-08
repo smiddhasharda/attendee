@@ -169,63 +169,99 @@ const StudentInfo = ({ navigation,refresh }) => {
       const CopyEmptyValues = copiesData?.length > 0 ? copiesData.some(data => data.mainCopy === "" || data.alternateCopies.includes("")) : true;
       if (CopyEmptyValues && status !== "Absent") {
         addToast("Enter the copy details!", "error");
-      }
-      else {
+      } else {
+        // Check for duplicate mainCopy values
+        const uniqueMainCopies = new Set();
+        let duplicateFound = false;
+        
+        for (const data of copiesData) {
+          if (uniqueMainCopies.has(data.mainCopy)) {
+            duplicateFound = true;
+            break;
+          }
+          uniqueMainCopies.add(data.mainCopy);
+        }
+        
+        if (duplicateFound) {
+          addToast("Duplicate copy numbers are not allowed!", "error");
+          return;
+        }
+  
         const authToken = await checkAuthToken();
-        const response = await insert(
+        let CopyArray = copiesData?.map((item) => item?.mainCopy);
+        const CopyExistResponse = await fetch(
           {
-            operation: "insert",
-            tblName: "tbl_report_master",
-            data: {
-              EMPLID: studentDetails.EMPLID,
-              NAME_FORMAL: studentDetails.NAME_FORMAL,
-              STRM: studentDetails.STRM,
-              ADM_APPL_NBR: studentDetails.ADM_APPL_NBR,
-              DESCR: studentDetails.DESCR,
-              DESCR2: studentDetails.DESCR2,
-              DESCR3: studentDetails.DESCR3,
-              EXAM_DT: exam_Dt,
-              ROOM_NBR: room_Nbr,
-              EXAM_START_TIME: startTime,
-              CATALOG_NBR: catlog_Nbr,
-              PTP_SEQ_CHAR: seat_Nbr,
-              Attendece_Status:attendenceStatus,
-              Status: status,
-              SU_PAPER_ID: courseDetails.SU_PAPER_ID,
-              DESCR100: courseDetails.DESCR100,
-            },
-            conditionString: `EMPLID = '${studentDetails.EMPLID}' AND EXAM_DT = '${exam_Dt}' AND ROOM_NBR = '${room_Nbr}' AND EXAM_START_TIME = '${startTime}'`,
-            checkAvailability: true,
-            customQuery: "",
+            operation: "custom",
+            tblName: "tbl_copy_master",
+            data: '',
+            conditionString: "",
+            checkAvailability: "",
+            customQuery: `Select * from tbl_copy_master Where copyNumber in (${CopyArray})`,
           },
           authToken
         );
-        if (response) {
-          const studentCopyWithId = copiesData.map((item) => {
-            let newItem = {
-              FK_ReportId: response?.data?.receivedData?.insertId,
-              copyNumber: item.mainCopy,
-              EMPLID: studentDetails.EMPLID,
-            };
-            item.alternateCopies.forEach((copy, index) => {
-              newItem[`alternateCopyNumber${index + 1}`] = copy;
-            });
-            return newItem;
-          });
-          const NewResponse = await insert(
+  
+        if (CopyExistResponse.data.receivedData?.length > 0) {
+          addToast(`Copy Number Already Exist ${CopyExistResponse.data.receivedData?.map((item) => item.copyNumber)}`, "error");
+        } else {
+          const response = await insert(
             {
               operation: "insert",
-              tblName: "tbl_copy_master",
-              data: studentCopyWithId,
-              conditionString: "",
-              checkAvailability: "",
+              tblName: "tbl_report_master",
+              data: {
+                EMPLID: studentDetails.EMPLID,
+                NAME_FORMAL: studentDetails.NAME_FORMAL,
+                STRM: studentDetails.STRM,
+                ADM_APPL_NBR: studentDetails.ADM_APPL_NBR,
+                DESCR: studentDetails.DESCR,
+                DESCR2: studentDetails.DESCR2,
+                DESCR3: studentDetails.DESCR3,
+                EXAM_DT: exam_Dt,
+                ROOM_NBR: room_Nbr,
+                EXAM_START_TIME: startTime,
+                CATALOG_NBR: catlog_Nbr,
+                PTP_SEQ_CHAR: seat_Nbr,
+                Attendece_Status: attendenceStatus,
+                Status: status,
+                SU_PAPER_ID: courseDetails.SU_PAPER_ID,
+                DESCR100: courseDetails.DESCR100,
+              },
+              conditionString: `EMPLID = '${studentDetails.EMPLID}' AND EXAM_DT = '${exam_Dt}' AND ROOM_NBR = '${room_Nbr}' AND EXAM_START_TIME = '${startTime}'`,
+              checkAvailability: true,
               customQuery: "",
             },
             authToken
           );
-          if (NewResponse) {
-            addToast("Student details are updated successfully!", "success");
-            navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation: navigation, userAccess,refresh });
+  
+          if (response) {
+            const studentCopyWithId = copiesData.map((item) => {
+              let newItem = {
+                FK_ReportId: response?.data?.receivedData?.insertId,
+                copyNumber: item.mainCopy,
+                EMPLID: studentDetails.EMPLID,
+              };
+              item.alternateCopies.forEach((copy, index) => {
+                newItem[`alternateCopyNumber${index + 1}`] = copy;
+              });
+              return newItem;
+            });
+  
+            const NewResponse = await insert(
+              {
+                operation: "insert",
+                tblName: "tbl_copy_master",
+                data: studentCopyWithId,
+                conditionString: "",
+                checkAvailability: "",
+                customQuery: "",
+              },
+              authToken
+            );
+  
+            if (NewResponse) {
+              addToast("Student details are updated successfully!", "success");
+              navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation: navigation, userAccess, refresh });
+            }
           }
         }
       }
@@ -233,6 +269,7 @@ const StudentInfo = ({ navigation,refresh }) => {
       handleAuthErrors(error);
     }
   };
+  
 
   const handleGetCopyData = async () => {
     try {
@@ -274,82 +311,117 @@ const StudentInfo = ({ navigation,refresh }) => {
       handleAuthErrors(error);
     }
   };
-
   const handleStudentInfoUpdate = async () => {
     try {
       const CopyEmptyValues = copiesData?.length > 0 ? copiesData.some(data => data.mainCopy === "" || data.alternateCopies.includes("")) : true;
       if (CopyEmptyValues) {
         addToast("Please enter the copy details!", "error");
-      }
-      else {
+      } else {
+        // Check for duplicate mainCopy values
+        const uniqueMainCopies = new Set();
+        let duplicateFound = false;
+        
+        for (const data of copiesData) {
+          if (uniqueMainCopies.has(data.mainCopy)) {
+            duplicateFound = true;
+            break;
+          }
+          uniqueMainCopies.add(data.mainCopy);
+        }
+        
+        if (duplicateFound) {
+          addToast("Duplicate copy numbers are not allowed!", "error");
+          return;
+        }
+  
         const authToken = await checkAuthToken();
-        const response = await update(
+        let CopyArray = copiesData?.map((item) => item?.mainCopy);
+        const CopyExistResponse = await fetch(
           {
-            operation: "update",
-            tblName: "tbl_report_master",
-            data: {
-              EMPLID: studentDetails.EMPLID,
-              NAME_FORMAL: studentDetails.NAME_FORMAL,
-              STRM: studentDetails.STRM,
-              ADM_APPL_NBR: studentDetails.ADM_APPL_NBR,
-              DESCR: studentDetails.DESCR,
-              DESCR2: studentDetails.DESCR2,
-              DESCR3: studentDetails.DESCR3,
-              EXAM_DT: exam_Dt,
-              ROOM_NBR: room_Nbr,
-              EXAM_START_TIME: startTime,
-              CATALOG_NBR: catlog_Nbr,
-              PTP_SEQ_CHAR: seat_Nbr,
-              Attendece_Status:attendenceStatus,
-              Status: status,
-              SU_PAPER_ID: courseDetails.SU_PAPER_ID,
-              DESCR100: courseDetails.DESCR100,
-            },
-            conditionString: `PK_Report_Id = ${reportId}`,
+            operation: "custom",
+            tblName: "tbl_copy_master",
+            data: '',
+            conditionString: "",
             checkAvailability: "",
-            customQuery: "",
+            customQuery: `Select * from tbl_copy_master Where PK_CopyId NOT IN (${copyList}) AND copyNumber in (${CopyArray})`,
           },
           authToken
         );
-
-        if (response) {
-          const DeleteResponse = await remove(
+  
+        if (CopyExistResponse.data.receivedData?.length > 0) {
+          addToast(`Copy Number Already Exist ${CopyExistResponse.data.receivedData?.map((item) => item.copyNumber)}`, "error");
+        } else {
+          const response = await update(
             {
-              operation: "delete",
-              tblName: "tbl_copy_master",
-              data: "",
-              conditionString: `PK_CopyId IN (${copyList})`,
+              operation: "update",
+              tblName: "tbl_report_master",
+              data: {
+                EMPLID: studentDetails.EMPLID,
+                NAME_FORMAL: studentDetails.NAME_FORMAL,
+                STRM: studentDetails.STRM,
+                ADM_APPL_NBR: studentDetails.ADM_APPL_NBR,
+                DESCR: studentDetails.DESCR,
+                DESCR2: studentDetails.DESCR2,
+                DESCR3: studentDetails.DESCR3,
+                EXAM_DT: exam_Dt,
+                ROOM_NBR: room_Nbr,
+                EXAM_START_TIME: startTime,
+                CATALOG_NBR: catlog_Nbr,
+                PTP_SEQ_CHAR: seat_Nbr,
+                Attendece_Status: attendenceStatus,
+                Status: status,
+                SU_PAPER_ID: courseDetails.SU_PAPER_ID,
+                DESCR100: courseDetails.DESCR100,
+              },
+              conditionString: `PK_Report_Id = ${reportId}`,
               checkAvailability: "",
               customQuery: "",
             },
             authToken
           );
-          if (DeleteResponse) {
-            const studentCopyWithId = copiesData.map((item) => {
-              let newItem = {
-                FK_ReportId: reportId,
-                copyNumber: item.mainCopy,
-                EMPLID: studentDetails.EMPLID,
-              };
-              item.alternateCopies.forEach((copy, index) => {
-                newItem[`alternateCopyNumber${index + 1}`] = copy;
-              });
-              return newItem;
-            });
-            const NewResponse = await insert(
+  
+          if (response) {
+            const DeleteResponse = await remove(
               {
-                operation: "insert",
+                operation: "delete",
                 tblName: "tbl_copy_master",
-                data: studentCopyWithId,
-                conditionString: "",
+                data: "",
+                conditionString: `PK_CopyId IN (${copyList})`,
                 checkAvailability: "",
                 customQuery: "",
               },
               authToken
             );
-            if (NewResponse) {
-              addToast("Student details are updated successfully!", "success");
-              navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation: navigation, userAccess,refresh });
+  
+            if (DeleteResponse) {
+              const studentCopyWithId = copiesData.map((item) => {
+                let newItem = {
+                  FK_ReportId: reportId,
+                  copyNumber: item.mainCopy,
+                  EMPLID: studentDetails.EMPLID,
+                };
+                item.alternateCopies.forEach((copy, index) => {
+                  newItem[`alternateCopyNumber${index + 1}`] = copy;
+                });
+                return newItem;
+              });
+  
+              const NewResponse = await insert(
+                {
+                  operation: "insert",
+                  tblName: "tbl_copy_master",
+                  data: studentCopyWithId,
+                  conditionString: "",
+                  checkAvailability: "",
+                  customQuery: "",
+                },
+                authToken
+              );
+  
+              if (NewResponse) {
+                addToast("Student details are updated successfully!", "success");
+                navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation: navigation, userAccess, refresh });
+              }
             }
           }
         }
@@ -358,6 +430,7 @@ const StudentInfo = ({ navigation,refresh }) => {
       handleAuthErrors(error);
     }
   };
+  
 
   const handleAuthErrors = (error) => {
     switch (error.message) {
@@ -580,6 +653,13 @@ const StudentInfo = ({ navigation,refresh }) => {
     }
   }
 
+  // const formatShiftTime = (dateString) => {
+  //   const date = parseISO(dateString);
+  //   const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone; // Get the current timezone
+  //   const time = formatInTimeZone(date, timeZone, 'hh:mm');
+  //   return time;
+  // };
+
 
   useEffect(() => {
     fetchData();
@@ -602,7 +682,7 @@ const StudentInfo = ({ navigation,refresh }) => {
       startToday.setUTCMilliseconds(0);
 
       const start = startToday.getTime() - (15 * 60 * 1000); // 15 minutes before start time
-      const end = startToday.getTime() + (60 * 60 * 1000); // 1 hour after start time
+      const end = startToday.getTime() + (60 * 60 * 1500); // 1 hour after start time
 
       if (now.getTime() >= start && now.getTime() <= end) {
         setIsActive(true);
