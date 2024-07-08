@@ -212,12 +212,6 @@ const formattedShiftTimePrefix = formatShiftTimePrefix(startTime);
     return capitalizedWords.join(' ');
   };
  
-  
-  // useEffect(() => {
-  //   console.log("useEffect triggered");
-  //   fetchStudentDetails(exam_Dt, room_Nbr);
-  //   handleGetReportData();
-  // }, [UserAccess,refresh]);
   useFocusEffect(
     useCallback(() => {
       fetchStudentDetails(exam_Dt, room_Nbr);

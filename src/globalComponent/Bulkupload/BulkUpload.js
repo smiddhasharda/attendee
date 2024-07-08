@@ -36,7 +36,6 @@ const pickFile = async () => {
       readExcelFile(result.assets[0].uri);
     }
   } catch (error) {
-      console.error('Error picking file:', error);
       addToast('Error picking file.', 'error');
     }
   };
@@ -57,7 +56,6 @@ const pickFile = async () => {
         addToast(validData.error, 'error');
       }
     } catch (error) {
-      console.error('Error in reading file:', error);
       addToast('Error in reading file.', 'error');
     }
   };
@@ -77,7 +75,6 @@ const pickFile = async () => {
         addToast('File does not exist or is not a file','error');
       }
     } catch (error) {
-      console.error('Error reading file:', error);
       throw error;
     }
   };
@@ -100,14 +97,12 @@ const pickFile = async () => {
           resolve(filteredExcelData);
         };
         reader.onerror = (error) => {
-          console.error('Error in reading file:', error);
           reject(error);
         };
   
         reader.readAsArrayBuffer(blob);
       });
     } catch (error) {
-      console.error('Error in reading file:', error);
       addToast('Error in reading file.','error');
     }
   };
@@ -208,7 +203,6 @@ const pickFile = async () => {
     }
     return authToken;
   } catch (error) {
-    console.error('Error fetching auth token:', error);
     addToast("Error fetching authentication token", "error");
   }
   }, [addToast]);
@@ -241,7 +235,6 @@ const pickFile = async () => {
         addToast(`The following employee IDs are incorrect: ${missingIdsString}`, 'error', false);
       }
     } catch (error) {
-      console.log(error)
       handleAuthErrors(error);
     }
   };
@@ -335,29 +328,29 @@ const pickFile = async () => {
             <FontAwesome name="remove" size={20} color="red" />
               </Pressable></Text>
               <Text style={styles.previewTitle}>Preview:</Text>
-            <ScrollView horizontal={true} vertical={true}>
-            <FlatList
-              data={paginatedData}
-              keyExtractor={(item, index) => index.toString()}
-              ListHeaderComponent={props?.renderData}
-              renderItem={({ item }) => (
-                <View style={styles.listItem}>
-                    <Text style={styles.listItemText}>{item.employeeId}</Text>
-                    <Text  style={styles.listItemText}>{item.invigilatorName}</Text>
-                    <Text  style={styles.listItemText}>{item.date}</Text>
-                    <Text  style={styles.listItemText}>{item.shift}</Text>
-                    <Text  style={styles.listItemText}>{item.room}</Text>
-                    <Text  style={styles.listItemText}>{item.duty_status}</Text>                 
-      </View>
-              )}
-            />
+              <ScrollView horizontal={true} vertical={true}>
+                <FlatList
+                  data={paginatedData}
+                  keyExtractor={(item, index) => index.toString()}
+                  ListHeaderComponent={props?.renderData}
+                  renderItem={({ item }) => (
+                    <View style={styles.listItem}>
+                        <Text style={styles.listItemText}>{item.employeeId}</Text>
+                        <Text  style={styles.listItemText}>{item.invigilatorName}</Text>
+                        <Text  style={styles.listItemText}>{item.date}</Text>
+                        <Text  style={styles.listItemText}>{item.shift}</Text>
+                        <Text  style={styles.listItemText}>{item.room}</Text>
+                        <Text  style={styles.listItemText}>{item.duty_status}</Text>                 
+          </View>
+                  )}
+                />
+              </ScrollView>
               <Pagination
-          totalItems={excelData.length}
-          pageSize={pageSize}
-          currentPage={currentPage}
-          onPageChange={handlePageChange}
-        />
-            </ScrollView>
+                    totalItems={excelData.length}
+                    pageSize={pageSize}
+                    currentPage={currentPage}
+                    onPageChange={handlePageChange}
+              />
             {duplicateData?.length > 0  && 
                 <View style={styles.fileDetails}>
                 <Text style={styles.previewTitle}>Duplicate Rows:</Text>
@@ -456,7 +449,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     justifyContent:"space-between",
     alignSelf:"flex-end"
-    
   },
   uploadButton: {
     padding: 10,
@@ -534,7 +526,10 @@ const styles = StyleSheet.create({
    position:"relative",
    top:-38, 
    alignSelf:"flex-end"
-  }
+  },
+  // paginationStyling: {
+  //   display: "block"
+  // }
 });
 
 export default BulkUpload;

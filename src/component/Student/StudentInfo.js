@@ -544,7 +544,7 @@ const StudentInfo = ({ navigation,refresh }) => {
           color: 'white',
           marginRight: 54,
           padding: 6,
-          maxWidth: 100,
+          width: 75,
           display: "flex",
           alignItems: "center",
           justifyContent: "center"
@@ -557,19 +557,25 @@ const StudentInfo = ({ navigation,refresh }) => {
           color: 'white',
           marginRight: 54,
           padding: 6,
-          maxWidth: 100
+          width: 110,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center"
         };    
       default:
         return {
           backgroundColor:'green',
-          borderRadius:50,
+          borderRadius:4,
           height: 30,
           textAlign: "center",
           borderColor:'green',
           color: 'white',
           marginRight: 54,
           padding: 4,
-          width: 75
+          width: 75,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center"
         };
     }
   }

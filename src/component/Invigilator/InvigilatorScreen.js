@@ -7,7 +7,7 @@ import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Feather,FontAwesome5,FontAwesome ,FontAwesome6} from "@expo/vector-icons";
 import { parse, format,parseISO } from 'date-fns';
-
+import { formatInTimeZone } from 'date-fns-tz';
 
  const InvigilatorScreen = ({userAccess,refresh}) => {
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 4 );
@@ -98,8 +98,8 @@ import { parse, format,parseISO } from 'date-fns';
           shift:invigilatorData.shift,
           room:invigilatorData.room,
           duty_status:invigilatorData.duty_status,},
-          conditionString: "",
-          checkAvailability: "",
+          conditionString: `employeeId = '${invigilatorData.employeeId}' AND date = '${parseExcelDate(invigilatorData.date)}' AND shift = '${invigilatorData.shift}'`,
+          checkAvailability: true,
           customQuery: "",
         },
         authToken
@@ -211,28 +211,57 @@ import { parse, format,parseISO } from 'date-fns';
   //     handleAuthErrors(error);
   //   }
   // };
-  const convertedTime = (startTime) => {
-    const date = parseISO(startTime); // Parse the UTC ISO string into a Date object
-    return format(date, 'h:mm a'); // Format the Date object into 'h:mm AM/PM' format
+  const convertedTime = (startTime) => {    
+    const date = parseISO(startTime); // Parse the input ISO date string
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone; // Get the current timezone
+    const zonedDate = formatInTimeZone(date, timeZone ,'h:mm a' ); // Convert the date to the local timezone
+    return zonedDate;
   };
 
   const handleEditInvigilator = async (selectedData) => {
+    const selectedDate = parseISO(selectedData.date);
+    const currentDate = new Date();
+  
+    if (isBefore(selectedDate, currentDate)) {
+      // Prevent editing if the date is less than the current date
+      addToast("You cannot edit past invigilator duties.", "error");
+      return;
+    }
+  
     setInvigilatorData({
       PK_InvigilatorDutyId: selectedData.PK_InvigilatorDutyId,
-    employeeId: selectedData.employeeId,
-    invigilatorName: selectedData.invigilatorName,
-    date:selectedData.date,
-    shift:selectedData.shift,
-    room:selectedData.room,
-    duty_status:selectedData.duty_status,
-    isActive: selectedData.isActive,
+      employeeId: selectedData.employeeId,
+      invigilatorName: selectedData.invigilatorName,
+      date: selectedData.date,
+      shift: selectedData.shift,
+      room: selectedData.room,
+      duty_status: selectedData.duty_status,
+      isActive: selectedData.isActive,
     });
     setInvigilatorContainerVisible(true);
     await handleGetDateView(selectedData.date);
     await handleGetRoomView(selectedData.date);
     await handleGetShiftList(selectedData.date);
-
   };
+
+
+  <Pressable
+    style={[{ width: 80 }, { alignItems: "center" }]}
+    onPress={() => {
+      const selectedDate = parseISO(item.date);
+      const currentDate = new Date();
+      if (!isBefore(selectedDate, currentDate)) {
+        handleEditInvigilator(item);
+      } else {
+        addToast("You cannot edit past invigilator duties.", "error");
+      }
+    }}
+  >
+    <Text style={styles.listItemEditText}>
+      <Feather name="edit" size={16} color="green" />
+    </Text>
+  </Pressable>
+  
 
   const handleAuthErrors = (error) => {
     switch (error.message) {
@@ -240,7 +269,7 @@ import { parse, format,parseISO } from 'date-fns';
         addToast("Invalid authentication credentials", "error");
         break;
       case "Data already exists":
-        addToast("Module name already exists!", "error");
+        addToast("This Duty already exists!", "error");
         break;
       case "No response received from the server":
         addToast("No response received from the server", "error");
@@ -340,7 +369,6 @@ import { parse, format,parseISO } from 'date-fns';
           conditionString: '',
           checkAvailability: '',
           customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW WHERE EXAM_DT >= '${CurrentDate}' ORDER BY EXAM_DT ASC`,
-          // customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW ORDER BY EXAM_DT ASC`,
           viewType:'Campus_View'
         },
         authToken
@@ -573,8 +601,8 @@ import { parse, format,parseISO } from 'date-fns';
             keyExtractor={(item) => item.PK_InvigilatorDutyId.toString()}
                 ListHeaderComponent={() => (
                   <View style={styles.tableHeader}>
-                    <Text style={[styles.tableHeaderText,{width:80} ]}>Id</Text>
-                    <Text style={[styles.tableHeaderText, {width:120}]}>EmplId</Text>
+                    <Text style={[styles.tableHeaderText,{width:90} ]}>Id</Text>
+                    <Text style={[styles.tableHeaderText, {width:180}]}>EmplId</Text>
                     <Text style={[styles.tableHeaderText,{width:180} ]}>Name</Text>
                     <Text style={[styles.tableHeaderText,{width:120}  ]}>Room</Text>
                     <Text style={[styles.tableHeaderText,{width:120} ]}>Date</Text>
@@ -585,14 +613,14 @@ import { parse, format,parseISO } from 'date-fns';
                   </View>
           )} renderItem={({ item }) => (          
             <View style={styles.listItem}>
-              <Text style={[styles.listItemText, {width:80}]}>{item.PK_InvigilatorDutyId}</Text>
-              <Text style={[styles.listItemText, {width:120}]}>{item.employeeId}</Text>
+              <Text style={[styles.listItemText, {width:90}]}>{item.PK_InvigilatorDutyId}</Text>
+              <Text style={[styles.listItemText, {width:180}]}>{item.employeeId}</Text>
               <Text style={[styles.listItemText, {width:180}]}>{item.invigilatorName}</Text>
               <Text style={[styles.listItemText, {width:120}]}>{item.room}</Text>
               <Text style={[styles.listItemText, {width:120}]}>{parseAndFormatDate(item.date)}</Text>
               <Text style={[styles.listItemText, {width:120}]}>{convertedTime(item.shift)}</Text>
               <Text style={[styles.listItemText, {width:120}]}>{item.duty_status}</Text>    
-              {UserAccess?.update === 1 ? <Pressable style={[{width:80}, {alignItems:"center"}]} onPress={() => handleEditInvigilator(item)}>
+              {UserAccess?.update === 1  ? <Pressable style={[{width:80}, {alignItems:"center"}]} onPress={() => handleEditInvigilator(item)}>
               <Text style={styles.listItemEditText}><Feather name="edit" size={16} color="green" /></Text>
                 </Pressable> : (<Text>-</Text>)}  
             </View>

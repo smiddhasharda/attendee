@@ -37,8 +37,7 @@ const ExamScreen = ({ navigation, userAccess, userData,refresh }) => {
           data: '',
           conditionString: '',
           checkAvailability: '',
-          // customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW WHERE EXAM_DT >= '${CurrentDate}' ORDER BY EXAM_DT ASC`,
-          customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW ORDER BY EXAM_DT ASC`,
+          customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW WHERE EXAM_DT >= '${CurrentDate}' ORDER BY EXAM_DT ASC`,
           viewType:'Campus_View'
         },
         authToken
@@ -139,7 +138,6 @@ const ExamScreen = ({ navigation, userAccess, userData,refresh }) => {
       setLoading(false);
     } catch (error) {
       setLoading(false);
-      console.error("Error executing custom query:", error); // Improved error logging
       handleAuthErrors(error);
     }
   };

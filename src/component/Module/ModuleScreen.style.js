@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
   },
 
   actionbtn:{   
-    backgroundColor:"green",
+    backgroundColor:"#0CB551",
     borderRadius:4,
     width:60,
     // minWidth:70,

@@ -136,16 +136,13 @@ import {
       
     },
     actionbtn:{
-     
-         backgroundColor:"green",
+         backgroundColor:"#0CB551",
          borderRadius:4,
         //  minWidth:70,
         width:60,
          padding:6, 
          color:"#fff",
          textAlign:"center",
-         
- 
     },
     inactivebtn:{
       backgroundColor:"red",
@@ -156,8 +153,6 @@ import {
          color:"#fff",
          textAlign:"center"
     },
-  
-
     addbtntext:{
      color:"#fff",
      textAlign:"center",
