@@ -38,6 +38,7 @@ const ExamScreen = ({ navigation, userAccess, userData,refresh }) => {
           conditionString: '',
           checkAvailability: '',
           customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW WHERE EXAM_DT >= '${CurrentDate}' ORDER BY EXAM_DT ASC`,
+          // customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW  ORDER BY EXAM_DT ASC`,
           viewType:'Campus_View'
         },
         authToken
@@ -149,7 +150,7 @@ const ExamScreen = ({ navigation, userAccess, userData,refresh }) => {
 
   const fetchRoomDetails = async (date) => {
     setLoading(true);
-    if (userAccess?.label === "Admin") {
+    if (userAccess?.label === "Admin" || UserAccess?.special === 1) {
       handleGetDateView();
     } else {
       handleGetInvigilatorDutyDate();
@@ -160,7 +161,7 @@ const ExamScreen = ({ navigation, userAccess, userData,refresh }) => {
     setLoading(true);
     setExamSelectedDate(date);
     const RoomArray = invigilatorData?.filter((item) => item.date === date) ?.map((item) => ({ room: item.room, shift: item.shift }));
-    handleGetRoomView(date, userAccess?.label !== "Admin" && RoomArray);
+    handleGetRoomView(date, (userAccess?.label !== "Admin" && UserAccess?.special !== 1) && RoomArray);
   };
 
   const convertedTime = (startTime) => {
