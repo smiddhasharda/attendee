@@ -653,6 +653,13 @@ const StudentInfo = ({ navigation,refresh }) => {
     }
   }
 
+  // const formatShiftTime = (dateString) => {
+  //   const date = parseISO(dateString);
+  //   const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone; // Get the current timezone
+  //   const time = formatInTimeZone(date, timeZone, 'hh:mm');
+  //   return time;
+  // };
+
 
   useEffect(() => {
     fetchData();
@@ -675,7 +682,7 @@ const StudentInfo = ({ navigation,refresh }) => {
       startToday.setUTCMilliseconds(0);
 
       const start = startToday.getTime() - (15 * 60 * 1000); // 15 minutes before start time
-      const end = startToday.getTime() + (60 * 60 * 1000); // 1 hour after start time
+      const end = startToday.getTime() + (60 * 60 * 1500); // 1 hour after start time
 
       if (now.getTime() >= start && now.getTime() <= end) {
         setIsActive(true);
