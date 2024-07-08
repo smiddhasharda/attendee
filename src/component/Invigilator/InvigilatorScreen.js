@@ -10,7 +10,7 @@ import { parse, format,parseISO } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 
  const InvigilatorScreen = ({userAccess,refresh}) => {
-  const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 4 );
+  const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 8 );
   const { addToast } = useToast();
   const [invigilatorList, setInvigilatorList] = useState([]);
   const [isBulkuploadInvigilater, setIsBulkuploadInvigilater] = useState(false);
