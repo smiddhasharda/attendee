@@ -289,12 +289,12 @@ const ReportScreen = ({userAccess,refresh}) => {
         style={{
           backgroundColor:
           cell?.row?.original?.Status === "Present"
-          ? 'green'
+          ? 'rgb(12, 181, 81)'
           : cell?.row?.original?.Status === "Absent"
-          ? 'yellow'
+          ? 'rgb(234, 66, 66)'
           : cell?.row?.original?.Status === "UFM"
-          ? 'red'
-          : 'blue',
+          ? 'rgb(253, 191, 72)'
+          : 'rgb(64, 65, 66)',
           borderRadius: 22,
           color: "#fff",
           minWidth: 75,
@@ -302,6 +302,7 @@ const ReportScreen = ({userAccess,refresh}) => {
           paddingVertical: 2,
           paddingHorizontal: 7.5,
           textAlign: "center",
+          alignItems:"center"
         }}
       >
         <Text style={{ color: "#fff" }}>
@@ -321,12 +322,12 @@ const ReportScreen = ({userAccess,refresh}) => {
         style={{
           backgroundColor:
           cell?.row?.original?.Attendece_Status === "Eligible"
-            ? 'green'
+            ? 'rgb(12, 181, 81)'
             : cell?.row?.original?.Attendece_Status === "Not Defined"
-            ? 'yellow'
-            : cell?.row?.original?.Attendece_Status === "Debarred"
+            ? 'rgb(253, 191, 72)'
+            : cell?.row?.original?.Attendece_Status === "rgb(234, 66, 66)"
             ? 'red'
-            : 'blue',           
+            : 'rgb(64, 65, 66)',           
           borderRadius: 22,
           color: "#fff",
           minWidth: 75,
@@ -334,6 +335,7 @@ const ReportScreen = ({userAccess,refresh}) => {
           paddingVertical: 2,
           paddingHorizontal: 7.5,
           textAlign: "center",
+          alignItems:"center"
         }}
       >
         <Text style={{ color: "#fff" }}>
