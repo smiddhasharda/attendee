@@ -324,7 +324,7 @@ const pickFile = async () => {
       {selectedFile ? (
         <ScrollView style={styles.fileContainer}>
           <View style={styles.fileDetails}>
-          <Text style={styles.fileName}>Selected File: <Text style={{color:"green"}}>{selectedFile.name}</Text> <Pressable onPress={() =>cancelUpload()}>
+          <Text style={styles.fileName}>File Name: <Text style={{color:"green"}}>{selectedFile.name}</Text> <Pressable onPress={() =>cancelUpload()}>
             <FontAwesome name="remove" size={20} color="red" />
               </Pressable></Text>
               <Text style={styles.previewTitle}>Preview:</Text>

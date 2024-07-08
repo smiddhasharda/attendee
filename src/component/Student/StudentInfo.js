@@ -1069,7 +1069,7 @@ const StudentInfo = ({ navigation,refresh }) => {
             <View
               style={{ flexDirection: "row", justifyContent: "space-between" }}
             >
-              <Text style={styles.addAnsheading}> AnswerSheet </Text>
+              <Text style={styles.addAnsheading}>Answersheet</Text>
               {((copiesData?.length < 4 && isActive && attendenceStatus != 'Debarred')) && (
                 <AntDesign style={styles.addicon} name="pluscircleo" size={24} color="black" onPress={handleAddCopy} />
               )}
