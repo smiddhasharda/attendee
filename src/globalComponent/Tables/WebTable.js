@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 const WebTable = ({ columns, data,handleExportRows,handleExportData,handleRefreshData,style, }) => {
 
   return (
-    <ScrollView  style={{ maxHeight: 410 }} horizontal>
+    <ScrollView  style={{ maxHeight: 450 }} horizontal>
  <ScrollView>
     <MaterialReactTable
     columns={columns}
