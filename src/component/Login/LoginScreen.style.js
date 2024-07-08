@@ -7,13 +7,20 @@ const styles = StyleSheet.create({
   },
   bgimg1: {
     position: 'absolute',
-    top: 0,
-    left: 0,
+    // top: 0,
+    // left: 0,
+    // height: 706,
+    // width: 800,
+   transform: [{skewX: '-65deg'}],
+    top: -180,
+    left: -620,
   },
   bgimages2: {
     position: 'absolute',
-    bottom: 0,
-    right: 0,
+    transform: [{skewX: '162deg'}],
+    // transform: rotate(190),
+    top: 190,
+    right: -540,
   },
   form: {
     flex: 1,
@@ -100,11 +107,11 @@ const styles = StyleSheet.create({
   emailTooltipContainer: {
     position: 'absolute',
     top: 50,
-    left: 70,
+    left: 58,
     backgroundColor: '#f8d7da',
     borderRadius: 5,
     padding: 10,
-    width:260,
+    width:256,
   },
   emailTooltipTextStyle: {
     color: '#721c24',
@@ -116,13 +123,11 @@ const styles = StyleSheet.create({
   passwordTooltipContainer: {
     position: 'absolute',
     top: 50,
-    left: 70,
+    left: 78,
     backgroundColor: '#f8d7da',
     borderRadius: 5,
     padding: 10,
-    width:260,
-
-    
+    width:260,    
   },
   passwordTooltipTextStyle: {
     color: '#721c24',
