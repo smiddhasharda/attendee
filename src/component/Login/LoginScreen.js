@@ -155,7 +155,7 @@ const LoginScreen = ({ navigation }) => {
               </Text>
             </Pressable>
           </View>
-          <View style={{ marginTop: 14 }}>
+          <View style={{ marginTop: 14  }}>
             <Text style={styles.label}>Email Id</Text>
             {isEmailTooltipVisible && (
               <Tooltip>

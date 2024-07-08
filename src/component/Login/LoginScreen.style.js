@@ -100,10 +100,11 @@ const styles = StyleSheet.create({
   emailTooltipContainer: {
     position: 'absolute',
     top: 50,
-    left: 10,
+    left: 70,
     backgroundColor: '#f8d7da',
     borderRadius: 5,
     padding: 10,
+    width:260,
   },
   emailTooltipTextStyle: {
     color: '#721c24',
@@ -115,10 +116,13 @@ const styles = StyleSheet.create({
   passwordTooltipContainer: {
     position: 'absolute',
     top: 50,
-    left: 10,
+    left: 70,
     backgroundColor: '#f8d7da',
     borderRadius: 5,
     padding: 10,
+    width:260,
+
+    
   },
   passwordTooltipTextStyle: {
     color: '#721c24',
