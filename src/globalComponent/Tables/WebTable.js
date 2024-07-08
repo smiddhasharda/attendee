@@ -1,11 +1,13 @@
 import React from 'react';
 import { MaterialReactTable } from 'material-react-table';
-import { View, Pressable, Text } from 'react-native';
+import { View, Pressable, Text,  ScrollView} from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; 
 
 const WebTable = ({ columns, data,handleExportRows,handleExportData,handleRefreshData,style, }) => {
 
   return (
+    <ScrollView  style={{ maxHeight: 410 }} horizontal>
+ <ScrollView>
     <MaterialReactTable
     columns={columns}
     data={data || ''}
@@ -48,6 +50,9 @@ const WebTable = ({ columns, data,handleExportRows,handleExportData,handleRefres
     )}
     rowCount={data?.length || 0}
   />
+  </ScrollView>
+  </ScrollView>
+ 
   );
 };
 
