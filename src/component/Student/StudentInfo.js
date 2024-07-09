@@ -8,6 +8,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { insert, fetch, update, remove, view, } from "../../AuthService/AuthService";
 import DropDownPicker from "react-native-dropdown-picker";
 import CheckBox from "expo-checkbox";
+import { parseISO, format, differenceInSeconds, addMinutes, subMinutes, isSameDay,isBefore } from 'date-fns';
+import { toZonedTime, fromZonedTime } from 'date-fns-tz';
+
 
 
 const StudentInfo = ({ navigation,refresh }) => {
@@ -16,6 +19,7 @@ const StudentInfo = ({ navigation,refresh }) => {
   const [studentDetails, setStudentDetails] = useState({});
   const [studentPicture, setStudentPicture] = useState({});
   const [courseDetails, setCourseDetails] = useState({});
+  const [timeLeft, setTimeLeft] = useState('Pending');
   const { room_Nbr, catlog_Nbr, system_Id, seat_Nbr, exam_Dt, startTime, reportId, userAccess, current_Term } = route.params;
 
   const UserAccess = userAccess?.module?.find((item) => item?.FK_ModuleId === 6);
@@ -122,8 +126,8 @@ const StudentInfo = ({ navigation,refresh }) => {
               handleSaveCopy(copyType, tempCopyNumber, index, copyIndex)
             }
           >
-            {/* <Text style={{color:"#fff"}}>Save</Text> */}
-            <MaterialIcons name="done" size={16} color="#fff" style={styles.saveicon} />
+            <Text style={{color:"#fff"}}>Save</Text>
+            {/* <MaterialIcons name="done" size={16} color="#fff" style={styles.saveicon} /> */}
           </Pressable>
         )}
         {/* </>
@@ -169,7 +173,11 @@ const StudentInfo = ({ navigation,refresh }) => {
       const CopyEmptyValues = copiesData?.length > 0 ? copiesData.some(data => data.mainCopy === "" || data.alternateCopies.includes("")) : true;
       if (CopyEmptyValues && status !== "Absent") {
         addToast("Enter the copy details!", "error");
-      } else {
+      }
+      else if(status === "Absent" && copiesData?.length > 0) {
+        addToast("Please remove the copy details for mark Absent!", "error");
+      }
+      else {
         // Check for duplicate mainCopy values
         const uniqueMainCopies = new Set();
         let duplicateFound = false;
@@ -314,9 +322,14 @@ const StudentInfo = ({ navigation,refresh }) => {
   const handleStudentInfoUpdate = async () => {
     try {
       const CopyEmptyValues = copiesData?.length > 0 ? copiesData.some(data => data.mainCopy === "" || data.alternateCopies.includes("")) : true;
-      if (CopyEmptyValues) {
+      // if (CopyEmptyValues) {
+        if (CopyEmptyValues && status !== "Absent" ) {
         addToast("Please enter the copy details!", "error");
-      } else {
+      }
+      else if(status === "Absent" && copiesData?.length > 0) {
+        addToast("Please remove the copy details for mark Absent!", "error");
+      }
+       else {
         // Check for duplicate mainCopy values
         const uniqueMainCopies = new Set();
         let duplicateFound = false;
@@ -681,34 +694,92 @@ const StudentInfo = ({ navigation,refresh }) => {
     fetchData();
   }, [UserAccess,refresh]);
 
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     const now = new Date();
+  //     setCurrentTime(now);
+
+  //     // Extract the hours and minutes from the startTime
+  //     const startHours = new Date(startTime).getUTCHours();
+  //     const startMinutes = new Date(startTime).getUTCMinutes();
+
+  //     // Create today's date with the same time as startTime
+  //     const startToday = new Date(now);
+  //     startToday.setUTCHours(startHours);
+  //     startToday.setUTCMinutes(startMinutes);
+  //     startToday.setUTCSeconds(0);
+  //     startToday.setUTCMilliseconds(0);
+
+  //     const start = startToday.getTime() - (15 * 60 * 1000); // 15 minutes before start time
+  //     const end = startToday.getTime() + (60 * 60 * 1500); // 1 hour after start time
+
+  //     if (now.getTime() >= start && now.getTime() <= end) {
+  //       setIsActive(true);
+  //     } else {
+  //       setIsActive(true);   
+  //       // set false after changes//
+        
+  //     }
+  //   }, 1000);
+
+  //   return () => clearInterval(interval);
+  // }, [startTime]);
+  
   useEffect(() => {
     const interval = setInterval(() => {
       const now = new Date();
       setCurrentTime(now);
 
-      // Extract the hours and minutes from the startTime
-      const startHours = new Date(startTime).getUTCHours();
-      const startMinutes = new Date(startTime).getUTCMinutes();
+      // Parse the exam date and start time
+      const examDate = parseISO(exam_Dt);
+      const start = parseISO(startTime);
 
+      // Check if today is the exam date
+      if (!isSameDay(now, examDate)) {
+        setIsActive(false);
+        let PastDate = isBefore(examDate, now)
+        setTimeLeft(PastDate ? 'Pending': 'Complete');
+        return;
+      }
+
+      // Get the current timezone
+      const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+      // Convert the start time to the current time zone
+      const zonedStart = toZonedTime(start, timeZone);
+      // Extract only the time from the fixed date
+      const startHours = zonedStart.getHours();
+      const startMinutes = zonedStart.getMinutes();
       // Create today's date with the same time as startTime
       const startToday = new Date(now);
-      startToday.setUTCHours(startHours);
-      startToday.setUTCMinutes(startMinutes);
-      startToday.setUTCSeconds(0);
-      startToday.setUTCMilliseconds(0);
+      startToday.setHours(startHours);
+      startToday.setMinutes(startMinutes);
+      startToday.setSeconds(0);
+      startToday.setMilliseconds(0);
 
-      const start = startToday.getTime() - (15 * 60 * 1000); // 15 minutes before start time
-      const end = startToday.getTime() + (60 * 60 * 1500); // 1 hour after start time
+      // Calculate the time window
+      const startWindow = subMinutes(startToday, 15).getTime(); // 15 minutes before start time
+      const endWindow = addMinutes(startToday, 90).getTime(); // 1.5 hours after start time
+      console.log(now.getTime(),startWindow,endWindow)
 
-      if (now.getTime() >= start && now.getTime() <= end) {
+      if (now.getTime() >= startWindow && now.getTime() <= endWindow) {
         setIsActive(true);
+
+        // Calculate the countdown
+        const timeDiffInSeconds = differenceInSeconds(endWindow, now.getTime());
+        const minutes = Math.floor(timeDiffInSeconds / 60);
+        const seconds = timeDiffInSeconds % 60;
+        setTimeLeft(`${minutes}:${seconds < 10 ? '0' : ''}${seconds} min`);
       } else {
-        setIsActive(false);
+        setIsActive(false); // make false after changes
+        setTimeLeft(now.getTime() > endWindow ? 'Complete' : 'Pending');
+  
       }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [startTime]);
+  }, [startTime, exam_Dt]);
+
   return loading ? (
     <ActivityIndicator size="large" color="#0000ff" />
   ) : (
@@ -728,6 +799,18 @@ const StudentInfo = ({ navigation,refresh }) => {
       ) : (
         <View>
           <View style={styles.studentInfoWrap}>
+          <View style={styles.countWrap}>
+            <View style={styles.countDown}>
+            <Text style={styles.cotext}>Time Left</Text>
+              <View style={[styles.countbg1,  timeLeft === 'Complete' && styles.completeBackground] }>     
+                <Text  style={[styles.count,]}>
+                {timeLeft}
+                </Text>
+              </View>
+     
+            </View>
+        
+        </View>
             <Text style={styles.infoHeader}>Student Info:</Text>
             {/* <Text>Current Time: {currentTime}</Text> */}
             <View style={styles.infoContainer}>
@@ -1124,6 +1207,7 @@ const StudentInfo = ({ navigation,refresh }) => {
                               styles.sheetDetails,
                               styles.box,
                               styles.boxtext,
+                              styles.boxcopy,
                             ]}
                           >
                             {/* <Text style={[styles.header]}>
@@ -1132,7 +1216,7 @@ const StudentInfo = ({ navigation,refresh }) => {
                             <Text style={[styles.examname]}>
                               {copy.mainCopy}
                             </Text>
-                            <View style={styles.iconsWrap}>
+                            <View style={[styles.iconsWrap]}>
                               {/* {!(( copy.alternateCopies.length > 0 || copy.alternateCopies?.includes("")) && isActive */}
                               {isActive
                                && (
@@ -1159,14 +1243,15 @@ const StudentInfo = ({ navigation,refresh }) => {
                               AnswerSheet {index + 1}
                             </Text> */}
                             <MaterialCommunityIcons
+                              style={styles.gapBwIcon}
                               name="barcode-scan"
                               onPress={() =>
                                 startScanning("AnswerSheet", index)
                               }
-                              size={40}
+                              size={50}
                               color="black"
                             />
-                            <Text>OR</Text>
+                            <Text style={styles.gapBwIcon}>OR</Text>
                             {renderCopyInput("AnswerSheet", index, '')}
                           </View>
                         )}
@@ -1273,6 +1358,76 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 10,
   },
+
+  countWrap:{
+    flexDirection:"row",
+    alignSelf:"flex-end",
+  },
+  countDown:{
+    flexDirection:"row",
+    alignItems:"center"
+  },
+
+  countbg1:{
+    width:65,
+    height:65,
+    borderRadius:65,
+    
+ 
+
+    //  width:30,
+    //  height:30,
+     alignItems: "center",
+     justifyContent: "center",
+     backgroundColor: "#0cb551",
+     
+  },
+  countbg2:{
+    borderRadius:3,
+    width:30,
+    height:30,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#ea4242",
+  },
+  countbg3:{
+    borderRadius:3,
+    width:30,
+    height:30,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#fdbf48",
+  },
+  countbg4:{
+    borderRadius:3,
+    width:30,
+    height:30,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#404142",
+  },
+  countMain:{
+   flexDirection:"row",
+   alignItems:"center",
+   alignSelf:"center",
+   marginTop: 0,
+   marginBottom: 20,
+   marginRight: 10,
+   marginLeft:0
+  },
+  count:{
+    color:"#fff",
+    textAlign:"center",
+  },
+  cotext:{
+    color:"#000",
+    marginRight:14,
+    fontWeight:"600",
+    alignItems:"center",
+    textAlign:"center",
+  
+    fontSize:16,
+  },
   infoContainer: {
     backgroundColor: "#FFFFFF",
     padding: 12,
@@ -1329,16 +1484,20 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     display: "flex",
     alignItems: "center",
-    maxWidth: 100
+    maxWidth: 150
   },
   input: {
     flex: 1,
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 4,
-    padding: 8,
+    // padddingTop:10,
+    // paddingBottom:10,
+    // paddingLeft:5,
+    // paddingRight:5,
+    padding:8,
     marginRight: 8,
-    maxWidth: 100
+    maxWidth: 150
   },
   addButton: {
     backgroundColor: "#129912",
@@ -1424,12 +1583,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#f9f9f9",
     display: "flex",
     alignItems: "center",
-    justifyContent: "space-around"  
+    justifyContent: "flex-start"  
+  },
+
+  boxcopy:{
+  justifyContent:"space-between"
   },
   boxtext: {
     flexDirection: "row",
     color: "#000000",
-    justifyContent: "space-between",
   },
   iconsWrap: {
     flexDirection: "row",
@@ -1452,10 +1614,12 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 10,
+ 
   },
   answerSheetWrap: {
     flexDirection: "row",
     justifyContent: "space-between",
+  
     width: "auto",
     alignItems: "center",
   },
@@ -1564,8 +1728,12 @@ const styles = StyleSheet.create({
   //   width: "20%",
   // },
   doneWrap: {
-    backgroundColor: "green",
+    backgroundColor: "rgb(4 63 127)",
     borderRadius: 4,
+    padding:10,
+    width:75,
+    textAlign:"center",
+    alignItems:"center"
   },
   tableinput: {
    display: "none"
@@ -1599,5 +1767,12 @@ const styles = StyleSheet.create({
     width: 75,
     flexDirection: "column",
     marginRight: 0,
+  },
+  completeBackground:{
+ 
+    backgroundColor:"red"
+  },
+  gapBwIcon: {
+    marginRight: 6
   }
 });
