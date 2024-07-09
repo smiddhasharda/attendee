@@ -130,7 +130,7 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Image style={styles.bgimg1} source={require("../../local-assets/login-shape-bg-1.png")} />
+      <Image style={styles.bgimg1} source={require("../../local-assets/login-shape-bg-1-new.png")} />
       <View style={styles.form}>
         <View style={styles.logininfoWrap}>
           <View style={styles.loginheadWrap}>
@@ -158,7 +158,7 @@ const LoginScreen = ({ navigation }) => {
           <View style={{ marginTop: 14  }}>
             <Text style={styles.label}>Email Id</Text>
             {isEmailTooltipVisible && (
-              <Tooltip>
+              <Tooltip style={{backgroundColor:"transparent", }}>
                 <View style={styles.emailTooltipContainer}>
                   <Text style={styles.emailTooltipTextStyle}>
                     That
@@ -254,7 +254,7 @@ const LoginScreen = ({ navigation }) => {
           </View>
         </View>
       </View>
-      <Image style={styles.bgimages2} source={require("../../local-assets/login-shape-bg-2.png")} />
+      <Image style={styles.bgimages2} source={require("../../local-assets/login-shape-bg-2-new.png")} />
     </View>
   );
 };
