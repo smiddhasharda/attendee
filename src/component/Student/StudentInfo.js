@@ -773,6 +773,7 @@ const StudentInfo = ({ navigation,refresh }) => {
       } else {
         setIsActive(false); // make false after changes
         setTimeLeft(now.getTime() > endWindow ? 'Complete' : 'Pending');
+  
       }
     }, 1000);
 
@@ -1364,12 +1365,14 @@ const styles = StyleSheet.create({
   },
   countDown:{
     flexDirection:"row",
+    alignItems:"center"
   },
 
   countbg1:{
-    width:70,
-    height:70,
-    borderRadius:55,
+    width:65,
+    height:65,
+    borderRadius:65,
+    
  
 
     //  width:30,
@@ -1418,11 +1421,11 @@ const styles = StyleSheet.create({
   },
   cotext:{
     color:"#000",
-    marginRight:5,
+    marginRight:14,
     fontWeight:"600",
     alignItems:"center",
     textAlign:"center",
-    marginTop:18,
+  
     fontSize:16,
   },
   infoContainer: {
