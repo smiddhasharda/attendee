@@ -465,7 +465,7 @@ const StudentInfo = ({ navigation,refresh }) => {
       );
       if (response) {
         setStudentDetails(response?.data?.receivedData?.[0]);
-        setLoading(false);
+        // setLoading(false);
       }
     } catch (error) {
       setLoading(false);
@@ -581,21 +581,37 @@ const StudentInfo = ({ navigation,refresh }) => {
         setAttendenceStatus(AttendenceStatus);
         setStatus(AttendenceStatus === "Debarred" ? "Absent" : "Present");
         setDisabledStatus(AttendenceStatus === "Debarred" ? "Absent" : "Present");
-        setLoading(false);
+        // setLoading(false);
       }
     } catch (error) {
       setLoading(false);
       handleAuthErrors(error);
     }
   };
+  // const fetchData = async () => {
+  //   setLoading(true);
+  //   await handleGetStudentInfo();
+  //   await handleGetStudentCouseInfo();
+  //   await handleGetStudentAttendenceInfo();
+  //   // await handleGetStudentPicture();
+  //   (await reportId) ? handleGetCopyData() : "";
+  // };
+
   const fetchData = async () => {
     setLoading(true);
-    await handleGetStudentInfo();
-    await handleGetStudentCouseInfo();
+    try {
+      await handleGetStudentInfo();
+      await handleGetStudentCouseInfo();
     await handleGetStudentAttendenceInfo();
-    // await handleGetStudentPicture();
-    (await reportId) ? handleGetCopyData() : "";
+      // await handleGetStudentPicture();
+      if (await reportId) {
+        await handleGetCopyData();
+      }
+    } finally {
+      setLoading(false);
+    }
   };
+  
   const getStatuscolor = () => {
     switch (status) {
       case 'UFM':
