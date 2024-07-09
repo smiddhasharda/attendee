@@ -948,7 +948,7 @@ const StudentInfo = ({ navigation,refresh }) => {
 
       // Calculate the time window
       const startWindow = subMinutes(startToday, 15).getTime(); // 15 minutes before start time
-      const endWindow = addMinutes(startToday, 200).getTime(); // 1.5 hours after start time
+      const endWindow = addMinutes(startToday, 90).getTime(); // 1.5 hours after start time
 
       if (now.getTime() >= startWindow && now.getTime() <= endWindow) {
         setIsActive(true);
