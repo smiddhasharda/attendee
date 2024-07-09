@@ -49,7 +49,7 @@ function RoomDetail({navigation,refresh}) {
     navigation.navigate("StudentInfo", { room_Nbr: studentData.ROOM_NBR ,exam_Dt: studentData.EXAM_DT,catlog_Nbr: studentData.CATALOG_NBR ,system_Id:studentData.EMPLID, seat_Nbr: studentData.PTP_SEQ_CHAR ,startTime: startTime,current_Term:studentData.STRM,reportId: presentStudentList?.filter((item)=>item.EMPLID === Number(studentData.EMPLID))?.[0]?.PK_Report_Id ,userAccess });
    }
    else{
-    addToast("User not available!", "error");
+    addToast("Student not available in this room!", "error");
     handleCancel();
    }
   

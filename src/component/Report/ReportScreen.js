@@ -250,34 +250,50 @@ const ReportScreen = ({userAccess,refresh}) => {
   {
     accessorKey: 'NAME_FORMAL',
     header: 'Name',
-    size: 200,
+    size: 150,
   },
   {
-    accessorFn: (row) => row?.copyData?.[0]?.copyNumber || "-",
-    header: "Copy 1 Data"
+    accessorKey: 'CATALOG_NBR',
+    header: 'Catalog Number',
+    size: 150,
   },
   {
-    accessorFn: (row) => row?.copyData?.[1]?.copyNumber || "-",
-    header: "Copy 2 Data"
+    accessorKey: "EXAM_DT",
+    id: "EXAM_DT",
+    header: "Exam Date",
+    accessorFn: (row) => row?.EXAM_DT || "-",
+    Cell: ({ cell }) =>
+      cell?.row?.original?.EXAM_DT
+        ? new Date(cell?.row?.original?.EXAM_DT)?.toLocaleDateString("en-GB")
+        : "-",
+    filterFn: "lessThanOrEqualTo",
+    sortingFn: "datetime",
   },
   {
-    accessorFn: (row) => row?.copyData?.[2]?.copyNumber || "-",
-    header: "Copy 3 Data"
-  },
-  {
-    accessorFn: (row) => row?.copyData?.[3]?.copyNumber || "-",
-    header: "Copy 4 Data"
+    accessorKey: "EXAM_START_TIME",
+    id: "EXAM_START_TIME",
+    header: "Exam Shift",
+    accessorFn: (row) => row?.EXAM_START_TIME || "-",
+    Cell: ({ cell }) =>
+      cell?.row?.original?.EXAM_START_TIME
+        ? convertedTime(cell?.row?.original?.EXAM_START_TIME)
+        : "-",
+    filterVariant:"multi-select",
+    filterSelectOptions: shiftList.map(shift => ({
+      label: convertedTime(shift.label),
+      value: shift.value,
+    })),
   },
   {
     accessorKey: 'ROOM_NBR',
-    header: 'Room',
+    header: 'Room No.',
     size: 150,
     filterVariant: "multi-select",
     filterSelectOptions: roomList,
   },
   {
     accessorKey: 'PTP_SEQ_CHAR',
-    header: 'Seat',
+    header: 'Seat No.',
     size: 150,
   },
   {
@@ -364,37 +380,21 @@ const ReportScreen = ({userAccess,refresh}) => {
     size: 150,
   },
   {
-    accessorKey: 'CATALOG_NBR',
-    header: 'Catalog Number',
-    size: 150,
+    accessorFn: (row) => row?.copyData?.[0]?.copyNumber || "-",
+    header: "Copy 1 Data"
   },
   {
-    accessorKey: "EXAM_DT",
-    id: "EXAM_DT",
-    header: "Exam Date",
-    accessorFn: (row) => row?.EXAM_DT || "-",
-    Cell: ({ cell }) =>
-      cell?.row?.original?.EXAM_DT
-        ? new Date(cell?.row?.original?.EXAM_DT)?.toLocaleDateString("en-GB")
-        : "-",
-    filterFn: "lessThanOrEqualTo",
-    sortingFn: "datetime",
+    accessorFn: (row) => row?.copyData?.[1]?.copyNumber || "-",
+    header: "Copy 2 Data"
   },
   {
-    accessorKey: "EXAM_START_TIME",
-    id: "EXAM_START_TIME",
-    header: "Exam Start Time / Shift",
-    accessorFn: (row) => row?.EXAM_START_TIME || "-",
-    Cell: ({ cell }) =>
-      cell?.row?.original?.EXAM_START_TIME
-        ? convertedTime(cell?.row?.original?.EXAM_START_TIME)
-        : "-",
-    filterVariant:"multi-select",
-    filterSelectOptions: shiftList.map(shift => ({
-      label: convertedTime(shift.label),
-      value: shift.value,
-    })),
+    accessorFn: (row) => row?.copyData?.[2]?.copyNumber || "-",
+    header: "Copy 3 Data"
   },
+  {
+    accessorFn: (row) => row?.copyData?.[3]?.copyNumber || "-",
+    header: "Copy 4 Data"
+  }
 ], [schoolList,roomList,shiftList]);
 
      // Export CSV File
@@ -515,7 +515,7 @@ const ReportScreen = ({userAccess,refresh}) => {
             }}
             horizontal
             keyExtractor={(item) => item.EXAM_DT}
-          /> : <Text style={styles.nodatestext}>There is no Dates Available Between {startDate.toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-')} to {endDate.toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-')}</Text>}
+          /> : <Text style={styles.nodatestext}>There is no data available for the dates between {startDate.toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-')} to {endDate.toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-')}</Text>}
         </View>
       </View>
      
