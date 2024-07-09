@@ -221,7 +221,6 @@ import { formatInTimeZone } from 'date-fns-tz';
   const handleEditInvigilator = async (selectedData) => {
     const selectedDate = parseISO(selectedData.date);
     const currentDate = new Date();
-    console.log("DATA : ",selectedDate, currentDate);
     if (!isBefore(selectedDate, currentDate)) {
       // Prevent editing if the date is less than the current date
       addToast("You cannot edit past invigilator duties.", "error");
