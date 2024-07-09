@@ -36,7 +36,7 @@ const CustomDateTimePicker = (props,inputStyle, icon) => {
           // timeFormat="HH:mm"
           // timeIntervals={15}
           // dateFormat="dd MM, yyyy h:mm aa"
-          dateFormat="dd MM, yyyy"
+          dateFormat="dd/MM/yyyy"
           customInput={<TextInput style={[styles.input, inputStyle]} />}
           // inline={true}
           // showIcon={true}
