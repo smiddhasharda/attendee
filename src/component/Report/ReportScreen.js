@@ -23,7 +23,7 @@ const ReportScreen = ({userAccess,refresh}) => {
 
   const [startDate, setStartDate] = useState(pastMonthDate);
   const [endDate, setEndDate] = useState(currentDate);
-  const [tableHead, setTableHead] = useState(['System Id', 'Roll Number', 'Name','Copy','Room','Seat','Status','School','Graduation','Stream','Catelog Number','Exam Date','Exam Time']);
+  const [tableHead, setTableHead] = useState(['System Id', 'Roll Number', 'Name','Catalog Number','Exam Date','Exam Start Time','Room','Seat','Status','Attendance Status','School','Graduation','Stream','Copy 1','Copy 2','Copy 3','Copy 4']);
   const [tableData, setTableData] = useState([]);
   const [schoolList, setSchoolList] = useState([]);
   const [roomList, setRoomList] = useState([]);
@@ -214,6 +214,10 @@ const ReportScreen = ({userAccess,refresh}) => {
       return parsedDate;
     };
     
+    const parseExcelDate = (SelectedDate) => {
+      return format(new Date(SelectedDate), 'yyyy-MM-dd');
+      // return `${year}-${month}-${day}`;
+    };
     const handleDateClick = (date) => {
       setExamSelectedDate(date);
       handleGetExamReport(date);
@@ -415,16 +419,20 @@ const ReportScreen = ({userAccess,refresh}) => {
           `"${row.EMPLID || '-'}"`,
           `"${row.ADM_APPL_NBR || '-'}"`,
           `"${row.NAME_FORMAL || '-'}"`,
+          `"${row.CATALOG_NBR || '-'}"`,
+          `"${parseExcelDate(row.EXAM_DT) || '-'}"`,
+          `"${convertedTime(row.EXAM_START_TIME) || '-'}"`,
           `"${row.ROOM_NBR || '-'}"`,
           `"${row.PTP_SEQ_CHAR || '-'}"`,
-          `"${row.Status || '-'}"`,
+          `"${row.Status || '-'}"`,          
           `"${row.Attendece_Status || '-'}"`,
           `"${row.DESCR || '-'}"`,
           `"${row.DESCR2 || '-'}"`,
           `"${row.DESCR3 || '-'}"`,
-          `"${row.CATALOG_NBR || '-'}"`,
-          `"${row.EXAM_DT || '-'}"`,
-          `"${convertedTime(row.EXAM_START_TIME) || '-'}"`
+          `"${row.copyData?.[0]?.copyNumber || '-'}"`,
+          `"${row.copyData?.[1]?.copyNumber || '-'}"`,
+          `"${row.copyData?.[2]?.copyNumber || '-'}"`,
+          `"${row.copyData?.[3]?.copyNumber || '-'}"`
         ])
       ];
     
@@ -443,16 +451,20 @@ const ReportScreen = ({userAccess,refresh}) => {
           `"${original.EMPLID || '-'}"`,
           `"${original.ADM_APPL_NBR || '-'}"`,
           `"${original.NAME_FORMAL || '-'}"`,
+          `"${original.CATALOG_NBR || '-'}"`,
+          `"${parseExcelDate(original.EXAM_DT) || '-'}"`,
+          `"${convertedTime(original.EXAM_START_TIME) || '-'}"`,
           `"${original.ROOM_NBR || '-'}"`,
           `"${original.PTP_SEQ_CHAR || '-'}"`,
-          `"${original.Status || '-'}"`,
+          `"${original.Status || '-'}"`,          
           `"${original.Attendece_Status || '-'}"`,
           `"${original.DESCR || '-'}"`,
           `"${original.DESCR2 || '-'}"`,
           `"${original.DESCR3 || '-'}"`,
-          `"${original.CATALOG_NBR || '-'}"`,
-          `"${original.EXAM_DT || '-'}"`,
-          `"${convertedTime(original.EXAM_START_TIME) || '-'}"`
+          `"${original.copyData?.[0]?.copyNumber || '-'}"`,
+          `"${original.copyData?.[1]?.copyNumber || '-'}"`,
+          `"${original.copyData?.[2]?.copyNumber || '-'}"`,
+          `"${original.copyData?.[3]?.copyNumber || '-'}"`
         ])
       ];
     

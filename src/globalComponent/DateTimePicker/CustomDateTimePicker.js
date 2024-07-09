@@ -63,7 +63,9 @@ const CustomDateTimePicker = (props,inputStyle, icon) => {
     }
   };
 
-  return <View>{renderDatePicker()} </View>;
+  return <View>
+    {renderDatePicker()}
+   </View>;
 };
 const styles = StyleSheet.create({
   input: {
