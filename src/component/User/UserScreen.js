@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import {View, Text, TextInput, FlatList, StyleSheet, Pressable, LayoutAnimation} from "react-native";
+import {View, Text, TextInput, FlatList, StyleSheet, Pressable, LayoutAnimation, Dimensions} from "react-native";
 import { insert, fetch, update } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -11,6 +11,7 @@ import CheckBox from "expo-checkbox";
 import { ScrollView } from "react-native-gesture-handler";
 import { Ionicons,AntDesign,Feather} from "@expo/vector-icons";
 import { display } from "@mui/system";
+import Pagination from "../../globalComponent/Pagination/PaginationComponent";
 
 const UserScreen = ({userAccess,refresh}) => { 
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 4 );
@@ -34,6 +35,20 @@ const UserScreen = ({userAccess,refresh}) => {
   const [isEmplyIdTooltipVisible, setEmplyIdTooltipVisible] = useStateWithCallback(false);
   const [isContactNumberTooltipVisible, setContactNumberTooltipVisible] = useStateWithCallback(false);
   const [isPasswordTooltipVisible, setPasswordTooltipVisible] = useStateWithCallback(false);
+    //---------------------------------------------------- dimension based view--------------------------------------------//
+    const { width, height } = Dimensions.get('window');
+    const isMobile = width < 768; 
+    const tableWidth = isMobile ? width - 10 : width * 0.96; 
+    const tableHeight = isMobile ? height * 0.99 : height * 0.6; 
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const pageSize = 10;
+  const paginatedData = userList.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+  // const duplicatePageSize = 10;
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
 
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
@@ -645,9 +660,9 @@ const UserScreen = ({userAccess,refresh}) => {
                   </Pressable>) }
           </View>
           <ScrollView horizontal>
-          <View style={{minHeight:"80%",flex:1 ,minWidth:100}}>
+          <View style={{maxHeight: tableHeight, minWidth: isMobile ? 100 :tableWidth }}>
         <FlatList 
-          data={userList}
+          data={paginatedData}
           keyExtractor={(item) => item.user_id.toString()}
           ListHeaderComponent={() => (
             <View style={styles.tableHeader}>
@@ -676,9 +691,17 @@ const UserScreen = ({userAccess,refresh}) => {
               </View>
             </View>
           )}
+          stickyHeaderIndices={[0]} 
          />
          </View>
          </ScrollView>
+         
+         <Pagination
+                    totalItems={userList?.length}
+                    pageSize={pageSize}
+                    currentPage={currentPage}
+                    onPageChange={handlePageChange}
+              />
       </View>)
       }
       </View>     

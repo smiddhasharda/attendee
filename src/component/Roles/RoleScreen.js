@@ -8,6 +8,7 @@ import styles from "./RoleScreen.style";
 import { Ionicons,Feather} from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
 import { display } from "@mui/system";
+import Pagination from "../../globalComponent/Pagination/PaginationComponent";
 const RoleScreen = ({userAccess,refresh}) => {
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 2 );
   const { addToast } = useToast();
@@ -23,6 +24,13 @@ const RoleScreen = ({userAccess,refresh}) => {
   const [moduleList, setModuleList] = useState([]);
   const [tempModulePermission, setTempModulePermission] = useState([]);
   
+  const [currentPage, setCurrentPage] = useState(1);
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+  const pageSize = 10;
+  const paginatedData = roleList.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
 
@@ -429,56 +437,62 @@ const RoleScreen = ({userAccess,refresh}) => {
           </Pressable> 
           </View>
         }
-        <View style={{height:"90%"}}>
-      <FlatList
-        data={roleList}
-        style={styles.rolesTbl}
-        keyExtractor={(item) => item.PK_RoleId.toString()}
-          ListHeaderComponent={() => (
-            <View style={styles.tableHeader}>
-              <Text numberOfLines={1} style={[styles.tableHeaderText, {width:"50%", display: "inline-block"}]}>Role Name</Text>
-              <Text style={[styles.tableHeaderText, {width:"30%", display: "inline-block",}]}>Status</Text> 
-              <Text style={[styles.tableHeaderText, {width:"20%", display: "inline-block"}]}>Actions</Text>
-            </View>
-          )}
-          renderItem={({ item }) => (
-            <View style={[styles.listItem]}>
-              <View style={[styles.listItemText, {width:"50%", display: "inline-block"}]}>
-                <Text >
-                  {item.roleName}
-                </Text>
-              </View>
-              <View style={[styles.listItemText, {width:"30%", display: "inline-block" ,}]}>
-                <Pressable        
-                style={[{ display: "inline-block" ,}]}          
-                  onPress={() => UserAccess?.update === 1 ? handleRoleStatus(item.PK_RoleId, item?.isActive) : ''} 
-                >
-                  <Text
-                    style={[
-                      styles.listItemText, styles.columnStatus,
-                    
-                      item.isActive
-                        ? styles.actionbtn
-                        : styles.inactivebtn,
-                    ]}
-                  >
-                    {item.isActive ? "Active" : "Inactive"}
-                  </Text>
-                </Pressable>
-              </View>
-              <View style={[styles.listItemText, {width:"20%", alignItems: "center", display: "inline-block"}]}>
-                {UserAccess?.update === 1 ?
-                 (<Pressable style={[styles.listItemEditButton,{display:"inline-block" }]  } 
-                 onPress={() => handleEditRole(item)}>
-                     <Text style={[styles.listItemEditText, styles.columnAction,]}>
-                     <Feather name="edit" size={16} color="#0C7C62" />
-                     </Text>
-                  </Pressable>) : (<Text>-</Text>)}
-              </View>
-            </View>
-          )}
-      />
-      </View>
+            <View style={{maxHeight:"100%"}}>
+                <FlatList
+                  data={paginatedData}
+                  style={styles.rolesTbl}
+                  keyExtractor={(item) => item.PK_RoleId.toString()}
+                    ListHeaderComponent={() => (
+                      <View style={styles.tableHeader}>
+                        <Text numberOfLines={1} style={[styles.tableHeaderText, {width:"50%", display: "inline-block"}]}>Role Name</Text>
+                        <Text style={[styles.tableHeaderText, {width:"30%", display: "inline-block",}]}>Status</Text> 
+                        <Text style={[styles.tableHeaderText, {width:"20%", display: "inline-block"}]}>Actions</Text>
+                      </View>
+                    )}
+                    renderItem={({ item }) => (
+                      <View style={[styles.listItem]}>
+                        <View style={[styles.listItemText, {width:"50%", display: "inline-block"}]}>
+                          <Text >
+                            {item.roleName}
+                          </Text>
+                        </View>
+                        <View style={[styles.listItemText, {width:"30%", display: "inline-block" ,}]}>
+                          <Pressable        
+                          style={[{ display: "inline-block" ,}]}          
+                            onPress={() => UserAccess?.update === 1 ? handleRoleStatus(item.PK_RoleId, item?.isActive) : ''} 
+                          >
+                            <Text
+                              style={[
+                                styles.listItemText, styles.columnStatus,
+                              
+                                item.isActive
+                                  ? styles.actionbtn
+                                  : styles.inactivebtn,
+                              ]}
+                            >
+                              {item.isActive ? "Active" : "Inactive"}
+                            </Text>
+                          </Pressable>
+                        </View>
+                        <View style={[styles.listItemText, {width:"20%", alignItems: "center", display: "inline-block"}]}>
+                          {UserAccess?.update === 1 ?
+                          (<Pressable style={[styles.listItemEditButton,{display:"inline-block" }]  } 
+                          onPress={() => handleEditRole(item)}>
+                              <Text style={[styles.listItemEditText, styles.columnAction,]}>
+                              <Feather name="edit" size={16} color="#0C7C62" />
+                              </Text>
+                            </Pressable>) : (<Text>-</Text>)}
+                        </View>
+                      </View>
+                    )}
+                />
+          </View>
+          <Pagination
+                    totalItems={roleList?.length}
+                    pageSize={pageSize}
+                    currentPage={currentPage}
+                    onPageChange={handlePageChange}
+              />
         </View>)
         }
     </View>

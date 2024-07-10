@@ -328,7 +328,7 @@ const pickFile = async () => {
             <FontAwesome name="remove" size={20} color="red" />
               </Pressable></Text>
               <Text style={styles.previewTitle}>Preview:</Text>
-              <ScrollView horizontal={true} vertical={true}>
+              <ScrollView horizontal >
                 <FlatList
                   data={paginatedData}
                   keyExtractor={(item, index) => index.toString()}
@@ -343,6 +343,8 @@ const pickFile = async () => {
                         <Text  style={styles.listItemText}>{item.duty_status}</Text>                 
           </View>
                   )}
+                    style={{maxHeight:200}}
+                    stickyHeaderIndices={[0]} 
                 />
               </ScrollView>
               <Pagination
@@ -354,36 +356,39 @@ const pickFile = async () => {
             {duplicateData?.length > 0  && 
                 <View style={styles.fileDetails}>
                 <Text style={styles.previewTitle}>Duplicate Rows:</Text>
-                <ScrollView horizontal={true} vertical={true}>
-                <FlatList
-                  data={paginatedDuplicateData}
-                  keyExtractor={(item, index) => index.toString()}
-                  ListHeaderComponent={props?.renderData}
-                  renderItem={({ item }) => (
-                    <View style={styles.listItem}>
-                        <Text style={styles.listItemText}>{item.employeeId}</Text>
-                        <Text  style={styles.listItemText}>{item.invigilatorName}</Text>
-                        <Text  style={styles.listItemText}>{item.date}</Text>
-                        <Text  style={styles.listItemText}>{item.shift}</Text>
-                        <Text  style={styles.listItemText}>{item.room}</Text>
-                        <Text  style={styles.listItemText}>{item.duty_status}</Text>                 
-                       </View>
-                  )}
-                />
-                  <Pagination
-          totalItems={duplicateData.length}
-          pageSize={duplicatePageSize}
-          currentPage={currentDuplicatePage}
-          onPageChange={handleDuplicatePageChange}
-        />
+                <ScrollView horizontal={true}>
+                  <FlatList
+                    data={paginatedDuplicateData}
+                    keyExtractor={(item, index) => index.toString()}
+                    ListHeaderComponent={props?.renderData}
+                    renderItem={({ item }) => (
+                      <View style={styles.listItem}>
+                          <Text style={styles.listItemText}>{item.employeeId}</Text>
+                          <Text  style={styles.listItemText}>{item.invigilatorName}</Text>
+                          <Text  style={styles.listItemText}>{item.date}</Text>
+                          <Text  style={styles.listItemText}>{item.shift}</Text>
+                          <Text  style={styles.listItemText}>{item.room}</Text>
+                          <Text  style={styles.listItemText}>{item.duty_status}</Text>                 
+                        </View>
+                    )}
+                    style={{maxHeight:200}}
+                    stickyHeaderIndices={[0]} 
+                  />
                 </ScrollView>
+                
+                <Pagination
+                      totalItems={duplicateData.length}
+                      pageSize={duplicatePageSize}
+                      currentPage={currentDuplicatePage}
+                      onPageChange={handleDuplicatePageChange}
+                    />
               </View>
             }
             <View style={styles.buttonContainer}>
             {!(duplicateData?.length > 0)  && <Pressable style={styles.uploadButton} onPress={() => handleGetEmployeeSearch()}>
                 <Text style={styles.buttonText}>Upload</Text>
               </Pressable>}
-              <Pressable style={styles.cancelButton} onPress={() => cancelUpload()}>
+              <Pressable style={[styles.cancelButton ,{alignSelf:"flex-start", justifyContent:"flex-start"}]} onPress={() => cancelUpload()}>
                 <Text style={styles.buttonText}>Cancel</Text>
               </Pressable>
             </View>
@@ -395,7 +400,7 @@ const pickFile = async () => {
     </Pressable>
       )}
       {props?.handleClose && (
-         <Pressable style={[styles.cancelButton,{position:"relative", top:-38}]} onPress={() => props?.handleClose()}>
+         <Pressable style={[styles.gobackButton,{position:"fixed",  }]} onPress={() => props?.handleClose()}>
          <Text style={styles.buttonText}>Go Back</Text>
         </Pressable>
       )}
@@ -425,7 +430,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   fileDetails: {
-    alignItems: 'center',
+    // alignItems: 'center',
   },
   fileName: {
     fontSize: 16,
@@ -448,7 +453,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginTop: 10,
     justifyContent:"space-between",
-    alignSelf:"flex-end"
+    // alignSelf:"flex-end"
   },
   uploadButton: {
     padding: 10,
@@ -457,6 +462,13 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   cancelButton: {
+    padding: 10,
+    backgroundColor: '#f44336',
+    borderRadius: 5,
+    width:100,
+    // alignSelf:"flex-end",
+  },
+  gobackButton:{
     padding: 10,
     backgroundColor: '#f44336',
     borderRadius: 5,
