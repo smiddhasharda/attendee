@@ -283,6 +283,7 @@ import { formatInTimeZone } from 'date-fns-tz';
     duty_status:"Primary",
     isActive: 1,
     });
+    setOpen(0);
     setSearchedEmployee('');
     await handleGetInigilatorDuty();
   };
