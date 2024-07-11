@@ -1078,7 +1078,7 @@ const StudentInfo = ({ navigation,refresh }) => {
                 <Text style={styles.value}>{seat_Nbr}</Text>
               </View>
               <View style={styles.infoItem}>
-                <Text style={styles.label}>Attendance Status:</Text>
+                <Text style={styles.label}>Class Status:</Text>
                 <Text style={[styles.value, {marginBottom: 10}, getAttendenceStatuscolor()]}>
                   {attendenceStatus}
                 </Text>
