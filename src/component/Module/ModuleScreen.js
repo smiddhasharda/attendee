@@ -5,12 +5,15 @@ import {
   TextInput,
   FlatList,
   Pressable,
+  Dimensions
 } from "react-native";
 import { insert, fetch, update,view } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import styles from "./ModuleScreen.style";
 import { Ionicons, Feather } from "@expo/vector-icons";
+import Pagination from "../../globalComponent/Pagination/PaginationComponent";
+
 
 const ModuleScreen = ({ userAccess,refresh }) => {
   const userAccessForModule = userAccess?.module?.find(item => item?.FK_ModuleId === 3);
@@ -23,8 +26,21 @@ const ModuleScreen = ({ userAccess,refresh }) => {
     moduleStatus: 1,
   });
 
+
+  const [currentPage, setCurrentPage] = useState(1);
   const [moduleList, setModuleList] = useState([]);
   const [moduleContainerVisible, setModuleContainerVisible] = useState(false);
+  
+const handlePageChange = (page) => {
+  setCurrentPage(page);
+};
+const pageSize = 10;
+const paginatedData = moduleList.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+    //---------------------------------------------------- dimension based view--------------------------------------------//
+    const { width, height } = Dimensions.get('window');
+    const isMobile = width < 768; 
+    const tableWidth = isMobile ? width - 10 : width * 0.96; 
+    const tableHeight = isMobile ? height * 0.99 : height * 0.6; 
 
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
@@ -249,9 +265,9 @@ const ModuleScreen = ({ userAccess,refresh }) => {
                 </View>
               )
             }
-            <View style={{height:"80%"}}>
+            <View style={{maxHeight: tableHeight, minWidth: isMobile ? 100 :tableWidth}}>
               <FlatList
-                data={moduleList}
+                data={paginatedData}
                 style={styles.modulesTbl}
                 keyExtractor={item => item.PK_ModuleId.toString()}
                 ListHeaderComponent={() => (
@@ -284,6 +300,13 @@ const ModuleScreen = ({ userAccess,refresh }) => {
                 stickyHeaderIndices={[0]}  
               />
             </View>
+
+            <Pagination
+                    totalItems={moduleList?.length}
+                    pageSize={pageSize}
+                    currentPage={currentPage}
+                    onPageChange={handlePageChange}
+              />
         </View>
       )}
     </View>
