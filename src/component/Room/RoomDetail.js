@@ -40,6 +40,7 @@ function RoomDetail({navigation,refresh}) {
 
   const [scannedData, setScannedData] = useState(null);
 
+  
   const handleScannedData = (ScannedData) => {
     setScannedData(ScannedData);
     setIsScanning(false);
@@ -59,6 +60,11 @@ function RoomDetail({navigation,refresh}) {
     navigation.setOptions({ headerShown: true});
   };
 
+  const { width, height } = Dimensions.get('window');
+  const isMobile = width < 768; 
+  const tableWidth = isMobile ? width - 10 : width * 0.96; 
+  const tableHeight = isMobile ? height * 0.8 : height * 0.66; 
+  
   const startScanning = () => {
     setIsScanning(true);
     navigation.setOptions({ headerShown: false});
@@ -242,33 +248,45 @@ const formattedShiftTimePrefix = formatShiftTimePrefix(startTime);
         
           </View>
           
-          <View style={styles.countWrap}>
+          <View style={[styles.countWrap,isMobile ? styles.mobstatus : ''] }>
+          {/* <View style={isMobile ? styles.mobcolumn : styles.desktop}> */}
             <View style={styles.countMain}>
               <View style={styles.countbg1}>
-                <Text style={styles.count}>{presentStudentList?.filter((item)=> item?.Status === "Present")?.length || "0"}</Text>
+                <Text style={[styles.count,isMobile ? { fontSize: 12 } : {}]}>{presentStudentList?.filter((item)=> item?.Status === "Present")?.length || "0"}</Text>
               </View>
               <Text style={styles.cotext}>Present</Text>
             </View>
             <View style={styles.countMain}>
               <View style={styles.countbg2}>
-                <Text style={styles.count}>{presentStudentList?.filter((item)=> item?.Status === "Absent")?.length || "0"}</Text>
+                <Text style={[styles.count,isMobile ? { fontSize: 12 } : {}]}>{presentStudentList?.filter((item)=> item?.Status === "Absent")?.length || "0"}</Text>
               </View>
               <Text style={styles.cotext}>Absent</Text>
             </View>
+            {/* </View> */}
+            {/* <View style={isMobile ? styles.mobcolumn : styles.desktop}> */}
             <View style={styles.countMain}>
               <View style={styles.countbg3}>
-                <Text style={styles.count}>{presentStudentList?.filter((item)=> item?.Status === "UFM")?.length || "0"}</Text>
+                <Text style={[styles.count,isMobile ? { fontSize: 12 } : {}]}>{presentStudentList?.filter((item)=> item?.Status === "UFM")?.length || "0"}</Text>
               </View>
               <Text style={styles.cotext}>UFM</Text>
-            </View>         
+            </View>    
+            <View style={styles.countMain}>
+              <View style={styles.countbg5}>
+                <Text style={[styles.count,isMobile ? { fontSize: 12 } : {}]}>{studentDetails?.length - presentStudentList?.length  || "0"}</Text>
+              </View>
+              <Text style={styles.cotext}>Pending</Text>
+            </View>
+            {/* </View> */}
+            <View style={{flexDirection:"column"}}>
             <View style={styles.countMain}>
               <View style={styles.countbg4}>
-                <Text style={styles.count}>{studentDetails?.length || "0"}</Text>
+                <Text style={[styles.count,isMobile ? { fontSize: 12 } : {}]}>{studentDetails?.length || "0"}</Text>
               </View>
               <Text style={styles.cotext}>Total</Text>
             </View>
+            </View>
         </View>
-        <ScrollView style={{maxHeight:470}}>
+        <ScrollView style={{maxHeight: isMobile ? 540: tableHeight,  }}>
           <View style={styles.studentWrapSec}>
           {loading ? (
             <ActivityIndicator size="large" color="#0000ff" />
@@ -467,10 +485,13 @@ const styles = StyleSheet.create({
       flexDirection:"row",
       alignSelf:"flex-end",
     },
+    mobstatus:{
+    alignSelf:"center"
+    },
     countbg1:{
        borderRadius:3,
-       width:30,
-       height:30,
+       width:28,
+       height:28,
        alignItems: "center",
        justifyContent: "center",
        backgroundColor: "#0cb551",
@@ -478,36 +499,46 @@ const styles = StyleSheet.create({
     },
     countbg2:{
       borderRadius:3,
-      width:30,
-      height:30,
+      width:28,
+      height:28,
       alignItems: "center",
       justifyContent: "center",
       backgroundColor: "#ea4242",
     },
     countbg3:{
       borderRadius:3,
-      width:30,
-      height:30,
+      width:28,
+      height:28,
       alignItems: "center",
       justifyContent: "center",
       backgroundColor: "#fdbf48",
     },
     countbg4:{
       borderRadius:3,
-      width:30,
-      height:30,
+      width:28,
+       height:28,
       alignItems: "center",
       justifyContent: "center",
       backgroundColor: "#404142",
     },
+    countbg5:{
+      borderRadius:3,
+      width:28,
+      height:28,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: "#b1b1b1",
+    },
     countMain:{
      flexDirection:"row",
      alignItems:"center",
-     alignSelf:"center",
+    //  alignSelf:"center",
      marginTop: 0,
      marginBottom: 20,
-     marginRight: 10,
-     marginLeft:0
+     marginRight: 3,
+     marginLeft:0,
+     
+ 
     },
     count:{
       color:"#fff",
@@ -515,8 +546,9 @@ const styles = StyleSheet.create({
     },
     cotext:{
       color:"#000",
-      marginLeft:5,
+      marginLeft:3,
       fontWeight:"600",
+      fontSize:12
     },
     studentWrapSec: {
  
@@ -526,6 +558,13 @@ const styles = StyleSheet.create({
 
       //maxHeight: 440,
       clear: "both"
+    },
+
+    mobcolumn:{
+      flexDirection:"column"
+    },
+    desktop:{
+      flexDirection:"row",
     }
   });
  

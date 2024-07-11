@@ -987,9 +987,11 @@ const StudentInfo = ({ navigation,refresh }) => {
       ) : (
         <View>
           <View style={styles.studentInfoWrap}>
+          <View style={styles.headerWrap}>
+          {/* <Text style={[styles.infoHeader,{marginBottom:0}]}>Student Info:</Text> */}
           <View style={styles.countWrap}>
             <View style={styles.countDown}>
-            <Text style={styles.cotext}>Time Left</Text>
+            <Text style={styles.cotext}>Time Left :</Text>
               <View style={[styles.countbg1,  timeLeft === 'Attendence Completed' && styles.completeBackground] }>     
                 <Text  style={[styles.count,]}>
                 {timeLeft}
@@ -999,7 +1001,8 @@ const StudentInfo = ({ navigation,refresh }) => {
             </View>
         
         </View>
-            <Text style={styles.infoHeader}>Student Info:</Text>
+         
+            </View>
             {/* <Text>Current Time: {currentTime}</Text> */}
             <View style={styles.infoContainer}>
               <View style={styles.userDetailWrap}>
@@ -1542,9 +1545,9 @@ const styles = StyleSheet.create({
     //overflow: "hidden"
   },
   infoHeader: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 10,
+    fontSize: 14,
+    fontWeight: "600",
+ 
   },
 
   countWrap:{
@@ -1557,12 +1560,10 @@ const styles = StyleSheet.create({
   },
 
   countbg1:{
-    width:65,
-    height:65,
-    borderRadius:65,
-    
- 
-
+    width:"auto",
+    height:"",
+    borderRadius:24,
+    padding:10,
     //  width:30,
     //  height:30,
      alignItems: "center",
@@ -1606,15 +1607,17 @@ const styles = StyleSheet.create({
   count:{
     color:"#fff",
     textAlign:"center",
+    fontWeight:"600",
+    fontSize:12
   },
   cotext:{
     color:"#000",
-    marginRight:14,
+    marginRight:4,
     fontWeight:"600",
     alignItems:"center",
     textAlign:"center",
-  
-    fontSize:16,
+    fontSize:14,
+    fontWeight: "600",
   },
   infoContainer: {
     backgroundColor: "#FFFFFF",
@@ -1962,5 +1965,12 @@ const styles = StyleSheet.create({
   },
   gapBwIcon: {
     marginRight: 6
-  }
+  },
+  headerWrap:{
+        // justifyContent:"space-between" ,
+        // alignItems:"center",
+        marginBottom:12,
+        alignSelf:"flex-end"
+   
+}
 });
