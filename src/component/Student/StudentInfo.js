@@ -19,7 +19,7 @@ const StudentInfo = ({ navigation,refresh }) => {
   const [studentDetails, setStudentDetails] = useState({});
   const [studentPicture, setStudentPicture] = useState({});
   const [courseDetails, setCourseDetails] = useState({});
-  const [timeLeft, setTimeLeft] = useState('Pending');
+  const [timeLeft, setTimeLeft] = useState('Attendence Not Startted');
   const { room_Nbr, catlog_Nbr, system_Id, seat_Nbr, exam_Dt, startTime, reportId, userAccess, current_Term } = route.params;
 
   const UserAccess = userAccess?.module?.find((item) => item?.FK_ModuleId === 6);
@@ -196,7 +196,7 @@ const StudentInfo = ({ navigation,refresh }) => {
         }
   
         const authToken = await checkAuthToken();
-        let CopyArray = copiesData?.map((item) => item?.mainCopy);
+        let CopyArray = copiesData?.length > 0 ? copiesData?.map((item) => `'${item?.mainCopy}'`) : `""`;
         const CopyExistResponse = await fetch(
           {
             operation: "custom",
@@ -208,9 +208,9 @@ const StudentInfo = ({ navigation,refresh }) => {
           },
           authToken
         );
-  
         if (CopyExistResponse.data.receivedData?.length > 0) {
-          addToast(`Copy Number Already Exist ${CopyExistResponse.data.receivedData?.map((item) => item.copyNumber)}`, "error");
+          // ${CopyExistResponse.data.receivedData?.map((item) => item.copyNumber)}
+          addToast(`Copy Number Already Linked With Previous Student : ${CopyExistResponse.data.receivedData?.map((item) => item.copyNumber)} `, "error",false);
         } else {
           const response = await insert(
             {
@@ -319,21 +319,172 @@ const StudentInfo = ({ navigation,refresh }) => {
       handleAuthErrors(error);
     }
   };
+  // const handleStudentInfoUpdate = async () => {
+  //   try {
+  //     const CopyEmptyValues = copiesData?.length > 0 ? copiesData.some(data => data.mainCopy === "" || data.alternateCopies.includes("")) : true;
+  //     // if (CopyEmptyValues) {
+  //       if (CopyEmptyValues && status !== "Absent" ) {
+  //       addToast("Please enter the copy details!", "error");
+  //     }
+  //     else if(status === "Absent" && copiesData?.length > 0) {
+  //       addToast("Please remove the copy details for mark Absent!", "error");
+  //     }
+  //      else {
+  //       // Check for duplicate mainCopy values
+  //       const uniqueMainCopies = new Set();
+  //       let duplicateFound = false;
+        
+  //       for (const data of copiesData) {
+  //         if (uniqueMainCopies.has(data.mainCopy)) {
+  //           duplicateFound = true;
+  //           break;
+  //         }
+  //         uniqueMainCopies.add(data.mainCopy);
+  //       }
+        
+  //       if (duplicateFound) {
+  //         addToast("Duplicate copy numbers are not allowed!", "error");
+  //         return;
+  //       }
+  
+  //       const authToken = await checkAuthToken();
+  //       let CopyArray = copiesData?.length > 0 ? copiesData?.map((item) => `'${item?.mainCopy}'`) : `""`;;
+  //       const CopyExistResponse = await fetch(
+  //         {
+  //           operation: "custom",
+  //           tblName: "tbl_copy_master",
+  //           data: '',
+  //           conditionString: "",
+  //           checkAvailability: "",
+  //           customQuery: `Select * from tbl_copy_master Where PK_CopyId NOT IN (${copyList?.length > 0 ? copyList: `""`}) AND copyNumber in (${CopyArray})`,
+  //         },
+  //         authToken
+  //       );
+  
+  //       if (CopyExistResponse.data.receivedData?.length > 0) {
+  //         addToast(`Copy Number Already Exist ${CopyExistResponse.data.receivedData?.map((item) => item.copyNumber)}`, "error");
+  //       } else {
+  //         const response = await update(
+  //           {
+  //             operation: "update",
+  //             tblName: "tbl_report_master",
+  //             data: {
+  //               EMPLID: studentDetails.EMPLID,
+  //               NAME_FORMAL: studentDetails.NAME_FORMAL,
+  //               STRM: studentDetails.STRM,
+  //               ADM_APPL_NBR: studentDetails.ADM_APPL_NBR,
+  //               DESCR: studentDetails.DESCR,
+  //               DESCR2: studentDetails.DESCR2,
+  //               DESCR3: studentDetails.DESCR3,
+  //               EXAM_DT: exam_Dt,
+  //               ROOM_NBR: room_Nbr,
+  //               EXAM_START_TIME: startTime,
+  //               CATALOG_NBR: catlog_Nbr,
+  //               PTP_SEQ_CHAR: seat_Nbr,
+  //               Attendece_Status: attendenceStatus,
+  //               Status: status,
+  //               SU_PAPER_ID: courseDetails.SU_PAPER_ID,
+  //               DESCR100: courseDetails.DESCR100,
+  //             },
+  //             conditionString: `PK_Report_Id = ${reportId}`,
+  //             checkAvailability: "",
+  //             customQuery: "",
+  //           },
+  //           authToken
+  //         );
+  
+  //         if (response && (copiesData?.length > 0 || copyList?.length > 0) ) {
+  //           if(copyList?.length > 0){
+  //             const DeleteResponse = await remove(
+  //               {
+  //                 operation: "delete",
+  //                 tblName: "tbl_copy_master",
+  //                 data: "",
+  //                 conditionString: `PK_CopyId IN (${copyList})`,
+  //                 checkAvailability: "",
+  //                 customQuery: "",
+  //               },
+  //               authToken
+  //             );
+    
+  //             if (DeleteResponse && copiesData?.length > 0) {
+  //               const studentCopyWithId = copiesData.map((item) => {
+  //                 let newItem = {
+  //                   FK_ReportId: reportId,
+  //                   copyNumber: item.mainCopy,
+  //                   EMPLID: studentDetails.EMPLID,
+  //                 };
+  //                 item.alternateCopies.forEach((copy, index) => {
+  //                   newItem[`alternateCopyNumber${index + 1}`] = copy;
+  //                 });
+  //                 return newItem;
+  //               });
+    
+  //               const NewResponse = await insert(
+  //                 {
+  //                   operation: "insert",
+  //                   tblName: "tbl_copy_master",
+  //                   data: studentCopyWithId,
+  //                   conditionString: "",
+  //                   checkAvailability: "",
+  //                   customQuery: "",
+  //                 },
+  //                 authToken
+  //               );
+    
+  //               if (NewResponse) {
+  //                 addToast("Student details are updated successfully!", "success");
+  //                 navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation: navigation, userAccess, refresh });
+  //               }
+  //             }
+  //             else{
+  //               addToast("Student details are updated successfully!", "success");
+  //               navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation: navigation, userAccess, refresh });
+  //             }
+  //           }
+  //           else if(copiesData?.length > 0) {
+  //             const NewResponse = await insert(
+  //               {
+  //                 operation: "insert",
+  //                 tblName: "tbl_copy_master",
+  //                 data: studentCopyWithId,
+  //                 conditionString: "",
+  //                 checkAvailability: "",
+  //                 customQuery: "",
+  //               },
+  //               authToken
+  //             );
+  
+  //             if (NewResponse) {
+  //               addToast("Student details are updated successfully!", "success");
+  //               navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation: navigation, userAccess, refresh });
+  //             }
+  //           }         
+  //         }
+  //         else{
+  //           addToast("Student details are updated successfully!", "success");
+  //           navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation: navigation, userAccess, refresh });
+  //         }
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.log(error)
+  //     handleAuthErrors(error);
+  //   }
+  // };
+  
   const handleStudentInfoUpdate = async () => {
     try {
-      const CopyEmptyValues = copiesData?.length > 0 ? copiesData.some(data => data.mainCopy === "" || data.alternateCopies.includes("")) : true;
-      // if (CopyEmptyValues) {
-        if (CopyEmptyValues && status !== "Absent" ) {
+      const copyEmptyValues = copiesData?.length > 0 ? copiesData.some(data => data.mainCopy === "" || data.alternateCopies.includes("")) : true;
+  
+      if (copyEmptyValues && status !== "Absent") {
         addToast("Please enter the copy details!", "error");
-      }
-      else if(status === "Absent" && copiesData?.length > 0) {
-        addToast("Please remove the copy details for mark Absent!", "error");
-      }
-       else {
-        // Check for duplicate mainCopy values
+      } else if (status === "Absent" && copiesData?.length > 0) {
+        addToast("Please remove the copy details to mark Absent!", "error");
+      } else {
         const uniqueMainCopies = new Set();
         let duplicateFound = false;
-        
+  
         for (const data of copiesData) {
           if (uniqueMainCopies.has(data.mainCopy)) {
             duplicateFound = true;
@@ -341,28 +492,29 @@ const StudentInfo = ({ navigation,refresh }) => {
           }
           uniqueMainCopies.add(data.mainCopy);
         }
-        
+  
         if (duplicateFound) {
           addToast("Duplicate copy numbers are not allowed!", "error");
           return;
         }
   
         const authToken = await checkAuthToken();
-        let CopyArray = copiesData?.map((item) => item?.mainCopy);
-        const CopyExistResponse = await fetch(
+        let copyArray = copiesData?.length > 0 ? copiesData.map(item => `'${item?.mainCopy}'`).join(",") : `""`;
+        const copyExistResponse = await fetch(
           {
             operation: "custom",
             tblName: "tbl_copy_master",
             data: '',
             conditionString: "",
             checkAvailability: "",
-            customQuery: `Select * from tbl_copy_master Where PK_CopyId NOT IN (${copyList}) AND copyNumber in (${CopyArray})`,
+            customQuery: `SELECT * FROM tbl_copy_master WHERE PK_CopyId NOT IN (${copyList?.length > 0 ? copyList : `""`}) AND copyNumber IN (${copyArray})`,
           },
           authToken
         );
   
-        if (CopyExistResponse.data.receivedData?.length > 0) {
-          addToast(`Copy Number Already Exist ${CopyExistResponse.data.receivedData?.map((item) => item.copyNumber)}`, "error");
+        if (copyExistResponse.data.receivedData?.length > 0) {
+          // ${copyExistResponse.data.receivedData.map(item => item.copyNumber).join(", ")}
+          addToast(`Copy Number Already Linked With Previous Student : ${copyExistResponse.data.receivedData?.map((item) => item.copyNumber)} `, "error",false);
         } else {
           const response = await update(
             {
@@ -393,21 +545,55 @@ const StudentInfo = ({ navigation,refresh }) => {
             authToken
           );
   
-          if (response) {
-            const DeleteResponse = await remove(
-              {
-                operation: "delete",
-                tblName: "tbl_copy_master",
-                data: "",
-                conditionString: `PK_CopyId IN (${copyList})`,
-                checkAvailability: "",
-                customQuery: "",
-              },
-              authToken
-            );
+          if (response && (copiesData?.length > 0 || copyList?.length > 0)) {
+            if (copyList?.length > 0) {
+              const deleteResponse = await remove(
+                {
+                  operation: "delete",
+                  tblName: "tbl_copy_master",
+                  data: "",
+                  conditionString: `PK_CopyId IN (${copyList})`,
+                  checkAvailability: "",
+                  customQuery: "",
+                },
+                authToken
+              );
   
-            if (DeleteResponse) {
-              const studentCopyWithId = copiesData.map((item) => {
+              if (deleteResponse && copiesData?.length > 0) {
+                const studentCopyWithId = copiesData.map(item => {
+                  let newItem = {
+                    FK_ReportId: reportId,
+                    copyNumber: item.mainCopy,
+                    EMPLID: studentDetails.EMPLID,
+                  };
+                  item.alternateCopies.forEach((copy, index) => {
+                    newItem[`alternateCopyNumber${index + 1}`] = copy;
+                  });
+                  return newItem;
+                });
+  
+                const newResponse = await insert(
+                  {
+                    operation: "insert",
+                    tblName: "tbl_copy_master",
+                    data: studentCopyWithId,
+                    conditionString: "",
+                    checkAvailability: "",
+                    customQuery: "",
+                  },
+                  authToken
+                );
+  
+                if (newResponse) {
+                  addToast("Student details are updated successfully!", "success");
+                  navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation, userAccess, refresh });
+                }
+              } else {
+                addToast("Student details are updated successfully!", "success");
+                navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation, userAccess, refresh });
+              }
+            } else if (copiesData?.length > 0) {
+              const studentCopyWithId = copiesData.map(item => {
                 let newItem = {
                   FK_ReportId: reportId,
                   copyNumber: item.mainCopy,
@@ -419,7 +605,7 @@ const StudentInfo = ({ navigation,refresh }) => {
                 return newItem;
               });
   
-              const NewResponse = await insert(
+              const newResponse = await insert(
                 {
                   operation: "insert",
                   tblName: "tbl_copy_master",
@@ -431,19 +617,22 @@ const StudentInfo = ({ navigation,refresh }) => {
                 authToken
               );
   
-              if (NewResponse) {
+              if (newResponse) {
                 addToast("Student details are updated successfully!", "success");
-                navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation: navigation, userAccess, refresh });
+                navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime, navigation, userAccess, refresh });
               }
             }
+          } else {
+            addToast("Student details are updated successfully!", "success");
+            navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime, navigation, userAccess, refresh });
           }
         }
       }
     } catch (error) {
+      console.log(error);
       handleAuthErrors(error);
     }
   };
-  
 
   const handleAuthErrors = (error) => {
     switch (error.message) {
@@ -737,8 +926,8 @@ const StudentInfo = ({ navigation,refresh }) => {
       // Check if today is the exam date
       if (!isSameDay(now, examDate)) {
         setIsActive(false);
-        let PastDate = isBefore(examDate, now)
-        setTimeLeft(PastDate ? 'Pending': 'Complete');
+        let PastDate = !isBefore(examDate, now)
+        setTimeLeft(PastDate ? 'Attandence Not Startted': 'Attendence Completed');
         return;
       }
 
@@ -760,7 +949,6 @@ const StudentInfo = ({ navigation,refresh }) => {
       // Calculate the time window
       const startWindow = subMinutes(startToday, 15).getTime(); // 15 minutes before start time
       const endWindow = addMinutes(startToday, 90).getTime(); // 1.5 hours after start time
-      console.log(now.getTime(),startWindow,endWindow)
 
       if (now.getTime() >= startWindow && now.getTime() <= endWindow) {
         setIsActive(true);
@@ -772,7 +960,7 @@ const StudentInfo = ({ navigation,refresh }) => {
         setTimeLeft(`${minutes}:${seconds < 10 ? '0' : ''}${seconds} min`);
       } else {
         setIsActive(false); // make false after changes
-        setTimeLeft(now.getTime() > endWindow ? 'Complete' : 'Pending');
+        setTimeLeft(now.getTime() > endWindow ? 'Attendence Completed' : 'Attendence Not Startted');
   
       }
     }, 1000);
@@ -802,7 +990,7 @@ const StudentInfo = ({ navigation,refresh }) => {
           <View style={styles.countWrap}>
             <View style={styles.countDown}>
             <Text style={styles.cotext}>Time Left</Text>
-              <View style={[styles.countbg1,  timeLeft === 'Complete' && styles.completeBackground] }>     
+              <View style={[styles.countbg1,  timeLeft === 'Attendence Completed' && styles.completeBackground] }>     
                 <Text  style={[styles.count,]}>
                 {timeLeft}
                 </Text>
