@@ -110,12 +110,12 @@ const styles = StyleSheet.create({
   paginationContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'end',
     marginTop: 16,
   },
   paginationButton: {
     paddingVertical: 8,
-    paddingHorizontal: 12,
+    paddingHorizontal: 10,
     marginHorizontal: 4,
   },
   paginationText: {

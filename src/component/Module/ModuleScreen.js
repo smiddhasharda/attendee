@@ -40,8 +40,9 @@ const paginatedData = moduleList.slice((currentPage - 1) * pageSize, currentPage
     const { width, height } = Dimensions.get('window');
     const isMobile = width < 768; 
     const tableWidth = isMobile ? width - 10 : width * 0.96; 
-    const tableHeight = isMobile ? height * 0.99 : height * 0.6; 
-
+    const tableHeight = isMobile ? height * 0.70 : height * 0.67; 
+    console.log(`Table Width: ${tableWidth}, Table Height: ${tableHeight} `,);
+    
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
     if (!authToken) {
@@ -265,7 +266,7 @@ const paginatedData = moduleList.slice((currentPage - 1) * pageSize, currentPage
                 </View>
               )
             }
-            <View style={{maxHeight: tableHeight, minWidth: isMobile ? 100 :tableWidth}}>
+            <View style={{ maxHeight: tableHeight, minWidth: isMobile ? 100 :tableWidth}}>
               <FlatList
                 data={paginatedData}
                 style={styles.modulesTbl}
@@ -306,6 +307,7 @@ const paginatedData = moduleList.slice((currentPage - 1) * pageSize, currentPage
                     pageSize={pageSize}
                     currentPage={currentPage}
                     onPageChange={handlePageChange}
+                
               />
         </View>
       )}

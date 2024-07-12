@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, Text, TextInput, FlatList, Pressable ,} from "react-native";
+import { View, Text, TextInput, FlatList, Pressable ,Dimensions} from "react-native";
 import { insert, fetch, update } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -30,6 +30,18 @@ const RoleScreen = ({userAccess,refresh}) => {
   };
   const pageSize = 10;
   const paginatedData = roleList.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+     //---------------------------------------------------- dimension based view--------------------------------------------//
+     const { width, height } = Dimensions.get('window');
+     const isMobile = width < 768; 
+     const tableWidth = isMobile ? width - 10 : width * 0.96; 
+     const tableHeight = isMobile ? height * 0.70 : height * 0.62; 
+     console.log(`Table Width: ${tableWidth}, Table Height: ${tableHeight} `,);
+   
+
+     const tableWidth1 = isMobile ? width-10: width * 0.96; 
+     const tableHeight1 = isMobile ? height * 0.6 : height * 0.45; 
+     console.log(`Table Width1: ${tableWidth1}, Table Height1: ${tableHeight1} `,);
 
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
@@ -322,40 +334,42 @@ const RoleScreen = ({userAccess,refresh}) => {
 
   const renderModuleCheckboxes = (item) => {
     return (
-      <View style={styles.listItem} key={item?.PK_ModuleId}>
-        <Text style={[styles.listItemText, { width:120},{textAlign:"left"},]}>
+      <View style ={{maxHeight: tableHeight1, minWidth: isMobile ? tableWidth1 :tableWidth1}}>
+      <View style={[styles.listItem,]}  key={item?.PK_ModuleId}>
+        <Text style={[styles.listItemText, {width:"35%"},{textAlign:"left"},]}>
           {item?.moduleName}
         </Text>
-        <View style={[styles.checkboxContainer, {width:75 },{textAlign:"center"} ]}>
+        <View style={[styles.checkboxContainer, {width:"12%"},{textAlign:"center"} ]}>
           <CheckBox
             value={getModulePermission(item, "create")}
             onValueChange={() => handleUpdatePermissions(item, "create")}
           />
         </View>
-        <View style={[styles.checkboxContainer, {width:75},{textAlign:"center"}]}>
+        <View style={[styles.checkboxContainer, {width:"12%"},{textAlign:"center"}]}>
           <CheckBox
             value={getModulePermission(item, "read")}
             onValueChange={() => handleUpdatePermissions(item, "read")}
           />
         </View>
-        <View style={[styles.checkboxContainer, {width:75},{textAlign:"center"}]}>
+        <View style={[styles.checkboxContainer, {width:"14%"},{textAlign:"center"}]}>
           <CheckBox
             value={getModulePermission(item, "update")}
             onValueChange={() => handleUpdatePermissions(item, "update")}
           />
         </View>
-        <View style={[styles.checkboxContainer, {width:75},{textAlign:"center"}]}>
+        <View style={[styles.checkboxContainer, {width:"12%"},{textAlign:"center"}]}>
           <CheckBox
             value={getModulePermission(item, "delete")}
             onValueChange={() => handleUpdatePermissions(item, "delete")}
           />
         </View>
-        <View style={[styles.checkboxContainer, {width:75},{textAlign:"center"}]}>
+        <View style={[styles.checkboxContainer, {width:"15%"},{textAlign:"center"}]}>
           <CheckBox
             value={getModulePermission(item, "special")}
             onValueChange={() => handleUpdatePermissions(item, "special")}
           />
         </View>
+      </View>
       </View>
     );
   };
@@ -385,28 +399,28 @@ const RoleScreen = ({userAccess,refresh}) => {
             }
           />
           <View style={{marginTop:15}}>
-          <Text style={styles.header}> Module List : </Text>  
+          <Text style={[styles.header,{marginBottom:8}]}> Module List : </Text>  
           <ScrollView horizontal>
-          <View style={{maxHeight: 300}}>
+          <View style={{ maxHeight: tableHeight1, minWidth: isMobile ? tableWidth1 :tableWidth1}}>
           <FlatList
             data={moduleList}
             keyExtractor={(item) => item?.PK_ModuleId?.toString()}
             ListHeaderComponent={() => (
               <View style={styles.tableHeader}>
-                <Text style={[styles.tableHeaderText, {width:120} ,{textAlign:"left"}]}>
+                <Text style={[styles.tableHeaderText, {width:"35%"} ,{textAlign:"left"}]}>
                   Module  
                 </Text>
-                <Text style={[styles.tableHeaderText,{width:75} ,{textAlign:"center"}]}>
+                <Text style={[styles.tableHeaderText,{width:"12%"} ,{textAlign:"center"}]}>
                   Create
                 </Text>
-                <Text style={[styles.tableHeaderText, {width:75} ,{textAlign:"center"}]}>Read</Text>
-                <Text style={[styles.tableHeaderText, {width:75},{textAlign:"center"}]}>
+                <Text style={[styles.tableHeaderText, {width:"12%"} ,{textAlign:"center"}]}>Read</Text>
+                <Text style={[styles.tableHeaderText, {width:"14%"},{textAlign:"center"}]}>
                   Update
                 </Text>
-                <Text style={[styles.tableHeaderText,{width:75},{textAlign:"center"}]}>
+                <Text style={[styles.tableHeaderText,{width:"12%"},{textAlign:"center"}]}>
                   Delete
                 </Text>
-                <Text style={[styles.tableHeaderText, {width:75},{textAlign:"center"}]}>
+                <Text style={[styles.tableHeaderText, {width:"15%"},{textAlign:"center"}]}>
                   Special
                 </Text>
               </View>
@@ -437,7 +451,7 @@ const RoleScreen = ({userAccess,refresh}) => {
           </Pressable> 
           </View>
         }
-            <View style={{maxHeight:"100%"}}>
+            <View style={{maxHeight: tableHeight, minWidth: isMobile ? 100 :tableWidth}}>
                 <FlatList
                   data={paginatedData}
                   style={styles.rolesTbl}
