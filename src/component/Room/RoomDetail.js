@@ -250,13 +250,13 @@ const formattedShiftTimePrefix = formatShiftTimePrefix(startTime);
           
           <View style={[styles.countWrap,isMobile ? styles.mobstatus : ''] }>
           {/* <View style={isMobile ? styles.mobcolumn : styles.desktop}> */}
-            <View style={styles.countMain}>
+            <View style={[styles.countMain ,isMobile ? { marginRight: 3 } : {}]}>
               <View style={styles.countbg1}>
                 <Text style={[styles.count,isMobile ? { fontSize: 12 } : {}]}>{presentStudentList?.filter((item)=> item?.Status === "Present")?.length || "0"}</Text>
               </View>
               <Text style={styles.cotext}>Present</Text>
             </View>
-            <View style={styles.countMain}>
+            <View style={[styles.countMain ,isMobile ? { marginRight: 3 } : {}]}>
               <View style={styles.countbg2}>
                 <Text style={[styles.count,isMobile ? { fontSize: 12 } : {}]}>{presentStudentList?.filter((item)=> item?.Status === "Absent")?.length || "0"}</Text>
               </View>
@@ -264,13 +264,13 @@ const formattedShiftTimePrefix = formatShiftTimePrefix(startTime);
             </View>
             {/* </View> */}
             {/* <View style={isMobile ? styles.mobcolumn : styles.desktop}> */}
-            <View style={styles.countMain}>
+            <View style={[styles.countMain ,isMobile ? { marginRight: 3 } : {}]}>
               <View style={styles.countbg3}>
                 <Text style={[styles.count,isMobile ? { fontSize: 12 } : {}]}>{presentStudentList?.filter((item)=> item?.Status === "UFM")?.length || "0"}</Text>
               </View>
               <Text style={styles.cotext}>UFM</Text>
             </View>    
-            <View style={styles.countMain}>
+            <View style={[styles.countMain ,isMobile ? { marginRight: 3 } : {}]}>
               <View style={styles.countbg5}>
                 <Text style={[styles.count,isMobile ? { fontSize: 12 } : {}]}>{studentDetails?.length - presentStudentList?.length  || "0"}</Text>
               </View>
@@ -278,7 +278,7 @@ const formattedShiftTimePrefix = formatShiftTimePrefix(startTime);
             </View>
             {/* </View> */}
             <View style={{flexDirection:"column"}}>
-            <View style={styles.countMain}>
+            <View style={[styles.countMain ,isMobile ? { marginRight: 3 } : {}]}>
               <View style={styles.countbg4}>
                 <Text style={[styles.count,isMobile ? { fontSize: 12 } : {}]}>{studentDetails?.length || "0"}</Text>
               </View>
@@ -535,7 +535,7 @@ const styles = StyleSheet.create({
     //  alignSelf:"center",
      marginTop: 0,
      marginBottom: 20,
-     marginRight: 3,
+     marginRight: 10,
      marginLeft:0,
      
  
