@@ -38,7 +38,7 @@ const UserScreen = ({userAccess,refresh}) => {
     //---------------------------------------------------- dimension based view--------------------------------------------//
     const { width, height } = Dimensions.get('window');
     const isMobile = width < 768; 
-    const tableWidth = isMobile ? width  : width * 0.96; 
+    const tableWidth = isMobile ? width  : width * 0.95; 
     const tableHeight = isMobile ? height * 0.68 : height * 0.6; 
     console.log(`Table Width: ${tableWidth}, Table Height: ${tableHeight} `,);
     const tableWidth1 = isMobile ? width-200 : width * 0.96; 
@@ -46,7 +46,7 @@ const UserScreen = ({userAccess,refresh}) => {
     console.log(`Table Width1: ${tableWidth1}, Table Height1: ${tableHeight1}, `,);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const pageSize = 10;
+  const pageSize = 25;
   const paginatedData = userList.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   // const duplicatePageSize = 10;
@@ -714,13 +714,12 @@ const UserScreen = ({userAccess,refresh}) => {
           stickyHeaderIndices={[0]} 
          />
          </View>
-         </ScrollView>
-         
+         </ScrollView>         
          <Pagination
-                    totalItems={userList?.length}
-                    pageSize={pageSize}
-                    currentPage={currentPage}
-                    onPageChange={handlePageChange}
+          totalItems={userList?.length}
+          pageSize={pageSize}
+          currentPage={currentPage}
+          onPageChange={handlePageChange}
               />
       </View>)
       }
