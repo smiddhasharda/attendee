@@ -34,13 +34,13 @@ const RoleScreen = ({userAccess,refresh}) => {
      //---------------------------------------------------- dimension based view--------------------------------------------//
      const { width, height } = Dimensions.get('window');
      const isMobile = width < 768; 
-     const tableWidth = isMobile ? width - 10 : width * 0.96; 
+    //  const tableWidth = isMobile ? width  : width * 0.5; 
+     const tableWidth = width * 0.96;
      const tableHeight = isMobile ? height * 0.70 : height * 0.62; 
      console.log(`Table Width: ${tableWidth}, Table Height: ${tableHeight} `,);
-   
-
-     const tableWidth1 = isMobile ? width-10: width * 0.96; 
-     const tableHeight1 = isMobile ? height * 0.6 : height * 0.45; 
+  
+     const tableWidth1 = isMobile ? width*1.4: width * 0.96; 
+     const tableHeight1 = isMobile ? height * 0.56 : height * 0.45; 
      console.log(`Table Width1: ${tableWidth1}, Table Height1: ${tableHeight1} `,);
 
   const checkAuthToken = useCallback(async () => {
@@ -451,26 +451,32 @@ const RoleScreen = ({userAccess,refresh}) => {
           </Pressable> 
           </View>
         }
-            <View style={{maxHeight: tableHeight, minWidth: isMobile ? 100 :tableWidth}}>
+        <ScrollView horizontal>
+            <View style={{maxHeight: tableHeight, minWidth:tableWidth }}>
                 <FlatList
                   data={paginatedData}
                   style={styles.rolesTbl}
                   keyExtractor={(item) => item.PK_RoleId.toString()}
                     ListHeaderComponent={() => (
                       <View style={styles.tableHeader}>
-                        <Text numberOfLines={1} style={[styles.tableHeaderText, {width:"50%", display: "inline-block"}]}>Role Name</Text>
-                        <Text style={[styles.tableHeaderText, {width:"30%", display: "inline-block",}]}>Status</Text> 
-                        <Text style={[styles.tableHeaderText, {width:"20%", display: "inline-block"}]}>Actions</Text>
+                        <Text numberOfLines={1} style={[styles.tableHeaderText, {width:200, display: "inline-block"}]}>Role Name</Text>
+                        <Text style={[styles.tableHeaderText, {width:200, display: "inline-block",}]}>Status</Text> 
+                        <Text style={[styles.tableHeaderText, {width:200, display:"inline-block", textAlign:"center"}]} numberOfLines={1}>Created Date</Text>
+                    <Text style={[styles.tableHeaderText, {width:200, display:"inline-block", textAlign:"center"}]} numberOfLines={1}>Updated Date</Text>
+                    <Text style={[styles.tableHeaderText, {width:200, display:"inline-block", textAlign:"center"}]} numberOfLines={1}>Created By</Text>
+                    <Text style={[styles.tableHeaderText, {width:200, display:"inline-block",textAlign:"center"}]} numberOfLines={1}>Updated By</Text>
+                        <Text style={[styles.tableHeaderText, {width:100, display: "inline-block",textAlign:"center"}]}>Actions</Text>
                       </View>
                     )}
                     renderItem={({ item }) => (
+                      //  console.log("All items",item),
                       <View style={[styles.listItem]}>
-                        <View style={[styles.listItemText, {width:"50%", display: "inline-block"}]}>
+                        <View style={[styles.listItemText, {width:200, display: "inline-block"}]}>
                           <Text >
                             {item.roleName}
                           </Text>
                         </View>
-                        <View style={[styles.listItemText, {width:"30%", display: "inline-block" ,}]}>
+                        <View style={[styles.listItemText, {width:200, display: "inline-block" ,}]}>
                           <Pressable        
                           style={[{ display: "inline-block" ,}]}          
                             onPress={() => UserAccess?.update === 1 ? handleRoleStatus(item.PK_RoleId, item?.isActive) : ''} 
@@ -488,7 +494,19 @@ const RoleScreen = ({userAccess,refresh}) => {
                             </Text>
                           </Pressable>
                         </View>
-                        <View style={[styles.listItemText, {width:"20%", alignItems: "center", display: "inline-block"}]}>
+                        <Text style={[styles.listItemText, {width:200, display: "inline-block", textAlign:"center" }]} numberOfLines={1}>
+                      {item.created_at ? new Date(item.created_at.split('T')[0]).toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }) : 'N/A'}
+                    </Text>
+                    <Text style={[styles.listItemText, { width:200, display: "inline-block",textAlign:"center" }]} numberOfLines={1}>
+                    {item.updated_at ? new Date(item.updated_at.split('T')[0]).toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }) : 'N/A'}
+                    </Text>
+                    <Text style={[styles.listItemText, {width:200, display: "inline-block" , textAlign:"center"}]} numberOfLines={1}>
+                      {item.created_by ? created_by:'N/A'}
+                    </Text>
+                    <Text style={[styles.listItemText, {width:200, display: "inline-block",textAlign:"center" }]} numberOfLines={1}>
+                      {item.updated_by ? updated_by:'N/A'}
+                    </Text> 
+                        <View style={[styles.listItemText, {width:100, alignItems: "center", display: "inline-block",textAlign:"center"}]}>
                           {UserAccess?.update === 1 ?
                           (<Pressable style={[styles.listItemEditButton,{display:"inline-block" }]  } 
                           onPress={() => handleEditRole(item)}>
@@ -501,6 +519,7 @@ const RoleScreen = ({userAccess,refresh}) => {
                     )}
                 />
           </View>
+          </ScrollView>
           <Pagination
                     totalItems={roleList?.length}
                     pageSize={pageSize}

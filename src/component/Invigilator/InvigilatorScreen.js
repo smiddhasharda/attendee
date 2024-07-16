@@ -593,23 +593,28 @@ import { formatInTimeZone } from 'date-fns-tz';
         </View>
         </View>
         <ScrollView horizontal>
-        <View style={{ maxHeight: tableHeight, minWidth: isMobile ? 100 :tableWidth}}>
+        <View style={{maxHeight: tableHeight, minWidth: isMobile ? tableWidth :tableWidth}}>
           <FlatList 
             data={invigilatorList}
             keyExtractor={(item) => item.PK_InvigilatorDutyId.toString()}
                 ListHeaderComponent={() => (
                   <View style={styles.tableHeader}>
-                    <Text style={[styles.tableHeaderText,{width:90} ]}>Id</Text>
-                    <Text style={[styles.tableHeaderText, {width:180}]}>EmplId</Text>
+                    <Text style={[styles.tableHeaderText, {width:90} ]}>Id</Text>
+                    <Text style={[styles.tableHeaderText, {width:180}]}>Employee Id</Text>
                     <Text style={[styles.tableHeaderText,{width:180} ]}>Name</Text>
                     <Text style={[styles.tableHeaderText,{width:120}  ]}>Room</Text>
                     <Text style={[styles.tableHeaderText,{width:120} ]}>Date</Text>
                     <Text style={[styles.tableHeaderText,{width:120} ]}>Shift</Text>
                     <Text style={[styles.tableHeaderText,{width:120}  ]}>Status</Text>
+                    <Text style={[styles.tableHeaderText, {width:120, display:"inline-block", textAlign:"center"}]} numberOfLines={1}>Created Date</Text>
+                    <Text style={[styles.tableHeaderText, {width:120, display:"inline-block", textAlign:"center"}]} numberOfLines={1}>Updated Date</Text>
+                    <Text style={[styles.tableHeaderText, {width:120, display:"inline-block", textAlign:"center"}]} numberOfLines={1}>Created By</Text>
+                    <Text style={[styles.tableHeaderText, {width:120, display:"inline-block",textAlign:"center"}]} numberOfLines={1}>Updated By</Text>
                     <Text style={[styles.tableHeaderText,{width:80} ]}>Actions </Text>
                     
                   </View>
-          )} renderItem={({ item }) => (          
+          )} renderItem={({ item }) => (  
+            // console.log(item),      
             <View style={styles.listItem}>
               <Text style={[styles.listItemText, {width:90}]}>{item.PK_InvigilatorDutyId}</Text>
               <Text style={[styles.listItemText, {width:180}]}>{item.employeeId}</Text>
@@ -617,7 +622,19 @@ import { formatInTimeZone } from 'date-fns-tz';
               <Text style={[styles.listItemText, {width:120}]}>{item.room}</Text>
               <Text style={[styles.listItemText, {width:120}]}>{parseAndFormatDate(item.date)}</Text>
               <Text style={[styles.listItemText, {width:120}]}>{convertedTime(item.shift)}</Text>
-              <Text style={[styles.listItemText, {width:120}]}>{item.duty_status}</Text>    
+              <Text style={[styles.listItemText, {width:120}]}>{item.duty_status}</Text>   
+              <Text style={[styles.listItemText, {width:120, display: "inline-block", textAlign:"center" }]} numberOfLines={1}>
+                      {item.created_at ? new Date(item.created_at.split('T')[0]).toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }) : 'N/A'}
+                    </Text>
+                    <Text style={[styles.listItemText, { width:120, display: "inline-block",textAlign:"center" }]} numberOfLines={1}>
+                    {item.updated_at ? new Date(item.updated_at.split('T')[0]).toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }) : 'N/A'}
+                    </Text>
+                    <Text style={[styles.listItemText, {width:120, display: "inline-block" , textAlign:"center"}]} numberOfLines={1}>
+                      {item.created_by ? created_by:'N/A'}
+                    </Text>
+                    <Text style={[styles.listItemText, {width:120, display: "inline-block",textAlign:"center" }]} numberOfLines={1}>
+                      {item.updated_by ? updated_by:'N/A'}
+                    </Text> 
               {UserAccess?.update === 1  ? <Pressable style={[{width:80}, {alignItems:"center"}]} onPress={() => handleEditInvigilator(item)}>
               <Text style={styles.listItemEditText}><Feather name="edit" size={16} color="green" /></Text>
                 </Pressable> : (<Text>-</Text>)}  

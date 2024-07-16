@@ -13,7 +13,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import styles from "./ModuleScreen.style";
 import { Ionicons, Feather } from "@expo/vector-icons";
 import Pagination from "../../globalComponent/Pagination/PaginationComponent";
-
+import { ScrollView } from "react-native-gesture-handler";
 
 const ModuleScreen = ({ userAccess,refresh }) => {
   const userAccessForModule = userAccess?.module?.find(item => item?.FK_ModuleId === 3);
@@ -39,7 +39,8 @@ const paginatedData = moduleList.slice((currentPage - 1) * pageSize, currentPage
     //---------------------------------------------------- dimension based view--------------------------------------------//
     const { width, height } = Dimensions.get('window');
     const isMobile = width < 768; 
-    const tableWidth = isMobile ? width - 10 : width * 0.96; 
+    const tableWidth = isMobile ? width  : width * 0.96; 
+        // const tableWidth =  width ; 
     const tableHeight = isMobile ? height * 0.70 : height * 0.67; 
     console.log(`Table Width: ${tableWidth}, Table Height: ${tableHeight} `,);
     
@@ -142,7 +143,11 @@ const paginatedData = moduleList.slice((currentPage - 1) * pageSize, currentPage
       moduleStatus: 1,
     });
   };
-
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString.split('T')[0]);
+    return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' });
+  };
   // const handleGetSampleView = async () => {
   //   try {
   //     const authToken = await checkAuthToken();
@@ -266,30 +271,51 @@ const paginatedData = moduleList.slice((currentPage - 1) * pageSize, currentPage
                 </View>
               )
             }
-            <View style={{ maxHeight: tableHeight, minWidth: isMobile ? 100 :tableWidth}}>
+    
+        <ScrollView horizontal={true}>
+        <View style={{maxHeight: tableHeight, minWidth: isMobile ? tableWidth :tableWidth }}>
               <FlatList
                 data={paginatedData}
                 style={styles.modulesTbl}
                 keyExtractor={item => item.PK_ModuleId.toString()}
                 ListHeaderComponent={() => (
                   <View style={styles.tableHeader}>
-                    <Text style={[styles.tableHeaderText, {width:"50%", display:"inline-block"}]} numberOfLines={1}>Module</Text>
-                    <Text style={[styles.tableHeaderText, {width:"30%", display:"inline-block"}]} numberOfLines={1}>Status</Text>
-                    <Text style={[styles.tableHeaderText, {width:"20%", display:"inline-block",}]} numberOfLines={1}>Actions</Text>
+                    <Text style={[styles.tableHeaderText, {width:120, display:"inline-block" ,}]} numberOfLines={1}>Module</Text>
+                    <Text style={[styles.tableHeaderText, {width:100, display:"inline-block",}]} numberOfLines={1}>Status</Text>
+                    <Text style={[styles.tableHeaderText, {width:100, display:"inline-block", textAlign:"center"}]} numberOfLines={1}>Created Date</Text>
+                    <Text style={[styles.tableHeaderText, {width:100, display:"inline-block", textAlign:"center"}]} numberOfLines={1}>Updated Date</Text>
+                    <Text style={[styles.tableHeaderText, {width:120, display:"inline-block", textAlign:"center"}]} numberOfLines={1}>Created By</Text>
+                    <Text style={[styles.tableHeaderText, {width:120, display:"inline-block",textAlign:"center"}]} numberOfLines={1}>Updated By</Text>
+                
+                    <Text style={[styles.tableHeaderText, {width:100, display:"inline-block", textAlign:"center"}]} numberOfLines={1}>Actions</Text>
                   </View>
+                  
                 )}
                 renderItem={({ item }) => (
-                  <View style={styles.listItem}>
-                    <Text style={[styles.listItemText, {width:"50%", display: "inline-block"}]} numberOfLines={1}>{item.moduleName}</Text>
-                   
-                    <View style={[styles.listItemText, {width:"30%", display: "inline-block"}]}> 
+                  // console.log("all the items ",item),
+                  <View style={[styles.listItem]}>
+                    <Text style={[styles.listItemText, {width:120, display: "inline-block",}]} numberOfLines={1}>{item.moduleName}</Text>
+                    <View style={[styles.listItemText, {width:100, display: "inline-block" ,textAlign:"center"}]}> 
                     <Pressable style={[ { display: "inline-block"}]} onPress={() => userAccessForModule?.update === 1 && handleModuleStatus(item.PK_ModuleId, item.isActive)}>
                       <Text style={[styles.listItemText, item.isActive ? styles.actionbtn : styles.inactivebtn, styles.columnStatus,]} numberOfLines={1}>
                         {item.isActive ? "Active" : "Inactive"}
                       </Text>
                     </Pressable>
                     </View>
-                    <View style={[styles.listItemText, {width:"20%", display:"inline-block", alignItems:"center"}]}>
+                    <Text style={[styles.listItemText, {width:120, display: "inline-block", textAlign:"center" }]} numberOfLines={1}>
+                      {item.created_at ? new Date(item.created_at.split('T')[0]).toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }) : 'N/A'}
+                    </Text>
+                    <Text style={[styles.listItemText, { width:120, display: "inline-block",textAlign:"center" }]} numberOfLines={1}>
+                    {item.updated_at ? new Date(item.updated_at.split('T')[0]).toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }) : 'N/A'}
+                    </Text>
+                    <Text style={[styles.listItemText, {width:120, display: "inline-block" , textAlign:"center"}]} numberOfLines={1}>
+                      {item.created_by ? created_by:'N/A'}
+                    </Text>
+                    <Text style={[styles.listItemText, {width:120, display: "inline-block",textAlign:"center" }]} numberOfLines={1}>
+                      {item.updated_by ? updated_by:'N/A'}
+                    </Text>
+               
+                    <View style={[styles.listItemText, {width:120, display:"inline-block", alignItems:"center" ,textAlign:"center"}]}>
                       {userAccessForModule?.update === 1 ? (
                         <Pressable style={[styles.listItemEditButton, {display:"inline-block"}]}  onPress={() => handleEditModule(item)}>
                           <Feather name="edit" size={16} color="#0C7C62" />
@@ -301,7 +327,7 @@ const paginatedData = moduleList.slice((currentPage - 1) * pageSize, currentPage
                 stickyHeaderIndices={[0]}  
               />
             </View>
-
+            </ScrollView>
             <Pagination
                     totalItems={moduleList?.length}
                     pageSize={pageSize}
