@@ -32,7 +32,13 @@ import { formatInTimeZone } from 'date-fns-tz';
   const [roomList, setRoomList] = useState([]);
   const [shiftList, setShiftList] = useState([]);
 
-
+    //---------------------------------------------------- dimension based view--------------------------------------------//
+    const { width, height } = Dimensions.get('window');
+    const isMobile = width < 768; 
+    const tableWidth = isMobile ? width - 10 : width * 0.96; 
+    const tableHeight = isMobile ? height * 0.70 : height * 0.67; 
+    console.log(`Table Width: ${tableWidth}, Table Height: ${tableHeight} `,);
+    
 
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
@@ -587,7 +593,7 @@ import { formatInTimeZone } from 'date-fns-tz';
         </View>
         </View>
         <ScrollView horizontal>
-        <View style={{minHeight:"90%", width: '100%' ,}}>
+        <View style={{ maxHeight: tableHeight, minWidth: isMobile ? 100 :tableWidth}}>
           <FlatList 
             data={invigilatorList}
             keyExtractor={(item) => item.PK_InvigilatorDutyId.toString()}

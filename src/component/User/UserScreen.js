@@ -38,11 +38,15 @@ const UserScreen = ({userAccess,refresh}) => {
     //---------------------------------------------------- dimension based view--------------------------------------------//
     const { width, height } = Dimensions.get('window');
     const isMobile = width < 768; 
-    const tableWidth = isMobile ? width - 10 : width * 0.96; 
-    const tableHeight = isMobile ? height * 0.99 : height * 0.6; 
+    const tableWidth = isMobile ? width  : width * 0.95; 
+    const tableHeight = isMobile ? height * 0.68 : height * 0.6; 
+    console.log(`Table Width: ${tableWidth}, Table Height: ${tableHeight} `,);
+    const tableWidth1 = isMobile ? width-200 : width * 0.96; 
+    const tableHeight1 = isMobile ? height * 0.4  : height * 0.24; 
+    console.log(`Table Width1: ${tableWidth1}, Table Height1: ${tableHeight1}, `,);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const pageSize = 10;
+  const pageSize = 25;
   const paginatedData = userList.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   // const duplicatePageSize = 10;
@@ -587,11 +591,27 @@ const UserScreen = ({userAccess,refresh}) => {
     }
   };
 
+  const HorizontalItem = ({ item }) => (
+    <View style={styles.horizontalItem}>
+      <Text>{item.key}</Text>
+    </View>
+  );
+  
+  const VerticalItem = ({ item }) => (
+    <FlatList
+      horizontal
+      data={item}
+      renderItem={({ item }) => <HorizontalItem item={item} />}
+      keyExtractor={(item) => item.key}
+      showsHorizontalScrollIndicator={false}
+    />
+  );
+
   const renderRoleList = () =>{
     return(
         <View>
         <Text style={[styles.header,{marginTop:10}]}> Role List : </Text>
-        <View style={{minHeight:"45%"}}>
+        <View style={{maxHeight: tableHeight1, minWidth: isMobile ? tableWidth1 :tableWidth1 }}>
         <FlatList
           data={roleList}
           keyExtractor={(item) => item?.PK_RoleId?.toString()}
@@ -660,14 +680,14 @@ const UserScreen = ({userAccess,refresh}) => {
                   </Pressable>) }
           </View>
           <ScrollView horizontal>
-          <View style={{maxHeight: tableHeight, minWidth: isMobile ? 100 :tableWidth }}>
+          <View style={{maxHeight: tableHeight, minWidth: isMobile ? tableWidth :tableWidth }}>
         <FlatList 
           data={paginatedData}
           keyExtractor={(item) => item.user_id.toString()}
           ListHeaderComponent={() => (
             <View style={styles.tableHeader}>
               <Text style={[styles.tableHeaderText,{width:120}, ]}>Employee Id</Text>
-              <Text style={[styles.tableHeaderText,{width:150}, ]}>Name</Text>
+              <Text style={[styles.tableHeaderText,{width:200}, ]}>Name</Text>
               <Text style={[styles.tableHeaderText, {width:120} ]}>Mob.No</Text>
               <Text style={[styles.tableHeaderText,{width:90}  ]}>Status</Text>
               <Text style={[styles.tableHeaderText, {width:60, textAlign:"center"} ]}>Actions</Text>
@@ -676,7 +696,7 @@ const UserScreen = ({userAccess,refresh}) => {
           renderItem={({ item }) => (
             <View style={styles.listItem}>
               <Text style={[styles.listItemText,{width:120}]}>{item.username}</Text>
-              <Text style={[styles.listItemText,{width:150}]}>{item.name}</Text>
+              <Text style={[styles.listItemText,{width:200}]}>{item.name}</Text>
               <Text style={[styles.listItemText, {width:120}]}>{item.contact_number}</Text>
               <View style={[styles.listItemText, {display:"inline-block", width:90}]}>
                 <Pressable style={{display:"inline-block"} } onPress={() =>UserAccess?.update === 1 ? handleUserStatus(item.user_id, item?.isActive) : ''}>
@@ -694,13 +714,12 @@ const UserScreen = ({userAccess,refresh}) => {
           stickyHeaderIndices={[0]} 
          />
          </View>
-         </ScrollView>
-         
+         </ScrollView>         
          <Pagination
-                    totalItems={userList?.length}
-                    pageSize={pageSize}
-                    currentPage={currentPage}
-                    onPageChange={handlePageChange}
+          totalItems={userList?.length}
+          pageSize={pageSize}
+          currentPage={currentPage}
+          onPageChange={handlePageChange}
               />
       </View>)
       }
