@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Feather,FontAwesome5,FontAwesome ,FontAwesome6} from "@expo/vector-icons";
 import { parse, format,parseISO,isBefore } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
-
+import Pagination from "../../globalComponent/Pagination/PaginationComponent";
  const InvigilatorScreen = ({userAccess,refresh}) => {
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 8 );
   const { addToast } = useToast();
@@ -36,9 +36,16 @@ import { formatInTimeZone } from 'date-fns-tz';
     const { width, height } = Dimensions.get('window');
     const isMobile = width < 768; 
     const tableWidth = isMobile ? width - 10 : width * 0.96; 
-    const tableHeight = isMobile ? height * 0.70 : height * 0.67; 
-    console.log(`Table Width: ${tableWidth}, Table Height: ${tableHeight} `,);
+    const tableHeight = isMobile ? height * 0.72 : height * 0.66; 
+    // console.log(`Table Width: ${tableWidth}, Table Height: ${tableHeight} `,);
     
+// Pagination
+const [currentPage, setCurrentPage] = useState(1);
+const handlePageChange = (page) => {
+  setCurrentPage(page);
+};
+const pageSize = 25;
+const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
@@ -595,7 +602,7 @@ import { formatInTimeZone } from 'date-fns-tz';
         <ScrollView horizontal>
         <View style={{maxHeight: tableHeight, minWidth: isMobile ? tableWidth :tableWidth}}>
           <FlatList 
-            data={invigilatorList}
+            data={paginatedData}
             keyExtractor={(item) => item.PK_InvigilatorDutyId.toString()}
                 ListHeaderComponent={() => (
                   <View style={styles.tableHeader}>
@@ -643,9 +650,16 @@ import { formatInTimeZone } from 'date-fns-tz';
           />
       </View>
       </ScrollView>
+      <Pagination
+                    totalItems={invigilatorList?.length}
+                    pageSize={pageSize}
+                    currentPage={currentPage}
+                    onPageChange={handlePageChange}
+              />
     </View>
    ))
     }
+  
     </View>   
    );
  };

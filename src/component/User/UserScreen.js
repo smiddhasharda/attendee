@@ -40,10 +40,10 @@ const UserScreen = ({userAccess,refresh}) => {
     const isMobile = width < 768; 
     const tableWidth = isMobile ? width  : width * 0.95; 
     const tableHeight = isMobile ? height * 0.68 : height * 0.6; 
-    console.log(`Table Width: ${tableWidth}, Table Height: ${tableHeight} `,);
+    // console.log(`Table Width: ${tableWidth}, Table Height: ${tableHeight} `,);
     const tableWidth1 = isMobile ? width-200 : width * 0.96; 
     const tableHeight1 = isMobile ? height * 0.4  : height * 0.24; 
-    console.log(`Table Width1: ${tableWidth1}, Table Height1: ${tableHeight1}, `,);
+    // console.log(`Table Width1: ${tableWidth1}, Table Height1: ${tableHeight1}, `,);
   const [currentPage, setCurrentPage] = useState(1);
 
   const pageSize = 25;

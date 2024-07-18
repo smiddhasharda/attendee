@@ -40,9 +40,9 @@ const paginatedData = moduleList.slice((currentPage - 1) * pageSize, currentPage
     const { width, height } = Dimensions.get('window');
     const isMobile = width < 768; 
     const tableWidth = isMobile ? width  : width * 0.96; 
-        // const tableWidth =  width ; 
+    // const tableWidth =  width ; 
     const tableHeight = isMobile ? height * 0.70 : height * 0.67; 
-    console.log(`Table Width: ${tableWidth}, Table Height: ${tableHeight} `,);
+    // console.log(`Table Width: ${tableWidth}, Table Height: ${tableHeight} `,);
     
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
@@ -270,71 +270,68 @@ const paginatedData = moduleList.slice((currentPage - 1) * pageSize, currentPage
                   </Pressable>
                 </View>
               )
-            }
-    
-        <ScrollView horizontal={true}>
-        <View style={{maxHeight: tableHeight, minWidth: isMobile ? tableWidth :tableWidth }}>
-              <FlatList
-                data={paginatedData}
-                style={styles.modulesTbl}
-                keyExtractor={item => item.PK_ModuleId.toString()}
-                ListHeaderComponent={() => (
-                  <View style={styles.tableHeader}>
-                    <Text style={[styles.tableHeaderText, {width:120, display:"inline-block" ,}]} numberOfLines={1}>Module</Text>
-                    <Text style={[styles.tableHeaderText, {width:100, display:"inline-block",}]} numberOfLines={1}>Status</Text>
-                    <Text style={[styles.tableHeaderText, {width:100, display:"inline-block", textAlign:"center"}]} numberOfLines={1}>Created Date</Text>
-                    <Text style={[styles.tableHeaderText, {width:100, display:"inline-block", textAlign:"center"}]} numberOfLines={1}>Updated Date</Text>
-                    <Text style={[styles.tableHeaderText, {width:120, display:"inline-block", textAlign:"center"}]} numberOfLines={1}>Created By</Text>
-                    <Text style={[styles.tableHeaderText, {width:120, display:"inline-block",textAlign:"center"}]} numberOfLines={1}>Updated By</Text>
-                
-                    <Text style={[styles.tableHeaderText, {width:100, display:"inline-block", textAlign:"center"}]} numberOfLines={1}>Actions</Text>
-                  </View>
-                  
-                )}
-                renderItem={({ item }) => (
-                  // console.log("all the items ",item),
-                  <View style={[styles.listItem]}>
-                    <Text style={[styles.listItemText, {width:120, display: "inline-block",}]} numberOfLines={1}>{item.moduleName}</Text>
-                    <View style={[styles.listItemText, {width:100, display: "inline-block" ,textAlign:"center"}]}> 
-                    <Pressable style={[ { display: "inline-block"}]} onPress={() => userAccessForModule?.update === 1 && handleModuleStatus(item.PK_ModuleId, item.isActive)}>
-                      <Text style={[styles.listItemText, item.isActive ? styles.actionbtn : styles.inactivebtn, styles.columnStatus,]} numberOfLines={1}>
-                        {item.isActive ? "Active" : "Inactive"}
+            }  
+              <ScrollView horizontal={true}>
+              <View style={{maxHeight: tableHeight, minWidth: isMobile ? tableWidth :tableWidth }}>
+                <FlatList
+                  data={paginatedData}
+                  style={styles.modulesTbl}
+                  keyExtractor={item => item.PK_ModuleId.toString()}
+                  ListHeaderComponent={() => (
+                    <View style={styles.tableHeader}>
+                      <Text style={[styles.tableHeaderText, {width:120, display:"inline-block" ,}]} numberOfLines={1}>Module</Text>
+                      <Text style={[styles.tableHeaderText, {width:100, display:"inline-block",}]} numberOfLines={1}>Status</Text>
+                      <Text style={[styles.tableHeaderText, {width:100, display:"inline-block", textAlign:"center"}]} numberOfLines={1}>Created Date</Text>
+                      <Text style={[styles.tableHeaderText, {width:100, display:"inline-block", textAlign:"center"}]} numberOfLines={1}>Updated Date</Text>
+                      <Text style={[styles.tableHeaderText, {width:120, display:"inline-block", textAlign:"center"}]} numberOfLines={1}>Created By</Text>
+                      <Text style={[styles.tableHeaderText, {width:120, display:"inline-block",textAlign:"center"}]} numberOfLines={1}>Updated By</Text>              
+                      <Text style={[styles.tableHeaderText, {width:100, display:"inline-block", textAlign:"center"}]} numberOfLines={1}>Actions</Text>
+                    </View>
+                    
+                  )}
+                  renderItem={({ item }) => (
+                    // console.log("all the items ",item),
+                    <View style={[styles.listItem]}>
+                      <Text style={[styles.listItemText, {width:120, display: "inline-block",}]} numberOfLines={1}>{item.moduleName}</Text>
+                      <View style={[styles.listItemText, {width:100, display: "inline-block" ,textAlign:"center"}]}> 
+                      <Pressable style={[ { display: "inline-block"}]} onPress={() => userAccessForModule?.update === 1 && handleModuleStatus(item.PK_ModuleId, item.isActive)}>
+                        <Text style={[styles.listItemText, item.isActive ? styles.actionbtn : styles.inactivebtn, styles.columnStatus,]} numberOfLines={1}>
+                          {item.isActive ? "Active" : "Inactive"}
+                        </Text>
+                      </Pressable>
+                      </View>
+                      <Text style={[styles.listItemText, {width:120, display: "inline-block", textAlign:"center" }]} numberOfLines={1}>
+                        {item.created_at ? new Date(item.created_at.split('T')[0]).toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }) : 'N/A'}
                       </Text>
-                    </Pressable>
-                    </View>
-                    <Text style={[styles.listItemText, {width:120, display: "inline-block", textAlign:"center" }]} numberOfLines={1}>
-                      {item.created_at ? new Date(item.created_at.split('T')[0]).toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }) : 'N/A'}
-                    </Text>
-                    <Text style={[styles.listItemText, { width:120, display: "inline-block",textAlign:"center" }]} numberOfLines={1}>
-                    {item.updated_at ? new Date(item.updated_at.split('T')[0]).toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }) : 'N/A'}
-                    </Text>
-                    <Text style={[styles.listItemText, {width:120, display: "inline-block" , textAlign:"center"}]} numberOfLines={1}>
-                      {item.created_by ? created_by:'N/A'}
-                    </Text>
-                    <Text style={[styles.listItemText, {width:120, display: "inline-block",textAlign:"center" }]} numberOfLines={1}>
-                      {item.updated_by ? updated_by:'N/A'}
-                    </Text>
-               
-                    <View style={[styles.listItemText, {width:120, display:"inline-block", alignItems:"center" ,textAlign:"center"}]}>
-                      {userAccessForModule?.update === 1 ? (
-                        <Pressable style={[styles.listItemEditButton, {display:"inline-block"}]}  onPress={() => handleEditModule(item)}>
-                          <Feather name="edit" size={16} color="#0C7C62" />
-                        </Pressable>
-                      ) : (<Text>-</Text>)}
-                    </View>
-                  </View>
-                )}
-                stickyHeaderIndices={[0]}  
-              />
-            </View>
-            </ScrollView>
-            <Pagination
-                    totalItems={moduleList?.length}
-                    pageSize={pageSize}
-                    currentPage={currentPage}
-                    onPageChange={handlePageChange}
+                      <Text style={[styles.listItemText, { width:120, display: "inline-block",textAlign:"center" }]} numberOfLines={1}>
+                      {item.updated_at ? new Date(item.updated_at.split('T')[0]).toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }) : 'N/A'}
+                      </Text>
+                      <Text style={[styles.listItemText, {width:120, display: "inline-block" , textAlign:"center"}]} numberOfLines={1}>
+                        {item.created_by ? created_by:'N/A'}
+                      </Text>
+                      <Text style={[styles.listItemText, {width:120, display: "inline-block",textAlign:"center" }]} numberOfLines={1}>
+                        {item.updated_by ? updated_by:'N/A'}
+                      </Text>
                 
-              />
+                      <View style={[styles.listItemText, {width:120, display:"inline-block", alignItems:"center" ,textAlign:"center"}]}>
+                        {userAccessForModule?.update === 1 ? (
+                          <Pressable style={[styles.listItemEditButton, {display:"inline-block"}]}  onPress={() => handleEditModule(item)}>
+                            <Feather name="edit" size={16} color="#0C7C62" />
+                          </Pressable>
+                        ) : (<Text>-</Text>)}
+                      </View>
+                    </View>
+                  )}
+                  stickyHeaderIndices={[0]}  
+                />
+              </View>
+              </ScrollView>
+            <Pagination
+                totalItems={moduleList?.length}
+                pageSize={pageSize}
+                currentPage={currentPage}
+                onPageChange={handlePageChange}              
+          />
         </View>
       )}
     </View>
