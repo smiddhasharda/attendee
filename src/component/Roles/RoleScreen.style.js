@@ -38,7 +38,7 @@ import {
       fontWeight: "bold",
       //marginBottom:10,
       clear: "both",
-      marginBottom:10
+      // marginBottom:10
     },
     
     tableHeader: {
@@ -119,7 +119,8 @@ import {
     addBtn: {
       alignItems:"flex-end", 
       position: "relative", 
-      bottom: 35,
+      // bottom: 35,
+      bottom: 24,
       //minHeight: 40
     },
     rolesTbl:{

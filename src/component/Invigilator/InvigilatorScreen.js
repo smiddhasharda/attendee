@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Feather,FontAwesome5,FontAwesome ,FontAwesome6} from "@expo/vector-icons";
 import { parse, format,parseISO,isBefore } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
-
+import Pagination from "../../globalComponent/Pagination/PaginationComponent";
  const InvigilatorScreen = ({userAccess,refresh}) => {
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 8 );
   const { addToast } = useToast();
@@ -32,7 +32,20 @@ import { formatInTimeZone } from 'date-fns-tz';
   const [roomList, setRoomList] = useState([]);
   const [shiftList, setShiftList] = useState([]);
 
-
+    //---------------------------------------------------- dimension based view--------------------------------------------//
+    const { width, height } = Dimensions.get('window');
+    const isMobile = width < 768; 
+    const tableWidth = isMobile ? width - 10 : width * 0.96; 
+    const tableHeight = isMobile ? height * 0.72 : height * 0.66; 
+    // console.log(`Table Width: ${tableWidth}, Table Height: ${tableHeight} `,);
+    
+// Pagination
+const [currentPage, setCurrentPage] = useState(1);
+const handlePageChange = (page) => {
+  setCurrentPage(page);
+};
+const pageSize = 25;
+const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
@@ -587,23 +600,28 @@ import { formatInTimeZone } from 'date-fns-tz';
         </View>
         </View>
         <ScrollView horizontal>
-        <View style={{minHeight:"90%", width: '100%' ,}}>
+        <View style={{maxHeight: tableHeight, minWidth: isMobile ? tableWidth :tableWidth}}>
           <FlatList 
-            data={invigilatorList}
+            data={paginatedData}
             keyExtractor={(item) => item.PK_InvigilatorDutyId.toString()}
                 ListHeaderComponent={() => (
                   <View style={styles.tableHeader}>
-                    <Text style={[styles.tableHeaderText,{width:90} ]}>Id</Text>
-                    <Text style={[styles.tableHeaderText, {width:180}]}>EmplId</Text>
+                    <Text style={[styles.tableHeaderText, {width:90} ]}>Id</Text>
+                    <Text style={[styles.tableHeaderText, {width:180}]}>Employee Id</Text>
                     <Text style={[styles.tableHeaderText,{width:180} ]}>Name</Text>
                     <Text style={[styles.tableHeaderText,{width:120}  ]}>Room</Text>
                     <Text style={[styles.tableHeaderText,{width:120} ]}>Date</Text>
                     <Text style={[styles.tableHeaderText,{width:120} ]}>Shift</Text>
                     <Text style={[styles.tableHeaderText,{width:120}  ]}>Status</Text>
+                    <Text style={[styles.tableHeaderText, {width:120, display:"inline-block", textAlign:"center"}]} numberOfLines={1}>Created Date</Text>
+                    <Text style={[styles.tableHeaderText, {width:120, display:"inline-block", textAlign:"center"}]} numberOfLines={1}>Updated Date</Text>
+                    <Text style={[styles.tableHeaderText, {width:120, display:"inline-block", textAlign:"center"}]} numberOfLines={1}>Created By</Text>
+                    <Text style={[styles.tableHeaderText, {width:120, display:"inline-block",textAlign:"center"}]} numberOfLines={1}>Updated By</Text>
                     <Text style={[styles.tableHeaderText,{width:80} ]}>Actions </Text>
                     
                   </View>
-          )} renderItem={({ item }) => (          
+          )} renderItem={({ item }) => (  
+            // console.log(item),      
             <View style={styles.listItem}>
               <Text style={[styles.listItemText, {width:90}]}>{item.PK_InvigilatorDutyId}</Text>
               <Text style={[styles.listItemText, {width:180}]}>{item.employeeId}</Text>
@@ -611,7 +629,19 @@ import { formatInTimeZone } from 'date-fns-tz';
               <Text style={[styles.listItemText, {width:120}]}>{item.room}</Text>
               <Text style={[styles.listItemText, {width:120}]}>{parseAndFormatDate(item.date)}</Text>
               <Text style={[styles.listItemText, {width:120}]}>{convertedTime(item.shift)}</Text>
-              <Text style={[styles.listItemText, {width:120}]}>{item.duty_status}</Text>    
+              <Text style={[styles.listItemText, {width:120}]}>{item.duty_status}</Text>   
+              <Text style={[styles.listItemText, {width:120, display: "inline-block", textAlign:"center" }]} numberOfLines={1}>
+                      {item.created_at ? new Date(item.created_at.split('T')[0]).toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }) : 'N/A'}
+                    </Text>
+                    <Text style={[styles.listItemText, { width:120, display: "inline-block",textAlign:"center" }]} numberOfLines={1}>
+                    {item.updated_at ? new Date(item.updated_at.split('T')[0]).toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }) : 'N/A'}
+                    </Text>
+                    <Text style={[styles.listItemText, {width:120, display: "inline-block" , textAlign:"center"}]} numberOfLines={1}>
+                      {item.created_by ? created_by:'N/A'}
+                    </Text>
+                    <Text style={[styles.listItemText, {width:120, display: "inline-block",textAlign:"center" }]} numberOfLines={1}>
+                      {item.updated_by ? updated_by:'N/A'}
+                    </Text> 
               {UserAccess?.update === 1  ? <Pressable style={[{width:80}, {alignItems:"center"}]} onPress={() => handleEditInvigilator(item)}>
               <Text style={styles.listItemEditText}><Feather name="edit" size={16} color="green" /></Text>
                 </Pressable> : (<Text>-</Text>)}  
@@ -620,9 +650,16 @@ import { formatInTimeZone } from 'date-fns-tz';
           />
       </View>
       </ScrollView>
+      <Pagination
+                    totalItems={invigilatorList?.length}
+                    pageSize={pageSize}
+                    currentPage={currentPage}
+                    onPageChange={handlePageChange}
+              />
     </View>
    ))
     }
+  
     </View>   
    );
  };

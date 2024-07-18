@@ -25,7 +25,7 @@ import { RefreshContext } from "../../globalComponent/Refresh/RefreshContext";
 
 
 import InvigilatorScreen from "../../component/Invigilator/InvigilatorScreen";
-// import ReportScreen from "../../component/Report/ReportScreen";
+import ReportScreen from "../../component/Report/ReportScreen";
 
 // Screen components
 const RoleComponent = ({ userAccess,refresh }) => <RoleScreen userAccess={userAccess} refresh={refresh}/>;
@@ -267,7 +267,7 @@ const DrawerNavigator = ({ navigation }) => {
       UserScreen: focused ? 'person' : 'person-outline',
       ExamScreen: focused ? 'book' : 'book-outline',
       InvigilatorScreen: focused ? 'people' : 'people-outline',
-      // ReportScreen: focused ? 'bookmark' : 'bookmarks',
+      ReportScreen: focused ? 'bookmark' : 'bookmarks',
 
 
       // Add more mappings as needed
@@ -365,8 +365,8 @@ const DrawerNavigator = ({ navigation }) => {
             return "Exam";
           case "InvigilatorScreen":
             return "Invigilator Duties";
-          // case "ReportScreen":
-          //   return "Report";
+          case "ReportScreen":
+            return "Report";
           default:
             return module?.moduleMaster[0]?.moduleName;
         }
@@ -395,8 +395,8 @@ const DrawerNavigator = ({ navigation }) => {
                   return <ExamComponent {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData} refresh={refresh} />;
                 case "InvigilatorScreen":
                   return <InvigilatorScreen {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData} refresh={refresh} />;  
-                {/* case "ReportScreen":
-                  return <ReportScreen {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} refresh={refresh} />; */}
+                case "ReportScreen":
+                  return <ReportScreen {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} refresh={refresh} />;
                   
                   default:
                   return null;
