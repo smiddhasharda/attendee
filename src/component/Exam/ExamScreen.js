@@ -273,6 +273,7 @@ const styles = StyleSheet.create({
     justifyContent:"space-between",
     alignItems:"center",
      marginBottom:15,
+ 
   },
   searchicons:{
      padding:"10px",
@@ -290,9 +291,10 @@ const styles = StyleSheet.create({
     // borderColor:"#ccc",
     // borderTopWidth:1,
     // borderBottomWidth:1,
-    backgroundColor: "#ffffff",
+    // backgroundColor: "#ffffff",
+    backgroundColor:"#f6f6f6",
     borderBottomWidth: 1,
-    borderBottomColor: "#dddedf",
+    borderBottomColor: "#E9E8E8",
     borderTopWidth: 0,
     marginTop: 0,
   },
@@ -301,6 +303,8 @@ const styles = StyleSheet.create({
     // marginRight: 6,
     minWidth: 60,
     alignItems: "center",
+    borderRightWidth:1,
+    borderRightColor:"#E9E8E8"
     //  width:65,
     //  height:40,
     //  justifyContent:"center"
@@ -341,7 +345,6 @@ const styles = StyleSheet.create({
     flexDirection:"row",
     color:"#000",
     justifyContent:"space-between",
-
   },
  
   examTimedetail: {
