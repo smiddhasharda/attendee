@@ -22,16 +22,16 @@ import styles from "./DrawerNavigator.style";
 import { Ionicons,Feather } from '@expo/vector-icons'; 
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RefreshContext } from "../../globalComponent/Refresh/RefreshContext";
-
-
 import InvigilatorScreen from "../../component/Invigilator/InvigilatorScreen";
 import ReportScreen from "../../component/Report/ReportScreen";
+import ManagePasswordScreen from "../../component/Password/ManagePasswordScreen";
 
 // Screen components
 const RoleComponent = ({ userAccess,refresh }) => <RoleScreen userAccess={userAccess} refresh={refresh}/>;
 const ModuleComponent = ({ userAccess,refresh }) => <ModuleScreen userAccess={userAccess} refresh={refresh} />;
 const DashboardComponent = ({ userAccess,refresh }) => <DashboardScreen userAccess={userAccess} refresh={refresh} />;
 const UserComponent = ({ userAccess,refresh }) => <UserScreen userAccess={userAccess} refresh={refresh} />;
+const ManagePasswordComponent = ({ userAccess,refresh }) => <ManagePasswordScreen userAccess={userAccess} refresh={refresh} />;
 const ExamComponent = ({ navigation, userAccess, userData,refresh }) => (
   <ExamScreen navigation={navigation} userAccess={userAccess} userData={userData} refresh={refresh} />
 );
@@ -268,9 +268,7 @@ const DrawerNavigator = ({ navigation }) => {
       ExamScreen: focused ? 'book' : 'book-outline',
       InvigilatorScreen: focused ? 'people' : 'people-outline',
       ReportScreen: focused ? 'bookmark' : 'bookmarks',
-
-
-      // Add more mappings as needed
+      ManagePasswordScreen: focused ? 'lock-open-sharp' : 'lock-closed-sharp',
     };
     return icons[moduleName] || 'help'; // Default icon if no match is found
   };
@@ -367,6 +365,8 @@ const DrawerNavigator = ({ navigation }) => {
             return "Invigilator Duties";
           case "ReportScreen":
             return "Report";
+          case "ManagePasswordScreen":
+            return "Change Password" 
           default:
             return module?.moduleMaster[0]?.moduleName;
         }
@@ -394,7 +394,9 @@ const DrawerNavigator = ({ navigation }) => {
                 case "ExamScreen":
                   return <ExamComponent {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData} refresh={refresh} />;
                 case "InvigilatorScreen":
-                  return <InvigilatorScreen {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData} refresh={refresh} />;  
+                  return <InvigilatorScreen {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData} refresh={refresh} />; 
+                  case "ManagePasswordScreen":
+                  return <ManagePasswordComponent {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData} refresh={refresh} />;   
                 case "ReportScreen":
                   return <ReportScreen {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} refresh={refresh} />;
                   
