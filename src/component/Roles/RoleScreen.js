@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, Text, TextInput, FlatList, Pressable ,} from "react-native";
+import { View, Text, TextInput, FlatList, Pressable ,Dimensions} from "react-native";
 import { insert, fetch, update } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -31,6 +31,18 @@ const RoleScreen = ({userAccess,refresh}) => {
   const pageSize = 10;
   const paginatedData = roleList.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
+     //---------------------------------------------------- dimension based view--------------------------------------------//
+     const { width, height } = Dimensions.get('window');
+     const isMobile = width < 768; 
+    //  const tableWidth = isMobile ? width  : width * 0.5; 
+     const tableWidth = width * 0.96;
+     const tableHeight = isMobile ? height * 0.70 : height * 0.62; 
+     console.log(`Table Width: ${tableWidth}, Table Height: ${tableHeight} `,);
+  
+     const tableWidth1 = isMobile ? width*1.4: width * 0.96; 
+     const tableHeight1 = isMobile ? height * 0.56 : height * 0.45; 
+     console.log(`Table Width1: ${tableWidth1}, Table Height1: ${tableHeight1} `,);
+
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
 
@@ -58,8 +70,8 @@ const RoleScreen = ({userAccess,refresh}) => {
               description: roleData.roleDescription,
               isActive: roleData.roleStatus,
             },
-            conditionString: "",
-            checkAvailability: "",
+            conditionString: `role_name='${roleData.roleName}'`,
+            checkAvailability: true,
             customQuery: "",
           },
           authToken
@@ -79,8 +91,8 @@ const RoleScreen = ({userAccess,refresh}) => {
                 operation: "insert",
                 tblName: "tbl_role_module_permission",
                 data: rolePermissionsWithId,
-                conditionString: "",
-                checkAvailability: "",
+                conditionString: `FK_RoleId='${response?.data?.receivedData?.insertId}' AND FK_ModuleId IN (${roleData?.modulePermissions?.map((data) => data.FK_ModuleId)})`,
+                checkAvailability: true,
                 customQuery: "",
               },
               authToken
@@ -171,7 +183,7 @@ const RoleScreen = ({userAccess,refresh}) => {
           data: "",
           conditionString: "",
           checkAvailability: "",
-          customQuery: `select JSON_ARRAYAGG(json_object('PK_RoleId',p.PK_RoleId,'roleName',roleName,'description',p.description,'isActive',p.isActive,'modulePermission',( SELECT CAST( CONCAT('[', GROUP_CONCAT( JSON_OBJECT( 'Id',q.PK_role_module_permissionId,'FK_RoleId', q.FK_RoleId,'FK_ModuleId', q.FK_ModuleId, 'create', q.create, 'read', q.read, 'update', q.update, 'delete', q.delete, 'special', q.special) ), ']') AS JSON ) FROM tbl_role_module_permission q WHERE q.FK_RoleId = p.PK_RoleId ))) AS RoleMaster from tbl_role_master p`,
+          customQuery: `SELECT JSON_ARRAYAGG( JSON_OBJECT( 'PK_RoleId', p.PK_RoleId, 'roleName', p.roleName, 'description', p.description, 'isActive', p.isActive, 'modulePermission', ( SELECT JSON_ARRAYAGG( JSON_OBJECT( 'Id', q.PK_role_module_permissionId, 'FK_RoleId', q.FK_RoleId, 'FK_ModuleId', q.FK_ModuleId, 'create', q.create, 'read', q.read, 'update', q.update, 'delete', q.delete, 'special', q.special ) ) FROM tbl_role_module_permission q WHERE q.FK_RoleId = p.PK_RoleId ) ) ) AS RoleMaster FROM tbl_role_master p; `,
         },
         authToken
       );
@@ -322,40 +334,42 @@ const RoleScreen = ({userAccess,refresh}) => {
 
   const renderModuleCheckboxes = (item) => {
     return (
-      <View style={styles.listItem} key={item?.PK_ModuleId}>
-        <Text style={[styles.listItemText, { width:120},{textAlign:"left"},]}>
+      <View style ={{maxHeight: tableHeight1, minWidth: isMobile ? tableWidth1 :tableWidth1}}>
+      <View style={[styles.listItem,]}  key={item?.PK_ModuleId}>
+        <Text style={[styles.listItemText, {width:"35%"},{textAlign:"left"},]}>
           {item?.moduleName}
         </Text>
-        <View style={[styles.checkboxContainer, {width:75 },{textAlign:"center"} ]}>
+        <View style={[styles.checkboxContainer, {width:"12%"},{textAlign:"center"} ]}>
           <CheckBox
             value={getModulePermission(item, "create")}
             onValueChange={() => handleUpdatePermissions(item, "create")}
           />
         </View>
-        <View style={[styles.checkboxContainer, {width:75},{textAlign:"center"}]}>
+        <View style={[styles.checkboxContainer, {width:"12%"},{textAlign:"center"}]}>
           <CheckBox
             value={getModulePermission(item, "read")}
             onValueChange={() => handleUpdatePermissions(item, "read")}
           />
         </View>
-        <View style={[styles.checkboxContainer, {width:75},{textAlign:"center"}]}>
+        <View style={[styles.checkboxContainer, {width:"14%"},{textAlign:"center"}]}>
           <CheckBox
             value={getModulePermission(item, "update")}
             onValueChange={() => handleUpdatePermissions(item, "update")}
           />
         </View>
-        <View style={[styles.checkboxContainer, {width:75},{textAlign:"center"}]}>
+        <View style={[styles.checkboxContainer, {width:"12%"},{textAlign:"center"}]}>
           <CheckBox
             value={getModulePermission(item, "delete")}
             onValueChange={() => handleUpdatePermissions(item, "delete")}
           />
         </View>
-        <View style={[styles.checkboxContainer, {width:75},{textAlign:"center"}]}>
+        <View style={[styles.checkboxContainer, {width:"15%"},{textAlign:"center"}]}>
           <CheckBox
             value={getModulePermission(item, "special")}
             onValueChange={() => handleUpdatePermissions(item, "special")}
           />
         </View>
+      </View>
       </View>
     );
   };
@@ -385,28 +399,28 @@ const RoleScreen = ({userAccess,refresh}) => {
             }
           />
           <View style={{marginTop:15}}>
-          <Text style={styles.header}> Module List : </Text>  
+          <Text style={[styles.header,{marginBottom:8}]}> Module List : </Text>  
           <ScrollView horizontal>
-          <View style={{maxHeight: 300}}>
+          <View style={{ maxHeight: tableHeight1, minWidth: isMobile ? tableWidth1 :tableWidth1}}>
           <FlatList
             data={moduleList}
             keyExtractor={(item) => item?.PK_ModuleId?.toString()}
             ListHeaderComponent={() => (
               <View style={styles.tableHeader}>
-                <Text style={[styles.tableHeaderText, {width:120} ,{textAlign:"left"}]}>
+                <Text style={[styles.tableHeaderText, {width:"35%"} ,{textAlign:"left"}]}>
                   Module  
                 </Text>
-                <Text style={[styles.tableHeaderText,{width:75} ,{textAlign:"center"}]}>
+                <Text style={[styles.tableHeaderText,{width:"12%"} ,{textAlign:"center"}]}>
                   Create
                 </Text>
-                <Text style={[styles.tableHeaderText, {width:75} ,{textAlign:"center"}]}>Read</Text>
-                <Text style={[styles.tableHeaderText, {width:75},{textAlign:"center"}]}>
+                <Text style={[styles.tableHeaderText, {width:"12%"} ,{textAlign:"center"}]}>Read</Text>
+                <Text style={[styles.tableHeaderText, {width:"14%"},{textAlign:"center"}]}>
                   Update
                 </Text>
-                <Text style={[styles.tableHeaderText,{width:75},{textAlign:"center"}]}>
+                <Text style={[styles.tableHeaderText,{width:"12%"},{textAlign:"center"}]}>
                   Delete
                 </Text>
-                <Text style={[styles.tableHeaderText, {width:75},{textAlign:"center"}]}>
+                <Text style={[styles.tableHeaderText, {width:"15%"},{textAlign:"center"}]}>
                   Special
                 </Text>
               </View>
@@ -437,26 +451,32 @@ const RoleScreen = ({userAccess,refresh}) => {
           </Pressable> 
           </View>
         }
-            <View style={{maxHeight:"100%"}}>
+        <ScrollView horizontal>
+            <View style={{maxHeight: tableHeight, minWidth:tableWidth }}>
                 <FlatList
                   data={paginatedData}
                   style={styles.rolesTbl}
                   keyExtractor={(item) => item.PK_RoleId.toString()}
                     ListHeaderComponent={() => (
                       <View style={styles.tableHeader}>
-                        <Text numberOfLines={1} style={[styles.tableHeaderText, {width:"50%", display: "inline-block"}]}>Role Name</Text>
-                        <Text style={[styles.tableHeaderText, {width:"30%", display: "inline-block",}]}>Status</Text> 
-                        <Text style={[styles.tableHeaderText, {width:"20%", display: "inline-block"}]}>Actions</Text>
+                        <Text numberOfLines={1} style={[styles.tableHeaderText, {width:200, display: "inline-block"}]}>Role Name</Text>
+                        <Text style={[styles.tableHeaderText, {width:200, display: "inline-block",}]}>Status</Text> 
+                        <Text style={[styles.tableHeaderText, {width:200, display:"inline-block", textAlign:"center"}]} numberOfLines={1}>Created Date</Text>
+                    <Text style={[styles.tableHeaderText, {width:200, display:"inline-block", textAlign:"center"}]} numberOfLines={1}>Updated Date</Text>
+                    <Text style={[styles.tableHeaderText, {width:200, display:"inline-block", textAlign:"center"}]} numberOfLines={1}>Created By</Text>
+                    <Text style={[styles.tableHeaderText, {width:200, display:"inline-block",textAlign:"center"}]} numberOfLines={1}>Updated By</Text>
+                        <Text style={[styles.tableHeaderText, {width:100, display: "inline-block",textAlign:"center"}]}>Actions</Text>
                       </View>
                     )}
                     renderItem={({ item }) => (
+                      //  console.log("All items",item),
                       <View style={[styles.listItem]}>
-                        <View style={[styles.listItemText, {width:"50%", display: "inline-block"}]}>
+                        <View style={[styles.listItemText, {width:200, display: "inline-block"}]}>
                           <Text >
                             {item.roleName}
                           </Text>
                         </View>
-                        <View style={[styles.listItemText, {width:"30%", display: "inline-block" ,}]}>
+                        <View style={[styles.listItemText, {width:200, display: "inline-block" ,}]}>
                           <Pressable        
                           style={[{ display: "inline-block" ,}]}          
                             onPress={() => UserAccess?.update === 1 ? handleRoleStatus(item.PK_RoleId, item?.isActive) : ''} 
@@ -474,7 +494,19 @@ const RoleScreen = ({userAccess,refresh}) => {
                             </Text>
                           </Pressable>
                         </View>
-                        <View style={[styles.listItemText, {width:"20%", alignItems: "center", display: "inline-block"}]}>
+                        <Text style={[styles.listItemText, {width:200, display: "inline-block", textAlign:"center" }]} numberOfLines={1}>
+                      {item.created_at ? new Date(item.created_at.split('T')[0]).toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }) : 'N/A'}
+                    </Text>
+                    <Text style={[styles.listItemText, { width:200, display: "inline-block",textAlign:"center" }]} numberOfLines={1}>
+                    {item.updated_at ? new Date(item.updated_at.split('T')[0]).toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }) : 'N/A'}
+                    </Text>
+                    <Text style={[styles.listItemText, {width:200, display: "inline-block" , textAlign:"center"}]} numberOfLines={1}>
+                      {item.created_by ? created_by:'N/A'}
+                    </Text>
+                    <Text style={[styles.listItemText, {width:200, display: "inline-block",textAlign:"center" }]} numberOfLines={1}>
+                      {item.updated_by ? updated_by:'N/A'}
+                    </Text> 
+                        <View style={[styles.listItemText, {width:100, alignItems: "center", display: "inline-block",textAlign:"center"}]}>
                           {UserAccess?.update === 1 ?
                           (<Pressable style={[styles.listItemEditButton,{display:"inline-block" }]  } 
                           onPress={() => handleEditRole(item)}>
@@ -487,6 +519,7 @@ const RoleScreen = ({userAccess,refresh}) => {
                     )}
                 />
           </View>
+          </ScrollView>
           <Pagination
                     totalItems={roleList?.length}
                     pageSize={pageSize}

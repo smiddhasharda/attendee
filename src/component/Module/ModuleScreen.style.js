@@ -52,7 +52,7 @@ inactivebtn:{
   header: {
     fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 10,
+    // marginBottom: 10,
   },
   // tableHeader: {
   //   flexDirection: "row",
@@ -185,7 +185,7 @@ inactivebtn:{
   addBtn: {
     alignItems: "flex-end", 
     position: "relative", 
-    bottom: 35
+    bottom: 24
   },
   // modulesTbl:{
   //   position: "relative",
