@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet ,Dimensions} from 'react-native';
 import { FontAwesome } from '@expo/vector-icons'; 
 
 const Pagination = ({ totalItems, pageSize, currentPage, onPageChange }) => {
   const totalPages = Math.ceil(totalItems / pageSize);
   const maxPageNumbers = 5; 
 
+  
   // Calculate the range of pages to display
   let startPage = Math.max(1, currentPage - Math.floor(maxPageNumbers / 2));
   let endPage = Math.min(totalPages, startPage + maxPageNumbers - 1);
@@ -49,9 +50,12 @@ const Pagination = ({ totalItems, pageSize, currentPage, onPageChange }) => {
   const handlePageClick = (page) => {
     onPageChange(page);
   };
-
+  const { width, height } = Dimensions.get('window');
+  const isMobile = width < 768; 
+  const tableWidth = isMobile ? width  : width * 0.96; 
   return (
-    <View style={styles.paginationContainer}>
+    // <View style={styles.paginationContainer}>
+      <View style={[styles.paginationContainer, isMobile && styles.mobilePaginationContainer]}>
       <Pressable style={styles.paginationButton} onPress={handleFirst} disabled={currentPage === 1}>
         <FontAwesome name="angle-double-left" size={20} color={currentPage === 1 ? '#ccc' : '#007AFF'} />
       </Pressable>
@@ -110,8 +114,11 @@ const styles = StyleSheet.create({
   paginationContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'end',
+    justifyContent: 'start',
     marginTop: 16,
+  },
+  mobilePaginationContainer: {
+    justifyContent: 'center',
   },
   paginationButton: {
     paddingVertical: 8,
