@@ -273,6 +273,7 @@ const styles = StyleSheet.create({
     justifyContent:"space-between",
     alignItems:"center",
      marginBottom:15,
+    backgroundColor:"#f8f8f8",
  
   },
   searchicons:{
@@ -292,7 +293,7 @@ const styles = StyleSheet.create({
     // borderTopWidth:1,
     // borderBottomWidth:1,
     // backgroundColor: "#ffffff",
-    backgroundColor:"#f6f6f6",
+    // backgroundColor:"#f6f6f6",
     borderBottomWidth: 1,
     borderBottomColor: "#E9E8E8",
     borderTopWidth: 0,
@@ -304,7 +305,8 @@ const styles = StyleSheet.create({
     minWidth: 60,
     alignItems: "center",
     borderRightWidth:1,
-    borderRightColor:"#E9E8E8"
+    borderRightColor:"#E9E8E8",
+    backgroundColor:"#fff",
     //  width:65,
     //  height:40,
     //  justifyContent:"center"
