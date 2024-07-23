@@ -5,6 +5,10 @@ const { width, height } = Dimensions.get('window');
 const isMobile = width < 768; 
 
 const ManagePasswordScreen = () => {
+  const[showOldPassword,setShowOldPassword]=useState(false)
+  const[showNewPassword,setshowNewPassword]=useState(false);
+  const[showConfirmPassword,setshowConfirmPassword]=useState(false);
+
   const [password,setPassword] = useState({
     oldPassword:'',
     newPassword:'',
@@ -13,25 +17,83 @@ const ManagePasswordScreen = () => {
     isNewPassError:'',
     isConfPassError:'' 
   });
+ console.log(password);
 
-  const handlresetPassword=()=>{
-   if(!password.oldPassword){
-    setPassword({...password,isOldPassError: 'old password is requiured !'})
-     return;
+ const validatePassword=(newPassword) =>{
+   const minLength=8;
+   const hasUpperCase = /[A-Z]/.test(newPassword);
+   const hasLowerCase = /[a-z]/.test(newPassword);
+   const hasNumber = /[0-9]/.test(newPassword);
+   const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(newPassword);
+
+   if(newPassword.length < minLength){
+     return 'Password should be min lenght 8'
    }
-   if( !password.newPassword){
-    setPassword({...password,isNewPassError: 'new password is requiured !'})
-     return;
-   }
-   if(!password.confPassword){
-    setPassword({...password,isConfPassError: 'Confirm password is requiured !'})
-   }
-  else if(!(password.newPassword.match(password.confPassword))){
-      setPassword({...password,isNewPassError: 'Password Not Matched !',isConfPassError: 'Password Not Matched !'})
-       return;
-  }
-   alert("Password reset sucessfully");
-  }
+    if(!hasUpperCase){
+      return 'Password must have 1 Uppercase'
+    }
+    if(!hasLowerCase){
+      return'Password Must have one lower case'
+    }
+    if(!hasNumber){
+      return'must have 1 Number '
+    }
+    if(!hasSpecialChar){
+      return 'must have 1 special char'
+    }
+ } 
+
+  const handlresetPassword = () => {
+    if (!password.oldPassword) {
+      setPassword({
+        ...password,
+        isOldPassError: 'Old password is required!',
+      });
+      return;
+    }
+    const newPasswordError = validatePassword(password.newPassword);
+    if (newPasswordError) {
+      setPassword({ ...password, isNewPassError: newPasswordError });
+      return;
+    }
+
+    // if (!password.newPassword) {
+    //   setPassword({
+    //     ...password,
+    //     isNewPassError: 'New password is required!',
+    //   });
+    //   return;
+    // }
+  
+    if (!password.confPassword) {
+      setPassword({
+        ...password,
+        isConfPassError: 'Confirm password is required!',
+      });
+      return;
+    }
+  
+    if(!(password.newPassword.match(password.confPassword))){
+      setPassword({
+        ...password,
+        isConfPassError: 'Passwords do not match!',
+      });
+      return;
+    }
+  
+   
+    alert("Password successfully changed");
+  
+   
+    setPassword({
+      oldPassword: '',
+      newPassword: '',
+      confPassword: '',
+      isOldPassError: '',
+      isNewPassError: '',
+      isConfPassError: ''
+    });
+  };
 
   return (
    <SafeAreaView style={styles.passwordWrap}>
@@ -47,9 +109,9 @@ const ManagePasswordScreen = () => {
                     style={styles.input}
                     onChangeText={(text) =>setPassword({...password,oldPassword: text})}
                     onFocus={() =>setPassword({...password,isOldPassError: ''})}
+                    secureTextEntry={!showOldPassword}
                     />
-                    <Ionicons name='eye' style={[styles.eyeicon,{top:10}]
-                    }/>
+                    <Ionicons name={showOldPassword ?'eye':'eye-off'}  style={[styles.eyeicon,{top:10}] } onPress={()=> setShowOldPassword(!showOldPassword)}    />
                     {password.isOldPassError && <Text style={{color:'red'}}>{password.isOldPassError}</Text>}
                     </View>
                     <View style={[styles.inputWrap, isMobile ? styles.inputmobWrap : null]}>
@@ -61,9 +123,13 @@ const ManagePasswordScreen = () => {
                         style={styles.input}
                         onChangeText={(text) =>setPassword({...password,newPassword: text})}
                         onFocus={() =>setPassword({...password,isNewPassError: '',isConfPassError:''})}
+                        secureTextEntry={!showNewPassword} // it hide the text if false
+                        
                         />
+                        
                         {password.isNewPassError && <Text style={{color:'red'}}>{password.isNewPassError}</Text>}
-                              <Ionicons name='eye' style={styles.eyeicon}/>
+
+                              <Ionicons name={showNewPassword ? 'eye':'eye-off'} style={styles.eyeicon}   onPress={() => setshowNewPassword(!showNewPassword)}/>
                         </View>
                         <View style={{width: isMobile ? "100%" :"48%"}}>    
                       <Text style={styles.label}>Confirm Password</Text>
@@ -73,9 +139,10 @@ const ManagePasswordScreen = () => {
                           style={styles.input}
                           onChangeText={(text) =>setPassword({...password,confPassword: text})}
                           onFocus={() =>setPassword({...password,isNewPassError: '',isConfPassError:''})}
+                          secureTextEntry={!showConfirmPassword}
                           />
                           {password.isConfPassError && <Text style={{color:'red'}}>{password.isConfPassError}</Text>}
-                          <Ionicons name='eye' style={styles.eyeicon}/>
+                          <Ionicons name={showConfirmPassword ? 'eye':'eye-off'} style={styles.eyeicon}  onPress={()=>setshowConfirmPassword(!showConfirmPassword)}/>
                         </View>
                     </View>
                 </View>

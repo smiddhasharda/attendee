@@ -19,7 +19,7 @@ const StudentInfo = ({ navigation,refresh }) => {
   const [studentDetails, setStudentDetails] = useState({});
   const [studentPicture, setStudentPicture] = useState({});
   const [courseDetails, setCourseDetails] = useState({});
-  const [timeLeft, setTimeLeft] = useState('Attendence Not Startted');
+  const [timeLeft, setTimeLeft] = useState('Attendance Not Started');
   const { room_Nbr, catlog_Nbr, system_Id, seat_Nbr, exam_Dt, startTime, reportId, userAccess, current_Term } = route.params;
 
   const UserAccess = userAccess?.module?.find((item) => item?.FK_ModuleId === 6);
@@ -927,7 +927,7 @@ const StudentInfo = ({ navigation,refresh }) => {
       if (!isSameDay(now, examDate)) {
         setIsActive(false);
         let PastDate = !isBefore(examDate, now)
-        setTimeLeft(PastDate ? 'Attandence Not Startted': 'Attendence Completed');
+        setTimeLeft(PastDate ? 'Attendance Not Started': 'Attendance Completed');
         return;
       }
 
@@ -960,7 +960,7 @@ const StudentInfo = ({ navigation,refresh }) => {
         setTimeLeft(`${minutes}:${seconds < 10 ? '0' : ''}${seconds} min`);
       } else {
         setIsActive(false); // make false after changes
-        setTimeLeft(now.getTime() > endWindow ? 'Attendence Completed' : 'Attendence Not Startted');
+        setTimeLeft(now.getTime() > endWindow ? 'Attendance Completed' : 'Attendance Not Started');
   
       }
     }, 1000);
@@ -992,7 +992,7 @@ const StudentInfo = ({ navigation,refresh }) => {
           <View style={styles.countWrap}>
             <View style={styles.countDown}>
             <Text style={styles.cotext}>Time Left :</Text>
-              <View style={[styles.countbg1,  timeLeft === 'Attendence Completed' && styles.completeBackground] }>     
+              <View style={[styles.countbg1,  timeLeft === 'Attendance Completed' && styles.completeBackground] }>     
                 <Text  style={[styles.count,]}>
                 {timeLeft}
                 </Text>

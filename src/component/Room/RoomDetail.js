@@ -185,7 +185,7 @@ const formattedShiftTimePrefix = formatShiftTimePrefix(startTime);
           backgroundColor: '#0cb551',
           borderColor: "#0cb551",
           borderWidth: 1,
-          color: "#fff"
+          color: "#fff",        
         };
       case 'UFM':
         return {
@@ -297,7 +297,7 @@ const formattedShiftTimePrefix = formatShiftTimePrefix(startTime);
                 <Pressable 
                   key={studentData.EMPLID}  // Use a unique identifier from studentData, such as EMPLID
                   onPress={() => UserAccess?.create === 1 ?  navigation.navigate("StudentInfo", { room_Nbr: studentData.ROOM_NBR ,exam_Dt: studentData.EXAM_DT,catlog_Nbr: studentData.CATALOG_NBR ,system_Id:studentData.EMPLID, seat_Nbr: studentData.PTP_SEQ_CHAR ,startTime: startTime,current_Term:studentData.STRM,reportId: presentStudentList?.filter((item)=>item.EMPLID === Number(studentData.EMPLID))?.[0]?.PK_Report_Id ,userAccess }) : ''} >
-                  
+                         
                     <View style={[styles.box,getStatuscolor(presentStudentList?.filter((item) => item.EMPLID === Number(studentData.EMPLID))?.[0]?.Status)]} key={studentData.EMPLID}>
                       <View style={styles.boxtext}>
                         {/* <View style={styles.imgWrap}></View> */}
@@ -305,8 +305,8 @@ const formattedShiftTimePrefix = formatShiftTimePrefix(startTime);
                           {/* <Image source={user}  /> */}
                           <FontAwesome name="user-circle" size={36}  color="black" style={styles.userimage} />
                           <View style={styles.stuWrap}>
-                            <Text style={styles.examname} numberOfLines={1} ellipsizeMode='tail'>{capitalizeName(studentData?.NAME)}</Text>
-                            <Text style={styles.employeeid}>{studentData.EMPLID}</Text>
+                            <Text style={[styles.examname,getStatuscolor(presentStudentList?.filter((item) => item.EMPLID === Number(studentData.EMPLID))?.[0]?.Status)]} numberOfLines={1} ellipsizeMode='tail'>{capitalizeName(studentData?.NAME)}</Text>
+                            <Text style={[styles.employeeid,getStatuscolor(presentStudentList?.filter((item) => item.EMPLID === Number(studentData.EMPLID))?.[0]?.Status)]}> {studentData.EMPLID}</Text>
                             </View>
                         </View>
                         <View style={styles.seqWrap}>
