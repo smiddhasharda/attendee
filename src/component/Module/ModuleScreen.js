@@ -148,35 +148,38 @@ const paginatedData = moduleList.slice((currentPage - 1) * pageSize, currentPage
     const date = new Date(dateString.split('T')[0]);
     return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' });
   };
-  // const handleGetSampleView = async () => {
-  //   try {
-  //     const authToken = await checkAuthToken();
-  //     const response = await view(
-  //       {
-  //         operation: "fetch",
-  //         tblName: "PS_SU_PSFT_COEM_VW",
-  //         data: '',
-  //         conditionString: '',
-  //         checkAvailability: '',
-  //         customQuery: '',
-  //         viewType:'HRMS_View'
-  //       },
-  //       authToken
-  //     );
-
-  //     if (response) {
-  //       console.log("View Data : ",response?.data);
-  //       // setLoading(false);
-  //     }
-  //   } catch (error) {
-  //     // setLoading(false);
-  //     handleAuthErrors(error);
-  //   }
-  // };
+  const handleGetSampleView = async () => {
+    try {
+      const authToken = await checkAuthToken();
+      const response = await view(
+        {
+          operation: "fetch",
+          tblName: "PS_S_PRD_PHOTO_VW",
+          data: '',
+          conditionString: '',
+          checkAvailability: '',
+          customQuery: `SELECT EMPLOYEE_PHOTO FROM PS_S_PRD_PHOTO_VW`,
+          viewType: 'CAMPUS2_View'
+        },
+        authToken
+      );
+  
+      if (response) {
+        const base64Photo = response?.data?.receivedData?.[0]?.EMPLOYEE_PHOTO;
+        const imageSrc = `data:image/jpeg;base64,${base64Photo}`;
+        console.log("View Data : ", imageSrc);
+        // setLoading(false);
+      }
+    } catch (error) {
+      // setLoading(false);
+      handleAuthErrors(error);
+    }
+  };
+  
 
   useEffect(() => {
     fetchModuleList();
-    // handleGetSampleView();
+    handleGetSampleView();
   }, [userAccessForModule,refresh]);
 
   return (
