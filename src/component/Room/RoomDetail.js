@@ -62,8 +62,14 @@ function RoomDetail({navigation,refresh}) {
 
   const { width, height } = Dimensions.get('window');
   const isMobile = width < 768; 
+  console.log('height',height)
+ 
+const remainingHeight = height - 190;
+console.log('Remaining height:', remainingHeight);
+
   const tableWidth = isMobile ? width - 10 : width * 0.96; 
-  const tableHeight = isMobile ? height * 0.8 : height * 0.66; 
+  const tableHeight = isMobile ?  remainingHeight : remainingHeight; 
+  console.log('tableheight',tableHeight)
   
   const startScanning = () => {
     setIsScanning(true);
@@ -287,7 +293,7 @@ const formattedShiftTimePrefix = formatShiftTimePrefix(startTime);
             </View>
             </View>
         </View>
-        <ScrollView style={{maxHeight: isMobile ? 540: tableHeight,  }}>
+        <ScrollView style={{maxHeight: isMobile ?tableHeight : tableHeight,  }}>
           <View style={styles.studentWrapSec}>
           {loading ? (
             <ActivityIndicator size="large" color="#0000ff" />
@@ -331,7 +337,7 @@ const formattedShiftTimePrefix = formatShiftTimePrefix(startTime);
            <View style={[styles.magnifying]}>
               {/* <Ionicons name="search-outline" size={27} color="#fff" style={styles.searchIcon} /> */}
               {(UserAccess?.create === 1 && !isScanning) &&(<Pressable onPress={startScanning}>
-                <Ionicons name="qr-code-outline" size={27} color="#fff" style={styles.magIcon} />
+                <Ionicons name="qr-code-outline" size={26} color="#fff" style={styles.magIcon} />
               </Pressable>)}
             </View>
     </View>
@@ -467,14 +473,15 @@ const styles = StyleSheet.create({
     magIcon:{
       borderRadius:5,
       backgroundColor:"#114166",
-      padding:10,
+      padding:8,
       alignItems:"center"
     },
     magnifying:{
-      right:10,
+      right:64,
       position:"absolute",
       zIndex:9999,
-      bottom:10
+      bottom:15
+
     },
     centerText:{
       display: "flex",

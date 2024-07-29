@@ -989,23 +989,22 @@ const StudentInfo = ({ navigation,refresh }) => {
           <View style={styles.studentInfoWrap}>
           <View style={styles.headerWrap}>
           {/* <Text style={[styles.infoHeader,{marginBottom:0}]}>Student Info:</Text> */}
-          <View style={styles.countWrap}>
-            <View style={styles.countDown}>
-            <Text style={styles.cotext}>Time Left :</Text>
-              <View style={[styles.countbg1,  timeLeft === 'Attendance Completed' && styles.completeBackground] }>     
-                <Text  style={[styles.count,]}>
-                {timeLeft}
-                </Text>
-              </View>
-     
-            </View>
+              <View style={styles.countWrap}>
+                <View style={styles.countDown}>
+                <Text style={styles.cotext}>Time Left :</Text>
+                  <View style={[styles.countbg1,  timeLeft === 'Attendance Completed' && styles.completeBackground] }>     
+                    <Text  style={[styles.count,]}>
+                    {timeLeft}
+                    </Text>
+                  </View>
         
-        </View>
-         
+                </View>
+            
+            </View>        
             </View>
             {/* <Text>Current Time: {currentTime}</Text> */}
-            <View style={styles.infoContainer}>
-              <View style={styles.userDetailWrap}>
+            <View style={[styles.infoContainer,{flexDirection:"row"}]}>
+              <View style={[styles.userDetailWrap,{marginRight:20}]}>
                 {/* {studentPicture ? (
               // <Image source={{ uri: handleStudentPicture(studentPicture) }} style={styles.userImage} />
               <Image
@@ -1013,43 +1012,46 @@ const StudentInfo = ({ navigation,refresh }) => {
       style={{ width: 200, height: 200 }} // Set desired dimensions
     />
           ) : ( */}
-                <FontAwesome name="user" size={65} color="#fff" style={styles.studProfile} />
+                <FontAwesome name="user" size={40} color="#fff" style={styles.studProfile} />
+                <FontAwesome6 name="signature" size={34} color="black" />
                 {/* )} */}
               </View>
-              <View style={styles.infoItem}>
-                <Text style={styles.label}>Name:</Text>
-                <Text style={styles.value}>
-                  {" "}
-                  {studentDetails?.NAME_FORMAL || ""}{" "}
-                </Text>
-              </View>
-              <View style={styles.infoItem}>
-                <Text style={styles.label}>System Id:</Text>
-                <Text style={styles.value}>{studentDetails?.EMPLID || ""}</Text>
-              </View>
-              <View style={styles.infoItem}>
-                <Text style={styles.label}>Roll No:</Text>
-                <Text style={styles.value}>
-                  {studentDetails?.CAMPUS_ID || ""}
-                </Text>
-              </View>
-              <View style={styles.infoItem}>
-                <Text style={styles.label}>School:</Text>
-                <Text style={styles.value}>{studentDetails?.DESCR || ""}</Text>
-              </View>
-              <View style={styles.infoItem}>
-                <Text style={styles.label}>Program:</Text>
-                <Text style={styles.value}>{studentDetails?.DESCR2 || ""}</Text>
-              </View>
-              <View style={styles.infoItem}>
-                <Text style={styles.label}>Branch:</Text>
-                <Text style={styles.value}>{studentDetails?.DESCR3 || ""}</Text>
-              </View>
-              <View style={styles.infoItem}>
-                <Text style={styles.label}>Semester:</Text>
-                <Text style={styles.value}>
-                  {studentDetails?.ACAD_LEVEL_BOT || "0"}
-                </Text>
+              <View style={[styles.infoItemWrap]}>
+                    <View style={styles.infoItem}>
+                      <Text style={styles.label1}>Name:</Text>
+                      <Text style={styles.value1}>
+                        {" "}
+                        {studentDetails?.NAME_FORMAL || ""}{" "}
+                      </Text>
+                    </View>
+                    <View style={styles.infoItem}>
+                      <Text style={styles.label1}>System Id:</Text>
+                      <Text style={styles.value1} >{studentDetails?.EMPLID || ""} </Text>
+                    </View>
+                    <View style={styles.infoItem}>
+                      <Text style={styles.label1}>Roll No:</Text>
+                      <Text style={styles.value1}>
+                        {studentDetails?.CAMPUS_ID || ""}
+                      </Text>
+                    </View>
+                    <View style={styles.infoItem}>
+                      <Text style={styles.label1}>School:</Text>
+                      <Text style={styles.value1}>{studentDetails?.DESCR || ""}</Text>
+                    </View>
+                    <View style={styles.infoItem}>
+                      <Text style={styles.label1}>Program:</Text>
+                      <Text style={styles.value1}>{studentDetails?.DESCR2 || ""}</Text>
+                    </View>
+                    <View style={styles.infoItem}>
+                      <Text style={styles.label1}>Branch:</Text>
+                      <Text style={styles.value1}>{studentDetails?.DESCR3 || ""}</Text>
+                    </View>
+                    <View style={styles.infoItem}>
+                      <Text style={styles.label1}>Semester:</Text>
+                      <Text style={styles.value1}>
+                        {studentDetails?.ACAD_LEVEL_BOT || "0"}
+                      </Text>
+                    </View>
               </View>
             </View>
           </View>
@@ -1641,6 +1643,18 @@ const styles = StyleSheet.create({
     color: "#555",
     width: "65%",
   },
+  label1: {
+    fontWeight: "bold",
+    color: "#333",
+    // width: "35%",
+    display: "inline-block"
+  },
+  value1: {
+    color: "#555",
+  
+    
+    // width: "65%",
+  },
   // table: {
   //   // borderWidth: 1,
   //   // borderColor: "#DDDDDD",
@@ -1832,8 +1846,10 @@ const styles = StyleSheet.create({
     height: 90,
   },
   studProfile: {
-    width: 100,
-    height: 100,
+    // width: 100,
+    // height: 100,
+    width:55,
+    height:55,
     backgroundColor: '#dfdfdf',
     borderRadius: 50,
     display: "flex",
@@ -1944,10 +1960,11 @@ const styles = StyleSheet.create({
     zIndex: 1000,
   },
   userDetailWrap: {
-    width: "100%",
-    alignItems: "center",
+    // width: "100%",
+    // alignItems: "center",
+    width:"20%",
     display: "flex",
-    justifyContent: 'center'
+    // justifyContent: 'center'
   },
   customValue:{
     fontSize: 12,
