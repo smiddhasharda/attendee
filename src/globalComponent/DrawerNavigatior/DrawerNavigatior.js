@@ -9,7 +9,7 @@ import {
 } from "@react-navigation/drawer";
 
 import RoleScreen from "../../component/Roles/RoleScreen";
-import ModuleScreen from "../../component/Module/ModuleScreen";
+// import ModuleScreen from "../../component/Module/ModuleScreen";
 import DashboardScreen from "../../component/Dashboard/DashboardScreen";
 import UserScreen from "../../component/User/UserScreen";
 import ExamScreen from "../../component/Exam/ExamScreen";
@@ -28,7 +28,7 @@ import ManagePasswordScreen from "../../component/Password/ManagePasswordScreen"
 
 // Screen components
 const RoleComponent = ({ userAccess,refresh }) => <RoleScreen userAccess={userAccess} refresh={refresh}/>;
-const ModuleComponent = ({ userAccess,refresh }) => <ModuleScreen userAccess={userAccess} refresh={refresh} />;
+// const ModuleComponent = ({ userAccess,refresh }) => <ModuleScreen userAccess={userAccess} refresh={refresh} />;
 const DashboardComponent = ({ userAccess,refresh }) => <DashboardScreen userAccess={userAccess} refresh={refresh} />;
 const UserComponent = ({ userAccess,refresh }) => <UserScreen userAccess={userAccess} refresh={refresh} />;
 const ManagePasswordComponent = ({ userAccess,refresh }) => <ManagePasswordScreen userAccess={userAccess} refresh={refresh} />;
@@ -263,7 +263,7 @@ const DrawerNavigator = ({ navigation }) => {
     const icons = {
       Dashboard: focused ? 'home' : 'home-outline',
       RoleScreen: focused ? 'person-circle' : 'person-circle',
-      ModuleScreen: focused ? 'bookmark' : 'bookmark-outline',
+      // ModuleScreen: focused ? 'bookmark' : 'bookmark-outline',
       UserScreen: focused ? 'person' : 'person-outline',
       ExamScreen: focused ? 'book' : 'book-outline',
       InvigilatorScreen: focused ? 'people' : 'people-outline',
@@ -337,7 +337,8 @@ const DrawerNavigator = ({ navigation }) => {
           (module) =>
             module?.read === 1 &&
             module?.moduleMaster[0]?.moduleName !== "StudentInfo" &&
-            module?.moduleMaster[0]?.moduleName !== "RoomDetail" 
+            module?.moduleMaster[0]?.moduleName !== "RoomDetail" &&
+             module?.moduleMaster[0]?.moduleName !== "ModuleScreen"
             // &&  module?.moduleMaster[0]?.moduleName !== "ReportScreen" 
         )
         .map((module, index) => (
@@ -355,8 +356,8 @@ const DrawerNavigator = ({ navigation }) => {
         switch (module?.moduleMaster[0]?.moduleName) {
           case "RoleScreen":
             return "User Role";
-          case "ModuleScreen":
-            return "Manage Module";
+          // case "ModuleScreen":
+          //   return "Manage Module";
           case "UserScreen":
             return "Manage User";
           case "ExamScreen":
@@ -385,8 +386,8 @@ const DrawerNavigator = ({ navigation }) => {
               switch (module?.moduleMaster[0]?.moduleName) {
                 case "RoleScreen":
                   return <RoleComponent {...props} userAccess={userRoleList?.[userRoleIndex]} refresh={refresh} />;
-                case "ModuleScreen":
-                  return <ModuleComponent {...props} userAccess={userRoleList?.[userRoleIndex]} refresh={refresh}/>;
+                // case "ModuleScreen":
+                //   return <ModuleComponent {...props} userAccess={userRoleList?.[userRoleIndex]} refresh={refresh}/>;
                 case "Dashboard":
                   return <DashboardComponent {...props} userAccess={userRoleList?.[userRoleIndex]} refresh={refresh}  />;
                 case "UserScreen":
