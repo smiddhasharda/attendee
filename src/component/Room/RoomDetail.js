@@ -226,7 +226,7 @@ const formattedShiftTimePrefix = formatShiftTimePrefix(startTime);
   );
   return (
     <View style={styles.container}>
-        {isScanning ? (<CodeScanner onScannedData={ handleScannedData} onCancel={handleCancel} />) : 
+        {isScanning ? (<CodeScanner onScannedData={ handleScannedData} onCancel={handleCancel} BarCodeTypes={['qr']} />) : 
        ( <View>
           <View style={styles.topdetails}>
            <View style={styles.searchWrap}>

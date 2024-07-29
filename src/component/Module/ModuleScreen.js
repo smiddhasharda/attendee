@@ -166,7 +166,7 @@ const paginatedData = moduleList.slice((currentPage - 1) * pageSize, currentPage
   
       if (response) {
         const base64Photo = response?.data?.receivedData?.[0]?.EMPLOYEE_PHOTO;
-        const imageSrc = `data:image/jpeg;base64,${base64Photo}`;
+        const imageSrc = `data:image/jpeg;base64,${JSON.stringify(base64Photo)}`;
         console.log("View Data : ", imageSrc);
         // setLoading(false);
       }
