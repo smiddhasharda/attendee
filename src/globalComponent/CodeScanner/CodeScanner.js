@@ -119,12 +119,12 @@ export default function CodeScanner({ onScannedData, onCancel, BarCodeTypes }) {
         )}
         </View>
       <View style={styles.controlsContainer}>
-        <Pressable style={[styles.button,{backgroundColor:isTorchOn ? "rgba(255, 255, 255, 0.7)" : "rgba(0, 0, 0, 0.7)",}]} onPress={toggleTorch}>
-        <Entypo name='flashlight' size={24} color={isTorchOn ? 'blue' : 'white'} />
-       
+        <Pressable style={[styles.button,{backgroundColor:isTorchOn ? "rgba(255, 255, 255, 0.7)" : "rgba(0, 0, 0, 0.7)",borderRadius:42}]} onPress={toggleTorch}>
+        <Entypo name='flashlight' size={34} color={isTorchOn ? 'blue' : 'white'} />
         </Pressable>
         <Pressable style={[styles.button, styles.cancelButton]} onPress={onCancel}>
-          <Text style={styles.buttonText}>Cancel</Text>
+        <Entypo name="cross" size={38} color="#fff" />
+          {/* <Text style={styles.buttonText}>Cancel</Text> */}
         </Pressable>
       </View>
     </SafeAreaView>
@@ -177,17 +177,20 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    paddingVertical: 20,
-    paddingHorizontal: 20,
+    padding:8,
+    // paddingVertical: 20,
+    // paddingHorizontal: 20,
     borderRadius: 5,
   },
   cancelButton: {
-    backgroundColor: 'rgba(255, 0, 0, 0.6)',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    borderRadius:60
   },
   buttonText: {
     fontSize: 16,
     color: 'white',
     fontWeight: 'bold',
+    textAlign:"center"
   },
   text: {
     fontSize: 18,
