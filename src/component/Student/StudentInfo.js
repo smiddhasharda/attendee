@@ -983,6 +983,7 @@ const StudentInfo = ({ navigation,refresh }) => {
             )
           }
           onCancel={handleCancel}
+          BarCodeTypes={['code39']}
         />
       ) : (
         <View>
@@ -1004,7 +1005,7 @@ const StudentInfo = ({ navigation,refresh }) => {
             </View>
             {/* <Text>Current Time: {currentTime}</Text> */}
             <View style={[styles.infoContainer,{flexDirection:"row"}]}>
-              <View style={[styles.userDetailWrap,{marginRight:20}]}>
+              <View style={[styles.userDetailWrap,{marginRight:0}]}>
                 {/* {studentPicture ? (
               // <Image source={{ uri: handleStudentPicture(studentPicture) }} style={styles.userImage} />
               <Image
@@ -1013,44 +1014,45 @@ const StudentInfo = ({ navigation,refresh }) => {
     />
           ) : ( */}
                 <FontAwesome name="user" size={40} color="#fff" style={styles.studProfile} />
-                <FontAwesome6 name="signature" size={34} color="black" />
+        
                 {/* )} */}
               </View>
               <View style={[styles.infoItemWrap]}>
                     <View style={styles.infoItem}>
                       <Text style={styles.label1}>Name:</Text>
-                      <Text style={styles.value1}>
+                      <Text style={styles.value1} numberOfLines={1}>
                         {" "}
                         {studentDetails?.NAME_FORMAL || ""}{" "}
                       </Text>
                     </View>
                     <View style={styles.infoItem}>
                       <Text style={styles.label1}>System Id:</Text>
-                      <Text style={styles.value1} >{studentDetails?.EMPLID || ""} </Text>
+                      <Text style={styles.value1} numberOfLines={1}> {studentDetails?.EMPLID || ""} </Text>
                     </View>
                     <View style={styles.infoItem}>
-                      <Text style={styles.label1}>Roll No:</Text>
-                      <Text style={styles.value1}>
-                        {studentDetails?.CAMPUS_ID || ""}
+                      <Text style={styles.label1} >Roll No:</Text>
+                      <Text style={styles.value1} numberOfLines={1}> {studentDetails?.CAMPUS_ID || ""}
                       </Text>
                     </View>
                     <View style={styles.infoItem}>
-                      <Text style={styles.label1}>School:</Text>
-                      <Text style={styles.value1}>{studentDetails?.DESCR || ""}</Text>
+                      <Text style={styles.label1} >School:</Text>
+                      <Text style={styles.value1} numberOfLines={1}> {studentDetails?.DESCR || ""}</Text>
                     </View>
                     <View style={styles.infoItem}>
                       <Text style={styles.label1}>Program:</Text>
-                      <Text style={styles.value1}>{studentDetails?.DESCR2 || ""}</Text>
+                      <Text style={styles.value1} numberOfLines={1}> {studentDetails?.DESCR2 || ""}</Text>
                     </View>
                     <View style={styles.infoItem}>
                       <Text style={styles.label1}>Branch:</Text>
-                      <Text style={styles.value1}>{studentDetails?.DESCR3 || ""}</Text>
+                      <Text style={styles.value1} numberOfLines={1}> {studentDetails?.DESCR3 || ""}</Text>
                     </View>
                     <View style={styles.infoItem}>
                       <Text style={styles.label1}>Semester:</Text>
-                      <Text style={styles.value1}>
-                        {studentDetails?.ACAD_LEVEL_BOT || "0"}
-                      </Text>
+                      <Text style={styles.value1} numberOfLines={1}> {studentDetails?.ACAD_LEVEL_BOT || "0"}</Text>
+                    </View>
+                    <View style={styles.infoItem}>
+                      <Text style={styles.label1}>Signature:</Text>
+                      <Text style={styles.value1}> <FontAwesome6 name="signature" size={34} color="black" /></Text>
                     </View>
               </View>
             </View>
@@ -1629,9 +1631,11 @@ const styles = StyleSheet.create({
   infoItem: {
     flex: 1,
     flexDirection: "row",
+    maxWidth:200,
+    // flexDirection: "column",
     justifyContent: "flex-start",
     marginBottom: 10,
-    alignItems: "center" /** Additional Added  **/
+    alignItems: "center" 
   },
   label: {
     fontWeight: "bold",
@@ -1651,9 +1655,6 @@ const styles = StyleSheet.create({
   },
   value1: {
     color: "#555",
-  
-    
-    // width: "65%",
   },
   // table: {
   //   // borderWidth: 1,
@@ -1989,5 +1990,8 @@ const styles = StyleSheet.create({
         marginBottom:12,
         alignSelf:"flex-end"
    
+},
+infoItemWrap:{
+  width:"80%"
 }
 });
