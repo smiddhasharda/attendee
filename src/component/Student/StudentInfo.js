@@ -1014,6 +1014,7 @@ const StudentInfo = ({ navigation,refresh }) => {
     />
           ) : ( */}
                 <FontAwesome name="user" size={40} color="#fff" style={styles.studProfile} />
+                <FontAwesome6 name="signature" size={34} color="black" />
         
                 {/* )} */}
               </View>
@@ -1042,6 +1043,7 @@ const StudentInfo = ({ navigation,refresh }) => {
                       <Text style={styles.label1}>Program:</Text>
                       <Text style={styles.value1} numberOfLines={1}> {studentDetails?.DESCR2 || ""}</Text>
                     </View>
+               
                     <View style={styles.infoItem}>
                       <Text style={styles.label1}>Branch:</Text>
                       <Text style={styles.value1} numberOfLines={1}> {studentDetails?.DESCR3 || ""}</Text>
@@ -1049,28 +1051,34 @@ const StudentInfo = ({ navigation,refresh }) => {
                     <View style={styles.infoItem}>
                       <Text style={styles.label1}>Semester:</Text>
                       <Text style={styles.value1} numberOfLines={1}> {studentDetails?.ACAD_LEVEL_BOT || "0"}</Text>
+                  
                     </View>
-                    <View style={styles.infoItem}>
+                    {/* <View style={styles.infoItem}>
                       <Text style={styles.label1}>Signature:</Text>
                       <Text style={styles.value1}> <FontAwesome6 name="signature" size={34} color="black" /></Text>
-                    </View>
+                    </View> */}
               </View>
             </View>
           </View>
           <View style={styles.studentInfoWrap}>
-            <Text style={styles.infoHeader}>Exam Info:</Text>
+      
             <View style={styles.infoContainer}>
-              <View style={styles.infoItem}>
-                <Text style={styles.label}>Paper Id:</Text>
+            <View style={{ borderBottomColor:"#ccc",borderBottomWidth:1,padding:10, marginBottom:10}}>
+            <Text style={styles.infoHeader}>Exam Info:</Text>
+            </View>
+            <View style={styles.infopWrap}>
+              <View style={[styles.infoItem,]}>
+                <Text style={[styles.label,{width:"40%"}]}>Paper Id:</Text>
                 <Text style={styles.value}>
                   {courseDetails?.EXAM_TIME_CODE || ""}
                 </Text>
               </View>
               <View style={styles.infoItem}>
-                <Text style={styles.label}>Course Code:</Text>
+                <Text style={[styles.label,{width:"60%"}]}>Course Code:</Text>
                 <Text style={styles.value}>
                   {courseDetails?.CATALOG_NBR || ""}
                 </Text>
+              </View>
               </View>
               <View style={styles.infoItem}>
                 <Text style={styles.label}>Course Name:</Text>
@@ -1518,15 +1526,15 @@ const StudentInfo = ({ navigation,refresh }) => {
             )}
           </View>
 
- <View style={styles.buttonWrap}>
- {((copiesData?.length > 0 || status === "Absent") && ((isActive) || userAccess?.label === "Admin") ) && (<Pressable style={styles.submitButton} onPress={reportId ? handleStudentInfoUpdate : handleStudentInfoSubmit} >
-     <Text style={styles.addButtonText}> {" "} {reportId ? "Update" : "Submit"} </Text>
-   </Pressable>) }
-   
-   <Pressable style={[styles.submitButton,{backgroundColor:"red"}]} onPress={() => navigation.goBack()} >
-     <Text style={styles.addButtonText}> Cancel </Text>
-   </Pressable>
- </View>
+        <View style={styles.buttonWrap}>
+        {((copiesData?.length > 0 || status === "Absent") && ((isActive) || userAccess?.label === "Admin") ) && (<Pressable style={styles.submitButton} onPress={reportId ? handleStudentInfoUpdate : handleStudentInfoSubmit} >
+            <Text style={styles.addButtonText}> {" "} {reportId ? "Update" : "Submit"} </Text>
+          </Pressable>) }
+          
+          <Pressable style={[styles.submitButton,{backgroundColor:"red"}]} onPress={() => navigation.goBack()} >
+            <Text style={styles.addButtonText}> Cancel </Text>
+          </Pressable>
+        </View>
       
         </View>
       )}
@@ -1549,7 +1557,8 @@ const styles = StyleSheet.create({
     //overflow: "hidden"
   },
   infoHeader: {
-    fontSize: 14,
+    // fontSize: 14,
+    fontSize:18,
     fontWeight: "600",
  
   },
@@ -1631,7 +1640,7 @@ const styles = StyleSheet.create({
   infoItem: {
     flex: 1,
     flexDirection: "row",
-    maxWidth:200,
+    // maxWidth:200,
     // flexDirection: "column",
     justifyContent: "flex-start",
     marginBottom: 10,
@@ -1993,5 +2002,8 @@ const styles = StyleSheet.create({
 },
 infoItemWrap:{
   width:"80%"
+},
+infopWrap:{
+  flexDirection:"row",
 }
 });
