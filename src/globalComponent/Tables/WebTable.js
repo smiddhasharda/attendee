@@ -3,7 +3,7 @@ import { MaterialReactTable } from 'material-react-table';
 import { View, Pressable, Text,  ScrollView} from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; 
 
-const WebTable = ({ columns, data,handleExportRows,handleExportData,handleRefreshData,style, }) => {
+const WebTable = ({ columns, data,handleExportRows,handleExportData,handleRefreshData,style,handleExportRowsAsPDF }) => {
 
   return (
     <ScrollView  style={{ maxHeight: 450 }} horizontal>
@@ -45,6 +45,37 @@ const WebTable = ({ columns, data,handleExportRows,handleExportData,handleRefres
             {/* <Ionicons name='download' size={20}  color="#fff"  textAlign="center"/> */}
              Export Selected Rows
           </Text>
+        </Pressable>
+{/* PDF Download */}
+        <Pressable
+          disabled={table.getPrePaginationRowModel().rows.length === 0}
+          onPress={() =>
+            handleExportRowsAsPDF(table.getPrePaginationRowModel().rows)
+          }
+          style={style}
+        >
+           <Text style={{ color:"#fff",textAlign:"center"}}>
+          Export All Data As PDF
+          </Text>
+        </Pressable>
+        <Pressable
+          style={style}
+          disabled={table.getRowModel().rows.length === 0}
+          onPress={() => handleExportRowsAsPDF(table.getRowModel().rows)}
+        >
+        <Text style={{ color:"#fff",textAlign:"center"}}>
+          Export Page Rows As PDF
+          </Text>        </Pressable>
+        <Pressable
+          disabled={
+            !table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()
+          }
+          style={style}
+          onPress={() => handleExportRowsAsPDF(table.getSelectedRowModel().rows)}
+        >
+        <Text style={{ color:"#fff",textAlign:"center"}}>
+          Export Selected Rows As PDF
+          </Text>        
         </Pressable>
       </View>
     )}
