@@ -65,11 +65,11 @@ function RoomDetail({navigation,refresh}) {
   console.log('height',height)
  
 const remainingHeight = height - 190;
-console.log('Remaining height:', remainingHeight);
+// console.log('Remaining height:', remainingHeight);
 
   const tableWidth = isMobile ? width - 10 : width * 0.96; 
   const tableHeight = isMobile ?  remainingHeight : remainingHeight; 
-  console.log('tableheight',tableHeight)
+  // console.log('tableheight',tableHeight)
   
   const startScanning = () => {
     setIsScanning(true);
