@@ -19,7 +19,7 @@ const StudentInfo = ({ navigation,refresh }) => {
   const [studentDetails, setStudentDetails] = useState({});
   const [studentPicture, setStudentPicture] = useState({});
   const [courseDetails, setCourseDetails] = useState({});
-  const [timeLeft, setTimeLeft] = useState('Attendence Not Startted');
+  const [timeLeft, setTimeLeft] = useState('Attendance Not Started');
   const { room_Nbr, catlog_Nbr, system_Id, seat_Nbr, exam_Dt, startTime, reportId, userAccess, current_Term } = route.params;
 
   const UserAccess = userAccess?.module?.find((item) => item?.FK_ModuleId === 6);
@@ -927,7 +927,7 @@ const StudentInfo = ({ navigation,refresh }) => {
       if (!isSameDay(now, examDate)) {
         setIsActive(false);
         let PastDate = !isBefore(examDate, now)
-        setTimeLeft(PastDate ? 'Attandence Not Startted': 'Attendence Completed');
+        setTimeLeft(PastDate ? 'Attendance Not Started': 'Attendance Completed');
         return;
       }
 
@@ -960,7 +960,7 @@ const StudentInfo = ({ navigation,refresh }) => {
         setTimeLeft(`${minutes}:${seconds < 10 ? '0' : ''}${seconds} min`);
       } else {
         setIsActive(false); // make false after changes
-        setTimeLeft(now.getTime() > endWindow ? 'Attendence Completed' : 'Attendence Not Startted');
+        setTimeLeft(now.getTime() > endWindow ? 'Attendance Completed' : 'Attendance Not Started');
   
       }
     }, 1000);
@@ -983,29 +983,29 @@ const StudentInfo = ({ navigation,refresh }) => {
             )
           }
           onCancel={handleCancel}
+          BarCodeTypes={['code39']}
         />
       ) : (
         <View>
           <View style={styles.studentInfoWrap}>
           <View style={styles.headerWrap}>
           {/* <Text style={[styles.infoHeader,{marginBottom:0}]}>Student Info:</Text> */}
-          <View style={styles.countWrap}>
-            <View style={styles.countDown}>
-            <Text style={styles.cotext}>Time Left :</Text>
-              <View style={[styles.countbg1,  timeLeft === 'Attendence Completed' && styles.completeBackground] }>     
-                <Text  style={[styles.count,]}>
-                {timeLeft}
-                </Text>
-              </View>
-     
-            </View>
+              <View style={styles.countWrap}>
+                <View style={styles.countDown}>
+                <Text style={styles.cotext}>Time Left :</Text>
+                  <View style={[styles.countbg1,  timeLeft === 'Attendance Completed' && styles.completeBackground] }>     
+                    <Text  style={[styles.count,]}>
+                    {timeLeft}
+                    </Text>
+                  </View>
         
-        </View>
-         
+                </View>
+            
+            </View>        
             </View>
             {/* <Text>Current Time: {currentTime}</Text> */}
-            <View style={styles.infoContainer}>
-              <View style={styles.userDetailWrap}>
+            <View style={[styles.infoContainer,{flexDirection:"row"}]}>
+              <View style={[styles.userDetailWrap,{marginRight:0}]}>
                 {/* {studentPicture ? (
               // <Image source={{ uri: handleStudentPicture(studentPicture) }} style={styles.userImage} />
               <Image
@@ -1013,43 +1013,47 @@ const StudentInfo = ({ navigation,refresh }) => {
       style={{ width: 200, height: 200 }} // Set desired dimensions
     />
           ) : ( */}
-                <FontAwesome name="user" size={65} color="#fff" style={styles.studProfile} />
+                <FontAwesome name="user" size={40} color="#fff" style={styles.studProfile} />
+        
                 {/* )} */}
               </View>
-              <View style={styles.infoItem}>
-                <Text style={styles.label}>Name:</Text>
-                <Text style={styles.value}>
-                  {" "}
-                  {studentDetails?.NAME_FORMAL || ""}{" "}
-                </Text>
-              </View>
-              <View style={styles.infoItem}>
-                <Text style={styles.label}>System Id:</Text>
-                <Text style={styles.value}>{studentDetails?.EMPLID || ""}</Text>
-              </View>
-              <View style={styles.infoItem}>
-                <Text style={styles.label}>Roll No:</Text>
-                <Text style={styles.value}>
-                  {studentDetails?.CAMPUS_ID || ""}
-                </Text>
-              </View>
-              <View style={styles.infoItem}>
-                <Text style={styles.label}>School:</Text>
-                <Text style={styles.value}>{studentDetails?.DESCR || ""}</Text>
-              </View>
-              <View style={styles.infoItem}>
-                <Text style={styles.label}>Program:</Text>
-                <Text style={styles.value}>{studentDetails?.DESCR2 || ""}</Text>
-              </View>
-              <View style={styles.infoItem}>
-                <Text style={styles.label}>Branch:</Text>
-                <Text style={styles.value}>{studentDetails?.DESCR3 || ""}</Text>
-              </View>
-              <View style={styles.infoItem}>
-                <Text style={styles.label}>Semester:</Text>
-                <Text style={styles.value}>
-                  {studentDetails?.ACAD_LEVEL_BOT || "0"}
-                </Text>
+              <View style={[styles.infoItemWrap]}>
+                    <View style={styles.infoItem}>
+                      <Text style={styles.label1}>Name:</Text>
+                      <Text style={styles.value1} numberOfLines={1}>
+                        {" "}
+                        {studentDetails?.NAME_FORMAL || ""}{" "}
+                      </Text>
+                    </View>
+                    <View style={styles.infoItem}>
+                      <Text style={styles.label1}>System Id:</Text>
+                      <Text style={styles.value1} numberOfLines={1}> {studentDetails?.EMPLID || ""} </Text>
+                    </View>
+                    <View style={styles.infoItem}>
+                      <Text style={styles.label1} >Roll No:</Text>
+                      <Text style={styles.value1} numberOfLines={1}> {studentDetails?.CAMPUS_ID || ""}
+                      </Text>
+                    </View>
+                    <View style={styles.infoItem}>
+                      <Text style={styles.label1} >School:</Text>
+                      <Text style={styles.value1} numberOfLines={1}> {studentDetails?.DESCR || ""}</Text>
+                    </View>
+                    <View style={styles.infoItem}>
+                      <Text style={styles.label1}>Program:</Text>
+                      <Text style={styles.value1} numberOfLines={1}> {studentDetails?.DESCR2 || ""}</Text>
+                    </View>
+                    <View style={styles.infoItem}>
+                      <Text style={styles.label1}>Branch:</Text>
+                      <Text style={styles.value1} numberOfLines={1}> {studentDetails?.DESCR3 || ""}</Text>
+                    </View>
+                    <View style={styles.infoItem}>
+                      <Text style={styles.label1}>Semester:</Text>
+                      <Text style={styles.value1} numberOfLines={1}> {studentDetails?.ACAD_LEVEL_BOT || "0"}</Text>
+                    </View>
+                    <View style={styles.infoItem}>
+                      <Text style={styles.label1}>Signature:</Text>
+                      <Text style={styles.value1}> <FontAwesome6 name="signature" size={34} color="black" /></Text>
+                    </View>
               </View>
             </View>
           </View>
@@ -1627,9 +1631,11 @@ const styles = StyleSheet.create({
   infoItem: {
     flex: 1,
     flexDirection: "row",
+    maxWidth:200,
+    // flexDirection: "column",
     justifyContent: "flex-start",
     marginBottom: 10,
-    alignItems: "center" /** Additional Added  **/
+    alignItems: "center" 
   },
   label: {
     fontWeight: "bold",
@@ -1640,6 +1646,15 @@ const styles = StyleSheet.create({
   value: {
     color: "#555",
     width: "65%",
+  },
+  label1: {
+    fontWeight: "bold",
+    color: "#333",
+    // width: "35%",
+    display: "inline-block"
+  },
+  value1: {
+    color: "#555",
   },
   // table: {
   //   // borderWidth: 1,
@@ -1832,8 +1847,10 @@ const styles = StyleSheet.create({
     height: 90,
   },
   studProfile: {
-    width: 100,
-    height: 100,
+    // width: 100,
+    // height: 100,
+    width:55,
+    height:55,
     backgroundColor: '#dfdfdf',
     borderRadius: 50,
     display: "flex",
@@ -1944,10 +1961,11 @@ const styles = StyleSheet.create({
     zIndex: 1000,
   },
   userDetailWrap: {
-    width: "100%",
-    alignItems: "center",
+    // width: "100%",
+    // alignItems: "center",
+    width:"20%",
     display: "flex",
-    justifyContent: 'center'
+    // justifyContent: 'center'
   },
   customValue:{
     fontSize: 12,
@@ -1972,5 +1990,8 @@ const styles = StyleSheet.create({
         marginBottom:12,
         alignSelf:"flex-end"
    
+},
+infoItemWrap:{
+  width:"80%"
 }
 });
