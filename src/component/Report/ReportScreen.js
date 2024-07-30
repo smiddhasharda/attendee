@@ -8,6 +8,8 @@ import { parse, format } from 'date-fns';
 import { DataTable, Provider as PaperProvider, DarkTheme as PaperDarkTheme, DefaultTheme as PaperDefaultTheme  } from 'react-native-paper';
 import CustomDateTimePicker from '../../globalComponent/DateTimePicker/CustomDateTimePicker';
 import { Ionicons ,AntDesign} from '@expo/vector-icons'; 
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 let WebTable;
 if (Platform.OS === 'web') {
@@ -451,6 +453,7 @@ const ReportScreen = ({userAccess,refresh}) => {
     header: "Copy 4 Data"
   }
 ], [schoolList,roomList,shiftList]);
+
 const WebColumnsByCatelog = useMemo(() => [
     {
       accessorKey: 'CATALOG_NBR',
@@ -619,9 +622,7 @@ const WebColumnsByRoom = useMemo(() => [
       const csvFile = new File([blob], `${csvOptions.filename}.csv`, { type: 'text/csv;charset=utf-8;' });
       
       saveAs(csvFile);
-    };
-    
-    
+    }; 
     const handleExportRows = (rows) => {
       const csvData = [
         tableHead.map(header => `"${header}"`), // Headers
@@ -653,6 +654,75 @@ const WebColumnsByRoom = useMemo(() => [
       saveAs(csvFile);
     };
 
+    const handleExportRowsAsPDF = (rows) => {
+        const doc = new jsPDF('l', 'mm', 'a4'); // 'l' for landscape
+        const tableData = rows?.map(({ original }) => [
+            `${original?.EMPLID || '-'}`,
+            `${original?.ADM_APPL_NBR || '-'}`,
+            `${original?.NAME_FORMAL || '-'}`,
+            `${original?.CATALOG_NBR || '-'}`,
+            `${parseExcelDate(original?.EXAM_DT) || '-'}`,
+            `${convertedTime(original?.EXAM_START_TIME) || '-'}`,
+            `${original?.ROOM_NBR || '-'}`,
+            `${original?.PTP_SEQ_CHAR || '-'}`,
+            `${original?.Status || '-'}`,          
+            `${original?.Attendece_Status || '-'}`,
+            `${original?.DESCR || '-'}`,
+            `${original?.DESCR2 || '-'}`,
+            `${original?.DESCR3 || '-'}`,
+            `${original?.copyData?.[0]?.copyNumber || '-'}`,
+            `${original?.copyData?.[1]?.copyNumber || '-'}`,
+            `${original?.copyData?.[2]?.copyNumber || '-'}`,
+            `${original?.copyData?.[3]?.copyNumber || '-'}`
+        ]);
+    
+        autoTable(doc, {
+            head: [tableHead],
+            body: tableData,
+            theme: 'striped',
+            styles: {
+                fontSize: 7, // Reduce font size
+                cellPadding: 1, // Reduce cell padding
+                overflow: 'linebreak'
+            },
+            headStyles: {
+                fillColor: [22, 160, 133],
+                textColor: [255, 255, 255],
+                fontSize: 9, // Adjust font size for header
+                halign: 'center'
+            },
+            bodyStyles: {
+                valign: 'middle',
+                halign: 'center'
+            },
+            alternateRowStyles: {
+                fillColor: [240, 240, 240]
+            },
+            columnStyles: {
+                0: { cellWidth: 15 },
+                1: { cellWidth: 15 },
+                2: { cellWidth: 30 },
+                3: { cellWidth: 15 },
+                4: { cellWidth: 15 },
+                5: { cellWidth: 15 },
+                6: { cellWidth: 15 },
+                7: { cellWidth: 15 },
+                8: { cellWidth: 15 },
+                9: { cellWidth: 15 },
+                10: { cellWidth: 15 },
+                11: { cellWidth: 15 },
+                12: { cellWidth: 15 },
+                13: { cellWidth: 15 },
+                14: { cellWidth: 15 },
+                15: { cellWidth: 15 },
+                16: { cellWidth: 15 }
+            },
+            margin: { top: 20, bottom: 20, left: 20, right: 20 }
+        });
+    
+        doc.save(`Report-${currentDate}.pdf`);
+    };
+    
     const csvOptionsByCategory = {
         fieldSeparator: ',',
         quoteStrings: '"',
@@ -707,6 +777,59 @@ const WebColumnsByRoom = useMemo(() => [
      
        saveAs(csvFile);
      };
+
+     const handleExportRowsAsPDFByCategory = (rows) => {
+        const doc = new jsPDF('l', 'mm', 'a4'); // 'l' for landscape
+        const tableData = rows?.map(({ original }) => [
+           `${original.CATALOG_NBR || '-'}`,
+            `${original.TotalStudents || '-'}`,
+            `${original.PresentStudents || '-'}`,
+            `${original.AbsentStudents || '-'}`,
+            `${original.UFMStudents || '-'}`,
+            `${original.DebarredStudents || '-'}`,
+            `${parseExcelDate(original.EXAM_DT) || '-'}`,
+            `${convertedTime(original.EXAM_START_TIME) || '-'}`,
+            `${original.DESCR || '-'}`
+        ]);
+    
+        autoTable(doc, {
+            head: [tableHeadByCatelog],
+            body: tableData,
+            theme: 'striped',
+            styles: {
+                fontSize: 7, // Reduce font size
+                cellPadding: 1, // Reduce cell padding
+                overflow: 'linebreak'
+            },
+            headStyles: {
+                fillColor: [22, 160, 133],
+                textColor: [255, 255, 255],
+                fontSize: 9, // Adjust font size for header
+                halign: 'center'
+            },
+            bodyStyles: {
+                valign: 'middle',
+                halign: 'center'
+            },
+            alternateRowStyles: {
+                fillColor: [240, 240, 240]
+            },
+            columnStyles: {
+                0: { cellWidth:  25},
+                1: { cellWidth: 25 },
+                2: { cellWidth: 25 },
+                3: { cellWidth: 25 },
+                4: { cellWidth: 25 },
+                5: { cellWidth: 25 },
+                6: { cellWidth: 25 },
+                7: { cellWidth: 25 },
+                8: { cellWidth: 60 },
+            },
+            margin: { top: 20, bottom: 20, left: 20, right: 20 }
+        });
+    
+        doc.save(`ReportByCategory-${currentDate}.pdf`);
+    };
     
      const csvOptionsByRoom = {
         fieldSeparator: ',',
@@ -764,6 +887,61 @@ const WebColumnsByRoom = useMemo(() => [
      
        saveAs(csvFile);
      };
+     const handleExportRowsAsPDFByRoom = (rows) => {
+        const doc = new jsPDF('l', 'mm', 'a4'); // 'l' for landscape
+        const tableData = rows?.map(({ original }) => [
+            `${original.ROOM_NBR || '-'}`,
+           `${original.CATALOG_NBR || '-'}`,
+            `${original.TotalStudents || '-'}`,
+            `${original.PresentStudents || '-'}`,
+            `${original.AbsentStudents || '-'}`,
+            `${original.UFMStudents || '-'}`,
+            `${original.DebarredStudents || '-'}`,
+            `${parseExcelDate(original.EXAM_DT) || '-'}`,
+            `${convertedTime(original.EXAM_START_TIME) || '-'}`,
+            `${original.DESCR || '-'}`
+        ]);
+    
+        autoTable(doc, {
+            head: [tableHeadByRoom],
+            body: tableData,
+            theme: 'striped',
+            styles: {
+                fontSize: 7, // Reduce font size
+                cellPadding: 1, // Reduce cell padding
+                overflow: 'linebreak'
+            },
+            headStyles: {
+                fillColor: [22, 160, 133],
+                textColor: [255, 255, 255],
+                fontSize: 9, // Adjust font size for header
+                halign: 'center'
+            },
+            bodyStyles: {
+                valign: 'middle',
+                halign: 'center'
+            },
+            alternateRowStyles: {
+                fillColor: [240, 240, 240]
+            },
+            columnStyles: {
+                0: { cellWidth:  25},
+                1: { cellWidth: 25 },
+                2: { cellWidth: 25 },
+                3: { cellWidth: 25 },
+                4: { cellWidth: 25 },
+                5: { cellWidth: 25 },
+                6: { cellWidth: 25 },
+                7: { cellWidth: 25 },
+                8: { cellWidth:  25},
+                9: { cellWidth: 60 },
+            },
+            margin: { top: 20, bottom: 20, left: 20, right: 20 }
+        });
+    
+        doc.save(`ReportByCategory-${currentDate}.pdf`);
+    };
+
     const renderTable = () => {
         if (Platform.OS === 'web') {
           switch (currentTab) {
@@ -777,6 +955,7 @@ const WebColumnsByRoom = useMemo(() => [
                     handleExportData={handleExportData}
                     handleExportRows={handleExportRows}
                     handleRefreshData={() => handleDateClick(examSelectedDate)}
+                    handleExportRowsAsPDF={handleExportRowsAsPDF}
                     style={styles.tablebtn}
                   />
                 </React.Suspense>
@@ -791,6 +970,7 @@ const WebColumnsByRoom = useMemo(() => [
                     handleExportData={handleExportDataByCatelog}
                     handleExportRows={handleExportRowsByCatelog}
                     handleRefreshData={() => handleDateClick(examSelectedDate)}
+                    handleExportRowsAsPDF={handleExportRowsAsPDFByCategory}
                     style={styles.tablebtn}
                   />
                 </React.Suspense>
@@ -805,6 +985,7 @@ const WebColumnsByRoom = useMemo(() => [
                       handleExportData={handleExportDataByRoom}
                       handleExportRows={handleExportRowsByRoom}
                       handleRefreshData={() => handleDateClick(examSelectedDate)}
+                      handleExportRowsAsPDF={handleExportRowsAsPDFByRoom}                      
                       style={styles.tablebtn}
                     />
                   </React.Suspense>
