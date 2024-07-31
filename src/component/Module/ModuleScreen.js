@@ -7,7 +7,7 @@ import {
   Pressable,
   Dimensions
 } from "react-native";
-import { insert, fetch, update,view } from "../../AuthService/AuthService";
+import { insert, fetch, update } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import styles from "./ModuleScreen.style";
@@ -143,43 +143,10 @@ const paginatedData = moduleList.slice((currentPage - 1) * pageSize, currentPage
       moduleStatus: 1,
     });
   };
-  const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
-    const date = new Date(dateString.split('T')[0]);
-    return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' });
-  };
-  const handleGetSampleView = async () => {
-    try {
-      const authToken = await checkAuthToken();
-      const response = await view(
-        {
-          operation: "fetch",
-          tblName: "PS_S_PRD_PHOTO_VW",
-          data: '',
-          conditionString: '',
-          checkAvailability: '',
-          customQuery: `SELECT EMPLOYEE_PHOTO FROM PS_S_PRD_PHOTO_VW`,
-          viewType: 'CAMPUS2_View'
-        },
-        authToken
-      );
-  
-      if (response) {
-        const base64Photo = response?.data?.receivedData?.[0]?.EMPLOYEE_PHOTO;
-        const imageSrc = `data:image/jpeg;base64,${JSON.stringify(base64Photo)}`;
-        console.log("View Data : ", imageSrc);
-        // setLoading(false);
-      }
-    } catch (error) {
-      // setLoading(false);
-      handleAuthErrors(error);
-    }
-  };
   
 
   useEffect(() => {
     fetchModuleList();
-    handleGetSampleView();
   }, [userAccessForModule,refresh]);
 
   return (
@@ -221,48 +188,6 @@ const paginatedData = moduleList.slice((currentPage - 1) * pageSize, currentPage
           </View>
         </View>
       ) : (
-        // <View style={styles.moduleListContainer}>
-        //   <Text style={styles.header}>Manage Modules:</Text>
-        //   {userAccessForModule?.create === 1 && (
-        //     <View style={styles.addBtn}>
-        //       <Pressable onPress={() => setModuleContainerVisible(true)}>
-        //         <Ionicons name="add-circle-outline" size={35} color="black" />
-        //       </Pressable>
-        //     </View>
-        //   )}
-        //   <FlatList
-        //     data={moduleList}
-        //     style={styles.modulesTbl}
-        //     keyExtractor={item => item.PK_ModuleId.toString()}
-        //     ListHeaderComponent={() => (
-        //       <View style={styles.tableHeader}>
-        //         <Text style={[styles.tableHeaderText, styles.column10]}>Module</Text>
-        //         <Text style={[styles.tableHeaderText, styles.column60]}>Description</Text>
-        //         <Text style={[styles.tableHeaderText, styles.column10]}>Status</Text>
-        //         <Text style={[styles.tableHeaderText, styles.column10]}>Actions</Text>
-        //       </View>
-        //     )}
-        //     renderItem={({ item }) => (
-        //       <View style={styles.listItem}>
-        //         <Text style={[styles.listItemText, styles.column10]}>{item.moduleName}</Text>
-        //         <Text style={[styles.listItemText, styles.column60]}>{item.description}</Text>
-        //         <Pressable onPress={() => userAccessForModule?.update === 1 && handleModuleStatus(item.PK_ModuleId, item.isActive)}>
-        //           <Text style={[styles.listItemText, item.isActive ? styles.listItemActiveStatus : styles.listItemInactiveStatus, styles.column10]}>
-        //             {item.isActive ? "Active" : "Inactive"}
-        //           </Text>
-        //         </Pressable>
-        //         <View style={[styles.listItemActionContainer, styles.column10]}>
-        //           {userAccessForModule?.update === 1 ? (
-        //             <Pressable style={styles.listItemEditButton} onPress={() => handleEditModule(item)}>
-        //               <Feather name="edit" size={16} color="white" />
-        //             </Pressable>
-        //           ) : (<Text>-</Text>)}
-        //         </View>
-        //       </View>
-        //     )}
-        //   />
-
-        // </View>
         <View style={styles.moduleListContainer}>
           <Text style={styles.header}>Manage Modules:</Text>
             {
