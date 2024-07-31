@@ -17,7 +17,8 @@ const StudentInfo = ({ navigation,refresh }) => {
   const route = useRoute();
   const { addToast } = useToast();
   const [studentDetails, setStudentDetails] = useState({});
-  const [studentPicture, setStudentPicture] = useState({});
+  const [studentPicture, setStudentPicture] = useState('');
+  const [studentSign, setStudentSign] = useState('');
   const [courseDetails, setCourseDetails] = useState({});
   const [timeLeft, setTimeLeft] = useState('Attendance Not Started');
   const { room_Nbr, catlog_Nbr, system_Id, seat_Nbr, exam_Dt, startTime, reportId, userAccess, current_Term } = route.params;
@@ -679,22 +680,21 @@ const StudentInfo = ({ navigation,refresh }) => {
       const authToken = await checkAuthToken();
       const response = await view(
         {
-          operation: "fetch",
+          operation: "blobFromOracle",
           tblName: "PS_S_PRD_PHOTO_VW",
-          data: "",
+          data: '',
           conditionString: `EMPLID = '${system_Id}'`,
-          checkAvailability: "",
-          customQuery: "",
+          checkAvailability: '',
+          // customQuery: `SELECT EMPLOYEE_PHOTO,DERIVED_STUPHOTO,EMPLID FROM PS_S_PRD_PHOTO_VW Where EMPLID = '${system_Id}' `,
+          customQuery: `SELECT EMPLOYEE_PHOTO,DERIVED_STUPHOTO,EMPLID FROM PS_S_PRD_PHOTO_VW `,
           viewType: 'CAMPUS2_View'
         },
         authToken
       );
       if (response) {
-        setStudentPicture(response?.data?.receivedData?.[0]?.EMPLOYEE_PHOTO);
-        // const buffer = response?.data?.receivedData?.[0]?.EMPLOYEE_PHOTO;
-        // const bufferData = buffer._readableState.buffer;
-        // const base64String = bufferData.toString('base64');
-        // const uri = `data:image/jpeg;base64,${base64String}`;
+        
+        setStudentPicture(response?.data?.receivedData?.[0]?.EMPLOYEE_PHOTO || '');
+        setStudentSign(response?.data?.receivedData?.[0]?.DERIVED_STUPHOTO || '');
         setLoading(false);
       }
     } catch (error) {
@@ -702,41 +702,6 @@ const StudentInfo = ({ navigation,refresh }) => {
       handleAuthErrors(error);
     }
   };
-  // Function to convert blob to base64
-  // const blobToBase64 = (blob) => {
-  //   return new Promise((resolve, reject) => {
-  //     const reader = new FileReader();
-  //     reader.onloadend = () => {
-  //       resolve(reader.result);
-  //     };
-  //     reader.onerror = () => {
-  //       reject(new Error("Failed to convert blob to base64"));
-  //     };
-  //     reader.readAsDataURL(blob);
-  //   });
-  // };
-
-  // Function to handle student picture
-  // const handleStudentPicture = async (data) => {
-  //   try {
-  //     // Validate the data format
-  //     if (!data) {
-  //       throw new Error("Invalid data format");
-  //     }
-
-  //     // Log data for debugging
-  //     console.log("Data to convert:", data);
-
-  //     // Convert data to Blob
-  //     const blob = new Blob([data], { type: 'image/jpeg' });
-  //     const base64String = await blobToBase64(blob);
-
-  //     // Use the base64 string
-  //     console.log("Base64 string:", base64String);
-  //   } catch (error) {
-  //     console.error("Error converting data to Blob:", error);
-  //   }
-  // };
 
   const handleGetStudentCouseInfo = async () => {
     try {
@@ -805,7 +770,7 @@ const StudentInfo = ({ navigation,refresh }) => {
       await handleGetStudentInfo();
       await handleGetStudentCouseInfo();
     await handleGetStudentAttendenceInfo();
-      // await handleGetStudentPicture();
+      await handleGetStudentPicture();
       if (await reportId) {
         await handleGetCopyData();
       }
@@ -1003,19 +968,17 @@ const StudentInfo = ({ navigation,refresh }) => {
             
             </View>        
             </View>
-            {/* <Text>Current Time: {currentTime}</Text> */}
             <View style={[styles.infoContainer,{flexDirection:"row"}]}>
               <View style={[styles.userDetailWrap,{marginRight:0}]}>
-                {/* {studentPicture ? (
-              // <Image source={{ uri: handleStudentPicture(studentPicture) }} style={styles.userImage} />
+                {studentPicture ? (
               <Image
-      source={{ uri: `data:image/png;base64,${studentPicture}` }} // Adjust content type based on image format
-      style={{ width: 200, height: 200 }} // Set desired dimensions
-    />
-          ) : ( */}
+            source={{ uri: `data:image/png;base64,${studentPicture}` }}
+            style={styles.studProfile} 
+          />
+          ) : (
                 <FontAwesome name="user" size={40} color="#fff" style={styles.studProfile} />
         
-                {/* )} */}
+              )} 
               </View>
               <View style={[styles.infoItemWrap]}>
                     <View style={styles.infoItem}>
@@ -1052,7 +1015,14 @@ const StudentInfo = ({ navigation,refresh }) => {
                     </View>
                     <View style={styles.infoItem}>
                       <Text style={styles.label1}>Signature:</Text>
-                      <Text style={styles.value1}> <FontAwesome6 name="signature" size={34} color="black" /></Text>
+                      {studentSign ? (
+              <Image
+            source={{ uri: `data:image/png;base64,${studentSign}` }}
+            style={styles.studProfile} 
+          />
+          ) : (
+                <FontAwesome6 name="signature" size={34} color="black" />        
+              )} 
                     </View>
               </View>
             </View>
