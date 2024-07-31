@@ -87,8 +87,8 @@ const UserScreen = ({userAccess,refresh}) => {
             isActive: userData.status,
             isVerified: 1
           },
-          conditionString: '',
-          checkAvailability: '',
+          conditionString: `username = '${userData.emailId}' OR email_id = '${userData.emailId}'` ,
+          checkAvailability: true,
           customQuery: '',
         },
         authToken
@@ -694,11 +694,10 @@ const UserScreen = ({userAccess,refresh}) => {
               <Text style={[styles.tableHeaderText,{width:120 ,textAlign:"center"}, ]}>Updated Date</Text>
               <Text style={[styles.tableHeaderText,{width:120,textAlign:"center"}, ]}>Created By</Text>
               <Text style={[styles.tableHeaderText,{width:120,textAlign:"center"}, ]}>Updated By</Text>
-              <Text style={[styles.tableHeaderText, {width:60, textAlign:"center"} ]}>Actions</Text>
+              <Text style={[styles.tableHeaderText,{width:60, textAlign:"center"} ]}>Actions</Text>
             </View>
           )}
           renderItem={({ item }) => (
-            // console.log("All items",item),
             <View style={styles.listItem}>
               <Text style={[styles.listItemText,{width:120}]}>{item.username}</Text>
               <Text style={[styles.listItemText,{width:200}]}>{item.name}</Text>
@@ -715,10 +714,10 @@ const UserScreen = ({userAccess,refresh}) => {
                     {item.created_at ? new Date(item.created_at.split('T')[0]).toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }) : 'N/A'}
                     </Text>   
                     <Text style={[styles.listItemText, { width: 120, display: "inline-block",textAlign:"center" }]} numberOfLines={1}>
-                      {item.created_by ? created_by: 'N/A'}
+                      {item.created_by ? item.created_by: 'N/A'}
                     </Text>
                     <Text style={[styles.listItemText, { width: 120, display: "inline-block",textAlign:"center" }]} numberOfLines={1}>
-                    {item.updated_by ? updated_by: 'N/A'}
+                    {item.updated_by ? item.updated_by: 'N/A'}
                     </Text>
               <View style={{width:60, display:"inline-block", alignItems:"center",textAlign:"center"}}>
               {UserAccess?.update === 1 ? 
