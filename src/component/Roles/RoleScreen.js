@@ -460,7 +460,7 @@ const RoleScreen = ({userAccess,refresh}) => {
                     ListHeaderComponent={() => (
                       <View style={styles.tableHeader}>
                         <Text numberOfLines={1} style={[styles.tableHeaderText,{width:isMobile?120:''},{ display: "inline-block"}]}>Role Name</Text>
-                        <Text style={[styles.tableHeaderText, { display: "inline-block"},{width:isMobile?100:''},]}>Status</Text> 
+                        <Text style={[styles.tableHeaderText, { display: "inline-block",textAlign:"center"},{width:isMobile?100:''},]}>Status</Text> 
                         <Text style={[styles.tableHeaderText, { display:"inline-block", textAlign:"center"},{width:isMobile?100:''}]} numberOfLines={1}>Created Date</Text>
                     <Text style={[styles.tableHeaderText, { display:"inline-block", textAlign:"center"},{width:isMobile?100:''}]} numberOfLines={1}>Updated Date</Text>
                     <Text style={[styles.tableHeaderText, { display:"inline-block", textAlign:"center"},{width:isMobile?100:''}]} numberOfLines={1}>Created By</Text>
@@ -476,9 +476,9 @@ const RoleScreen = ({userAccess,refresh}) => {
                             {item.roleName}
                           </Text>
                         </View>
-                        <View style={[styles.listItemText, {display: "inline-block" ,},{width:isMobile?100:''} ]}>
+                        <View style={[styles.listItemText, {display: "inline-block" ,alignItems:"center"},{width:isMobile?100:''} ]}>
                           <Pressable        
-                          style={[{ display: "inline-block" ,}]}          
+                          style={[{ display: "inline-block" ,alignItems:"center"}]}          
                             onPress={() => UserAccess?.update === 1 ? handleRoleStatus(item.PK_RoleId, item?.isActive) : ''} 
                           >
                             <Text

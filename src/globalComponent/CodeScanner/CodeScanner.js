@@ -119,7 +119,7 @@ export default function CodeScanner({ onScannedData, onCancel, BarCodeTypes }) {
         )}
         </View>
       <View style={styles.controlsContainer}>
-        <Pressable style={[styles.button,{backgroundColor:isTorchOn ? "rgba(255, 255, 255, 0.7)" : "rgba(0, 0, 0, 0.7)",borderRadius:42}]} onPress={toggleTorch}>
+        <Pressable style={[styles.button,{backgroundColor:isTorchOn ? "rgba(255, 255, 255, 0.7)" : "rgba(0, 0, 0, 0.7)",borderRadius:30,padding:10}]} onPress={toggleTorch}>
         <Entypo name='flashlight' size={34} color={isTorchOn ? 'blue' : 'white'} />
         </Pressable>
         <Pressable style={[styles.button, styles.cancelButton]} onPress={onCancel}>

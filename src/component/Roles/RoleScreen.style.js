@@ -84,7 +84,7 @@ import {
     listItemText: {
      fontSize:13, 
      padding:6,
-     flex:1
+    //  flex:1
     },
     listItemActiveStatus: {
       color: "#fff",
