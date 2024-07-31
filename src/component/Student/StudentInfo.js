@@ -1037,11 +1037,11 @@ const StudentInfo = ({ navigation,refresh }) => {
                     </View>
                     <View style={styles.infoItem}>
                       <Text style={styles.label1} >School:</Text>
-                      <Text style={styles.value1} numberOfLines={1}> {studentDetails?.DESCR || ""}</Text>
+                      <Text style={styles.value1} numberOfLines={1} ellipsizeMode='tail'> {studentDetails?.DESCR || ""}</Text>
                     </View>
                     <View style={styles.infoItem}>
                       <Text style={styles.label1}>Program:</Text>
-                      <Text style={styles.value1} numberOfLines={1}> {studentDetails?.DESCR2 || ""}</Text>
+                      <Text style={styles.value1} numberOfLines={1} > {studentDetails?.DESCR2 || ""}</Text>
                     </View>
                
                     <View style={styles.infoItem}>
@@ -1640,7 +1640,7 @@ const styles = StyleSheet.create({
   infoItem: {
     flex: 1,
     flexDirection: "row",
-    // maxWidth:200,
+    maxWidth:250,
     // flexDirection: "column",
     justifyContent: "flex-start",
     marginBottom: 10,
@@ -1664,6 +1664,8 @@ const styles = StyleSheet.create({
   },
   value1: {
     color: "#555",
+    overflow: 'hidden',
+
   },
   // table: {
   //   // borderWidth: 1,
@@ -1969,13 +1971,7 @@ const styles = StyleSheet.create({
     width: "40%",
     zIndex: 1000,
   },
-  userDetailWrap: {
-    // width: "100%",
-    // alignItems: "center",
-    width:"20%",
-    display: "flex",
-    // justifyContent: 'center'
-  },
+
   customValue:{
     fontSize: 12,
     marginTop: 5,
@@ -2003,7 +1999,15 @@ const styles = StyleSheet.create({
 infoItemWrap:{
   width:"80%"
 },
+userDetailWrap: {
+  // width: "100%",
+  // alignItems: "center",
+  width:"20%",
+  display: "flex",
+  // justifyContent: 'center'
+},
 infopWrap:{
   flexDirection:"row",
-}
+},
+
 });
