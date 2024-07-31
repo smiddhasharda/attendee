@@ -1039,14 +1039,14 @@
 //       </View>
 
 //       <View style={styles.tabContainer}>
-//         <Pressable style={styles.tabButton} onPress={() => setCurrentTab('ReportByStudents')}>
-//           <Text style={currentTab === 'ReportByStudents' ? styles.activeTabText : styles.tabText}>Report By Students</Text>
+//         <Pressable style={[styles.tabButton ,styles.tabWrap]} onPress={() => setCurrentTab('ReportByStudents')}>
+//           <Text style={currentTab === 'ReportByStudents' ? styles.activeTabText : styles.tabText}>Students Report</Text>
 //         </Pressable>
-//         <Pressable style={styles.tabButton} onPress={() => setCurrentTab('ReportByCatelog')}>
-//           <Text style={currentTab === 'ReportByCatelog' ? styles.activeTabText : styles.tabText}>Report By Catelog</Text>
+//         <Pressable style={[styles.tabButton,styles.tabWrap]} onPress={() => setCurrentTab('ReportByCatelog')}>
+//           <Text style={currentTab === 'ReportByCatelog' ? styles.activeTabText : styles.tabText}>Catalog Report</Text>
 //         </Pressable>
-//         <Pressable style={styles.tabButton} onPress={() => setCurrentTab('ReportByRoom')}>
-//           <Text style={currentTab === 'ReportByRoom' ? styles.activeTabText : styles.tabText}>Report By Room</Text>
+//         <Pressable style={[styles.tabButton,styles.tabWrap]} onPress={() => setCurrentTab('ReportByRoom')}>
+//           <Text style={currentTab === 'ReportByRoom' ? styles.activeTabText : styles.tabText}>Rooms Report </Text>
 //         </Pressable>
 //       </View>
 //       {renderTable()}
@@ -1184,29 +1184,42 @@
 //     color:"#fff"
 //   },
  
+
 //   nodatestext:{
 //     padding:14,
 //     borderRadius:5,
 //   },
 //   tabContainer: {
 //     flexDirection: 'row',
-//     justifyContent: 'space-around',
+//     // justifyContent: 'space-around',
 //     backgroundColor: '#f8f8f8',
 //     padding: 10,
 //   },
 //   tabButton: {
-//     flex: 1,
-//     alignItems: 'center',
+//     // flex: 1,
+//     // alignItems: 'center',
 //     padding: 10,
+  
+    
 //   },
+
+ 
 //   tabText: {
 //     fontSize: 16,
 //     color: '#000',
+//     fontWeight:"600",
+//     backgroundColor:'#ccc',
+//     padding:10,
+//     borderRadius:5,
+   
 //   },
 //   activeTabText: {
 //     fontSize: 16,
-//     color: '#007AFF',
-//     fontWeight: 'bold',
+//     color: '#fff',
+//     fontWeight: '600',
+//     backgroundColor:"green",
+//     borderRadius:5,
+//     padding:10,
 //   },
 //   itemContainer: {
 //     padding: 10,

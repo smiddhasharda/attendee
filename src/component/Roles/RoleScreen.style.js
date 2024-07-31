@@ -58,6 +58,7 @@ import {
       color:"#fff",
       textAlign:"left",
       alignItems:"center",
+      flex:1
       // flexShrink: 0,
  
     },
@@ -83,6 +84,7 @@ import {
     listItemText: {
      fontSize:13, 
      padding:6,
+     flex:1
     },
     listItemActiveStatus: {
       color: "#fff",
