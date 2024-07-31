@@ -978,6 +978,14 @@ const StudentInfo = ({ navigation,refresh }) => {
           ) : (
                 <FontAwesome name="user" size={40} color="#fff" style={styles.studProfile} />        
               )} 
+                {studentSign ? (
+              <Image
+            source={{ uri: `data:image/png;base64,${studentSign}` }}
+            style={styles.studProfile} 
+          />
+          ) : (
+                <FontAwesome6 name="signature" size={34} color="black" />        
+              )} 
               </View>
               <View style={[styles.infoItemWrap]}>
                     <View style={styles.infoItem}>
