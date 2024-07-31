@@ -976,9 +976,7 @@ const StudentInfo = ({ navigation,refresh }) => {
             style={styles.studProfile} 
           />
           ) : (
-                <FontAwesome name="user" size={40} color="#fff" style={styles.studProfile} />
-                <FontAwesome6 name="signature" size={34} color="black" />
-        
+                <FontAwesome name="user" size={40} color="#fff" style={styles.studProfile} />        
               )} 
               </View>
               <View style={[styles.infoItemWrap]}>
