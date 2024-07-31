@@ -62,7 +62,7 @@ function RoomDetail({navigation,refresh}) {
 
   const { width, height } = Dimensions.get('window');
   const isMobile = width < 768; 
-  console.log('height',height)
+  // console.log('height',height)
  
 const remainingHeight = height - 190;
 // console.log('Remaining height:', remainingHeight);
