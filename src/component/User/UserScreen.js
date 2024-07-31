@@ -687,9 +687,9 @@ const UserScreen = ({userAccess,refresh}) => {
           ListHeaderComponent={() => (
             <View style={styles.tableHeader}>
               <Text style={[styles.tableHeaderText,{width:120}, ]}>Employee Id</Text>
-              <Text style={[styles.tableHeaderText,{width:200}, ]}>Name</Text>
-              <Text style={[styles.tableHeaderText, {width:120,} ]}>Mob.No</Text>
-              <Text style={[styles.tableHeaderText,{width:90}  ]}>Status</Text>
+              <Text style={[styles.tableHeaderText,{width:200,textAlign:"center"}, ]}>Name</Text>
+              <Text style={[styles.tableHeaderText, {width:170,textAlign:"center"} ]}>Mob.No</Text>
+              <Text style={[styles.tableHeaderText,{width:90,textAlign:"center"}  ]}>Status</Text>
               <Text style={[styles.tableHeaderText,{width:120 ,textAlign:"center"}, ]}>Created Date</Text>
               <Text style={[styles.tableHeaderText,{width:120 ,textAlign:"center"}, ]}>Updated Date</Text>
               <Text style={[styles.tableHeaderText,{width:120,textAlign:"center"}, ]}>Created By</Text>
@@ -701,11 +701,11 @@ const UserScreen = ({userAccess,refresh}) => {
             // console.log("All items",item),
             <View style={styles.listItem}>
               <Text style={[styles.listItemText,{width:120}]}>{item.username}</Text>
-              <Text style={[styles.listItemText,{width:200}]}>{item.name}</Text>
-              <Text style={[styles.listItemText, {width:120}]}>{item.contact_number}</Text>
-                    <View style={[styles.listItemText, {display:"inline-block", width:90}]}>
-                      <Pressable style={{display:"inline-block"} } onPress={() =>UserAccess?.update === 1 ? handleUserStatus(item.user_id, item?.isActive) : ''}>
-                    <Text style={[styles.listItemText, { flex: 1 }, item.isActive ? styles.actionbtn : styles.inactivebtn,]}>{item.isActive ? "Active" : "Inactive"}</Text>
+              <Text style={[styles.listItemText,{width:200,textAlign:"center"}]}>{item.name}</Text>
+              <Text style={[styles.listItemText, {width:170,textAlign:"center"}]}>{item.contact_number}</Text>
+                    <View style={[styles.listItemText, {display:"inline-block", alignItems:"center", width:90}]}>
+                      <Pressable style={{display:"inline-block" ,alignItems:"center"} } onPress={() =>UserAccess?.update === 1 ? handleUserStatus(item.user_id, item?.isActive) : ''}>
+                    <Text style={[styles.listItemText,  item.isActive ? styles.actionbtn : styles.inactivebtn,]}>{item.isActive ? "Active" : "Inactive"}</Text>
                     </Pressable>     
                     </View>  
                     <Text style={[styles.listItemText, { width: 120, display: "inline-block",textAlign:"center" }]} numberOfLines={1}>
