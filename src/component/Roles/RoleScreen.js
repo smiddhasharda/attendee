@@ -459,26 +459,26 @@ const RoleScreen = ({userAccess,refresh}) => {
                   keyExtractor={(item) => item.PK_RoleId.toString()}
                     ListHeaderComponent={() => (
                       <View style={styles.tableHeader}>
-                        <Text numberOfLines={1} style={[styles.tableHeaderText,{width:isMobile?120:''},{ display: "inline-block"}]}>Role Name</Text>
-                        <Text style={[styles.tableHeaderText, { display: "inline-block",textAlign:"center"},{width:isMobile?100:''},]}>Status</Text> 
-                        <Text style={[styles.tableHeaderText, { display:"inline-block", textAlign:"center"},{width:isMobile?100:''}]} numberOfLines={1}>Created Date</Text>
-                    <Text style={[styles.tableHeaderText, { display:"inline-block", textAlign:"center"},{width:isMobile?100:''}]} numberOfLines={1}>Updated Date</Text>
-                    <Text style={[styles.tableHeaderText, { display:"inline-block", textAlign:"center"},{width:isMobile?100:''}]} numberOfLines={1}>Created By</Text>
-                    <Text style={[styles.tableHeaderText, { display:"inline-block",textAlign:"center"},{width:isMobile?100:''}]} numberOfLines={1}>Updated By</Text>
-                        <Text style={[styles.tableHeaderText, { display: "inline-block",textAlign:"center"},{width:isMobile?100:''}]}>Actions</Text>
+                        <Text numberOfLines={1} style={[styles.tableHeaderTextRole,{width:isMobile?120:''},{ display: "inline-block", }]}>Role Name</Text>
+                        <Text style={[styles.tableHeaderTextRole, { display: "inline-block"},{width:isMobile?100:''},]}>Status</Text> 
+                        <Text style={[styles.tableHeaderTextRole, { display:"inline-block", textAlign:"center"},{width:isMobile?100:''}]} numberOfLines={1}>Created Date</Text>
+                    <Text style={[styles.tableHeaderTextRole, { display:"inline-block", textAlign:"center"},{width:isMobile?100:''}]} numberOfLines={1}>Updated Date</Text>
+                    <Text style={[styles.tableHeaderTextRole, { display:"inline-block", textAlign:"center"},{width:isMobile?100:''}]} numberOfLines={1}>Created By</Text>
+                    <Text style={[styles.tableHeaderTextRole, { display:"inline-block",textAlign:"center"},{width:isMobile?100:''}]} numberOfLines={1}>Updated By</Text>
+                        <Text style={[styles.tableHeaderTextRole, { display: "inline-block",textAlign:"center"},{width:isMobile?100:''}]}>Actions</Text>
                       </View>
                     )}
                     renderItem={({ item }) => (
                       //  console.log("All items",item),
                       <View style={[styles.listItem]}>
-                        <View style={[styles.listItemText,{width:isMobile?120:''}, { display: "inline-block"}]}>
+                        <View style={[styles.listItemText,{width:isMobile?120:''}, { display: "inline-block", }]}>
                           <Text >
                             {item.roleName}
                           </Text>
                         </View>
-                        <View style={[styles.listItemText, {display: "inline-block" ,alignItems:"center"},{width:isMobile?100:''} ]}>
+                        <View style={[styles.listItemText, {display: "inline-block" ,},{width:isMobile?100:''} ]}>
                           <Pressable        
-                          style={[{ display: "inline-block" ,alignItems:"center"}]}          
+                          style={[{ display: "inline-block" ,}]}          
                             onPress={() => UserAccess?.update === 1 ? handleRoleStatus(item.PK_RoleId, item?.isActive) : ''} 
                           >
                             <Text

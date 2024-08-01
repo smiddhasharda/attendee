@@ -6,8 +6,10 @@ import {
     StyleSheet,
     TextStyle,
   } from "react-native";
-  
+  const { width, height } = Dimensions.get('window');
+  const isMobile = width < 768; 
   const styles = StyleSheet.create({
+    
     container: {
       //flex: 1,
       padding: 20,
@@ -51,6 +53,15 @@ import {
       //marginBottom: 10,
       borderRadius:5,
     },
+    tableHeaderTextRole:{
+      fontSize: 13, 
+      fontWeight: 'bold', 
+      // paddingHorizontal: 5,
+      color:"#fff",
+      textAlign:"left",
+      alignItems:"center",
+      flex:1,
+    },
     tableHeaderText: {
       fontSize: 13, 
       fontWeight: 'bold', 
@@ -58,7 +69,7 @@ import {
       color:"#fff",
       textAlign:"left",
       alignItems:"center",
-      flex:1
+      // flex:1,
       // flexShrink: 0,
  
     },
@@ -83,8 +94,9 @@ import {
     },
     listItemText: {
      fontSize:13, 
-     padding:6,
-    //  flex:1
+     padding:6,   
+     flex:1
+   
     },
     listItemActiveStatus: {
       color: "#fff",
