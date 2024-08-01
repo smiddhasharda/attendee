@@ -11,12 +11,10 @@ import CheckBox from "expo-checkbox";
 import { parseISO, format, differenceInSeconds, addMinutes, subMinutes, isSameDay,isBefore } from 'date-fns';
 import { toZonedTime, fromZonedTime } from 'date-fns-tz';
 
-
+const { width, height } = Dimensions.get('window');
+const isMobile = width < 768; 
 
 const StudentInfo = ({ navigation,refresh }) => {
-
-  const { width, height } = Dimensions.get('window');
-  const isMobile = width < 768; 
 
   const route = useRoute();
   const { addToast } = useToast();
@@ -976,7 +974,9 @@ const StudentInfo = ({ navigation,refresh }) => {
                 {studentPicture ? (
               <Image
             source={{ uri: `data:image/png;base64,${studentPicture}` }}
-            style={[styles.studProfile, isMobile ? styles.studProfilemob :styles.studProfile ]}
+            style={styles.studProfile}
+
+
 
             
           />
@@ -1039,7 +1039,7 @@ const StudentInfo = ({ navigation,refresh }) => {
           ) : (
                 <FontAwesome6 name="signature" size={34} color="black" />        
               )} 
-                    </View>
+                    </View> */}
               </View>
             </View>
           </View>
@@ -1855,8 +1855,8 @@ const styles = StyleSheet.create({
   studProfile: {
     // width: 100,
     // height: 100,
-    width:170,
-    height:215,
+    width: isMobile ? 54 : 170,
+    height:isMobile ? 66 : 215,
     backgroundColor: '#dfdfdf',
     // borderRadius: 50,
     display: "flex",
@@ -1868,8 +1868,8 @@ const styles = StyleSheet.create({
     marginBottom: 20
   },
   studProfilemob:{
-  width:50,
-  height:64,
+  // width:50,
+  // height:64,
   },
   copiesdataWrap: {
     marginTop: 10,
