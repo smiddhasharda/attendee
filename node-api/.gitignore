@@ -2,17 +2,10 @@
 
 # dependencies
 /node_modules
-/config
-/middlewares
-/db
 /logs
 /.pnp
 .pnp.js
 .env
-.main.js
-/cronjobs
-/logs
-/resources
 /resources/assets/
 # Native
 *.orig.*
