@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, Text, StyleSheet, ScrollView, TextInput, Pressable, ActivityIndicator, Image, } from "react-native";
+import { View, Text, StyleSheet, ScrollView, TextInput, Pressable, ActivityIndicator, Image,Dimensions } from "react-native";
 import { Ionicons, FontAwesome, AntDesign, MaterialCommunityIcons, MaterialIcons, Entypo, FontAwesome6, } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
@@ -14,6 +14,10 @@ import { toZonedTime, fromZonedTime } from 'date-fns-tz';
 
 
 const StudentInfo = ({ navigation,refresh }) => {
+
+  const { width, height } = Dimensions.get('window');
+  const isMobile = width < 768; 
+
   const route = useRoute();
   const { addToast } = useToast();
   const [studentDetails, setStudentDetails] = useState({});
@@ -685,14 +689,13 @@ const StudentInfo = ({ navigation,refresh }) => {
           data: '',
           conditionString: `EMPLID = '${system_Id}'`,
           checkAvailability: '',
-          // customQuery: `SELECT EMPLOYEE_PHOTO,DERIVED_STUPHOTO,EMPLID FROM PS_S_PRD_PHOTO_VW Where EMPLID = '${system_Id}' `,
-          customQuery: `SELECT EMPLOYEE_PHOTO,DERIVED_STUPHOTO,EMPLID FROM PS_S_PRD_PHOTO_VW `,
+          customQuery: `SELECT EMPLOYEE_PHOTO,DERIVED_STUPHOTO,EMPLID FROM PS_S_PRD_PHOTO_VW Where EMPLID = '${system_Id}' `,
+          // customQuery: `SELECT EMPLOYEE_PHOTO,DERIVED_STUPHOTO,EMPLID FROM PS_S_PRD_PHOTO_VW Where EMPLID = 2023000230 `,
           viewType: 'CAMPUS2_View'
         },
         authToken
       );
       if (response) {
-        
         setStudentPicture(response?.data?.receivedData?.[0]?.EMPLOYEE_PHOTO || '');
         setStudentSign(response?.data?.receivedData?.[0]?.DERIVED_STUPHOTO || '');
         setLoading(false);
@@ -973,15 +976,18 @@ const StudentInfo = ({ navigation,refresh }) => {
                 {studentPicture ? (
               <Image
             source={{ uri: `data:image/png;base64,${studentPicture}` }}
-            style={styles.studProfile} 
+            style={[styles.studProfile, isMobile ? styles.studProfilemob :styles.studProfile ]}
+
+            
           />
           ) : (
                 <FontAwesome name="user" size={40} color="#fff" style={styles.studProfile} />        
               )} 
                 {studentSign ? (
-              <Image
+              <Image 
             source={{ uri: `data:image/png;base64,${studentSign}` }}
-            style={styles.studProfile} 
+            style={[styles.signature ,isMobile ?styles.signaturemob:styles.signature]} 
+            
           />
           ) : (
                 <FontAwesome6 name="signature" size={34} color="black" />        
@@ -1834,13 +1840,25 @@ const styles = StyleSheet.create({
     width: 90,
     height: 90,
   },
+  signaturemob:{
+  width:50,
+  height:30,
+  },
+
+  signature:{
+  width:170,
+  height:50,
+  borderWidth:1,
+  borderColor:"#dadada"
+  },
+
   studProfile: {
     // width: 100,
     // height: 100,
-    width:55,
-    height:55,
+    width:170,
+    height:215,
     backgroundColor: '#dfdfdf',
-    borderRadius: 50,
+    // borderRadius: 50,
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -1848,6 +1866,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
     verticalAlign: "middle",
     marginBottom: 20
+  },
+  studProfilemob:{
+  width:50,
+  height:64,
   },
   copiesdataWrap: {
     marginTop: 10,
