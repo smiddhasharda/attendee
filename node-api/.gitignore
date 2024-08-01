@@ -9,6 +9,7 @@
 /.pnp
 .pnp.js
 .env
+.main.js
 /cronjobs
 /logs
 /resources
