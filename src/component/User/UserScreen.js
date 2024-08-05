@@ -702,7 +702,7 @@ const UserScreen = ({userAccess,refresh}) => {
               <Text style={[styles.listItemText,{width:120}]}>{item.username}</Text>
               <Text style={[styles.listItemText,{width:200,textAlign:"center"}]}>{item.name}</Text>
               <Text style={[styles.listItemText, {width:170,textAlign:"center"}]}>{item.contact_number}</Text>
-                    <View style={[styles.listItemText, {display:"inline-block", alignItems:"center", width:90}]}>
+                    <View style={[styles.listItemText, {display:"inline-block", alignItems:"center", textAlign:"center", width:90}]}>
                       <Pressable style={{display:"inline-block" ,alignItems:"center"} } onPress={() =>UserAccess?.update === 1 ? handleUserStatus(item.user_id, item?.isActive) : ''}>
                     <Text style={[styles.listItemText,  item.isActive ? styles.actionbtn : styles.inactivebtn,]}>{item.isActive ? "Active" : "Inactive"}</Text>
                     </Pressable>     
