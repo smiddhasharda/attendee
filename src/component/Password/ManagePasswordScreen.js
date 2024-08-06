@@ -17,7 +17,7 @@ const ManagePasswordScreen = () => {
     isNewPassError:'',
     isConfPassError:'' 
   });
- console.log(password);
+//  console.log(password);
 
  const validatePassword=(newPassword) =>{
    const minLength=8;
@@ -43,48 +43,30 @@ const ManagePasswordScreen = () => {
     }
  } 
 
-  const handlresetPassword = () => {
+   const handlresetPassword = () => {
     if (!password.oldPassword) {
-      setPassword({
-        ...password,
-        isOldPassError: 'Old password is required!',
-      });
+      setPassword({ ...password, isOldPassError: 'Old password is required!' });
       return;
     }
+
     const newPasswordError = validatePassword(password.newPassword);
     if (newPasswordError) {
       setPassword({ ...password, isNewPassError: newPasswordError });
       return;
     }
 
-    // if (!password.newPassword) {
-    //   setPassword({
-    //     ...password,
-    //     isNewPassError: 'New password is required!',
-    //   });
-    //   return;
-    // }
-  
     if (!password.confPassword) {
-      setPassword({
-        ...password,
-        isConfPassError: 'Confirm password is required!',
-      });
+      setPassword({ ...password, isConfPassError: 'Confirm password is required!' });
       return;
     }
-  
-    if(!(password.newPassword.match(password.confPassword))){
-      setPassword({
-        ...password,
-        isConfPassError: 'Passwords do not match!',
-      });
+
+    if (password.newPassword !== password.confPassword) {
+      setPassword({ ...password, isConfPassError: 'Passwords do not match!' });
       return;
     }
-  
-   
+
     alert("Password successfully changed");
-  
-   
+
     setPassword({
       oldPassword: '',
       newPassword: '',
@@ -111,8 +93,12 @@ const ManagePasswordScreen = () => {
                     onFocus={() =>setPassword({...password,isOldPassError: ''})}
                     secureTextEntry={!showOldPassword}
                     />
+                   <>
+                     {password.isOldPassError && <Text style={{color:'red'}}>{password.isOldPassError}</Text>}
+                     </>
                     <Ionicons name={showOldPassword ?'eye':'eye-off'}  style={[styles.eyeicon,{top:10}] } onPress={()=> setShowOldPassword(!showOldPassword)}    />
-                    {password.isOldPassError && <Text style={{color:'red'}}>{password.isOldPassError}</Text>}
+                   
+                    
                     </View>
                     <View style={[styles.inputWrap, isMobile ? styles.inputmobWrap : null]}>
                         <View style={{width: isMobile ? "100%" :"48%"}}>
@@ -126,8 +112,9 @@ const ManagePasswordScreen = () => {
                         secureTextEntry={!showNewPassword} // it hide the text if false
                         
                         />
-                        
+                        <>
                         {password.isNewPassError && <Text style={{color:'red'}}>{password.isNewPassError}</Text>}
+                        </>
 
                               <Ionicons name={showNewPassword ? 'eye':'eye-off'} style={styles.eyeicon}   onPress={() => setshowNewPassword(!showNewPassword)}/>
                         </View>
@@ -141,7 +128,9 @@ const ManagePasswordScreen = () => {
                           onFocus={() =>setPassword({...password,isNewPassError: '',isConfPassError:''})}
                           secureTextEntry={!showConfirmPassword}
                           />
+                          <>
                           {password.isConfPassError && <Text style={{color:'red'}}>{password.isConfPassError}</Text>}
+                          </>
                           <Ionicons name={showConfirmPassword ? 'eye':'eye-off'} style={styles.eyeicon}  onPress={()=>setshowConfirmPassword(!showConfirmPassword)}/>
                         </View>
                     </View>
@@ -188,11 +177,11 @@ const styles = StyleSheet.create({
     label:{
       fontSize:16,
       marginBottom:10,
-      fontWeight:600
+      fontWeight:'600',
     },
     headertext:{
       fontSize:18,
-      fontWeight:"600",
+      fontWeight:'600',
       marginBottom:10
     },
     resetbtn:{
