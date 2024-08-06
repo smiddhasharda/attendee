@@ -607,12 +607,12 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
                 ListHeaderComponent={() => (
                   <View style={styles.tableHeader}>
                     <Text style={[styles.tableHeaderText, {width:90} ]}>Id</Text>
-                    <Text style={[styles.tableHeaderText, {width:180}]}>Employee Id</Text>
-                    <Text style={[styles.tableHeaderText,{width:180} ]}>Name</Text>
-                    <Text style={[styles.tableHeaderText,{width:120}  ]}>Room</Text>
-                    <Text style={[styles.tableHeaderText,{width:120} ]}>Date</Text>
-                    <Text style={[styles.tableHeaderText,{width:120} ]}>Shift</Text>
-                    <Text style={[styles.tableHeaderText,{width:120}  ]}>Status</Text>
+                    <Text style={[styles.tableHeaderText, {width:180, textAlign:"center"}]}>Employee Id</Text>
+                    <Text style={[styles.tableHeaderText,{width:180, textAlign:"center"} ]}>Name</Text>
+                    <Text style={[styles.tableHeaderText,{width:120, textAlign:"center"}  ]}>Room</Text>
+                    <Text style={[styles.tableHeaderText,{width:120, textAlign:"center"} ]}>Date</Text>
+                    <Text style={[styles.tableHeaderText,{width:120, textAlign:"center"} ]}>Shift</Text>
+                    <Text style={[styles.tableHeaderText,{width:120, textAlign:"center"}  ]}>Status</Text>
                     <Text style={[styles.tableHeaderText, {width:120, display:"inline-block", textAlign:"center"}]} numberOfLines={1}>Created Date</Text>
                     <Text style={[styles.tableHeaderText, {width:120, display:"inline-block", textAlign:"center"}]} numberOfLines={1}>Updated Date</Text>
                     <Text style={[styles.tableHeaderText, {width:120, display:"inline-block", textAlign:"center"}]} numberOfLines={1}>Created By</Text>
@@ -624,12 +624,12 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
             // console.log(item),      
             <View style={styles.listItem}>
               <Text style={[styles.listItemText, {width:90}]}>{item.PK_InvigilatorDutyId}</Text>
-              <Text style={[styles.listItemText, {width:180}]}>{item.employeeId}</Text>
-              <Text style={[styles.listItemText, {width:180}]}>{item.invigilatorName}</Text>
-              <Text style={[styles.listItemText, {width:120}]}>{item.room}</Text>
-              <Text style={[styles.listItemText, {width:120}]}>{parseAndFormatDate(item.date)}</Text>
-              <Text style={[styles.listItemText, {width:120}]}>{convertedTime(item.shift)}</Text>
-              <Text style={[styles.listItemText, {width:120}]}>{item.duty_status}</Text>   
+              <Text style={[styles.listItemText, {width:180, textAlign:"center"}]}>{item.employeeId}</Text>
+              <Text style={[styles.listItemText, {width:180, textAlign:"center"}]}>{item.invigilatorName}</Text>
+              <Text style={[styles.listItemText, {width:120, textAlign:"center"}]}>{item.room}</Text>
+              <Text style={[styles.listItemText, {width:120, textAlign:"center"}]}>{parseAndFormatDate(item.date)}</Text>
+              <Text style={[styles.listItemText, {width:120, textAlign:"center"}]}>{convertedTime(item.shift)}</Text>
+              <Text style={[styles.listItemText, {width:120, textAlign:"center"}]}>{item.duty_status}</Text>   
               <Text style={[styles.listItemText, {width:120, display: "inline-block", textAlign:"center" }]} numberOfLines={1}>
                       {item.created_at ? new Date(item.created_at.split('T')[0]).toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }) : 'N/A'}
                     </Text>
