@@ -891,7 +891,7 @@ const StudentInfo = ({ navigation,refresh }) => {
 
       // Check if today is the exam date
       if (!isSameDay(now, examDate)) {
-        setIsActive(false);
+        setIsActive(true);
         let PastDate = !isBefore(examDate, now)
         setTimeLeft(PastDate ? 'Attendance Not Started': 'Attendance Completed');
         return;
