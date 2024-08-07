@@ -1,4 +1,6 @@
-import { StyleSheet,Platform } from 'react-native';
+import { StyleSheet,Platform ,Dimensions} from 'react-native';
+const { width, height } = Dimensions.get('window');
+const isMobile = width < 768; 
 
 const styles = StyleSheet.create({
   container: {
@@ -139,12 +141,14 @@ const styles = StyleSheet.create({
   },
   eyeButton: {
     position: 'absolute',
-    top: 12,
+    top: isMobile? 6 :12,
     right: 10,
+ 
   },
   eyeIcon: {
     width: 20,
     height: 20,
+  
   },
 });
 
