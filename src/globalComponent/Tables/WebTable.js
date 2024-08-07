@@ -65,7 +65,8 @@ const WebTable = ({ columns, data,handleExportRows,handleExportData,handleRefres
         >
         <Text style={{ color:"#fff",textAlign:"center"}}>
           Export Page Rows As PDF
-          </Text>        </Pressable>
+          </Text>        
+        </Pressable>
         <Pressable
           disabled={
             !table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()
