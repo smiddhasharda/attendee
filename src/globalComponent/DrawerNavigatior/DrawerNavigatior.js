@@ -18,7 +18,7 @@ import { Ionicons,Feather } from '@expo/vector-icons';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RefreshContext } from "../../globalComponent/Refresh/RefreshContext";
 import InvigilatorScreen from "../../component/Invigilator/InvigilatorScreen";
-import ReportScreen from "../../component/Report/ReportScreen";
+// import ReportScreen from "../../component/Report/ReportScreen";
 import ManagePasswordScreen from "../../component/Password/ManagePasswordScreen";
 
 // Screen components
@@ -184,17 +184,6 @@ const CustomDrawerContent = ({ ...props }) => {
         )}
         labelStyle={styles.drawerItemLabel}
       />
-      {/* <View>     
-        <Pressable onPress={() => props.handleLogout()}>
-        <Ionicons 
-        style={styles.icons} 
-        name='log-out'
-        size={24} 
-        color="rgb(0, 122, 255)"
-      />
-          <Text style={{ margin: 16 }}>Logout</Text>
-        </Pressable>
-      </View> */}
       </DrawerContentScrollView>
     </View>
   );
@@ -334,7 +323,7 @@ const DrawerNavigator = ({ navigation }) => {
             module?.moduleMaster[0]?.moduleName !== "StudentInfo" &&
             module?.moduleMaster[0]?.moduleName !== "RoomDetail" &&
              module?.moduleMaster[0]?.moduleName !== "ModuleScreen"
-            // &&  module?.moduleMaster[0]?.moduleName !== "ReportScreen" 
+            &&  module?.moduleMaster[0]?.moduleName !== "ReportScreen" 
         )
         .map((module, index) => (
     //       <Drawer.Screen  options={{
@@ -393,8 +382,8 @@ const DrawerNavigator = ({ navigation }) => {
                   return <InvigilatorScreen {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData} refresh={refresh} />; 
                   case "ManagePasswordScreen":
                   return <ManagePasswordComponent {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData} refresh={refresh} />;   
-                case "ReportScreen":
-                  return <ReportScreen {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData} refresh={refresh} />;
+                // case "ReportScreen":
+                //   return <ReportScreen {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData} refresh={refresh} />;
                   
                   default:
                   return null;

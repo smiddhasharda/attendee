@@ -9,7 +9,8 @@ import { Feather,FontAwesome5,FontAwesome ,FontAwesome6} from "@expo/vector-icon
 import { parse, format,parseISO,isBefore } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import Pagination from "../../globalComponent/Pagination/PaginationComponent";
- const InvigilatorScreen = ({userAccess,refresh}) => {
+ const InvigilatorScreen = ({userAccess}) => {
+  const [refreshing, setRefreshing] = useState(false);
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 8 );
   const { addToast } = useToast();
   const [invigilatorList, setInvigilatorList] = useState([]);
@@ -415,7 +416,7 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
     };
   useEffect(() => {
     handleGetInigilatorDuty();
-  }, [UserAccess,refresh]);
+  }, [UserAccess]);
    return (
     
     <View style={styles.container}>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useContext } from "react";
-import { View, ActivityIndicator, StyleSheet, StatusBar, RefreshControl, SafeAreaView } from "react-native";
+import { View, ActivityIndicator, StyleSheet, StatusBar, RefreshControl, SafeAreaView, ScrollView } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Provider as PaperProvider } from 'react-native-paper';
@@ -40,7 +40,7 @@ const AppContent = () => {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    triggerRefresh(); // This will update the context state and trigger a re-render in all components consuming the refresh state
+    triggerRefresh(); 
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
@@ -117,9 +117,13 @@ const AppContent = () => {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* <RefreshControl refreshing={refreshing} onRefresh={onRefresh} /> */}
-      {loading ? renderLoading() : renderRouting()}
+    <SafeAreaView style={styles.container} >
+      {/* <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      > */}
+       {loading ? renderLoading() : renderRouting()}
+      {/* </ScrollView> */}
     </SafeAreaView>
   );
 };
