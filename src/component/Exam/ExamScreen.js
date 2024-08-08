@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback,useContext } from 'react';
-import { View, Text, FlatList, StyleSheet, ScrollView, Pressable, ActivityIndicator, Dimensions } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Pressable, ActivityIndicator, Dimensions } from 'react-native';
 import { view, fetch } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -10,6 +10,7 @@ const { width, height } = Dimensions.get('window');
 
 const ExamScreen = ({ navigation, userAccess, userData,refresh }) => {
   const UserAccess = userAccess?.module?.find((item) => item?.FK_ModuleId === 5);
+  const [refreshing, setRefreshing] = useState(false);
   const [examDates, setExamDates] = useState([]);
   const [roomDetails, setRoomDetails] = useState([]);
   const [examSelectedDate, setExamSelectedDate] = useState('');
@@ -37,8 +38,8 @@ const ExamScreen = ({ navigation, userAccess, userData,refresh }) => {
           data: '',
           conditionString: '',
           checkAvailability: '',
-          customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW WHERE EXAM_DT >= '${CurrentDate}' ORDER BY EXAM_DT ASC`,
-          // customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW  ORDER BY EXAM_DT ASC`,
+          // customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW WHERE EXAM_DT >= '${CurrentDate}' ORDER BY EXAM_DT ASC`,
+          customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW  ORDER BY EXAM_DT ASC`,
           viewType:'Campus_View'
         },
         authToken
@@ -137,6 +138,7 @@ const ExamScreen = ({ navigation, userAccess, userData,refresh }) => {
         setRoomDetails(response?.data?.receivedData);
       }
       setLoading(false);
+      setRefreshing(false);
     } catch (error) {
       setLoading(false);
       handleAuthErrors(error);
@@ -196,10 +198,14 @@ const ExamScreen = ({ navigation, userAccess, userData,refresh }) => {
     // return parsedDate;
     return format(parsedDate, 'dd$MMM,yy$EEE')  };
   
+    const onRefresh = useCallback(() => {
+      setRefreshing(true);
+      fetchRoomDetails(examSelectedDate);
+    }, []);
 
   useEffect(() => {
     fetchRoomDetails(examSelectedDate);
-  }, [UserAccess,refresh]);
+  }, [UserAccess]);
 
   return (
     <View style={styles.container}>
@@ -252,6 +258,8 @@ const ExamScreen = ({ navigation, userAccess, userData,refresh }) => {
                 </View>
               </Pressable>
             )}
+            refreshing={refreshing}
+            onRefresh={onRefresh}
             keyExtractor={(item, index) => index.toString()}
           />
         ) : (
