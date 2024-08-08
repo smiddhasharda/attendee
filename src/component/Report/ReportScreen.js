@@ -1184,6 +1184,7 @@ const styles = StyleSheet.create({
     color:"#fff"
   },
  
+
   nodatestext:{
     padding:14,
     borderRadius:5,

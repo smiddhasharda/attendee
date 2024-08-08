@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet,Platform } from "react-native";
 
 export default StyleSheet.create({
   container: {
@@ -11,7 +11,20 @@ export default StyleSheet.create({
     paddingBottom: 0,
     borderRadius: 12,
     backgroundColor: "#fff",
-    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.3)',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 5,
+      },
+      web:{
+        boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.3)',
+      }
+    }),
   },
   arrow: {
     top: 10,
@@ -26,6 +39,19 @@ export default StyleSheet.create({
     borderLeftColor: "transparent",
     height: 0,
     width: 0,
-    boxShadow: '0px 6px 4px rgba(0, 0, 0, 0.3)',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 5,
+      },
+      web:{
+        boxShadow: '0px 6px 4px rgba(0, 0, 0, 0.3)',
+      }
+    }),
   },
 });

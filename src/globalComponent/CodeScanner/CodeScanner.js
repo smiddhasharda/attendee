@@ -29,7 +29,6 @@ export default function CodeScanner({ onScannedData, onCancel, BarCodeTypes }) {
   //     console.error("Error accessing camera:", err);
   //   }
   // }, []);
-
   const handleBarCodeScanned = useCallback(({ type, data }) => {
     if (scannedCodes.length < 3) {
       setScannedCodes(prev => [...prev, data]);
@@ -38,11 +37,11 @@ export default function CodeScanner({ onScannedData, onCancel, BarCodeTypes }) {
     if (scannedCodes.length > 2 && scannedCodes.every(code => code === data)) {
       setScanned(true);
       if (BarCodeTypes?.[0] === 'code39') {
-        if (isValidBarcode(data)) {
+        // if (isValidBarcode(data)) {
           onScannedData(data);
-        } else {
-          alert("Invalid Barcode. Please try scanning again.");
-        }
+        // } else {
+        //   alert("Invalid Barcode. Please try scanning again.");
+        // }
       } else if (BarCodeTypes?.[0] === 'qr') {
         onScannedData(data);
       } else {
@@ -119,7 +118,7 @@ export default function CodeScanner({ onScannedData, onCancel, BarCodeTypes }) {
         )}
         </View>
       <View style={styles.controlsContainer}>
-        <Pressable style={[styles.button,{backgroundColor:isTorchOn ? "rgba(255, 255, 255, 0.7)" : "rgba(0, 0, 0, 0.7)",borderRadius:42}]} onPress={toggleTorch}>
+        <Pressable style={[styles.button,{backgroundColor:isTorchOn ? "rgba(255, 255, 255, 0.7)" : "rgba(0, 0, 0, 0.7)",borderRadius:30,padding:10}]} onPress={toggleTorch}>
         <Entypo name='flashlight' size={34} color={isTorchOn ? 'blue' : 'white'} />
         </Pressable>
         <Pressable style={[styles.button, styles.cancelButton]} onPress={onCancel}>

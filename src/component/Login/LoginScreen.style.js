@@ -1,4 +1,6 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet,Platform ,Dimensions} from 'react-native';
+const { width, height } = Dimensions.get('window');
+const isMobile = width < 768; 
 
 const styles = StyleSheet.create({
   container: {
@@ -7,18 +9,13 @@ const styles = StyleSheet.create({
   },
   bgimg1: {
     position: 'absolute',
-    // top: 0,
-    // left: 0,
-    // height: 706,
-    // width: 800,
-   transform: [{skewX: '-65deg'}],
+    transform: [{ skewX: '-65deg' }],
     top: -180,
     left: -620,
   },
   bgimages2: {
     position: 'absolute',
-    transform: [{skewX: '162deg'}],
-    // transform: rotate(190),
+    transform: [{ skewX: '162deg' }],
     top: 190,
     right: -540,
   },
@@ -26,22 +23,28 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    position:'relative',
-    zIndex:99999
+    position: 'relative',
+    zIndex: 99999,
   },
   logininfoWrap: {
     width: '80%',
     backgroundColor: '#fff',
     padding: 20,
     borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+      },
+      android: {
+        elevation: 5,
+      },
+      web:{
+        boxShadow: '0px 2px 3.84px rgba(0, 0, 0, 0.25)',
+      }
+    }),
   },
   loginheadWrap: {
     marginBottom: 20,
@@ -111,7 +114,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f8d7da',
     borderRadius: 5,
     padding: 10,
-    width:256,
+    width: 256,
   },
   emailTooltipTextStyle: {
     color: '#721c24',
@@ -127,7 +130,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f8d7da',
     borderRadius: 5,
     padding: 10,
-    width:260,    
+    width: 260,
   },
   passwordTooltipTextStyle: {
     color: '#721c24',
@@ -138,12 +141,14 @@ const styles = StyleSheet.create({
   },
   eyeButton: {
     position: 'absolute',
-    top: 12,
+    top: isMobile? 6 :12,
     right: 10,
+ 
   },
   eyeIcon: {
     width: 20,
     height: 20,
+  
   },
 });
 

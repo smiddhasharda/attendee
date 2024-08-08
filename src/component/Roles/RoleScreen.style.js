@@ -1,13 +1,9 @@
 import { padding } from "@mui/system";
-import {
-    ViewStyle,
-    ImageStyle,
-    Dimensions,
-    StyleSheet,
-    TextStyle,
-  } from "react-native";
-  
+import { StyleSheet,Dimensions,Platform } from 'react-native';
+  const { width, height } = Dimensions.get('window');
+  const isMobile = width < 768; 
   const styles = StyleSheet.create({
+    
     container: {
       //flex: 1,
       padding: 20,
@@ -51,6 +47,15 @@ import {
       //marginBottom: 10,
       borderRadius:5,
     },
+    tableHeaderTextRole:{
+      fontSize: 13, 
+      fontWeight: 'bold', 
+      // paddingHorizontal: 5,
+      color:"#fff",
+      textAlign:"left",
+      alignItems:"center",
+      flex:1,
+    },
     tableHeaderText: {
       fontSize: 13, 
       fontWeight: 'bold', 
@@ -58,7 +63,7 @@ import {
       color:"#fff",
       textAlign:"left",
       alignItems:"center",
-      flex:1
+      // flex:1,
       // flexShrink: 0,
  
     },
@@ -83,8 +88,9 @@ import {
     },
     listItemText: {
      fontSize:13, 
-     padding:6,
+     padding:6,   
      flex:1
+   
     },
     listItemActiveStatus: {
       color: "#fff",
@@ -111,7 +117,20 @@ import {
     roleLists:{
       backgroundColor:"#fff",
       padding:15,
-      boxShadow: '0px 2px 3.84px rgba(0, 0, 0, 0.25)',
+      ...Platform.select({
+        ios: {
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.25,
+          shadowRadius: 3.84,
+        },
+        android: {
+          elevation: 5,
+        },
+        web:{
+          boxShadow: '0px 2px 3.84px rgba(0, 0, 0, 0.25)',
+        }
+      }),
       borderRadius:10,
     },
     // wrapElements: {

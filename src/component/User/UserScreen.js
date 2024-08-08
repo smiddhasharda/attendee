@@ -87,8 +87,8 @@ const UserScreen = ({userAccess,refresh}) => {
             isActive: userData.status,
             isVerified: 1
           },
-          conditionString: '',
-          checkAvailability: '',
+          conditionString: `username = '${userData.emailId}' OR email_id = '${userData.emailId}'` ,
+          checkAvailability: true,
           customQuery: '',
         },
         authToken
@@ -687,25 +687,24 @@ const UserScreen = ({userAccess,refresh}) => {
           ListHeaderComponent={() => (
             <View style={styles.tableHeader}>
               <Text style={[styles.tableHeaderText,{width:120}, ]}>Employee Id</Text>
-              <Text style={[styles.tableHeaderText,{width:200}, ]}>Name</Text>
-              <Text style={[styles.tableHeaderText, {width:120,} ]}>Mob.No</Text>
-              <Text style={[styles.tableHeaderText,{width:90}  ]}>Status</Text>
+              <Text style={[styles.tableHeaderText,{width:200,textAlign:"center"}, ]}>Name</Text>
+              <Text style={[styles.tableHeaderText, {width:170,textAlign:"center"} ]}>Mob.No</Text>
+              <Text style={[styles.tableHeaderText,{width:90,textAlign:"center"}  ]}>Status</Text>
               <Text style={[styles.tableHeaderText,{width:120 ,textAlign:"center"}, ]}>Created Date</Text>
               <Text style={[styles.tableHeaderText,{width:120 ,textAlign:"center"}, ]}>Updated Date</Text>
               <Text style={[styles.tableHeaderText,{width:120,textAlign:"center"}, ]}>Created By</Text>
               <Text style={[styles.tableHeaderText,{width:120,textAlign:"center"}, ]}>Updated By</Text>
-              <Text style={[styles.tableHeaderText, {width:60, textAlign:"center"} ]}>Actions</Text>
+              <Text style={[styles.tableHeaderText,{width:60, textAlign:"center"} ]}>Actions</Text>
             </View>
           )}
           renderItem={({ item }) => (
-            // console.log("All items",item),
             <View style={styles.listItem}>
               <Text style={[styles.listItemText,{width:120}]}>{item.username}</Text>
-              <Text style={[styles.listItemText,{width:200}]}>{item.name}</Text>
-              <Text style={[styles.listItemText, {width:120}]}>{item.contact_number}</Text>
-                    <View style={[styles.listItemText, {display:"inline-block", width:90}]}>
-                      <Pressable style={{display:"inline-block"} } onPress={() =>UserAccess?.update === 1 ? handleUserStatus(item.user_id, item?.isActive) : ''}>
-                    <Text style={[styles.listItemText, { flex: 1 }, item.isActive ? styles.actionbtn : styles.inactivebtn,]}>{item.isActive ? "Active" : "Inactive"}</Text>
+              <Text style={[styles.listItemText,{width:200,textAlign:"center"}]}>{item.name}</Text>
+              <Text style={[styles.listItemText, {width:170,textAlign:"center"}]}>{item.contact_number}</Text>
+                    <View style={[styles.listItemText, {display:"inline-block", alignItems:"center", textAlign:"center", width:90}]}>
+                      <Pressable style={{display:"inline-block" ,alignItems:"center"} } onPress={() =>UserAccess?.update === 1 ? handleUserStatus(item.user_id, item?.isActive) : ''}>
+                    <Text style={[styles.listItemText,  item.isActive ? styles.actionbtn : styles.inactivebtn,]}>{item.isActive ? "Active" : "Inactive"}</Text>
                     </Pressable>     
                     </View>  
                     <Text style={[styles.listItemText, { width: 120, display: "inline-block",textAlign:"center" }]} numberOfLines={1}>
@@ -715,10 +714,10 @@ const UserScreen = ({userAccess,refresh}) => {
                     {item.created_at ? new Date(item.created_at.split('T')[0]).toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }) : 'N/A'}
                     </Text>   
                     <Text style={[styles.listItemText, { width: 120, display: "inline-block",textAlign:"center" }]} numberOfLines={1}>
-                      {item.created_by ? created_by: 'N/A'}
+                      {item.created_by ? item.created_by: 'N/A'}
                     </Text>
                     <Text style={[styles.listItemText, { width: 120, display: "inline-block",textAlign:"center" }]} numberOfLines={1}>
-                    {item.updated_by ? updated_by: 'N/A'}
+                    {item.updated_by ? item.updated_by: 'N/A'}
                     </Text>
               <View style={{width:60, display:"inline-block", alignItems:"center",textAlign:"center"}}>
               {UserAccess?.update === 1 ? 
