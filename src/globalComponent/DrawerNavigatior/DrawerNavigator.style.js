@@ -79,7 +79,10 @@ const styles = StyleSheet.create({
   },
   dropdownContainer:{
     width:125,
-    padding: [10, 5],
+    paddingVertical:10,
+    paddingBottom:5,
+    // padding: [10, 5],
+    
     height: "auto"
   },
   drawerItemLabel:{

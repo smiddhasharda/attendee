@@ -16,7 +16,7 @@ export default function SplashScreen() {
   return (
     <View style={styles.container}>
       <Animated.View style={[styles.imageContainer, { opacity: fadeAnimation }]}>
-        <Image style={styles.image} source={icon} />
+        <Image resizeMode= "contain" style={styles.image} source={icon} />
       </Animated.View>
     </View>
   );
@@ -38,6 +38,6 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: "100%",
-    resizeMode: "contain",
+    // resizeMode: "contain",
   },
 });

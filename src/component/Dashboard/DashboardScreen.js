@@ -46,7 +46,7 @@ const { navigate } = useNavigation();
             </View>
             </ScrollView> */}
            
-              <Image style={styles.homeBG} source={require("../../local-assets/home-img.png")} />
+              <Image  resizeMode="contain"   style={styles.homeBG} source={require("../../local-assets/home-img.png")} />
             
     </View> 
   );
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
   homeBG: {
     width: Dimensions.get('window').width, // Full width of the screen
     height: 280, // Adjust this to the desired height
-    resizeMode: 'contain', // or 'contain' depending on your requirement
+    // resizeMode: 'contain', // or 'contain' depending on your requirement
     position: "relative",
     top: 40,
     right: 15,
