@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, Text, StyleSheet, ScrollView, TextInput, Pressable, ActivityIndicator, Image,Dimensions } from "react-native";
+import { View, Text, StyleSheet, ScrollView, TextInput, Pressable, ActivityIndicator, Image,Dimensions,RefreshControl } from "react-native";
 import { Ionicons, FontAwesome, AntDesign, MaterialCommunityIcons, MaterialIcons, Entypo, FontAwesome6, } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
@@ -14,7 +14,7 @@ import { toZonedTime, fromZonedTime } from 'date-fns-tz';
 const { width, height } = Dimensions.get('window');
 const isMobile = width < 768; 
 
-const StudentInfo = ({ navigation,refresh }) => {
+const StudentInfo = ({ navigation }) => {
 
   const route = useRoute();
   const { addToast } = useToast();
@@ -271,7 +271,7 @@ const StudentInfo = ({ navigation,refresh }) => {
   
             if (NewResponse) {
               addToast("Student details are updated successfully!", "success");
-              navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation: navigation, userAccess, refresh });
+              navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation: navigation, userAccess });
             }
           }
         }
@@ -589,11 +589,11 @@ const StudentInfo = ({ navigation,refresh }) => {
   
                 if (newResponse) {
                   addToast("Student details are updated successfully!", "success");
-                  navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation, userAccess, refresh });
+                  navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation, userAccess });
                 }
               } else {
                 addToast("Student details are updated successfully!", "success");
-                navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation, userAccess, refresh });
+                navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation, userAccess });
               }
             } else if (copiesData?.length > 0) {
               const studentCopyWithId = copiesData.map(item => {
@@ -622,12 +622,12 @@ const StudentInfo = ({ navigation,refresh }) => {
   
               if (newResponse) {
                 addToast("Student details are updated successfully!", "success");
-                navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime, navigation, userAccess, refresh });
+                navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime, navigation, userAccess });
               }
             }
           } else {
             addToast("Student details are updated successfully!", "success");
-            navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime, navigation, userAccess, refresh });
+            navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime, navigation, userAccess });
           }
         }
       }
@@ -847,7 +847,7 @@ const StudentInfo = ({ navigation,refresh }) => {
 
   useEffect(() => {
     fetchData();
-  }, [UserAccess,refresh]);
+  }, [UserAccess]);
 
   // useEffect(() => {
   //   const interval = setInterval(() => {
@@ -938,7 +938,9 @@ const StudentInfo = ({ navigation,refresh }) => {
   return loading ? (
     <ActivityIndicator size="large" color="#0000ff" />
   ) : (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}  refreshControl={
+      <RefreshControl refreshing={loading} onRefresh={()=>fetchData()} />
+    }>
       {isScanning ? (
         <CodeScanner
           onScannedData={(data) =>

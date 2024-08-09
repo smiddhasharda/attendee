@@ -15,7 +15,7 @@ import { Ionicons, Feather } from "@expo/vector-icons";
 import Pagination from "../../globalComponent/Pagination/PaginationComponent";
 import { ScrollView } from "react-native-gesture-handler";
 
-const ModuleScreen = ({ userAccess,refresh }) => {
+const ModuleScreen = ({ userAccess }) => {
   const userAccessForModule = userAccess?.module?.find(item => item?.FK_ModuleId === 3);
   const { addToast } = useToast();
 
@@ -147,7 +147,7 @@ const paginatedData = moduleList.slice((currentPage - 1) * pageSize, currentPage
 
   useEffect(() => {
     fetchModuleList();
-  }, [userAccessForModule,refresh]);
+  }, [userAccessForModule]);
 
   return (
     <View style={styles.container}>
