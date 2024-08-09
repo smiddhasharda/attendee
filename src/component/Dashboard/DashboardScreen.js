@@ -8,13 +8,14 @@ const { navigate } = useNavigation();
     navigate('ReportScreen');
   };
   const handleExamPress = () => {
-    navigate('ExamScreen');
+    navigate('Privacy');
   };
   
   return (
 
     <View style={styles.container}>
       <Text style={styles.heading}>Welcome to Attendance Portal</Text>      
+      <Text onPress={handleExamPress}> privacy policy </Text>
           {/* <TextInput
             style={styles.searchBox}
             placeholder="Search..."          
