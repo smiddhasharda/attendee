@@ -16,6 +16,7 @@ import StudentInfo from "./src/component/Student/StudentInfo";
 import RoomDetail from "./src/component/Room/RoomDetail";
 import TopHeader from "./src/globalComponent/Header/TopHeader";
 import ToastContainer from './src/globalComponent/ToastContainer/ToastContainer'; 
+import Privacy from "./src/component/LandingScreeens/Privacy";
 
 const Stack = createNativeStackNavigator();
 global.SERVER_URL = "http://3.111.185.105:3502";
@@ -80,6 +81,12 @@ const AppContent = () => {
                   component={LoginScreen}
                   options={{ headerShown: false }}
                 />
+                   <Stack.Screen
+                  name="Privacy"
+                  component={Privacy}
+                  options={{ headerShown: false }}
+                />
+
                 <Stack.Screen
                   name="PostLogin"
                   component={DrawerNavigator}
