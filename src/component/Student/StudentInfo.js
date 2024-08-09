@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, Text, StyleSheet, ScrollView, TextInput, Pressable, ActivityIndicator, Image,Dimensions } from "react-native";
+import { View, Text, StyleSheet, ScrollView, TextInput, Pressable, ActivityIndicator, Image,Dimensions,RefreshControl } from "react-native";
 import { Ionicons, FontAwesome, AntDesign, MaterialCommunityIcons, MaterialIcons, Entypo, FontAwesome6, } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
@@ -938,7 +938,9 @@ const StudentInfo = ({ navigation,refresh }) => {
   return loading ? (
     <ActivityIndicator size="large" color="#0000ff" />
   ) : (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}  refreshControl={
+      <RefreshControl refreshing={loading} onRefresh={()=>fetchData()} />
+    }>
       {isScanning ? (
         <CodeScanner
           onScannedData={(data) =>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect,useCallback  } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, TextInput, ActivityIndicator, Dimensions, Pressable } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, TextInput, ActivityIndicator, Dimensions, Pressable,RefreshControl } from 'react-native';
 import { Ionicons,FontAwesome, Entypo } from '@expo/vector-icons'
 import { useRoute,useFocusEffect } from '@react-navigation/native';
 import CodeScanner from '../../globalComponent/CodeScanner/CodeScanner'; // Make sure to import CodeScanner properly
@@ -293,7 +293,9 @@ const formattedShiftTimePrefix = formatShiftTimePrefix(startTime);
             </View>
             </View>
         </View>
-        <ScrollView style={{maxHeight: isMobile ?tableHeight : tableHeight,  }}>
+        <ScrollView style={{maxHeight: isMobile ?tableHeight : tableHeight,flexGrow: 1 }} refreshControl={
+            <RefreshControl refreshing={loading} onRefresh={()=>fetchStudentDetails(exam_Dt, room_Nbr)} />
+          } >
           <View style={styles.studentWrapSec}>
           {loading ? (
             <ActivityIndicator size="large" color="#0000ff" />
