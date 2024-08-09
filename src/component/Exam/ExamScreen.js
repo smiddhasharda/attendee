@@ -11,6 +11,7 @@ const { width, height } = Dimensions.get('window');
 const ExamScreen = ({ navigation, userAccess, userData,refresh }) => {
   const UserAccess = userAccess?.module?.find((item) => item?.FK_ModuleId === 5);
   const [refreshing, setRefreshing] = useState(false);
+  const [pageRefreshing, setPageRefreshing] = useState(false);
   const [examDates, setExamDates] = useState([]);
   const [roomDetails, setRoomDetails] = useState([]);
   const [examSelectedDate, setExamSelectedDate] = useState('');
@@ -52,6 +53,8 @@ const ExamScreen = ({ navigation, userAccess, userData,refresh }) => {
       }
     } catch (error) {
       setLoading(false);
+      setRefreshing(false);
+      setPageRefreshing(false);
       handleAuthErrors(error);
     }
   };
@@ -81,6 +84,8 @@ const ExamScreen = ({ navigation, userAccess, userData,refresh }) => {
         handleGetRoomView(response?.data?.receivedData?.[0]?.date, RoomArray);
       }
     } catch (error) {
+      setRefreshing(false);
+      setPageRefreshing(false);
       handleAuthErrors(error);
     }
   };
@@ -139,8 +144,11 @@ const ExamScreen = ({ navigation, userAccess, userData,refresh }) => {
       }
       setLoading(false);
       setRefreshing(false);
+      setPageRefreshing(false);
     } catch (error) {
       setLoading(false);
+      setRefreshing(false);
+      setPageRefreshing(false);
       handleAuthErrors(error);
     }
   };
@@ -198,11 +206,16 @@ const ExamScreen = ({ navigation, userAccess, userData,refresh }) => {
     // return parsedDate;
     return format(parsedDate, 'dd$MMM,yy$EEE')  };
   
-    const onRefresh = useCallback(() => {
+    const onRefresh = useCallback((date) => {
       setRefreshing(true);
-      fetchRoomDetails(examSelectedDate);
+      handleDateClick(date);
     }, []);
 
+    const onPageRefresh = useCallback(() => {
+      setPageRefreshing(true);
+      fetchRoomDetails();
+    }, []);
+    
   useEffect(() => {
     fetchRoomDetails(examSelectedDate);
   }, [UserAccess]);
@@ -235,6 +248,8 @@ const ExamScreen = ({ navigation, userAccess, userData,refresh }) => {
                 }}
                 horizontal
                 keyExtractor={(item) => item.EXAM_DT}
+                refreshing={pageRefreshing}
+                onRefresh={()=>onPageRefresh()}
               />
             </View>
             </View>
@@ -259,7 +274,7 @@ const ExamScreen = ({ navigation, userAccess, userData,refresh }) => {
               </Pressable>
             )}
             refreshing={refreshing}
-            onRefresh={onRefresh}
+            onRefresh={()=>onRefresh(examSelectedDate)}
             keyExtractor={(item, index) => index.toString()}
           />
         ) : (
