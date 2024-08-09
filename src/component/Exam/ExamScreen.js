@@ -8,7 +8,7 @@ import { formatInTimeZone } from 'date-fns-tz';
 
 const { width, height } = Dimensions.get('window');
 
-const ExamScreen = ({ navigation, userAccess, userData,refresh }) => {
+const ExamScreen = ({ navigation, userAccess, userData }) => {
   const UserAccess = userAccess?.module?.find((item) => item?.FK_ModuleId === 5);
   const [refreshing, setRefreshing] = useState(false);
   const [pageRefreshing, setPageRefreshing] = useState(false);

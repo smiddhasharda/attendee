@@ -10,7 +10,7 @@ import { parse, format,parseISO } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 
 
-function RoomDetail({navigation,refresh}) {
+function RoomDetail({navigation}) {
   const [isScanning, setIsScanning] = useState(false);
   const route = useRoute();
   const { addToast } = useToast();
@@ -228,7 +228,7 @@ const formattedShiftTimePrefix = formatShiftTimePrefix(startTime);
     useCallback(() => {
       fetchStudentDetails(exam_Dt, room_Nbr);
       handleGetReportData();
-    }, [UserAccess, refresh])
+    }, [UserAccess])
   );
   return (
     <View style={styles.container}>

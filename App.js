@@ -8,7 +8,7 @@ import { Provider } from "react-redux";
 import store from "./src/redux/store";
 import { ToastProvider } from "./src/globalComponent/ToastContainer/ToastContext";
 import { RoleProvider } from "./src/component/Roles/RoleContext";
-import { RefreshProvider, RefreshContext } from "./src/globalComponent/Refresh/RefreshContext";
+// import { RefreshProvider, RefreshContext } from "./src/globalComponent/Refresh/RefreshContext";
 import LoginScreen from "./src/component/Login/LoginScreen";
 import DrawerNavigator from "./src/globalComponent/DrawerNavigatior/DrawerNavigatior";
 import InvigilatorScreen from "./src/component/Invigilator/InvigilatorScreen";
@@ -21,11 +21,11 @@ const Stack = createNativeStackNavigator();
 global.SERVER_URL = "http://3.111.185.105:3502";
 
 const AppContent = () => {
-  const [refreshing, setRefreshing] = useState(false);
+  // const [refreshing, setRefreshing] = useState(false);
   const [initialRoute, setInitialRoute] = useState("Login");
   const [loading, setLoading] = useState(true);
 
-  const { triggerRefresh } = useContext(RefreshContext);
+  // const { triggerRefresh } = useContext(RefreshContext);
 
   const TopHeaderCommonConfig = {
     headerStyle: {
@@ -38,13 +38,13 @@ const AppContent = () => {
     headerTintColor: "#fff",
   };
 
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    triggerRefresh(); 
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 2000);
-  }, [triggerRefresh]);
+  // const onRefresh = useCallback(() => {
+  //   setRefreshing(true);
+  //   triggerRefresh(); 
+  //   setTimeout(() => {
+  //     setRefreshing(false);
+  //   }, 2000);
+  // }, [triggerRefresh]);
 
   useEffect(() => {
     const checkAuthStatus = async () => {
@@ -129,9 +129,9 @@ const AppContent = () => {
 };
 
 const App = () => (
-  <RefreshProvider>
+  // <RefreshProvider>
     <AppContent />
-  </RefreshProvider>
+  // </RefreshProvider>
 );
 
 export default App;

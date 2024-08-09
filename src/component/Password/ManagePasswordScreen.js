@@ -19,8 +19,7 @@ const isMobile = width < 768;
 const ManagePasswordScreen = ({
   navigation,
   userAccess,
-  userData,
-  refresh,
+  userData
 }) => {
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setshowNewPassword] = useState(false);

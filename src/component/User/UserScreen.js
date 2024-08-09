@@ -12,7 +12,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import { Ionicons,AntDesign,Feather} from "@expo/vector-icons";
 import Pagination from "../../globalComponent/Pagination/PaginationComponent";
 
-const UserScreen = ({userAccess,refresh}) => { 
+const UserScreen = ({userAccess}) => { 
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 4 );
   const [refreshing, setRefreshing] = useState(false);
   const { addToast } = useToast();
@@ -641,7 +641,7 @@ const UserScreen = ({userAccess,refresh}) => {
   useEffect(() => {
     handleGetUserList();
     handleGetRoleList();
-  }, [UserAccess,refresh]);
+  }, [UserAccess]);
     return (
       <View style={styles.container}>
       {userContainerVisible ? (
