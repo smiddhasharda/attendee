@@ -8,7 +8,7 @@ import styles from "./RoleScreen.style";
 import { Ionicons,Feather} from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
 import Pagination from "../../globalComponent/Pagination/PaginationComponent";
-const RoleScreen = ({userAccess,refresh}) => {
+const RoleScreen = ({userAccess}) => {
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 2 );
   const [refreshing, setRefreshing] = useState(false);
   const { addToast } = useToast();

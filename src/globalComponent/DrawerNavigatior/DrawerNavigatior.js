@@ -16,19 +16,18 @@ import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import styles from "./DrawerNavigator.style";
 import { Ionicons,Feather } from '@expo/vector-icons'; 
 import { SafeAreaView } from "react-native-safe-area-context";
-import { RefreshContext } from "../../globalComponent/Refresh/RefreshContext";
 import InvigilatorScreen from "../../component/Invigilator/InvigilatorScreen";
 // import ReportScreen from "../../component/Report/ReportScreen";
 import ManagePasswordScreen from "../../component/Password/ManagePasswordScreen";
 
 // Screen components
-const RoleComponent = ({ navigation,userAccess, userData,refresh }) => <RoleScreen navigation={navigation} userData={userData} userAccess={userAccess} refresh={refresh}/>;
-// const ModuleComponent = ({ navigation,userAccess, userData,refresh }) => <ModuleScreen userAccess={userAccess} refresh={refresh} />;
-const DashboardComponent = ({ navigation,userAccess, userData,refresh }) => <DashboardScreen navigation={navigation} userData={userData} userAccess={userAccess} refresh={refresh} />;
-const UserComponent = ({ navigation,userAccess, userData,refresh }) => <UserScreen navigation={navigation} userData={userData} userAccess={userAccess} refresh={refresh} />;
-const ManagePasswordComponent = ({navigation,userAccess, userData,refresh }) => <ManagePasswordScreen navigation={navigation} userData={userData} userAccess={userAccess} refresh={refresh} />;
-const ExamComponent = ({ navigation, userAccess, userData,refresh }) => (
-  <ExamScreen navigation={navigation} userAccess={userAccess} userData={userData} refresh={refresh} />
+const RoleComponent = ({ navigation,userAccess, userData }) => <RoleScreen navigation={navigation} userData={userData} userAccess={userAccess} />;
+// const ModuleComponent = ({ navigation,userAccess, userData }) => <ModuleScreen userAccess={userAccess}  />;
+const DashboardComponent = ({ navigation,userAccess, userData }) => <DashboardScreen navigation={navigation} userData={userData} userAccess={userAccess}  />;
+const UserComponent = ({ navigation,userAccess, userData }) => <UserScreen navigation={navigation} userData={userData} userAccess={userAccess}  />;
+const ManagePasswordComponent = ({navigation,userAccess, userData }) => <ManagePasswordScreen navigation={navigation} userData={userData} userAccess={userAccess}  />;
+const ExamComponent = ({ navigation, userAccess, userData }) => (
+  <ExamScreen navigation={navigation} userAccess={userAccess} userData={userData}  />
 );
 const Drawer = createDrawerNavigator();
 
@@ -190,7 +189,6 @@ const CustomDrawerContent = ({ ...props }) => {
 };
 
 const DrawerNavigator = ({ navigation }) => {
-  const { refresh } = useContext(RefreshContext);
   const [userRolePermission, setUserRolePermission] = useState([]);
   const [userRoleList, setUserRoleList] = useState([]);
   const [userRoleIndex, setUserRoleIndex] = useState(0);
@@ -369,21 +367,21 @@ const DrawerNavigator = ({ navigation }) => {
             {(props) => {
               switch (module?.moduleMaster[0]?.moduleName) {
                 case "RoleScreen":
-                  return <RoleComponent {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData} refresh={refresh} />;
+                  return <RoleComponent {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData}  />;
                 // case "ModuleScreen":
-                //   return <ModuleComponent {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData} refresh={refresh}/>;
+                //   return <ModuleComponent {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData} />;
                 case "Dashboard":
-                  return <DashboardComponent {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData} refresh={refresh}  />;
+                  return <DashboardComponent {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData}   />;
                 case "UserScreen":
-                  return <UserComponent {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData} refresh={refresh} />;
+                  return <UserComponent {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData}  />;
                 case "ExamScreen":
-                  return <ExamComponent {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData} refresh={refresh} />;
+                  return <ExamComponent {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData}  />;
                 case "InvigilatorScreen":
-                  return <InvigilatorScreen {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData} refresh={refresh} />; 
+                  return <InvigilatorScreen {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData}  />; 
                   case "ManagePasswordScreen":
-                  return <ManagePasswordComponent {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData} refresh={refresh} />;   
+                  return <ManagePasswordComponent {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData}  />;   
                 // case "ReportScreen":
-                //   return <ReportScreen {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData} refresh={refresh} />;
+                //   return <ReportScreen {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData}  />;
                   
                   default:
                   return null;
