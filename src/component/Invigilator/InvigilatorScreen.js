@@ -75,9 +75,11 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
       );
 
       if (response) {
-        setInvigilatorList(response?.data?.receivedData)
+        setInvigilatorList(response?.data?.receivedData);
+        setRefreshing(false);
       }
     } catch (error) {
+      setRefreshing(false);
       handleAuthErrors(error);
     }
   };
@@ -414,6 +416,11 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
     handleAuthErrors(error);
     }
     };
+
+    const onRefresh = useCallback((date) => {
+      setRefreshing(true);
+      handleGetInigilatorDuty(date);
+    }, []);
   useEffect(() => {
     handleGetInigilatorDuty();
   }, [UserAccess]);
@@ -648,7 +655,10 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
                 </Pressable> : (<Text>-</Text>)}  
             </View>
             )}
-          />
+            stickyHeaderIndices={[0]} 
+            refreshing={refreshing}
+            onRefresh={()=>onRefresh()}
+            />
       </View>
       </ScrollView>
       <Pagination
