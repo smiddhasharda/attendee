@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "attendee",
-    "slug": "attendee",
+    "name": "AttendEx",
+    "slug": "AttendEx",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/Attendee_icon.png",
+    "icon": "./assets/AttendEx_Logo.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/Splash_img.png",
@@ -48,8 +48,8 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "Allow attendee to access your camera",
-          "microphonePermission": "Allow attendee to access your microphone",
+          "cameraPermission": "Allow AttendEx to access your camera",
+          "microphonePermission": "Allow AttendEx to access your microphone",
           "recordAudioAndroid": true
         }
       ],
