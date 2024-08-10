@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 const DashboardScreen = () => {
 const { navigate } = useNavigation(); 
   const handleReportPress = () => {
-    navigate('ReportScreen');
+    navigate('Home');
   };
   const handleExamPress = () => {
     navigate('Privacy');
@@ -16,6 +16,7 @@ const { navigate } = useNavigation();
     <View style={styles.container}>
       <Text style={styles.heading}>Welcome to Attendance Portal</Text>      
       <Text onPress={handleExamPress}> privacy policy </Text>
+      <Text onPress={handleReportPress}> Home </Text>
           {/* <TextInput
             style={styles.searchBox}
             placeholder="Search..."          

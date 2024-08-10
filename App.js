@@ -17,6 +17,7 @@ import RoomDetail from "./src/component/Room/RoomDetail";
 import TopHeader from "./src/globalComponent/Header/TopHeader";
 import ToastContainer from './src/globalComponent/ToastContainer/ToastContainer'; 
 import Privacy from "./src/component/LandingScreeens/Privacy";
+import Home from "./src/component/LandingScreeens/Home";
 
 const Stack = createNativeStackNavigator();
 global.SERVER_URL = "http://3.111.185.105:3502";
@@ -86,7 +87,11 @@ const AppContent = () => {
                   component={Privacy}
                   options={{ headerShown: false }}
                 />
-
+              <Stack.Screen
+                  name="Home"
+                  component={Home}
+                  options={{ headerShown: false }}
+                />
                 <Stack.Screen
                   name="PostLogin"
                   component={DrawerNavigator}
