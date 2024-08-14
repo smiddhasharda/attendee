@@ -4,19 +4,18 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native'; 
 const DashboardScreen = () => {
 const { navigate } = useNavigation(); 
-  const handleReportPress = () => {
-    navigate('Home');
-  };
-  const handleExamPress = () => {
-    navigate('Privacy');
-  };
+  // const handleReportPress = () => {
+  //   navigate('Home');
+  // };
+  // const handleExamPress = () => {
+  //   navigate('Privacy');
+  // };
   
   return (
 
     <View style={styles.container}>
       <Text style={styles.heading}>Welcome to Attendance Portal</Text>      
-      <Text onPress={handleExamPress}> privacy policy </Text>
-      <Text onPress={handleReportPress}> Home </Text>
+     
           {/* <TextInput
             style={styles.searchBox}
             placeholder="Search..."          

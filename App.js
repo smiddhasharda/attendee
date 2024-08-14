@@ -18,7 +18,7 @@ import TopHeader from "./src/globalComponent/Header/TopHeader";
 import ToastContainer from './src/globalComponent/ToastContainer/ToastContainer'; 
 import Privacy from "./src/component/LandingScreeens/Privacy";
 import Home from "./src/component/LandingScreeens/Home";
-import Shimmer from "./src/component/ShimmerLoader/Shimmer"
+// import Shimmer from "./src/component/ShimmerLoader/Shimmer"
  
 const Stack = createNativeStackNavigator();
 global.SERVER_URL = "http://3.111.185.105:3502";
@@ -68,9 +68,9 @@ const AppContent = () => {
 
   const renderLoading = () => (
     <View style={styles.loadingContainer}>
-      <View style={styles.shimmerContainer}>
+      {/* <View style={styles.shimmerContainer}>
         <Shimmer /> 
-      </View>
+      </View> */}
       <ActivityIndicator size="large" color="#0000ff" />
     </View>
   );
