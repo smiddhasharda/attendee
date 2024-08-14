@@ -11,6 +11,7 @@ import CheckBox from "expo-checkbox";
 import { ScrollView } from "react-native-gesture-handler";
 import { Ionicons,AntDesign,Feather} from "@expo/vector-icons";
 import Pagination from "../../globalComponent/Pagination/PaginationComponent";
+import ShimmerEffect from "../../globalComponent/Refresh/ShimmerEffect";
 
 const UserScreen = ({userAccess}) => { 
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 4 );
@@ -638,6 +639,7 @@ const UserScreen = ({userAccess}) => {
         </View>
     )
   }
+  
   useEffect(() => {
     handleGetUserList();
     handleGetRoleList();
@@ -704,6 +706,7 @@ const UserScreen = ({userAccess}) => {
             </View>
           )}
           renderItem={({ item }) => (
+            refreshing ? <ShimmerEffect/> :
             <View style={styles.listItem}>
               <Text style={[styles.listItemText,{width:120}]}>{item.username}</Text>
               <Text style={[styles.listItemText,{width:200,textAlign:"center"}]}>{item.name}</Text>
