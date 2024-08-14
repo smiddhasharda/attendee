@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useContext } from "react";
-import { View, ActivityIndicator, StyleSheet, StatusBar, RefreshControl, SafeAreaView, ScrollView } from "react-native";
+import { View, ActivityIndicator, StyleSheet, StatusBar, RefreshControl, SafeAreaView, ScrollView ,Image, Pressable,Text} from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Provider as PaperProvider } from 'react-native-paper';
@@ -18,13 +18,14 @@ import TopHeader from "./src/globalComponent/Header/TopHeader";
 import ToastContainer from './src/globalComponent/ToastContainer/ToastContainer'; 
 import Privacy from "./src/component/LandingScreeens/Privacy";
 import Home from "./src/component/LandingScreeens/Home";
-
+import Shimmer from "./src/component/ShimmerLoader/Shimmer"
+ 
 const Stack = createNativeStackNavigator();
 global.SERVER_URL = "http://3.111.185.105:3502";
 
 const AppContent = () => {
   // const [refreshing, setRefreshing] = useState(false);
-  const [initialRoute, setInitialRoute] = useState("Login");
+  const [initialRoute, setInitialRoute] = useState("Home");
   const [loading, setLoading] = useState(true);
 
   // const { triggerRefresh } = useContext(RefreshContext);
@@ -39,7 +40,10 @@ const AppContent = () => {
     },
     headerTintColor: "#fff",
   };
-
+  const handleLoginNavigation = () => {
+    navigation.replace('Login');
+  };
+  const logoImage = require('../../../../../../Development/attendee/src/local-assets/shardalogo.png');
   // const onRefresh = useCallback(() => {
   //   setRefreshing(true);
   //   triggerRefresh(); 
@@ -52,7 +56,7 @@ const AppContent = () => {
     const checkAuthStatus = async () => {
       try {
         const authToken = await AsyncStorage.getItem("authToken");
-        setInitialRoute(authToken ? "PostLogin" : "Login");
+        setInitialRoute(authToken ? "PostLogin" : "Home");
       } catch (error) {
         console.error("Error reading authToken from AsyncStorage:", error);
       } finally {
@@ -63,11 +67,13 @@ const AppContent = () => {
   }, []);
 
   const renderLoading = () => (
-    <View style={{ flex: 1, backgroundColor: "plum", padding: 60 }}>
+    <View style={styles.loadingContainer}>
+      <View style={styles.shimmerContainer}>
+        <Shimmer /> 
+      </View>
       <ActivityIndicator size="large" color="#0000ff" />
     </View>
   );
-
   const renderRouting = () => (
     <Provider store={store}>
       <PaperProvider>
@@ -77,7 +83,33 @@ const AppContent = () => {
           <RoleProvider>
             <NavigationContainer>
               <Stack.Navigator initialRouteName={initialRoute}>
-                <Stack.Screen
+              <Stack.Screen
+                name="Home"
+                component={Home}
+                options={({ navigation }) => ({
+                  headerLeft: () => (
+                    <Image
+                      source={logoImage}
+                      style={styles.logo}
+                    />
+                  ),
+                  headerRight: () => (
+                    <Pressable
+                      style={styles.loginBtn}
+                      onPress={() => navigation.replace('Login')} 
+                    >
+                      <Text style={styles.loginText}>Login</Text>
+                    </Pressable>
+                  ),
+                    title: '',
+                    headerStyle: {
+                    paddingHorizontal:20,
+                    paddingVertical:40
+                    },
+                  
+                  })}
+              />
+              <Stack.Screen
                   name="Login"
                   component={LoginScreen}
                   options={{ headerShown: false }}
@@ -85,12 +117,7 @@ const AppContent = () => {
                    <Stack.Screen
                   name="Privacy"
                   component={Privacy}
-                  options={{ headerShown: false }}
-                />
-              <Stack.Screen
-                  name="Home"
-                  component={Home}
-                  options={{ headerShown: false }}
+                  // options={{ headerShown: false }}
                 />
                 <Stack.Screen
                   name="PostLogin"
@@ -120,6 +147,7 @@ const AppContent = () => {
                   component={InvigilatorScreen}
                   options={TopHeaderCommonConfig}
                 />
+                
               </Stack.Navigator>
             </NavigationContainer>
           </RoleProvider>
@@ -151,5 +179,22 @@ export default App;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  logo:{
+    width: 120,
+    height: 40,
+    resizeMode: 'contain',
+  },
+  loginBtn: {
+    backgroundColor: 'rgb(17, 65, 102)',
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+  },
+  loginText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+    textAlign: 'center',
   },
 });
