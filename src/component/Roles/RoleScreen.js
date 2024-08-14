@@ -8,6 +8,7 @@ import styles from "./RoleScreen.style";
 import { Ionicons,Feather} from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
 import Pagination from "../../globalComponent/Pagination/PaginationComponent";
+import ShimmerEffect from "../../globalComponent/Refresh/ShimmerEffect";
 const RoleScreen = ({userAccess}) => {
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 2 );
   const [refreshing, setRefreshing] = useState(false);
@@ -475,7 +476,7 @@ const RoleScreen = ({userAccess}) => {
                       </View>
                     )}
                     renderItem={({ item }) => (
-                      //  console.log("All items",item),
+                      refreshing ? <ShimmerEffect/> :
                       <View style={[styles.listItem]}>
                         <View style={[styles.listItemText,{width:isMobile?120:''}, { display: "inline-block", }]}>
                           <Text >
