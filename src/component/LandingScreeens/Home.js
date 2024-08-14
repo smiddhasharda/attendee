@@ -1,23 +1,30 @@
 import { View, Text, StyleSheet, SafeAreaView, Pressable, Image, ScrollView, Dimensions } from 'react-native';
 import React from 'react';
+import { useNavigation } from '@react-navigation/native'; 
 
 const Home = () => {
   const isMobile = Dimensions.get('window').width < 768;
-
+  const navigation = useNavigation(); 
+  const handleLoginNavigation = () => {
+    navigation.replace('Login');
+  };
+  const handlePrivacy = () => {
+    navigation.navigate('Privacy');
+  };
   return (
     <ScrollView contentContainerStyle={styles.scrollView}>
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.homeWrap}>
 
           {/* Header */}
-          <View style={styles.header}>
+          {/* <View style={styles.header}>
             <View style={styles.headerContent}>
               <Image style={styles.logo} source={require('../../local-assets/shardalogo.png')} />
-              <Pressable style={styles.loginBtn}>
+              <Pressable style={styles.loginBtn} onPress={handleLoginNavigation}>
                 <Text style={styles.loginText}>Login</Text>
               </Pressable>
             </View>
-          </View>
+          </View> */}
 
           {/* Hero Section */}
           <View style={styles.heroSection}>
@@ -75,7 +82,7 @@ const Home = () => {
           <View style={styles.footerContainer}>
             <View style={styles.footerContent}>
               <View style={styles.leftSection}>
-                <Text style={styles.footerHeading}>Privacy Policy</Text>
+                <Text style={styles.footerHeading} onPress={handlePrivacy}>Privacy Policy</Text>
                 <Text style={styles.footerLink}>Terms and Conditions</Text>
                 <Text style={styles.footerDescription}>
                   Affiliation: University Grants Commission has empowered Sharda University to award degrees under Section 22 of UGC Act 1956.
