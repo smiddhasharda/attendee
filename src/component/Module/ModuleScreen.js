@@ -14,7 +14,6 @@ import styles from "./ModuleScreen.style";
 import { Ionicons, Feather } from "@expo/vector-icons";
 import Pagination from "../../globalComponent/Pagination/PaginationComponent";
 import { ScrollView } from "react-native-gesture-handler";
-import ShimmerEffect from "../../globalComponent/Refresh/ShimmerEffect";
 
 const ModuleScreen = ({ userAccess }) => {
   const userAccessForModule = userAccess?.module?.find(item => item?.FK_ModuleId === 3);
@@ -41,7 +40,9 @@ const paginatedData = moduleList.slice((currentPage - 1) * pageSize, currentPage
     const { width, height } = Dimensions.get('window');
     const isMobile = width < 768; 
     const tableWidth = isMobile ? width  : width * 0.96; 
+    // const tableWidth =  width ; 
     const tableHeight = isMobile ? height * 0.70 : height * 0.67; 
+    // console.log(`Table Width: ${tableWidth}, Table Height: ${tableHeight} `,);
     
   const checkAuthToken = useCallback(async () => {
     const authToken = await AsyncStorage.getItem("authToken");
@@ -143,6 +144,7 @@ const paginatedData = moduleList.slice((currentPage - 1) * pageSize, currentPage
     });
   };
   
+
   useEffect(() => {
     fetchModuleList();
   }, [userAccessForModule]);
@@ -216,7 +218,7 @@ const paginatedData = moduleList.slice((currentPage - 1) * pageSize, currentPage
                     
                   )}
                   renderItem={({ item }) => (
-                    refreshing ? <ShimmerEffect/> :
+                    // console.log("all the items ",item),
                     <View style={[styles.listItem]}>
                       <Text style={[styles.listItemText, {width:120, display: "inline-block",}]} numberOfLines={1}>{item.moduleName}</Text>
                       <View style={[styles.listItemText, {width:100, display: "inline-block" ,textAlign:"center"}]}> 
