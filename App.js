@@ -88,24 +88,26 @@ const AppContent = () => {
                 component={Home}
                 options={({ navigation }) => ({
                   headerLeft: () => (
+                    <View style={{padding:20}}>
                     <Image
                       source={logoImage}
                       style={styles.logo}
                     />
+                  </View>
                   ),
+          
                   headerRight: () => (
+                    <View style={{padding:20}}>
                     <Pressable
                       style={styles.loginBtn}
                       onPress={() => navigation.replace('Login')} 
                     >
                       <Text style={styles.loginText}>Login</Text>
                     </Pressable>
+                    </View>
                   ),
                     title: '',
-                    headerStyle: {
-                    paddingHorizontal:20,
-                    paddingVertical:40
-                    },
+                 
                   
                   })}
               />
@@ -183,7 +185,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   logo:{
-    width: 120,
+    width: 140,
     height: 40,
     resizeMode: 'contain',
   },
