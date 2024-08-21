@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback, useContext } from "react";
-import { View, ActivityIndicator, StyleSheet, StatusBar, RefreshControl, SafeAreaView, ScrollView ,Image, Pressable,Text} from "react-native";
+import { View, ActivityIndicator, StyleSheet, StatusBar, RefreshControl, SafeAreaView, ScrollView ,Image, Pressable,Text,
+  Dimensions} from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Provider as PaperProvider } from 'react-native-paper';
@@ -29,7 +30,8 @@ const AppContent = () => {
   const [loading, setLoading] = useState(true);
 
   // const { triggerRefresh } = useContext(RefreshContext);
-
+  const { width, height } = Dimensions.get('window');
+  const isMobile = width < 768; 
   const TopHeaderCommonConfig = {
     headerStyle: {
       backgroundColor: "rgb(17, 65, 102)",
@@ -88,16 +90,16 @@ const AppContent = () => {
                 component={Home}
                 options={({ navigation }) => ({
                   headerLeft: () => (
-                    <View style={{padding:20}}>
+                    <View style={{padding:10}}>
                     <Image
                       source={logoImage}
-                      style={styles.logo}
+                      style={[styles.logo ,{height:isMobile?50 :40} ]}
                     />
                   </View>
                   ),
           
                   headerRight: () => (
-                    <View style={{padding:20}}>
+                    <View style={{padding:isMobile?0:20}}>
                     <Pressable
                       style={styles.loginBtn}
                       onPress={() => navigation.replace('Login')} 

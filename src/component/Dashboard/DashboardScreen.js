@@ -15,12 +15,12 @@ const { navigate } = useNavigation();
 
     <View style={styles.container}>
       <Text style={styles.heading}>Welcome to Attendance Portal</Text>      
-       {/* <Pressable onPress={handleReportPress}>
+       <Pressable onPress={handleReportPress}>
        <Text>Home</Text>   
        </Pressable>
        <Pressable onPress={handleExamPress}>
          <Text>Privacy</Text>
-       </Pressable> */}
+       </Pressable> 
           {/* <TextInput
             style={styles.searchBox}
             placeholder="Search..."          
