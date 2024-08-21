@@ -43,7 +43,7 @@ const AppContent = () => {
   const handleLoginNavigation = () => {
     navigation.replace('Login');
   };
-  const logoImage = require('../../../../../../Development/attendee/src/local-assets/shardalogo.png');
+  const logoImage = require('./src/local-assets/shardalogo.png');
   // const onRefresh = useCallback(() => {
   //   setRefreshing(true);
   //   triggerRefresh(); 
@@ -119,7 +119,9 @@ const AppContent = () => {
                    <Stack.Screen
                   name="Privacy"
                   component={Privacy}
-                  // options={{ headerShown: false }}
+                  options={({ route }) => ({
+                    title: `Private Policy`,
+                  })}
                 />
                 <Stack.Screen
                   name="PostLogin"

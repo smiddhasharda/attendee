@@ -9,6 +9,7 @@ import { Feather,FontAwesome5,FontAwesome ,FontAwesome6} from "@expo/vector-icon
 import { parse, format,parseISO,isBefore } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import Pagination from "../../globalComponent/Pagination/PaginationComponent";
+import ShimmerEffect from '../../globalComponent/Refresh/ShimmerEffect';
  const InvigilatorScreen = ({userAccess}) => {
   const [refreshing, setRefreshing] = useState(false);
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 8 );
@@ -629,8 +630,8 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
                     
                   </View>
           )} renderItem={({ item }) => (  
-            // console.log(item),      
-            <View style={styles.listItem}>
+            refreshing ? <ShimmerEffect/> :
+           ( <View style={styles.listItem}>
               <Text style={[styles.listItemText, {width:20}]}>{item.PK_InvigilatorDutyId}</Text>
               <Text style={[styles.listItemText, {width:120, textAlign:"center"}]}>{item.employeeId}</Text>
               <Text style={[styles.listItemText, {width:180, textAlign:"center"}]}>{item.invigilatorName}</Text>
@@ -653,7 +654,7 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
               {UserAccess?.update === 1  ? <Pressable style={[{width:80}, {alignItems:"center"}]} onPress={() => handleEditInvigilator(item)}>
               <Text style={styles.listItemEditText}><Feather name="edit" size={16} color="green" /></Text>
                 </Pressable> : (<Text>-</Text>)}  
-            </View>
+            </View>)
             )}
             stickyHeaderIndices={[0]} 
             refreshing={refreshing}
