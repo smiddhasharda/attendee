@@ -169,7 +169,7 @@ const Privacy = () => {
                     <Text style={styles.subheading}>Affiliate</Text>
                     <Text style={styles.text}>means an entity that controls, is controlled by, or is under common control with a party, where "control" means ownership of 50% or more of the shares, equity interest, or other securities entitled to vote for election of directors or other managing authority</Text>
                     <Text style={styles.subheading}>Application</Text>
-                    <Text style={styles.text}>refers to Attendee, the software program provided by the Company.</Text>
+                    <Text style={styles.text}>refers to e-Nirikshak, the software program provided by the Company.</Text>
                     <Text style={styles.subheading}>Company</Text>
                     <Text style={styles.text}>  Plot No. 32-34, Knowledge Park III, Greater Noida, U.P.-201310</Text>
                     <Text style={styles.subheading}>Country</Text>
