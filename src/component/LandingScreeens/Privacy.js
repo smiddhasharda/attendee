@@ -86,7 +86,7 @@ const Privacy = () => {
             <ScrollView>
                 <View style={styles.formContainer}>
                     <Text style={styles.heading}>Privacy Policy</Text>
-                    <Text style={styles.updateDate}>Last updated: August 09, 2024</Text>
+                    {/* <Text style={styles.updateDate}>Last updated: August 09, 2024</Text> */}
                     <Text style={styles.text}>
                         This Privacy Policy describes Our policies and procedures on the collection, use, and disclosure of Your information when You use the Service and tells You about Your privacy rights and how the law protects You.
                     </Text>
