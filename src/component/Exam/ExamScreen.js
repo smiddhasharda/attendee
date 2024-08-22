@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback,useContext } from 'react';
-import { View, Text, FlatList, StyleSheet, ScrollView, Pressable, ActivityIndicator, Dimensions } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Pressable, ActivityIndicator, Dimensions } from 'react-native';
 import { view, fetch } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -8,8 +8,10 @@ import { formatInTimeZone } from 'date-fns-tz';
 
 const { width, height } = Dimensions.get('window');
 
-const ExamScreen = ({ navigation, userAccess, userData,refresh }) => {
+const ExamScreen = ({ navigation, userAccess, userData }) => {
   const UserAccess = userAccess?.module?.find((item) => item?.FK_ModuleId === 5);
+  const [refreshing, setRefreshing] = useState(false);
+  const [pageRefreshing, setPageRefreshing] = useState(false);
   const [examDates, setExamDates] = useState([]);
   const [roomDetails, setRoomDetails] = useState([]);
   const [examSelectedDate, setExamSelectedDate] = useState('');
@@ -51,6 +53,8 @@ const ExamScreen = ({ navigation, userAccess, userData,refresh }) => {
       }
     } catch (error) {
       setLoading(false);
+      setRefreshing(false);
+      setPageRefreshing(false);
       handleAuthErrors(error);
     }
   };
@@ -80,6 +84,8 @@ const ExamScreen = ({ navigation, userAccess, userData,refresh }) => {
         handleGetRoomView(response?.data?.receivedData?.[0]?.date, RoomArray);
       }
     } catch (error) {
+      setRefreshing(false);
+      setPageRefreshing(false);
       handleAuthErrors(error);
     }
   };
@@ -137,8 +143,12 @@ const ExamScreen = ({ navigation, userAccess, userData,refresh }) => {
         setRoomDetails(response?.data?.receivedData);
       }
       setLoading(false);
+      setRefreshing(false);
+      setPageRefreshing(false);
     } catch (error) {
       setLoading(false);
+      setRefreshing(false);
+      setPageRefreshing(false);
       handleAuthErrors(error);
     }
   };
@@ -196,10 +206,19 @@ const ExamScreen = ({ navigation, userAccess, userData,refresh }) => {
     // return parsedDate;
     return format(parsedDate, 'dd$MMM,yy$EEE')  };
   
+    const onRefresh = useCallback((date) => {
+      setRefreshing(true);
+      handleDateClick(date);
+    }, []);
 
+    const onPageRefresh = useCallback(() => {
+      setPageRefreshing(true);
+      fetchRoomDetails();
+    }, []);
+    
   useEffect(() => {
     fetchRoomDetails(examSelectedDate);
-  }, [UserAccess,refresh]);
+  }, [UserAccess]);
 
   return (
     <View style={styles.container}>
@@ -229,6 +248,8 @@ const ExamScreen = ({ navigation, userAccess, userData,refresh }) => {
                 }}
                 horizontal
                 keyExtractor={(item) => item.EXAM_DT}
+                refreshing={pageRefreshing}
+                onRefresh={()=>onPageRefresh()}
               />
             </View>
             </View>
@@ -252,6 +273,8 @@ const ExamScreen = ({ navigation, userAccess, userData,refresh }) => {
                 </View>
               </Pressable>
             )}
+            refreshing={refreshing}
+            onRefresh={()=>onRefresh(examSelectedDate)}
             keyExtractor={(item, index) => index.toString()}
           />
         ) : (

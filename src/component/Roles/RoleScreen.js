@@ -7,10 +7,11 @@ import CheckBox from "expo-checkbox";
 import styles from "./RoleScreen.style";
 import { Ionicons,Feather} from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
-import { display } from "@mui/system";
 import Pagination from "../../globalComponent/Pagination/PaginationComponent";
-const RoleScreen = ({userAccess,refresh}) => {
+import ShimmerEffect from "../../globalComponent/Refresh/ShimmerEffect";
+const RoleScreen = ({userAccess}) => {
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 2 );
+  const [refreshing, setRefreshing] = useState(false);
   const { addToast } = useToast();
   const [roleData, setRoleData] = useState({
     roleId: "",
@@ -190,8 +191,10 @@ const RoleScreen = ({userAccess,refresh}) => {
 
       if (response) {
         setRoleList(response?.data?.receivedData?.[0]?.RoleMaster);
+        setRefreshing(false);
       }
     } catch (error) {
+      setRefreshing(false);
       handleAuthErrors(error);
     }
   };
@@ -373,11 +376,15 @@ const RoleScreen = ({userAccess,refresh}) => {
       </View>
     );
   };
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    handleGetRoleList();
+  }, []);
 
   useEffect(() => {
     handleGetRoleList();
     handleGetModuleList();
-  }, [UserAccess,refresh]);
+  }, [UserAccess]);
   return (
     <View style={styles.container}>
       {roleContainerVisible ? (
@@ -426,7 +433,7 @@ const RoleScreen = ({userAccess,refresh}) => {
               </View>
             )}
             renderItem={({ item }) => renderModuleCheckboxes(item)}
-             stickyHeaderIndices={[0]} 
+             stickyHeaderIndices={[0]}            
           />
           </View>
           </ScrollView> 
@@ -469,7 +476,7 @@ const RoleScreen = ({userAccess,refresh}) => {
                       </View>
                     )}
                     renderItem={({ item }) => (
-                      //  console.log("All items",item),
+                      refreshing ? <ShimmerEffect/> :
                       <View style={[styles.listItem]}>
                         <View style={[styles.listItemText,{width:isMobile?120:''}, { display: "inline-block", }]}>
                           <Text >
@@ -517,6 +524,8 @@ const RoleScreen = ({userAccess,refresh}) => {
                         </View>
                       </View>
                     )}
+                    refreshing={refreshing}
+                    onRefresh={()=>onRefresh()}
                 />
           </View>
           </ScrollView>

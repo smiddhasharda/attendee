@@ -10,11 +10,12 @@ import Tooltip from "../../globalComponent/ToolTip/Tooltip";
 import CheckBox from "expo-checkbox";
 import { ScrollView } from "react-native-gesture-handler";
 import { Ionicons,AntDesign,Feather} from "@expo/vector-icons";
-import { display } from "@mui/system";
 import Pagination from "../../globalComponent/Pagination/PaginationComponent";
+import ShimmerEffect from "../../globalComponent/Refresh/ShimmerEffect";
 
-const UserScreen = ({userAccess,refresh}) => { 
+const UserScreen = ({userAccess}) => { 
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 4 );
+  const [refreshing, setRefreshing] = useState(false);
   const { addToast } = useToast();
   const [userData, setUserData] = useState({
     userId: '',
@@ -216,9 +217,11 @@ const UserScreen = ({userAccess,refresh}) => {
 
       if (response) {
         setUserList(response?.data?.receivedData?.[0]?.UserMaster);
+        setRefreshing(false);
       }
     } catch (error) {
       handleAuthErrors(error);
+      setRefreshing(false);
     }
   };
 
@@ -596,7 +599,11 @@ const UserScreen = ({userAccess,refresh}) => {
       <Text>{item.key}</Text>
     </View>
   );
-  
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    handleGetUserList();
+  }, []);
+
   const VerticalItem = ({ item }) => (
     <FlatList
       horizontal
@@ -632,10 +639,11 @@ const UserScreen = ({userAccess,refresh}) => {
         </View>
     )
   }
+  
   useEffect(() => {
     handleGetUserList();
     handleGetRoleList();
-  }, [UserAccess,refresh]);
+  }, [UserAccess]);
     return (
       <View style={styles.container}>
       {userContainerVisible ? (
@@ -698,6 +706,7 @@ const UserScreen = ({userAccess,refresh}) => {
             </View>
           )}
           renderItem={({ item }) => (
+            refreshing ? <ShimmerEffect/> :
             <View style={styles.listItem}>
               <Text style={[styles.listItemText,{width:120}]}>{item.username}</Text>
               <Text style={[styles.listItemText,{width:200,textAlign:"center"}]}>{item.name}</Text>
@@ -728,6 +737,8 @@ const UserScreen = ({userAccess,refresh}) => {
             </View>
           )}
           stickyHeaderIndices={[0]} 
+          refreshing={refreshing}
+          onRefresh={()=>onRefresh()}
          />
          </View>
          </ScrollView>         

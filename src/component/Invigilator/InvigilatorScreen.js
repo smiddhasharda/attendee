@@ -1,5 +1,5 @@
  import React,{useEffect,useCallback, useState} from 'react';
- import { View, Text, StyleSheet, Dimensions,ScrollView,FlatList,Pressable,TextInput,Linking } from 'react-native';
+ import { View, Text, StyleSheet, Dimensions,ScrollView,FlatList,Pressable,TextInput,ActivityIndicator,Linking } from 'react-native';
  import Bulkpload from '../../globalComponent/Bulkupload/BulkUpload';
  import DropDownPicker from "react-native-dropdown-picker";
  import { insert, update, fetch,view } from "../../AuthService/AuthService";
@@ -9,7 +9,9 @@ import { Feather,FontAwesome5,FontAwesome ,FontAwesome6} from "@expo/vector-icon
 import { parse, format,parseISO,isBefore } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import Pagination from "../../globalComponent/Pagination/PaginationComponent";
- const InvigilatorScreen = ({userAccess,refresh}) => {
+import ShimmerEffect from '../../globalComponent/Refresh/ShimmerEffect';
+ const InvigilatorScreen = ({userAccess}) => {
+  const [refreshing, setRefreshing] = useState(false);
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 8 );
   const { addToast } = useToast();
   const [invigilatorList, setInvigilatorList] = useState([]);
@@ -74,9 +76,11 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
       );
 
       if (response) {
-        setInvigilatorList(response?.data?.receivedData)
+        setInvigilatorList(response?.data?.receivedData);
+        setRefreshing(false);
       }
     } catch (error) {
+      setRefreshing(false);
       handleAuthErrors(error);
     }
   };
@@ -413,9 +417,14 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
     handleAuthErrors(error);
     }
     };
+
+    const onRefresh = useCallback((date) => {
+      setRefreshing(true);
+      handleGetInigilatorDuty(date);
+    }, []);
   useEffect(() => {
     handleGetInigilatorDuty();
-  }, [UserAccess,refresh]);
+  }, [UserAccess]);
    return (
     
     <View style={styles.container}>
@@ -606,8 +615,8 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
             keyExtractor={(item) => item.PK_InvigilatorDutyId.toString()}
                 ListHeaderComponent={() => (
                   <View style={styles.tableHeader}>
-                    <Text style={[styles.tableHeaderText, {width:90} ]}>Id</Text>
-                    <Text style={[styles.tableHeaderText, {width:180, textAlign:"center"}]}>Employee Id</Text>
+                    <Text style={[styles.tableHeaderText, {width:20} ]}>Id</Text>
+                    <Text style={[styles.tableHeaderText, {width:110, textAlign:"center"}]}>Employee Id</Text>
                     <Text style={[styles.tableHeaderText,{width:180, textAlign:"center"} ]}>Name</Text>
                     <Text style={[styles.tableHeaderText,{width:120, textAlign:"center"}  ]}>Room</Text>
                     <Text style={[styles.tableHeaderText,{width:120, textAlign:"center"} ]}>Date</Text>
@@ -621,10 +630,10 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
                     
                   </View>
           )} renderItem={({ item }) => (  
-            // console.log(item),      
-            <View style={styles.listItem}>
-              <Text style={[styles.listItemText, {width:90}]}>{item.PK_InvigilatorDutyId}</Text>
-              <Text style={[styles.listItemText, {width:180, textAlign:"center"}]}>{item.employeeId}</Text>
+            refreshing ? <ShimmerEffect/> :
+           ( <View style={styles.listItem}>
+              <Text style={[styles.listItemText, {width:20}]}>{item.PK_InvigilatorDutyId}</Text>
+              <Text style={[styles.listItemText, {width:120, textAlign:"center"}]}>{item.employeeId}</Text>
               <Text style={[styles.listItemText, {width:180, textAlign:"center"}]}>{item.invigilatorName}</Text>
               <Text style={[styles.listItemText, {width:120, textAlign:"center"}]}>{item.room}</Text>
               <Text style={[styles.listItemText, {width:120, textAlign:"center"}]}>{parseAndFormatDate(item.date)}</Text>
@@ -645,9 +654,13 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
               {UserAccess?.update === 1  ? <Pressable style={[{width:80}, {alignItems:"center"}]} onPress={() => handleEditInvigilator(item)}>
               <Text style={styles.listItemEditText}><Feather name="edit" size={16} color="green" /></Text>
                 </Pressable> : (<Text>-</Text>)}  
-            </View>
+            </View>)
             )}
-          />
+            stickyHeaderIndices={[0]} 
+            refreshing={refreshing}
+            onRefresh={() => onRefresh()}    
+            />
+               
       </View>
       </ScrollView>
       <Pagination
@@ -688,6 +701,7 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
     marginBottom: 10,
     paddingHorizontal: 10,
   },
+ 
   buttonContainer: {
     marginTop:10,
     flexDirection: 'row',
@@ -866,6 +880,7 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
     marginBottom: 10,
     minHeight: 45
   },
+  
   searchIcon: {
     marginRight: 20,
     position: "absolute",

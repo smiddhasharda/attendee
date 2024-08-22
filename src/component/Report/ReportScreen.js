@@ -18,7 +18,7 @@ if (Platform.OS === 'web') {
   WebTable = DataTable; // or some other table component for mobile
 }
 
-const ReportScreen = ({userAccess,refresh}) => {
+const ReportScreen = ({userAccess}) => {
     const [currentTab, setCurrentTab] = useState('ReportByStudents');
   const currentDate = new Date();
   const pastMonthDate = new Date();
@@ -42,7 +42,7 @@ const ReportScreen = ({userAccess,refresh}) => {
 
   useEffect(() => {
     handleGetExamDateList();
-  }, [userAccess,refresh]);
+  }, [userAccess]);
 
 
   const checkAuthToken = useCallback(async () => {
