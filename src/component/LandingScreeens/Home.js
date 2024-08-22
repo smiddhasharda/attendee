@@ -21,12 +21,12 @@ const Home = () => {<MaterialIcons name="smartphone" size={24} color="black" />
 
           {/* Hero Section */}
           <View style={styles.heroSection}>
-            <Image style={styles.heroImage} source={require('../../local-assets/banner-img.jpg')} />
+            <Image style={[styles.heroImage,{height:isMobile?320:460}]} source={require('../../local-assets/banner-img.jpg')} />
             <View style={[styles.overlay,]}>
               <Text style={[styles.heroText ,{ fontSize: isMobile ? 40 : 60 ,width:isMobile?"100%" :"50%" }]}>Easily Track Student Attendance </Text>
             </View>
             <View>
-            <Pressable onPress={handleLoginNavigation}     style={styles.loginBtn}>
+            <Pressable onPress={handleLoginNavigation} style={styles.loginBtn}>
               <Text  style={styles.loginText}>Login</Text>
             </Pressable>
             </View>
@@ -62,7 +62,7 @@ const Home = () => {<MaterialIcons name="smartphone" size={24} color="black" />
        {/* <MyCarousel/> */}
           {/* Productivity Section */}
           <View style={[styles.productivitySection,{flexDirection:isMobile? "column" :"row"}]}>
-            <View style={[styles.productivityItem,{width:isMobile?"100%" :'30%' ,marginBottom:isMobile?10:0}]}>
+            <View style={[styles.productivityItem,{width:isMobile?"100%" :'30%' ,marginBottom:isMobile?15:0 ,marginTop:isMobile?15:0}]}>
             <MaterialIcons name="credit-score" size={40} color="rgb(0 93 84)" />
               {/* <Image style={styles.productivityImage} source={require('../../local-assets/download (1).png')} /> */}
               <Text style={styles.productivityTitle}>Exam Tracking</Text>
@@ -70,7 +70,7 @@ const Home = () => {<MaterialIcons name="smartphone" size={24} color="black" />
               Stay on top of all your exams with real-time tracking. Our app ensures you’re always updated on exam schedules and changes.
               </Text>
             </View>
-            <View style={[styles.productivityItem,{width:isMobile?"100%" :'30%',marginBottom:isMobile?10:0}]}>
+            <View style={[styles.productivityItem,{width:isMobile?"100%" :'30%',marginBottom:isMobile?15:0}]}>
             <FontAwesome5 name="chalkboard-teacher" size={38} color="rgb(0 93 84)" />
               <Text style={styles.productivityTitle}>Invigilator</Text>
               <Text style={styles.productivityDescription}>
@@ -78,7 +78,7 @@ const Home = () => {<MaterialIcons name="smartphone" size={24} color="black" />
               </Text>
             </View>
             
-            <View  style={[styles.productivityItem,{width:isMobile?"100%" :'30%',marginBottom:isMobile?10:0}]}>
+            <View  style={[styles.productivityItem,{width:isMobile?"100%" :'30%',marginBottom:isMobile?15:0}]}>
             <MaterialCommunityIcons name="barcode-scan" size={40} color="rgb(0 93 84)" />
               <Text style={styles.productivityTitle}>Barcode Scanning</Text>
               <Text style={styles.productivityDescription}>
@@ -88,16 +88,16 @@ const Home = () => {<MaterialIcons name="smartphone" size={24} color="black" />
           </View>
 
           {/* Get App Section */}
-          <View style={styles.getAppSection}>
-            <View style={{ width: isMobile?"40%":"50%" }}>
+          <View style={[styles.getAppSection,{flexDirection:isMobile?"column":"row"}]}>
+            <View style={{ width: isMobile?"100%":"50%" }}>
               <Image style={[styles.appimg]} source={require('../../local-assets/room-left.png')} />
             </View>
-            <View style={[styles.appContent,{width:isMobile?"60%":"50%", padding:isMobile?24 :40}]}>
+            <View style={[styles.appContent,{width:isMobile?"100%":"50%", padding:isMobile?24 :40}]}>
               <Text style={[styles.getAppTitle ,]}>Get the App</Text>
               <Text style={styles.getAppDescription}>
                 Download the Attendance app and never miss another case update, even when you’re on the go.
               </Text>
-              <View style={[styles.downloadButtons,{justifyContent:isMobile ?"center":"flex-start"}]}>
+              <View style={[styles.downloadButtons,]}>
                 <Image style={styles.downloadBtn} source={require('../../local-assets/google-play.png')} />
                 {/* Add more buttons for iOS or others as needed */}
               </View>
@@ -106,26 +106,26 @@ const Home = () => {<MaterialIcons name="smartphone" size={24} color="black" />
 
           {/* Footer */}
             <View style={[styles.footerContainer ,{paddingVertical:isMobile? 24: 50 ,paddingHorizontal:isMobile ? 0 :50}]}>
-            <View style={styles.footerContent}>
-              <View style={[styles.leftSection,{width:isMobile?"34%":'30%'}]}>
-                <Text style={[styles.footerHeading,{fontSize:isMobile?15:18}]} onPress={handlePrivacy}>
+            <View style={[styles.footerContent,{flexDirection:isMobile ? "column":"row"}]}>
+              <View style={[styles.leftSection,{width:isMobile?"100%":'30%'}]}>
+                <Text style={[styles.footerHeading,{fontSize:isMobile?15:18, marginBottom:isMobile?14:10}]} onPress={handlePrivacy}>
                   Privacy Policy
                 </Text>
-                <Text style={[styles.footerLink,{fontSize:isMobile?15:16}]}>Terms and Conditions</Text>
-                <Text style={[styles.footerDescription,{fontSize:isMobile?14:''}]}>
+                {/* <Text style={[styles.footerLink,{fontSize:isMobile?15:16}]}>Terms and Conditions</Text> */}
+                <Text style={[styles.footerDescription,{fontSize:isMobile?14:'' ,marginBottom:isMobile?20:14}]}>
                   Affiliation: University Grants Commission has empowered Sharda University to award degrees under Section 22 of UGC Act 1956.
                 </Text>
               </View>
 
-              <View style={[styles.middleSection,{width:isMobile?"34%":"30%"}]}>
-                <Text style={[styles.footerHeading,{fontSize:isMobile?15:18}]}>Sharda University</Text>
+              <View style={[styles.middleSection,{width:isMobile?"100%":"30%"}]}>
+                <Text style={[styles.footerHeading,{fontSize:isMobile?15:18 ,marginBottom:isMobile?14:10}]}>Sharda University</Text>
                 <Text style={styles.footerAddress}>
                   Plot No. 32-34, Knowledge Park III, Greater Noida, U.P.-201310
                 </Text>
               </View>
 
-              <View style={[styles.rightSection,{width:isMobile?"33%":''}]}>
-                <Text style={[styles.footerHeading,{fontSize:isMobile?15:18}]}>Contact Us</Text>
+              <View style={[styles.rightSection,{width:isMobile?"100%":''}]}>
+                <Text style={[styles.footerHeading,{fontSize:isMobile?15:18 ,marginBottom:isMobile?14:10}]}>Contact Us</Text>
                 <Text style={[styles.footerContact,{fontSize:isMobile?14:16}]}>
                   <FontAwesome6 name="phone" size={16} color="#fff" /> +91-0120-4570000
                 </Text>
@@ -134,7 +134,7 @@ const Home = () => {<MaterialIcons name="smartphone" size={24} color="black" />
                 </Text>
               </View>
             </View>
-            <View style={styles.footerBottom}>
+            <View style={[styles.footerBottom,{paddingTop:isMobile?10 :20}]}>
               <Text style={styles.copyrightText}>
                 Copyright © Sharda University 2024. All Rights Reserved
               </Text>
@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
   footerDescription: {
     fontSize: 14,
     color: '#ccc',
-    marginTop: 8,
+    // marginTop: 8,
     lineHeight: 22,
   },
   footerAddress: {
@@ -355,8 +355,8 @@ const styles = StyleSheet.create({
     width:100,
     marginBottom:10,
     position:"relative",
-    left:40,
-    bottom:10,
+    left:20,
+    bottom:30,
   },
   loginText: {
     color: '#fff',
