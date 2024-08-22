@@ -19,7 +19,7 @@ module.exports = async function (env, argv) {
   };
 
   // Set the publicPath for correct asset loading
-  config.output.publicPath = '/attendee/';
+  config.output.publicPath = '/e-Nirikshak/';
 
   return config;
 };
