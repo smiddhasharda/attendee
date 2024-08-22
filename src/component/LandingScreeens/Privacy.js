@@ -16,7 +16,7 @@ const Privacy = () => {
         {
             id: 3,
             title: 'Application',
-            description: 'refers to Attendee, the software program provided by the Company.'
+            description: 'refers to e-Nirikshak, the software program provided by the Company.'
         },
         {
             id: 4,
