@@ -17,7 +17,7 @@ import styles from "./DrawerNavigator.style";
 import { Ionicons,Feather } from '@expo/vector-icons'; 
 import { SafeAreaView } from "react-native-safe-area-context";
 import InvigilatorScreen from "../../component/Invigilator/InvigilatorScreen";
-// import ReportScreen from "../../component/Report/ReportScreen";
+import ReportScreen from "../../component/Report/ReportScreen";
 import ManagePasswordScreen from "../../component/Password/ManagePasswordScreen";
 
 // Screen components
@@ -380,8 +380,8 @@ const DrawerNavigator = ({ navigation }) => {
                   return <InvigilatorScreen {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData}  />; 
                   case "ManagePasswordScreen":
                   return <ManagePasswordComponent {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData}  />;   
-                // case "ReportScreen":
-                //   return <ReportScreen {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData}  />;
+                case "ReportScreen":
+                  return <ReportScreen {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData}  />;
                   
                   default:
                   return null;
