@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, Text, StyleSheet, ScrollView, TextInput, Pressable, ActivityIndicator, Image,Dimensions,RefreshControl } from "react-native";
+import { View, Text, StyleSheet, ScrollView, TextInput, Pressable, ActivityIndicator, Image,Dimensions,RefreshControl,TouchableOpacity  } from "react-native";
 import { Ionicons, FontAwesome, AntDesign, MaterialCommunityIcons, MaterialIcons, Entypo, FontAwesome6, } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
@@ -11,12 +11,14 @@ import CheckBox from "expo-checkbox";
 import { parseISO, format, differenceInSeconds, addMinutes, subMinutes, isSameDay,isBefore } from 'date-fns';
 import { toZonedTime, fromZonedTime } from 'date-fns-tz';
 import CryptoJS from 'crypto-js';
-
+import PopUpModal from "../Modals/PopUpModal";
 const { width, height } = Dimensions.get('window');
 const isMobile = width < 768; 
 
 const StudentInfo = ({ navigation }) => {
 
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
   const route = useRoute();
   const { addToast } = useToast();
   const [studentDetails, setStudentDetails] = useState({});
@@ -1049,14 +1051,13 @@ const StudentInfo = ({ navigation }) => {
             <View style={[styles.infoContainer,{flexDirection:"row"}]}>
               <View style={[styles.userDetailWrap,{marginRight:0}]}>
                 {studentPicture ? (
-              <Image
+                  <Pressable onPress={()=> setModalVisible(true)}>
+                  <Image
             source={{ uri: `data:image/png;base64,${studentPicture}` }}
-            style={styles.studProfile}
-
-
-
-            
+            style={styles.studProfile}            
           />
+                  </Pressable>
+             
           ) : (
                 <FontAwesome name="user" size={40} color="#fff" style={styles.studProfile} />        
               )} 
@@ -1118,6 +1119,20 @@ const StudentInfo = ({ navigation }) => {
               )} 
                     </View> */}
               </View>
+              <PopUpModal
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+        animationType="slide">
+        <View style={styles.modalContainer}>
+          {/* <TouchableOpacity style={styles.modalCloseButton} onPress={() => setModalVisible(false)}>
+            <Text style={styles.modalCloseText}>Close</Text>
+          </TouchableOpacity> */}
+          <View style={styles.modalView}>
+          <Image    source={{ uri: `data:image/png;base64,${studentPicture}` }} style={{position:"static" , width:250, height:420}}/>
+          
+          </View>
+        </View>
+      </PopUpModal>
             </View>
           </View>
           <View style={styles.studentInfoWrap}>
@@ -2082,8 +2097,10 @@ userDetailWrap: {
   display: "flex",
   // justifyContent: 'center'
 },
+ 
 infopWrap:{
   flexDirection:"row",
 },
+
 
 });

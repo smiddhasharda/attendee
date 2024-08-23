@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "AttendEx",
-    "slug": "AttendEx",
+    "name": "e-Nirikshak",
+    "slug": "e-Nirikshak",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/AttendEx_Logo.png",
+    "icon": "./assets/eNirikshak_Logo.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/Splash_img.png",
@@ -31,6 +31,11 @@
     },
     "web": {
       "bundler": "metro"
+      // Remove the comment while making production build & comment the above bundler line.
+      // "bundler": "webpack",
+      // "build": {
+      //   "publicPath": "/e-Nirikshak/"
+      // }
     },
     "plugins": [
       [
@@ -48,8 +53,8 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "Allow AttendEx to access your camera",
-          "microphonePermission": "Allow AttendEx to access your microphone",
+          "cameraPermission": "Allow e-Nirikshak to access your camera",
+          "microphonePermission": "Allow e-Nirikshak to access your microphone",
           "recordAudioAndroid": true
         }
       ],

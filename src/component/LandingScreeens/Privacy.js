@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, SafeAreaView, FlatList, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, FlatList, ScrollView ,Dimensions} from 'react-native';
 import React from 'react';
 
 const Privacy = () => {
@@ -16,7 +16,7 @@ const Privacy = () => {
         {
             id: 3,
             title: 'Application',
-            description: 'refers to Attendee, the software program provided by the Company.'
+            description: 'refers to e-Nirikshak, the software program provided by the Company.'
         },
         {
             id: 4,
@@ -59,6 +59,8 @@ const Privacy = () => {
             description: 'means the individual accessing or using the Service, or the company, or other legal entity on behalf of which such individual is accessing or using the Service, as applicable.'
         },
     ];
+    const { width, height } = Dimensions.get('window');
+    const isMobile = width < 768; 
    
     const personaldata=[
         {
@@ -106,41 +108,6 @@ const Privacy = () => {
         para:'We may also collect information that Your browser sends whenever You visit our Service or when You access the Service by or through a mobile device.'
     }
 
-    ],
-    yourpersonaldata=[
-        {
-            title:'To provide and maintain our Service',
-            description:'including to monitor the usage of our Service'
-        },
-        {
-            title:'To manage Your Account',
-            description:'to manage Your registration as a user of the Service. The Personal Data You provide can give You access to different functionalities of the Service that are available to You as a registered user.'
-        },
-        {
-            title:'For the performance of a contract',
-            description:'the development, compliance and undertaking of the purchase contract for the products, items or services You have purchased or of any other contract with Us through the Service.'
-        },
-        {
-            title:'To contact You:',
-            description:' To contact You by email, telephone calls, SMS, or other equivalent forms of electronic communication, such as a mobile application push notifications regarding updates or informative communications related to the functionalities, products or contracted services, including the security updates, when necessary or reasonable for their implementation.'
-        },
-        {
-            title:'To provide You',
-            description:' with news, special offers and general information about other goods, services and events which we offer that are similar to those that you have already purchased or enquired about unless You have opted not to receive such information.'
-        },
-        {
-            title:'To manage Your requests:',
-            description:' To attend and manage Your requests to Us.'
-        },
-        {
-            title:'For business transfers:',
-            description:'We may use Your information to evaluate or conduct a merger, divestiture, restructuring, reorganization, dissolution, or other sale or transfer of some or all of Our assets, whether as a going concern or as part of bankruptcy, liquidation, or similar proceeding, in which Personal Data held by Us about our Service users is among the assets transferred.'
-        },
-        {
-            title:'For other purposes',
-            description:' We may use Your information for other purposes, such as data analysis, identifying usage trends, determining the effectiveness of our promotional campaigns and to evaluate and improve our Service, products, services, marketing and your experience'
-        },
-        
     ]
     
     const renderItem = ({ item }) => (
@@ -174,12 +141,12 @@ const Privacy = () => {
             <ScrollView>
                 <View style={styles.formContainer}>
                     <Text style={styles.heading}>Privacy Policy</Text>
-                    <Text style={styles.updateDate}>Last updated: August 09, 2024</Text>
+                    {/* <Text style={styles.updateDate}>Last updated: August 09, 2024</Text> */}
                     <Text style={styles.text}>
                         This Privacy Policy describes Our policies and procedures on the collection, use, and disclosure of Your information when You use the Service and tells You about Your privacy rights and how the law protects You.
                     </Text>
                     <Text style={styles.text}>
-                        We use Your Personal data to provide and improve the Service. By using the Service, You agree to the collection and use of information in accordance with this Privacy Policy. This Privacy Policy has been created with the help of the <Text style={styles.link} onPress={() => Linking.openURL('https://www.freeprivacypolicy.com/free-privacy-policy-generator/')}>Free Privacy Policy Generator</Text>.
+                        We use Your Personal data to provide and improve the Service. By using the Service, You agree to the collection and use of information in accordance with this Privacy Policy. 
                     </Text>
 
                     <Text style={styles.heading}>Interpretation and Definitions</Text>
@@ -191,11 +158,35 @@ const Privacy = () => {
                     <Text style={styles.heading}>Definitions</Text>
                     <Text style={styles.subheading}>For the purposes of this Privacy Policy:</Text>
 
-                    <FlatList
+                    {/* <FlatList
                         data={privacydata}
                         renderItem={renderItem}
                       
-                    />
+                    /> */}
+                    <View>
+                    <Text style={styles.subheading}>Account</Text>
+                    <Text style={styles.text}>means a unique account created for You to access our Service or parts of our Service</Text>
+                    <Text style={styles.subheading}>Affiliate</Text>
+                    <Text style={styles.text}>means an entity that controls, is controlled by, or is under common control with a party, where "control" means ownership of 50% or more of the shares, equity interest, or other securities entitled to vote for election of directors or other managing authority</Text>
+                    <Text style={styles.subheading}>Application</Text>
+                    <Text style={styles.text}>refers to e-Nirikshak, the software program provided by the Company.</Text>
+                    <Text style={styles.subheading}>Company</Text>
+                    <Text style={styles.text}>  Plot No. 32-34, Knowledge Park III, Greater Noida, U.P.-201310</Text>
+                    <Text style={styles.subheading}>Country</Text>
+                    <Text style={styles.text}>refers to: Uttar Pradesh, India</Text>
+                    <Text style={styles.subheading}>Device</Text>
+                    <Text style={styles.text}>means any device that can access the Service such as a computer, a cellphone or a digital tablet</Text>
+                    <Text style={styles.subheading}>Personal Data</Text>
+                    <Text style={styles.text}>is any information that relates to an identified or identifiable individual</Text>
+                    <Text style={styles.subheading}>Service</Text>
+                    <Text style={styles.text}>refers to the Application</Text>
+                    <Text style={styles.subheading}>Service Provider</Text>
+                    <Text style={styles.text}>means any natural or legal person who processes the data on behalf of the Company. It refers to third-party companies or individuals employed by the Company to facilitate the Service, to provide the Service on behalf of the Company, to perform services related to the Service, or to assist the Company in analyzing how the Service is used</Text>
+                    <Text style={styles.subheading}>Usage Data</Text>
+                    <Text style={styles.text}>refers to data collected automatically, either generated by the use of the Service or from the Service infrastructure itself (for example, the duration of a page visit)</Text>
+                    <Text style={styles.subheading}>You</Text>
+                    <Text style={styles.text}>means the individual accessing or using the Service, or the company, or other legal entity on behalf of which such individual is accessing or using the Service, as applicable</Text>                  
+                    </View>
                <View>
                     <Text style={styles.heading}>Collecting and Using Your Personal Data</Text>
                     <Text style={styles.subheading}>Types of Data Collected</Text>
@@ -226,11 +217,32 @@ const Privacy = () => {
             </View>
             <View>
                 <Text style={styles.heading}>Use of Your Personal Data</Text>
-                <Text style={styles.text}>The Company may use Personal Data for the following purposes:</Text>
-                <FlatList
+               
+                <Text style={styles.subheading}>To provide and maintain our Service</Text>               
+                    <Text style={styles.text}>including to monitor the usage of our Service</Text> 
+                         
+                <Text style={styles.subheading}>To manage Your Account</Text>               
+                    <Text style={styles.text}>to manage Your registration as a user of the Service. The Personal Data You provide can give You access to different functionalities of the Service that are available to You as a registered user</Text> 
+               
+                    <Text style={styles.subheading}>For the performance of a contract</Text>               
+                    <Text style={styles.text}>the development, compliance and undertaking of the purchase contract for the products, items or services You have purchased or of any other contract with Us through the Service.</Text> 
+
+                    <Text style={styles.subheading}>To contact You</Text>               
+                    <Text style={styles.text}>  To contact You by email, telephone calls, SMS, or other equivalent forms of electronic communication, such as a mobile application push notifications regarding updates or informative communications related to the functionalities, products or contracted services, including the security updates, when necessary or reasonable for their implementation.</Text> 
+                    <Text style={styles.subheading}>To provide You</Text>               
+                    <Text style={styles.text}> with news, special offers and general information about other goods, services and events which we offer that are similar to those that you have already purchased or enquired about unless You have opted not to receive such information.</Text>
+                    <Text style={styles.subheading}>To manage Your requests</Text>               
+                    <Text style={styles.text}>To attend and manage Your requests to Us</Text>
+                    <Text style={styles.subheading}>For business transfers</Text>               
+                    <Text style={styles.text}>We may use Your information to evaluate or conduct a merger, divestiture, restructuring, reorganization, dissolution, or other sale or transfer of some or all of Our assets, whether as a going concern or as part of bankruptcy, liquidation, or similar proceeding, in which Personal Data held by Us about our Service users is among the assets transferred</Text>
+                    <Text style={styles.subheading}>For other purposes</Text>               
+                    <Text style={styles.text}> We may use Your information for other purposes, such as data analysis, identifying usage trends, determining the effectiveness of our promotional campaigns and to evaluate and improve our Service, products, services, marketing and your experience</Text>   
+
+                  
+                {/* <FlatList
                     data={yourpersonaldata}
                     renderItem={yourpersonaldataitem}
-                />
+                /> */}
                    {/* <View style={styles.item}>
                     <Text style={styles.listheading}>To provide and maintain our Service</Text>
                     <Text  style={styles.description}>including to monitor the usage of our Service</Text>
@@ -251,23 +263,23 @@ const Privacy = () => {
                     <Text style={styles.heading} >
                     We may share Your personal information in the following situations:
                     </Text>
-                    <View style={styles.item}>
+                    <View style={[styles.item ,{flexDirection:isMobile?"column":"row"}]}>
                     <Text style={styles.listheading}>With Service Providers</Text>
-                    <Text  style={styles.description}>We may share Your personal information with Service Providers to monitor and analyze the use of our Service, to contact You.</Text>
+                    <Text  style={[styles.description ]}>We may share Your personal information with Service Providers to monitor and analyze the use of our Service, to contact You.</Text>
                         </View>
-                    <View style={styles.item}>
+                    <View style={[styles.item ,{flexDirection:isMobile?"column":"row"}]}>
                     <Text style={styles.listheading}>For business transfers</Text>
                     <Text  style={styles.description}> We may share or transfer Your personal information in connection with, or during negotiations of, any merger, sale of Company assets, financing, or acquisition of all or a portion of Our business to another company</Text>
                         </View>
-                        <View style={styles.item}>
+                        <View style={[styles.item ,{flexDirection:isMobile?"column":"row"}]}>
                     <Text style={styles.listheading}>With Affiliates:</Text>
                     <Text  style={styles.description}>We may share Your information with Our affiliates, in which case we will require those affiliates to honor this Privacy Policy. Affiliates include Our parent company and any other subsidiaries, joint venture partners or other companies that We control or that are under common control with Us.</Text>
                         </View>
-                        <View style={styles.item}>
+                        <View style={[styles.item ,{flexDirection:isMobile?"column":"row"}]}>
                     <Text style={styles.listheading}>With business partners:</Text>
                     <Text  style={styles.description}>We may share Your information with Our business partners to offer You certain products, services or promotions</Text>
                     </View>
-                    <View style={styles.item}>
+                    <View style={[styles.item ,{flexDirection:isMobile?"column":"row"}]}>
                     <Text style={styles.listheading}>With Your consent:</Text>
                     <Text  style={styles.description}>We may disclose Your personal information for any other purpose with Your consent.</Text>
                     </View>
@@ -328,7 +340,7 @@ const Privacy = () => {
                 <View>
                     <Text style={styles.heading}>Contact Us</Text>
                     <Text style={styles.text}>If you have any questions about this Privacy Policy, You can contact us:</Text>        
-                    <Text style={styles.text}>By email:</Text>  
+                    <Text style={styles.text}>Contact nO:-92055 86066</Text>  
                 </View>
             </View>
                 </View>

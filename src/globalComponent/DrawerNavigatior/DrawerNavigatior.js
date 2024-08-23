@@ -4,7 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem, } from "@react-navigation/drawer";
 
 import RoleScreen from "../../component/Roles/RoleScreen";
-import ModuleScreen from "../../component/Module/ModuleScreen";
+// import ModuleScreen from "../../component/Module/ModuleScreen";
 import DashboardScreen from "../../component/Dashboard/DashboardScreen";
 import UserScreen from "../../component/User/UserScreen";
 import ExamScreen from "../../component/Exam/ExamScreen";
@@ -17,13 +17,13 @@ import styles from "./DrawerNavigator.style";
 import { Ionicons,Feather } from '@expo/vector-icons'; 
 import { SafeAreaView } from "react-native-safe-area-context";
 import InvigilatorScreen from "../../component/Invigilator/InvigilatorScreen";
-// import ReportScreen from "../../component/Report/ReportScreen";
+import ReportScreen from "../../component/Report/ReportScreen";
 import ManagePasswordScreen from "../../component/Password/ManagePasswordScreen";
 import CryptoJS from 'crypto-js';
 
 // Screen components
 const RoleComponent = ({ navigation,userAccess, userData }) => <RoleScreen navigation={navigation} userData={userData} userAccess={userAccess} />;
-const ModuleComponent = ({ navigation,userAccess, userData }) => <ModuleScreen userAccess={userAccess}  />;
+// const ModuleComponent = ({ navigation,userAccess, userData }) => <ModuleScreen userAccess={userAccess}  />;
 const DashboardComponent = ({ navigation,userAccess, userData }) => <DashboardScreen navigation={navigation} userData={userData} userAccess={userAccess}  />;
 const UserComponent = ({ navigation,userAccess, userData }) => <UserScreen navigation={navigation} userData={userData} userAccess={userAccess}  />;
 const ManagePasswordComponent = ({navigation,userAccess, userData }) => <ManagePasswordScreen navigation={navigation} userData={userData} userAccess={userAccess}  />;
@@ -277,7 +277,7 @@ const DrawerNavigator = ({ navigation }) => {
     const icons = {
       Dashboard: focused ? 'home' : 'home-outline',
       RoleScreen: focused ? 'person-circle' : 'person-circle',
-      ModuleScreen: focused ? 'bookmark' : 'bookmark-outline',
+      // ModuleScreen: focused ? 'bookmark' : 'bookmark-outline',
       UserScreen: focused ? 'person' : 'person-outline',
       ExamScreen: focused ? 'book' : 'book-outline',
       InvigilatorScreen: focused ? 'people' : 'people-outline',
@@ -352,8 +352,8 @@ const DrawerNavigator = ({ navigation }) => {
             module?.read === 1 &&
             module?.moduleMaster[0]?.moduleName !== "StudentInfo" &&
             module?.moduleMaster[0]?.moduleName !== "RoomDetail" 
-            // && module?.moduleMaster[0]?.moduleName !== "ModuleScreen"
-            &&  module?.moduleMaster[0]?.moduleName !== "ReportScreen" 
+            && module?.moduleMaster[0]?.moduleName !== "ModuleScreen"
+            // &&  module?.moduleMaster[0]?.moduleName !== "ReportScreen" 
         )
         .map((module, index) => (
     //       <Drawer.Screen  options={{
@@ -370,8 +370,8 @@ const DrawerNavigator = ({ navigation }) => {
         switch (module?.moduleMaster[0]?.moduleName) {
           case "RoleScreen":
             return "User Role";
-          case "ModuleScreen":
-            return "Manage Module";
+          // case "ModuleScreen":
+          //   return "Manage Module";
           case "UserScreen":
             return "Manage User";
           case "ExamScreen":
@@ -400,8 +400,8 @@ const DrawerNavigator = ({ navigation }) => {
               switch (module?.moduleMaster[0]?.moduleName) {
                 case "RoleScreen":
                   return <RoleComponent {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData}  />;
-                case "ModuleScreen":
-                  return <ModuleComponent {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData} />;
+                // case "ModuleScreen":
+                //   return <ModuleComponent {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData} />;
                 case "Dashboard":
                   return <DashboardComponent {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData}   />;
                 case "UserScreen":
@@ -412,8 +412,8 @@ const DrawerNavigator = ({ navigation }) => {
                   return <InvigilatorScreen {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData}  />; 
                   case "ManagePasswordScreen":
                   return <ManagePasswordComponent {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData}  />;   
-                // case "ReportScreen":
-                //   return <ReportScreen {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData}  />;
+                case "ReportScreen":
+                  return <ReportScreen {...props} navigation={navigation} userAccess={userRoleList?.[userRoleIndex]} userData={userData}  />;
                   
                   default:
                   return null;

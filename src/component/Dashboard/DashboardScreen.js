@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TextInput, StyleSheet ,ScrollView, Image, Dimensions } from 'react-native';
+import { View, Text, TextInput, StyleSheet ,ScrollView, Image, Dimensions, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; 
 import { useNavigation } from '@react-navigation/native'; 
 const DashboardScreen = () => {
@@ -15,7 +15,12 @@ const { navigate } = useNavigation();
 
     <View style={styles.container}>
       <Text style={styles.heading}>Welcome to Attendance Portal</Text>      
-     
+       {/* <Pressable onPress={handleReportPress}>
+       <Text>Home</Text>   
+       </Pressable>
+       <Pressable onPress={handleExamPress}>
+         <Text>Privacy</Text>
+       </Pressable>  */}
           {/* <TextInput
             style={styles.searchBox}
             placeholder="Search..."          
