@@ -18,9 +18,9 @@ const request = async (method, endpoint, data, authToken,params) => {
     };
 
     if (method === 'get') {
-      config.params = { ...config.params, ...data };
+      config.params = { ...config.params, data: data } ;
     } else {
-      config.data = data;
+      config.data = {data : data};
     }
 
     const response = await axios(config);
@@ -58,10 +58,10 @@ const login = async (tblName, conditionString) => {
     const { token,userRole,userData } = response?.data;
     // const { token, expirationTimestamp,userRole,userData } = response;
 
-    await AsyncStorage.setItem('userRolePermission', userRole ? JSON?.stringify(userRole) : '').catch(handleAsyncStorageError);
-    await AsyncStorage.setItem('authToken', token).catch(handleAsyncStorageError);
-    await AsyncStorage.setItem('userData', userData ? JSON?.stringify(userData) : '').catch(handleAsyncStorageError);
-    // await AsyncStorage.setItem('tokenExpiration', expirationTimestamp.toString()).catch(handleAsyncStorageError);
+    await AsyncStorage.setItem(btoa('userRolePermission'), userRole ? btoa(JSON?.stringify(userRole)) : '').catch(handleAsyncStorageError);
+    await AsyncStorage.setItem(btoa('authToken'), btoa(token)).catch(handleAsyncStorageError);
+    await AsyncStorage.setItem(btoa('userData'), userData ? btoa(JSON?.stringify(userData)) : '').catch(handleAsyncStorageError);
+    // await AsyncStorage.setItem(btoa('tokenExpiration'), btoa(expirationTimestamp.toString())).catch(handleAsyncStorageError);
     return token;
   } catch (error) {
     throw error;
@@ -111,4 +111,7 @@ const bulkupload = async (data, authToken) => {
 const view = async (data, authToken) => {     
   return request('get', 'view', data, authToken);
 };
-export { login, register,emailVerify, logout, insert, update, fetch, remove, common,multer,bulkupload,view };
+const photoView = async (data, authToken) => {     
+  return request('get', 'photoView', data, authToken);
+}
+export { login, register,emailVerify, logout, insert, update, fetch, remove, common,multer,bulkupload,view,photoView };

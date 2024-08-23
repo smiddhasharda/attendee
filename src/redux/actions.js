@@ -12,7 +12,7 @@ export const setRememberMe = (value) => ({
 
 export const setRememberedCredentials = (credentials) => async (dispatch) => {
   try {
-    await AsyncStorage.setItem('credentials', JSON.stringify(credentials));
+    await AsyncStorage.setItem(btoa('credentials'), btoa(JSON.stringify(credentials)));
     dispatch({
       type: SET_REMEMBERED_CREDENTIALS,
       payload: credentials,
@@ -24,7 +24,7 @@ export const setRememberedCredentials = (credentials) => async (dispatch) => {
 
 export const loadRememberedCredentials = async () => {
   try {
-    const serializedCredentials = await AsyncStorage.getItem('credentials');
+    const serializedCredentials = atob(await AsyncStorage.getItem(btoa('credentials')));
     if (serializedCredentials) {
       const credentials = JSON.parse(serializedCredentials);
       return { email: credentials.email, password: credentials.password };

@@ -12,6 +12,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import { Ionicons,AntDesign,Feather} from "@expo/vector-icons";
 import Pagination from "../../globalComponent/Pagination/PaginationComponent";
 import ShimmerEffect from "../../globalComponent/Refresh/ShimmerEffect";
+import CryptoJS from 'crypto-js';
 
 const UserScreen = ({userAccess}) => { 
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 4 );
@@ -56,7 +57,7 @@ const UserScreen = ({userAccess}) => {
   };
 
   const checkAuthToken = useCallback(async () => {
-    const authToken = await AsyncStorage.getItem("authToken");
+    const authToken = atob( await AsyncStorage.getItem(btoa("authToken")));
 
     if (!authToken) {
       addToast("Authentication token is not available", "error");
@@ -66,6 +67,35 @@ const UserScreen = ({userAccess}) => {
     return authToken;
   }, [addToast]);
 
+  const decrypt = (encryptedData) => {
+    const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
+    const [iv, encrypted] = encryptedData.split(':');
+    const ivBytes = CryptoJS.enc.Hex.parse(iv);
+    const encryptedBytes = CryptoJS.enc.Hex.parse(encrypted);
+    const decrypted = CryptoJS.AES.decrypt(
+      { ciphertext: encryptedBytes },
+      CryptoJS.enc.Utf8.parse(encryptScreteKey),
+      {
+        iv: ivBytes,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7,
+      }
+    );
+    return decrypted.toString(CryptoJS.enc.Utf8);
+  };
+
+  const encrypt = (text) => {
+    const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
+    const iv = CryptoJS.lib.WordArray.random(16);
+    const encrypted = CryptoJS.AES.encrypt(text, CryptoJS.enc.Utf8.parse(encryptScreteKey), {
+      iv: iv,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7,
+    });
+  
+    return iv.toString() + ':' + encrypted.toString();
+  };
+
   const handleAddUser = async () => {
     try {
       const authToken = await checkAuthToken();
@@ -74,24 +104,26 @@ const UserScreen = ({userAccess}) => {
       if (!handlePasswordValidation()) return;
       if (!handleEmailValidation()) return;
       if (!handleContactNumberValidation()) return;
-      const response = await insert(
-        {
-          operation: "insert",
-          tblName: "tbl_user_master",
-          data: {
-            username: userData.emailId,
-            name: userData.name,           
-            password: userData.password,
-            contact_number: userData.contactNumber,
-            email_id: userData.emailId,
-            username:userData.username,
-            isActive: userData.status,
-            isVerified: 1
-          },
-          conditionString: `username = '${userData.emailId}' OR email_id = '${userData.emailId}'` ,
-          checkAvailability: true,
-          customQuery: '',
+      const Parameter ={
+        operation: "insert",
+        tblName: "tbl_user_master",
+        data: {
+          username: userData.emailId,
+          name: userData.name,           
+          password: userData.password,
+          contact_number: userData.contactNumber,
+          email_id: userData.emailId,
+          username:userData.username,
+          isActive: userData.status,
+          isVerified: 1
         },
+        conditionString: `username = '${userData.emailId}' OR email_id = '${userData.emailId}'` ,
+        checkAvailability: true,
+        customQuery: '',
+      };
+      const encryptedParams = encrypt(JSON.stringify(Parameter));
+      const response = await insert(
+        encryptedParams,
         authToken
       );
 
@@ -103,16 +135,18 @@ const UserScreen = ({userAccess}) => {
               ...permissions,
             })
           );
-
+          const Parameter1 ={
+            operation: "insert",
+            tblName: "tbl_user_role_permission",
+            data: rolePermissionsWithId,
+            conditionString: "",
+            checkAvailability: "",
+            customQuery: "",
+          };
+          const encryptedParams1 = encrypt(JSON.stringify(Parameter1));
+          
           await insert(
-            {
-              operation: "insert",
-              tblName: "tbl_user_role_permission",
-              data: rolePermissionsWithId,
-              conditionString: "",
-              checkAvailability: "",
-              customQuery: "",
-            },
+            encryptedParams1,
             authToken
           );
 
@@ -140,22 +174,24 @@ const UserScreen = ({userAccess}) => {
       handlePasswordValidation();
       handleEmailValidation();
       handleContactNumberValidation();
-      const response = await update(
-        {
-          operation: "update",
-          tblName: "tbl_user_master",
-          data: {
-            name: userData.name,           
-            password: userData.password,
-            contact_number: userData.contactNumber,
-            email_id: userData.emailId,
-            username:userData.username,
-            isActive: userData.status,
-          },
-          conditionString: `user_id = ${userData.userId}`,
-          checkAvailability: '',
-          customQuery: '',
+      const Parameter ={
+        operation: "update",
+        tblName: "tbl_user_master",
+        data: {
+          name: userData.name,           
+          password: userData.password,
+          contact_number: userData.contactNumber,
+          email_id: userData.emailId,
+          username:userData.username,
+          isActive: userData.status,
         },
+        conditionString: `user_id = ${userData.userId}`,
+        checkAvailability: '',
+        customQuery: '',
+      };
+      const encryptedParams = encrypt(JSON.stringify(Parameter));
+      const response = await update(
+        encryptedParams,
         authToken
       );
 
@@ -173,15 +209,18 @@ const UserScreen = ({userAccess}) => {
             )
           );
 
+          const Parameter1 = {
+            operation: "update",
+            tblName: "tbl_user_role_permission",
+            data: rolePermissionsWithId,
+            conditionString: `PK_user_role_permissionId = ? `,
+            checkAvailability: true,
+            customQuery: "",
+          };
+          const encryptedParams1 = encrypt(JSON.stringify(Parameter1));
+
           await update(
-            {
-              operation: "update",
-              tblName: "tbl_user_role_permission",
-              data: rolePermissionsWithId,
-              conditionString: `PK_user_role_permissionId = ? `,
-              checkAvailability: true,
-              customQuery: "",
-            },
+            encryptedParams1,
             authToken
           );
 
@@ -199,24 +238,28 @@ const UserScreen = ({userAccess}) => {
       handleAuthErrors(error);
     }
   };
-
+  
   const handleGetUserList = async () => {
     try {
       const authToken = await checkAuthToken();
+      const Parameter =  {
+        operation: "custom",
+        tblName: "tbl_user_master",
+        data: '',
+        conditionString: '',
+        checkAvailability: '',
+        customQuery: `select JSON_ARRAYAGG(json_object('user_id',p.user_id,'username',username,'password',p.password,'name',p.name,'contact_number',p.contact_number,'email_id',p.email_id,'profile_image_url',p.profile_image_url,'isActive',p.isActive,'rolePermission',( SELECT CAST( CONCAT('[', GROUP_CONCAT( JSON_OBJECT( 'Id',q.PK_user_role_permissionId,'FK_userId', q.FK_userId,'FK_RoleId', q.FK_RoleId,'isActive',q.isActive) ), ']') AS JSON ) FROM tbl_user_role_permission q WHERE q.FK_userId = p.user_id ))) AS UserMaster from tbl_user_master p`,
+      };
+      const encryptedParams = encrypt(JSON.stringify(Parameter));
       const response = await fetch(
-        {
-          operation: "custom",
-          tblName: "tbl_user_master",
-          data: '',
-          conditionString: '',
-          checkAvailability: '',
-          customQuery: `select JSON_ARRAYAGG(json_object('user_id',p.user_id,'username',username,'password',p.password,'name',p.name,'contact_number',p.contact_number,'email_id',p.email_id,'profile_image_url',p.profile_image_url,'isActive',p.isActive,'rolePermission',( SELECT CAST( CONCAT('[', GROUP_CONCAT( JSON_OBJECT( 'Id',q.PK_user_role_permissionId,'FK_userId', q.FK_userId,'FK_RoleId', q.FK_RoleId,'isActive',q.isActive) ), ']') AS JSON ) FROM tbl_user_role_permission q WHERE q.FK_userId = p.user_id ))) AS UserMaster from tbl_user_master p`,
-        },
+        encryptedParams,
         authToken
       );
 
       if (response) {
-        setUserList(response?.data?.receivedData?.[0]?.UserMaster);
+        const decryptedData = decrypt(response?.data?.receivedData);
+        const DecryptedData = JSON.parse(decryptedData);
+        setUserList(DecryptedData?.[0]?.UserMaster);
         setRefreshing(false);
       }
     } catch (error) {
@@ -228,15 +271,19 @@ const UserScreen = ({userAccess}) => {
   const handleUserStatus = async (userId, status) => {
     try {
       const authToken = await checkAuthToken();
+
+      const Parameter ={
+        operation: "update",
+        tblName: "tbl_user_master",
+        data: { isActive: !status },
+        conditionString: `user_id = ${userId}`,
+        checkAvailability: '',
+        customQuery: '',
+      };
+      const encryptedParams = encrypt(JSON.stringify(Parameter));
+      
       const response = await update(
-        {
-          operation: "update",
-          tblName: "tbl_user_master",
-          data: { isActive: !status },
-          conditionString: `user_id = ${userId}`,
-          checkAvailability: '',
-          customQuery: '',
-        },
+        encryptedParams,
         authToken
       );
 
@@ -574,20 +621,24 @@ const UserScreen = ({userAccess}) => {
   const handleGetRoleList = async () => {
     try {
       const authToken = await checkAuthToken();
+      const Parameter = {
+        operation: "fetch",
+        tblName: "tbl_role_master",
+        data: "",
+        conditionString: "",
+        checkAvailability: "",
+        customQuery: "",
+      }
+      const encryptedParams = encrypt(JSON.stringify(Parameter));
       const response = await fetch(
-        {
-          operation: "fetch",
-          tblName: "tbl_role_master",
-          data: "",
-          conditionString: "",
-          checkAvailability: "",
-          customQuery: "",
-        },
+        encryptedParams,
         authToken
       );
 
       if (response) {
-        setRoleList(response?.data?.receivedData);
+        const decryptedData = decrypt(response?.data?.receivedData);
+        const DecryptedData = JSON.parse(decryptedData);
+        setRoleList(DecryptedData);
       }
     } catch (error) {
       handleAuthErrors(error);

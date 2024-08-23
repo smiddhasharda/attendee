@@ -10,6 +10,7 @@ import CustomDateTimePicker from '../../globalComponent/DateTimePicker/CustomDat
 import { Ionicons ,AntDesign} from '@expo/vector-icons'; 
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import CryptoJS from 'crypto-js';
 
 let WebTable;
 if (Platform.OS === 'web') {
@@ -46,7 +47,7 @@ const ReportScreen = ({userAccess}) => {
 
 
   const checkAuthToken = useCallback(async () => {
-    const authToken = await AsyncStorage.getItem("authToken");
+    const authToken = atob(await AsyncStorage.getItem(btoa("authToken")));
     
     if (!authToken) {
       addToast("Authentication token not available", "error");
@@ -55,33 +56,66 @@ const ReportScreen = ({userAccess}) => {
     
     return authToken;
     }, [addToast]);
+
+    const decrypt = (encryptedData) => {
+      const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
+      const [iv, encrypted] = encryptedData.split(':');
+      const ivBytes = CryptoJS.enc.Hex.parse(iv);
+      const encryptedBytes = CryptoJS.enc.Hex.parse(encrypted);
+      const decrypted = CryptoJS.AES.decrypt(
+        { ciphertext: encryptedBytes },
+        CryptoJS.enc.Utf8.parse(encryptScreteKey),
+        {
+          iv: ivBytes,
+          mode: CryptoJS.mode.CBC,
+          padding: CryptoJS.pad.Pkcs7,
+        }
+      );
+      return decrypted.toString(CryptoJS.enc.Utf8);
+    };
+  
+    const encrypt = (text) => {
+      const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
+      const iv = CryptoJS.lib.WordArray.random(16);
+      const encrypted = CryptoJS.AES.encrypt(text, CryptoJS.enc.Utf8.parse(encryptScreteKey), {
+        iv: iv,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7,
+      });
+    
+      return iv.toString() + ':' + encrypted.toString();
+    };
     
     const handleGetExamDateList = async () => {
     try {
     const authToken = await checkAuthToken();
-    const response = await fetch(
-    {
-    operation: "custom",
+    const Parameter =  {
+      operation: "custom",
     tblName: "tbl_report_master",
     data: "",
     conditionString: "",
     checkAvailability: "",
     customQuery: `SELECT DISTINCT EXAM_DT FROM tbl_report_master WHERE EXAM_DT >= '${startDate.toISOString()}' AND EXAM_DT <= '${endDate.toISOString()}'`,
-    },
+     };
+    const encryptedParams = encrypt(JSON.stringify(Parameter));
+    const response = await fetch(
+      encryptedParams,
     authToken
     );
     
     
       if (response) {
-        let ExamDateList = response?.data?.receivedData;
-        setExamDates(ExamDateList || []);
-        setExamSelectedDate(ExamDateList?.[0]?.EXAM_DT);
-        handleGetExamRoomList(ExamDateList?.[0]?.EXAM_DT);
-        handleGetExamReport(ExamDateList?.[0]?.EXAM_DT);
-        handleGetExamReportByCategory(ExamDateList?.[0]?.EXAM_DT);
-        handleGetExamReportByRoom(ExamDateList?.[0]?.EXAM_DT);
-        handleGetSchoolList(ExamDateList?.[0]?.EXAM_DT);
-        handleGetShiftList(ExamDateList?.[0]?.EXAM_DT);
+        const decryptedData = decrypt(response?.data?.receivedData);
+        const DecryptedData = JSON.parse(decryptedData);
+        // let ExamDateList = response?.data?.receivedData;
+        setExamDates(DecryptedData || []);
+        setExamSelectedDate(DecryptedData?.[0]?.EXAM_DT);
+        handleGetExamRoomList(DecryptedData?.[0]?.EXAM_DT);
+        handleGetExamReport(DecryptedData?.[0]?.EXAM_DT);
+        handleGetExamReportByCategory(DecryptedData?.[0]?.EXAM_DT);
+        handleGetExamReportByRoom(DecryptedData?.[0]?.EXAM_DT);
+        handleGetSchoolList(DecryptedData?.[0]?.EXAM_DT);
+        handleGetShiftList(DecryptedData?.[0]?.EXAM_DT);
       }
     } catch (error) {
       handleAuthErrors(error);
@@ -91,19 +125,24 @@ const ReportScreen = ({userAccess}) => {
     const handleGetExamRoomList = async (date) => {
     try {
     const authToken = await checkAuthToken();
+    const Parameter =  {
+      operation: "custom",
+      tblName: "tbl_report_master",
+      data: "",
+      conditionString: "",
+      checkAvailability: "",
+      customQuery: `SELECT Distinct ROOM_NBR FROM tbl_report_master WHERE EXAM_DT = '${date}'`,
+      };
+    const encryptedParams = encrypt(JSON.stringify(Parameter));
+    
     const response = await fetch(
-    {
-    operation: "custom",
-    tblName: "tbl_report_master",
-    data: "",
-    conditionString: "",
-    checkAvailability: "",
-    customQuery: `SELECT Distinct ROOM_NBR FROM tbl_report_master WHERE EXAM_DT = '${date}'`,
-    },
+      encryptedParams,
     authToken
     );
     if (response) {
-    let RoomList = response?.data?.receivedData?.map((item) => item.ROOM_NBR) || [];
+      const decryptedData = decrypt(response?.data?.receivedData);
+      const DecryptedData = JSON.parse(decryptedData);
+    let RoomList = DecryptedData?.map((item) => item.ROOM_NBR) || [];
     setRoomList(RoomList);
     }
     } catch (error) {
@@ -114,20 +153,24 @@ const ReportScreen = ({userAccess}) => {
     const handleGetSchoolList = async (date) => {
       try {
         const authToken = await checkAuthToken();
+        const Parameter = {
+          operation: "custom",
+          tblName: "tbl_report_master",
+          data: "",
+          conditionString: "",
+          checkAvailability: "",
+          customQuery: `SELECT Distinct DESCR FROM tbl_report_master WHERE EXAM_DT = '${date}'`,
+        };
+        const encryptedParams = encrypt(JSON.stringify(Parameter));
         const response = await fetch(
-          {
-            operation: "custom",
-            tblName: "tbl_report_master",
-            data: "",
-            conditionString: "",
-            checkAvailability: "",
-            customQuery: `SELECT Distinct DESCR FROM tbl_report_master WHERE EXAM_DT = '${date}'`,
-          },
+          encryptedParams,
           authToken
         );
     
         if (response) {
-          let SchoolList = response?.data?.receivedData?.map((item) => item.DESCR) || [];
+          const decryptedData = decrypt(response?.data?.receivedData);
+      const DecryptedData = JSON.parse(decryptedData);
+          let SchoolList = DecryptedData?.map((item) => item.DESCR) || [];
           setSchoolList(SchoolList);
         }
       } catch (error) {
@@ -138,19 +181,23 @@ const ReportScreen = ({userAccess}) => {
     const handleGetShiftList = async (date) => {
       try {
       const authToken = await checkAuthToken();
-      const response = await fetch(
-      {
-      operation: "custom",
+      const Parameter = {
+        operation: "custom",
       tblName: "tbl_report_master",
       data: "",
       conditionString: "",
       checkAvailability: "",
       customQuery:`SELECT JSON_ARRAYAGG(room) AS ShiftData FROM ( SELECT JSON_OBJECT( 'label', EXAM_START_TIME, 'value', EXAM_START_TIME ) AS room FROM tbl_report_master WHERE EXAM_DT = '${date}' GROUP BY EXAM_START_TIME ) AS rooms` ,
-    },
+    };
+      const encryptedParams = encrypt(JSON.stringify(Parameter));
+      const response = await fetch(
+        encryptedParams,
       authToken
       );
       if (response) {
-        setShiftList(response?.data?.receivedData?.[0]?.ShiftData || []);
+        const decryptedData = decrypt(response?.data?.receivedData);
+        const DecryptedData = JSON.parse(decryptedData);  
+        setShiftList(DecryptedData?.[0]?.ShiftData || []);
       }
       } catch (error) {
       handleAuthErrors(error);
@@ -159,20 +206,23 @@ const ReportScreen = ({userAccess}) => {
     const handleGetExamReport = async (date) => {
     try {
     const authToken = await checkAuthToken();
+    const Parameter =  {
+      operation: "custom",
+      tblName: "tbl_report_master",
+      data: "",
+      conditionString:"",
+      checkAvailability: "",
+      customQuery: `select JSON_ARRAYAGG(json_object('PK_Report_Id',p.PK_Report_Id,'EMPLID',EMPLID,'EXAM_DT',p.EXAM_DT,'ROOM_NBR',p.ROOM_NBR,'EXAM_START_TIME',p.EXAM_START_TIME,'STRM',p.STRM,'CATALOG_NBR',p.CATALOG_NBR,'PTP_SEQ_CHAR',p.PTP_SEQ_CHAR,'NAME_FORMAL',p.NAME_FORMAL,'ADM_APPL_NBR',p.ADM_APPL_NBR,'DESCR',p.DESCR,'DESCR2',p.DESCR2,'DESCR3',p.DESCR3,'Status',p.Status,'Attendece_Status',p.Attendece_Status,'isActive',p.isActive,'copyData',( SELECT CAST( CONCAT('[', GROUP_CONCAT( JSON_OBJECT( 'PK_CopyId',q.PK_CopyId,'FK_ReportId',q.FK_ReportId,'EMPLID',q.EMPLID,'copyNumber',q.copyNumber,'alternateCopyNumber1',q.alternateCopyNumber1,'alternateCopyNumber2',q.alternateCopyNumber2,'alternateCopyNumber3',q.alternateCopyNumber3,'alternateCopyNumber4',q.alternateCopyNumber4,'alternateCopyNumber5',q.alternateCopyNumber5,'alternateCopyNumber6',q.alternateCopyNumber6,'isActive',q.isActive) ), ']') AS JSON ) FROM tbl_copy_master q WHERE q.FK_ReportId = p.PK_Report_Id ))) AS ReportMaster from tbl_report_master p where EXAM_DT = '${date}'`,
+    };
+    const encryptedParams = encrypt(JSON.stringify(Parameter));
     const response = await fetch(
-    {
-    operation: "custom",
-    tblName: "tbl_report_master",
-    data: "",
-    conditionString:"",
-    checkAvailability: "",
-    customQuery: `select JSON_ARRAYAGG(json_object('PK_Report_Id',p.PK_Report_Id,'EMPLID',EMPLID,'EXAM_DT',p.EXAM_DT,'ROOM_NBR',p.ROOM_NBR,'EXAM_START_TIME',p.EXAM_START_TIME,'STRM',p.STRM,'CATALOG_NBR',p.CATALOG_NBR,'PTP_SEQ_CHAR',p.PTP_SEQ_CHAR,'NAME_FORMAL',p.NAME_FORMAL,'ADM_APPL_NBR',p.ADM_APPL_NBR,'DESCR',p.DESCR,'DESCR2',p.DESCR2,'DESCR3',p.DESCR3,'Status',p.Status,'Attendece_Status',p.Attendece_Status,'isActive',p.isActive,'copyData',( SELECT CAST( CONCAT('[', GROUP_CONCAT( JSON_OBJECT( 'PK_CopyId',q.PK_CopyId,'FK_ReportId',q.FK_ReportId,'EMPLID',q.EMPLID,'copyNumber',q.copyNumber,'alternateCopyNumber1',q.alternateCopyNumber1,'alternateCopyNumber2',q.alternateCopyNumber2,'alternateCopyNumber3',q.alternateCopyNumber3,'alternateCopyNumber4',q.alternateCopyNumber4,'alternateCopyNumber5',q.alternateCopyNumber5,'alternateCopyNumber6',q.alternateCopyNumber6,'isActive',q.isActive) ), ']') AS JSON ) FROM tbl_copy_master q WHERE q.FK_ReportId = p.PK_Report_Id ))) AS ReportMaster from tbl_report_master p where EXAM_DT = '${date}'`,
-
-  },
+      encryptedParams,
     authToken
     );
     if (response) {
-      setTableData(response?.data?.receivedData?.[0]?.ReportMaster || []);
+      const decryptedData = decrypt(response?.data?.receivedData);
+      const DecryptedData = JSON.parse(decryptedData);  
+      setTableData(DecryptedData?.[0]?.ReportMaster || []);
     }
     } catch (error) {
     handleAuthErrors(error);
@@ -181,19 +231,24 @@ const ReportScreen = ({userAccess}) => {
     const handleGetExamReportByCategory = async (date) => {
         try {
         const authToken = await checkAuthToken();
+        const Parameter =  {
+          operation: "custom",
+          tblName: "tbl_report_master",
+          data: "",
+          conditionString:"",
+          checkAvailability: "",
+          customQuery: `SELECT EXAM_DT, CATALOG_NBR, EXAM_START_TIME, DESCR, COUNT(*) AS TotalStudents, SUM(CASE WHEN Status = 'Present' THEN 1 ELSE 0 END) AS PresentStudents, SUM(CASE WHEN Status = 'Absent' THEN 1 ELSE 0 END) AS AbsentStudents, SUM(CASE WHEN Status = 'UFM' THEN 1 ELSE 0 END) AS UFMStudents, SUM(CASE WHEN Attendece_Status = 'Debarred' THEN 1 ELSE 0 END) AS DebarredStudents FROM tbl_report_master WHERE EXAM_DT = '${date}' GROUP BY EXAM_DT, CATALOG_NBR, EXAM_START_TIME, DESCR; `,
+       };
+        const encryptedParams = encrypt(JSON.stringify(Parameter));
+
         const response = await fetch(
-        {
-        operation: "custom",
-        tblName: "tbl_report_master",
-        data: "",
-        conditionString:"",
-        checkAvailability: "",
-        customQuery: `SELECT EXAM_DT, CATALOG_NBR, EXAM_START_TIME, DESCR, COUNT(*) AS TotalStudents, SUM(CASE WHEN Status = 'Present' THEN 1 ELSE 0 END) AS PresentStudents, SUM(CASE WHEN Status = 'Absent' THEN 1 ELSE 0 END) AS AbsentStudents, SUM(CASE WHEN Status = 'UFM' THEN 1 ELSE 0 END) AS UFMStudents, SUM(CASE WHEN Attendece_Status = 'Debarred' THEN 1 ELSE 0 END) AS DebarredStudents FROM tbl_report_master WHERE EXAM_DT = '${date}' GROUP BY EXAM_DT, CATALOG_NBR, EXAM_START_TIME, DESCR; `,
-     },
+          encryptedParams,
         authToken
         );
         if (response) {
-        setTableDataByCatelog(response?.data?.receivedData || []);
+          const decryptedData = decrypt(response?.data?.receivedData);
+          const DecryptedData = JSON.parse(decryptedData);      
+        setTableDataByCatelog(DecryptedData || []);
         }
         } catch (error) {
         handleAuthErrors(error);
@@ -202,19 +257,23 @@ const ReportScreen = ({userAccess}) => {
     const handleGetExamReportByRoom = async (date) => {
         try {
         const authToken = await checkAuthToken();
+        const Parameter =  {
+          operation: "custom",
+          tblName: "tbl_report_master",
+          data: "",
+          conditionString:"",
+          checkAvailability: "",
+          customQuery: `SELECT ROOM_NBR,EXAM_DT, CATALOG_NBR, EXAM_START_TIME, DESCR, COUNT(*) AS TotalStudents, SUM(CASE WHEN Status = 'Present' THEN 1 ELSE 0 END) AS PresentStudents, SUM(CASE WHEN Status = 'Absent' THEN 1 ELSE 0 END) AS AbsentStudents, SUM(CASE WHEN Status = 'UFM' THEN 1 ELSE 0 END) AS UFMStudents, SUM(CASE WHEN Attendece_Status = 'Debarred' THEN 1 ELSE 0 END) AS DebarredStudents FROM tbl_report_master WHERE EXAM_DT = '${date}' GROUP BY EXAM_DT, CATALOG_NBR, EXAM_START_TIME, DESCR,ROOM_NBR`,
+          };
+        const encryptedParams = encrypt(JSON.stringify(Parameter));
+
         const response = await fetch(
-        {
-        operation: "custom",
-        tblName: "tbl_report_master",
-        data: "",
-        conditionString:"",
-        checkAvailability: "",
-        customQuery: `SELECT ROOM_NBR,EXAM_DT, CATALOG_NBR, EXAM_START_TIME, DESCR, COUNT(*) AS TotalStudents, SUM(CASE WHEN Status = 'Present' THEN 1 ELSE 0 END) AS PresentStudents, SUM(CASE WHEN Status = 'Absent' THEN 1 ELSE 0 END) AS AbsentStudents, SUM(CASE WHEN Status = 'UFM' THEN 1 ELSE 0 END) AS UFMStudents, SUM(CASE WHEN Attendece_Status = 'Debarred' THEN 1 ELSE 0 END) AS DebarredStudents FROM tbl_report_master WHERE EXAM_DT = '${date}' GROUP BY EXAM_DT, CATALOG_NBR, EXAM_START_TIME, DESCR,ROOM_NBR`,
-        },
+          encryptedParams,
         authToken
         );
-        if (response) {
-            setTableDataByRoom(response?.data?.receivedData || []);
+        if (response) {const decryptedData = decrypt(response?.data?.receivedData);
+          const DecryptedData = JSON.parse(decryptedData);      
+            setTableDataByRoom(DecryptedData || []);
         }
         } catch (error) {
         handleAuthErrors(error);

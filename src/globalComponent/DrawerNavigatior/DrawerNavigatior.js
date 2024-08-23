@@ -19,6 +19,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import InvigilatorScreen from "../../component/Invigilator/InvigilatorScreen";
 // import ReportScreen from "../../component/Report/ReportScreen";
 import ManagePasswordScreen from "../../component/Password/ManagePasswordScreen";
+import CryptoJS from 'crypto-js';
 
 // Screen components
 const RoleComponent = ({ navigation,userAccess, userData }) => <RoleScreen navigation={navigation} userData={userData} userAccess={userAccess} />;
@@ -37,13 +38,42 @@ const CustomDrawerContent = ({ ...props }) => {
   const [open, setOpen] = useState(false);
 
   const checkAuthToken = useCallback(async () => {
-    const authToken = await AsyncStorage.getItem("authToken");
+    const authToken = atob(await AsyncStorage.getItem(btoa("authToken")));
     if (!authToken) {
       addToast("Authentication token is not available", "error");
       throw new Error("Authentication token is not available");
     }
     return authToken;
   }, [addToast]);
+
+  const decrypt = (encryptedData) => {
+    const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
+    const [iv, encrypted] = encryptedData.split(':');
+    const ivBytes = CryptoJS.enc.Hex.parse(iv);
+    const encryptedBytes = CryptoJS.enc.Hex.parse(encrypted);
+    const decrypted = CryptoJS.AES.decrypt(
+      { ciphertext: encryptedBytes },
+      CryptoJS.enc.Utf8.parse(encryptScreteKey),
+      {
+        iv: ivBytes,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7,
+      }
+    );
+    return decrypted.toString(CryptoJS.enc.Utf8);
+  };
+
+  const encrypt = (text) => {
+    const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
+    const iv = CryptoJS.lib.WordArray.random(16);
+    const encrypted = CryptoJS.AES.encrypt(text, CryptoJS.enc.Utf8.parse(encryptScreteKey), {
+      iv: iv,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7,
+    });
+  
+    return iv.toString() + ':' + encrypted.toString();
+  };
 
   const handleImageChange = (imageSource) => {
     setFile(imageSource);
@@ -52,22 +82,24 @@ const CustomDrawerContent = ({ ...props }) => {
   const handleGetUserData = async () => {
     try {
       const authToken = await checkAuthToken();
+      const Parameter = {
+        operation: "fetch",
+        tblName: "tbl_user_master",
+        data: "",
+        conditionString: `user_id = ${props.userData?.user_id}`,
+        checkAvailability: "",
+        customQuery: "",
+      };
+      const encryptedParams = encrypt(JSON.stringify(Parameter));
       const response = await FetchData(
-        {
-          operation: "fetch",
-          tblName: "tbl_user_master",
-          data: "",
-          conditionString: `user_id = ${props.userData?.user_id}`,
-          checkAvailability: "",
-          customQuery: "",
-        },
+        encryptedParams,
         authToken
       );
 
       if (response) {
-        await AsyncStorage.setItem(
-          "userData",
-          (response?.data?.receivedData?.[0] && JSON?.stringify(response?.data?.receivedData?.[0])) || ""
+        const decryptedData = decrypt(response?.data?.receivedData);
+        const DecryptedData = JSON.parse(decryptedData);
+        await AsyncStorage.setItem( btoa("userData"), btoa(DecryptedData?.[0] && JSON?.stringify(DecryptedData?.[0])) || ""
         );
         setFile("");
         await props.fetchUserRolePermission();
@@ -224,9 +256,9 @@ const DrawerNavigator = ({ navigation }) => {
 
   const fetchUserRolePermission = async () => {
     try {
-      const userRoleArray = await AsyncStorage.getItem("userRolePermission");
+      const userRoleArray = atob(await AsyncStorage.getItem(btoa("userRolePermission")));
       const parsedUserRoleArray = userRoleArray ? JSON.parse(userRoleArray) : [];
-      const userDataArray = await AsyncStorage.getItem("userData");
+      const userDataArray = atob(await AsyncStorage.getItem(btoa("userData")));
       const parsedUserDataArray = userDataArray ? JSON.parse(userDataArray) : [];
       const RoleList = parsedUserRoleArray?.map((item, index) => ({
         label: item?.rolePermission?.[0]?.roleName,

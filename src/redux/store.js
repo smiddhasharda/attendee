@@ -8,7 +8,7 @@ import rootReducer from './reducer';
 // Load initial state from AsyncStorage
 const loadState = async () => {
   try {
-    const serializedState = await AsyncStorage.getItem('reduxState');
+    const serializedState = atob(await AsyncStorage.getItem(btoa('reduxState')));
     return serializedState ? JSON.parse(serializedState) : undefined;
   } catch (err) {
     console.error('Error loading state from AsyncStorage:', err);
@@ -20,7 +20,7 @@ const loadState = async () => {
 const saveState = (state) => {
   try {
     const serializedState = JSON.stringify(state);
-    AsyncStorage.setItem('reduxState', serializedState);
+    AsyncStorage.setItem(btoa('reduxState'), btoa(serializedState));
   } catch (err) {
     console.error('Error saving state to AsyncStorage:', err);
   }
