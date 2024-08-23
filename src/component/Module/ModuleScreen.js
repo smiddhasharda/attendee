@@ -14,6 +14,7 @@ import styles from "./ModuleScreen.style";
 import { Ionicons, Feather } from "@expo/vector-icons";
 import Pagination from "../../globalComponent/Pagination/PaginationComponent";
 import { ScrollView } from "react-native-gesture-handler";
+import CryptoJS from 'crypto-js';
 
 const ModuleScreen = ({ userAccess }) => {
   const userAccessForModule = userAccess?.module?.find(item => item?.FK_ModuleId === 3);
@@ -31,6 +32,35 @@ const ModuleScreen = ({ userAccess }) => {
   const [moduleList, setModuleList] = useState([]);
   const [moduleContainerVisible, setModuleContainerVisible] = useState(false);
   
+  const decrypt = (encryptedData) => {
+    const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
+    const [iv, encrypted] = encryptedData.split(':');
+    const ivBytes = CryptoJS.enc.Hex.parse(iv);
+    const encryptedBytes = CryptoJS.enc.Hex.parse(encrypted);
+    const decrypted = CryptoJS.AES.decrypt(
+      { ciphertext: encryptedBytes },
+      CryptoJS.enc.Utf8.parse(encryptScreteKey),
+      {
+        iv: ivBytes,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7,
+      }
+    );
+    return decrypted.toString(CryptoJS.enc.Utf8);
+  };
+
+  const encrypt = (text) => {
+    const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
+    const iv = CryptoJS.lib.WordArray.random(16);
+    const encrypted = CryptoJS.AES.encrypt(text, CryptoJS.enc.Utf8.parse(encryptScreteKey), {
+      iv: iv,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7,
+    });
+  
+    return iv.toString() + ':' + encrypted.toString();
+  };
+
 const handlePageChange = (page) => {
   setCurrentPage(page);
 };
@@ -45,7 +75,7 @@ const paginatedData = moduleList.slice((currentPage - 1) * pageSize, currentPage
     // console.log(`Table Width: ${tableWidth}, Table Height: ${tableHeight} `,);
     
   const checkAuthToken = useCallback(async () => {
-    const authToken = await AsyncStorage.getItem("authToken");
+    const authToken = atob(await AsyncStorage.getItem(btoa("authToken")));
     if (!authToken) {
       addToast("Authentication token is not available", "error");
       throw new Error("Authentication token is not available");
@@ -56,13 +86,15 @@ const paginatedData = moduleList.slice((currentPage - 1) * pageSize, currentPage
   const handleModuleOperation = useCallback(async (operation, data, successMessage, conditionString = "") => {
     try {
       const authToken = await checkAuthToken();
+      const Parameter = {
+        operation,
+        tblName: "tbl_module_master",
+        data,
+        conditionString,
+      };
+      const encryptedParams = encrypt(JSON.stringify(Parameter));
       const response = await (operation === 'insert' ? insert : update)(
-        {
-          operation,
-          tblName: "tbl_module_master",
-          data,
-          conditionString,
-        },
+        encryptedParams,
         authToken
       );
       if (response) {
@@ -96,15 +128,19 @@ const paginatedData = moduleList.slice((currentPage - 1) * pageSize, currentPage
   const fetchModuleList = useCallback(async () => {
     try {
       const authToken = await checkAuthToken();
-      const response = await fetch({
+      const Parameter =  {
         operation: "fetch",
         tblName: "tbl_module_master",
         data: "",
-        conditionString: "",
-      }, authToken);
+        conditionString: ""
+      };
+      const encryptedParams = encrypt(JSON.stringify(Parameter));
+      const response = await fetch(encryptedParams, authToken);
 
       if (response) {
-        setModuleList(response?.data?.receivedData);
+        const decryptedData = decrypt(response?.data?.receivedData);
+        const DecryptedData = JSON.parse(decryptedData);
+        setModuleList(DecryptedData);
       }
     } catch (error) {
       handleAuthErrors(error);

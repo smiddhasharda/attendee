@@ -9,6 +9,8 @@ import { Ionicons,Feather} from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
 import Pagination from "../../globalComponent/Pagination/PaginationComponent";
 import ShimmerEffect from "../../globalComponent/Refresh/ShimmerEffect";
+import CryptoJS from 'crypto-js';
+
 const RoleScreen = ({userAccess}) => {
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 2 );
   const [refreshing, setRefreshing] = useState(false);
@@ -45,7 +47,7 @@ const RoleScreen = ({userAccess}) => {
     //  console.log(`Table Width1: ${tableWidth1}, Table Height1: ${tableHeight1} `,);
 
   const checkAuthToken = useCallback(async () => {
-    const authToken = await AsyncStorage.getItem("authToken");
+    const authToken = atob(await AsyncStorage.getItem(btoa("authToken")));
 
     if (!authToken) {
       addToast("Authentication token is not available", "error");
@@ -55,6 +57,35 @@ const RoleScreen = ({userAccess}) => {
     return authToken;
   }, [addToast]);
 
+  const decrypt = (encryptedData) => {
+    const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
+    const [iv, encrypted] = encryptedData.split(':');
+    const ivBytes = CryptoJS.enc.Hex.parse(iv);
+    const encryptedBytes = CryptoJS.enc.Hex.parse(encrypted);
+    const decrypted = CryptoJS.AES.decrypt(
+      { ciphertext: encryptedBytes },
+      CryptoJS.enc.Utf8.parse(encryptScreteKey),
+      {
+        iv: ivBytes,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7,
+      }
+    );
+    return decrypted.toString(CryptoJS.enc.Utf8);
+  };
+
+  const encrypt = (text) => {
+    const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
+    const iv = CryptoJS.lib.WordArray.random(16);
+    const encrypted = CryptoJS.AES.encrypt(text, CryptoJS.enc.Utf8.parse(encryptScreteKey), {
+      iv: iv,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7,
+    });
+  
+    return iv.toString() + ':' + encrypted.toString();
+  };
+
   const handleAddRole = async () => {
     try {
       if (roleData.roleName.replace(/\s+/g, '') === "") {
@@ -62,19 +93,21 @@ const RoleScreen = ({userAccess}) => {
       }
       else {
         const authToken = await checkAuthToken();
-        const response = await insert(
-          {
-            operation: "insert",
-            tblName: "tbl_role_master",
-            data: {
-              roleName: roleData.roleName,
-              description: roleData.roleDescription,
-              isActive: roleData.roleStatus,
-            },
-            conditionString: `role_name='${roleData.roleName}'`,
-            checkAvailability: true,
-            customQuery: "",
+        const Parameter =  {
+          operation: "insert",
+          tblName: "tbl_role_master",
+          data: {
+            roleName: roleData.roleName,
+            description: roleData.roleDescription,
+            isActive: roleData.roleStatus,
           },
+          conditionString: `role_name='${roleData.roleName}'`,
+          checkAvailability: true,
+          customQuery: "",
+        };
+        const encryptedParams = encrypt(JSON.stringify(Parameter));
+        const response = await insert(
+          encryptedParams,
           authToken
         );
   
@@ -86,16 +119,19 @@ const RoleScreen = ({userAccess}) => {
                 ...permissions,
               })
             );
+
+            const Parameter1 ={
+              operation: "insert",
+              tblName: "tbl_role_module_permission",
+              data: rolePermissionsWithId,
+              conditionString: `FK_RoleId='${response?.data?.receivedData?.insertId}' AND FK_ModuleId IN (${roleData?.modulePermissions?.map((data) => data.FK_ModuleId)})`,
+              checkAvailability: true,
+              customQuery: "",
+            };
+            const encryptedParams1 = encrypt(JSON.stringify(Parameter1));
   
             await insert(
-              {
-                operation: "insert",
-                tblName: "tbl_role_module_permission",
-                data: rolePermissionsWithId,
-                conditionString: `FK_RoleId='${response?.data?.receivedData?.insertId}' AND FK_ModuleId IN (${roleData?.modulePermissions?.map((data) => data.FK_ModuleId)})`,
-                checkAvailability: true,
-                customQuery: "",
-              },
+              encryptedParams1,
               authToken
             );
   
@@ -123,19 +159,21 @@ const RoleScreen = ({userAccess}) => {
       }
       else {
       const authToken = await checkAuthToken();
-      const response = await update(
-        {
-          operation: "update",
-          tblName: "tbl_role_master",
-          data: {
-            roleName: roleData.roleName,
-            description: roleData.roleDescription,
-            isActive: roleData.roleStatus,
-          },
-          conditionString: `PK_RoleId = ${roleData.roleId}`,
-          checkAvailability: "",
-          customQuery: "",
+      const Parameter = {
+        operation: "update",
+        tblName: "tbl_role_master",
+        data: {
+          roleName: roleData.roleName,
+          description: roleData.roleDescription,
+          isActive: roleData.roleStatus,
         },
+        conditionString: `PK_RoleId = ${roleData.roleId}`,
+        checkAvailability: "",
+        customQuery: "",
+      };
+      const encryptedParams = encrypt(JSON.stringify(Parameter));
+      const response = await update(
+        encryptedParams,
         authToken
       );
 
@@ -151,15 +189,18 @@ const RoleScreen = ({userAccess}) => {
                     ...permissions,
                   }
           );
+          const Parameter1 = {
+            operation: "update",
+            tblName: "tbl_role_module_permission",
+            data: rolePermissionsWithId,
+            conditionString: `PK_role_module_permissionId = ?`,
+            checkAvailability: true,
+            customQuery: "",
+          };
+          const encryptedParams1 = encrypt(JSON.stringify(Parameter1));
+          
           await update(
-            {
-              operation: "update",
-              tblName: "tbl_role_module_permission",
-              data: rolePermissionsWithId,
-              conditionString: `PK_role_module_permissionId = ?`,
-              checkAvailability: true,
-              customQuery: "",
-            },
+            encryptedParams1,
             authToken
           );
 
@@ -177,20 +218,25 @@ const RoleScreen = ({userAccess}) => {
   const handleGetRoleList = async () => {
     try {
       const authToken = await checkAuthToken();
+      const Parameter =   {
+        operation: "custom",
+        tblName: "tbl_role_master",
+        data: "",
+        conditionString: "",
+        checkAvailability: "",
+        customQuery: `SELECT JSON_ARRAYAGG( JSON_OBJECT( 'PK_RoleId', p.PK_RoleId, 'roleName', p.roleName, 'description', p.description, 'isActive', p.isActive, 'modulePermission', ( SELECT JSON_ARRAYAGG( JSON_OBJECT( 'Id', q.PK_role_module_permissionId, 'FK_RoleId', q.FK_RoleId, 'FK_ModuleId', q.FK_ModuleId, 'create', q.create, 'read', q.read, 'update', q.update, 'delete', q.delete, 'special', q.special ) ) FROM tbl_role_module_permission q WHERE q.FK_RoleId = p.PK_RoleId ) ) ) AS RoleMaster FROM tbl_role_master p; `,
+      };
+      const encryptedParams = encrypt(JSON.stringify(Parameter));
+      
       const response = await fetch(
-        {
-          operation: "custom",
-          tblName: "tbl_role_master",
-          data: "",
-          conditionString: "",
-          checkAvailability: "",
-          customQuery: `SELECT JSON_ARRAYAGG( JSON_OBJECT( 'PK_RoleId', p.PK_RoleId, 'roleName', p.roleName, 'description', p.description, 'isActive', p.isActive, 'modulePermission', ( SELECT JSON_ARRAYAGG( JSON_OBJECT( 'Id', q.PK_role_module_permissionId, 'FK_RoleId', q.FK_RoleId, 'FK_ModuleId', q.FK_ModuleId, 'create', q.create, 'read', q.read, 'update', q.update, 'delete', q.delete, 'special', q.special ) ) FROM tbl_role_module_permission q WHERE q.FK_RoleId = p.PK_RoleId ) ) ) AS RoleMaster FROM tbl_role_master p; `,
-        },
+        encryptedParams,
         authToken
       );
 
       if (response) {
-        setRoleList(response?.data?.receivedData?.[0]?.RoleMaster);
+        const decryptedData = decrypt(response?.data?.receivedData);
+        const DecryptedData = JSON.parse(decryptedData);
+        setRoleList(DecryptedData?.[0]?.RoleMaster);
         setRefreshing(false);
       }
     } catch (error) {
@@ -202,15 +248,17 @@ const RoleScreen = ({userAccess}) => {
   const handleRoleStatus = async (roleId, status) => {
     try {
       const authToken = await checkAuthToken();
+      const Parameter = {
+        operation: "update",
+        tblName: "tbl_role_master",
+        data: { isActive: !status },
+        conditionString: `PK_RoleId = ${roleId}`,
+        checkAvailability: "",
+        customQuery: "",
+      };
+      const encryptedParams = encrypt(JSON.stringify(Parameter));
       const response = await update(
-        {
-          operation: "update",
-          tblName: "tbl_role_master",
-          data: { isActive: !status },
-          conditionString: `PK_RoleId = ${roleId}`,
-          checkAvailability: "",
-          customQuery: "",
-        },
+        encryptedParams,
         authToken
       );
 
@@ -239,21 +287,26 @@ const RoleScreen = ({userAccess}) => {
   const handleGetModuleList = async () => {
     try {
       const authToken = await checkAuthToken();
+      const Parameter = {
+        operation: "fetch",
+        tblName: "tbl_module_master",
+        data: "",
+        conditionString: "",
+        checkAvailability: "",
+        customQuery: "",
+      };
+      const encryptedParams = encrypt(JSON.stringify(Parameter));
+      
       const response = await fetch(
-        {
-          operation: "fetch",
-          tblName: "tbl_module_master",
-          data: "",
-          conditionString: "",
-          checkAvailability: "",
-          customQuery: "",
-        },
+        encryptedParams,
         authToken
       );
 
       if (response) {
-        setModuleList(response?.data?.receivedData);
-        let ModulePermissionData = response?.data?.receivedData?.map((item) => ({
+        const decryptedData = decrypt(response?.data?.receivedData);
+        const DecryptedData = JSON.parse(decryptedData);
+        setModuleList(DecryptedData);
+        let ModulePermissionData = DecryptedData?.map((item) => ({
           FK_ModuleId: item?.PK_ModuleId,
           create: 0,
           delete: 0,

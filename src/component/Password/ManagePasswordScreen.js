@@ -12,6 +12,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { fetch, update } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import CryptoJS from 'crypto-js';
 
 const { width, height } = Dimensions.get("window");
 const isMobile = width < 768;
@@ -34,6 +35,35 @@ const ManagePasswordScreen = ({
     isNewPassError: "",
     isConfPassError: "",
   });
+
+  const decrypt = (encryptedData) => {
+    const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
+    const [iv, encrypted] = encryptedData.split(':');
+    const ivBytes = CryptoJS.enc.Hex.parse(iv);
+    const encryptedBytes = CryptoJS.enc.Hex.parse(encrypted);
+    const decrypted = CryptoJS.AES.decrypt(
+      { ciphertext: encryptedBytes },
+      CryptoJS.enc.Utf8.parse(encryptScreteKey),
+      {
+        iv: ivBytes,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7,
+      }
+    );
+    return decrypted.toString(CryptoJS.enc.Utf8);
+  };
+
+  const encrypt = (text) => {
+    const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
+    const iv = CryptoJS.lib.WordArray.random(16);
+    const encrypted = CryptoJS.AES.encrypt(text, CryptoJS.enc.Utf8.parse(encryptScreteKey), {
+      iv: iv,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7,
+    });
+  
+    return iv.toString() + ':' + encrypted.toString();
+  };
 
   const validatePassword = (newPassword) => {
     let NewPassword = newPassword?.replace(/\s+/g, '')?.trim()
@@ -63,7 +93,7 @@ const ManagePasswordScreen = ({
   };
 
   const checkAuthToken = useCallback(async () => {
-    const authToken = await AsyncStorage.getItem("authToken");
+    const authToken = atob(await AsyncStorage.getItem(btoa("authToken")));
 
     if (!authToken) {
       addToast("Authentication token is not available", "error");
@@ -105,27 +135,32 @@ const ManagePasswordScreen = ({
         return;
       } else {
         const authToken = await checkAuthToken();
+        const Parameter =  {
+          operation: "fetch",
+          tblName: "tbl_user_master",
+          data: "",
+          conditionString: `password = '${password.oldPassword}' AND user_id = ${userData.user_id}`,
+          checkAvailability: "",
+          customQuery: "",
+        };
+        const encryptedParams = encrypt(JSON.stringify(Parameter));
+     
         const response = await fetch(
-          {
-            operation: "fetch",
-            tblName: "tbl_user_master",
-            data: "",
-            conditionString: `password = '${password.oldPassword}' AND user_id = ${userData.user_id}`,
-            checkAvailability: "",
-            customQuery: "",
-          },
+          encryptedParams,
           authToken
         );
         if (response?.data?.receivedData?.length > 0) {
+          const Parameter1 = {
+            operation: "update",
+            tblName: "tbl_user_master",
+            data: { password: password.newPassword},
+            conditionString: `user_id = ${userData.user_id}`,
+            checkAvailability: "",
+            customQuery: "",
+          };
+          const encryptedParams1 = encrypt(JSON.stringify(Parameter1));
           await update(
-            {
-              operation: "update",
-              tblName: "tbl_user_master",
-              data: { password: password.newPassword},
-              conditionString: `user_id = ${userData.user_id}`,
-              checkAvailability: "",
-              customQuery: "",
-            },
+            encryptedParams1,
             authToken
           );
 

@@ -57,7 +57,7 @@ const AppContent = () => {
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {
-        const authToken = await AsyncStorage.getItem("authToken");
+        const authToken =  atob(await AsyncStorage.getItem(btoa("authToken")));
         setInitialRoute(authToken ? "PostLogin" : "Home");
       } catch (error) {
         console.error("Error reading authToken from AsyncStorage:", error);
