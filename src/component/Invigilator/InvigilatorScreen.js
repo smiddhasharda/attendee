@@ -5,11 +5,13 @@
  import { insert, update, fetch,view } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Feather,FontAwesome5,FontAwesome ,FontAwesome6} from "@expo/vector-icons";
+import { Feather,FontAwesome5,FontAwesome ,FontAwesome6,Entypo} from "@expo/vector-icons";
 import { parse, format,parseISO,isBefore } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import Pagination from "../../globalComponent/Pagination/PaginationComponent";
 import ShimmerEffect from '../../globalComponent/Refresh/ShimmerEffect';
+import CryptoJS from 'crypto-js';
+
  const InvigilatorScreen = ({userAccess}) => {
   const [refreshing, setRefreshing] = useState(false);
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 8 );
@@ -34,6 +36,9 @@ import ShimmerEffect from '../../globalComponent/Refresh/ShimmerEffect';
   const [roomList, setRoomList] = useState([]);
   const [shiftList, setShiftList] = useState([]);
 
+  const [searchText, setSearchText] = useState('');
+
+
     //---------------------------------------------------- dimension based view--------------------------------------------//
     const { width, height } = Dimensions.get('window');
     const isMobile = width < 768; 
@@ -50,7 +55,7 @@ const pageSize = 25;
 const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const checkAuthToken = useCallback(async () => {
-    const authToken = await AsyncStorage.getItem("authToken");
+    const authToken = atob(await AsyncStorage.getItem(btoa("authToken")));
 
     if (!authToken) {
       addToast("Authentication token is not available", "error");
@@ -60,23 +65,56 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
     return authToken;
   }, [addToast]);
 
+  const decrypt = (encryptedData) => {
+    const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
+    const [iv, encrypted] = encryptedData.split(':');
+    const ivBytes = CryptoJS.enc.Hex.parse(iv);
+    const encryptedBytes = CryptoJS.enc.Hex.parse(encrypted);
+    const decrypted = CryptoJS.AES.decrypt(
+      { ciphertext: encryptedBytes },
+      CryptoJS.enc.Utf8.parse(encryptScreteKey),
+      {
+        iv: ivBytes,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7,
+      }
+    );
+    return decrypted.toString(CryptoJS.enc.Utf8);
+  };
+
+  const encrypt = (text) => {
+    const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
+    const iv = CryptoJS.lib.WordArray.random(16);
+    const encrypted = CryptoJS.AES.encrypt(text, CryptoJS.enc.Utf8.parse(encryptScreteKey), {
+      iv: iv,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7,
+    });
+  
+    return iv.toString() + ':' + encrypted.toString();
+  };
+
   const handleGetInigilatorDuty = async () => {
     try {
       const authToken = await checkAuthToken();
+      const Parameter = {
+        operation: "custom",
+        tblName: "tbl_invigilator_duty",
+        data: "",
+        conditionString: "",
+        checkAvailability: "",
+        customQuery: "SELECT * FROM tbl_invigilator_duty order by PK_InvigilatorDutyId Desc",
+      };
+      const encryptedParams = encrypt(JSON.stringify(Parameter));
       const response = await fetch(
-        {
-          operation: "fetch",
-          tblName: "tbl_invigilator_duty",
-          data: "",
-          conditionString: "",
-          checkAvailability: "",
-          customQuery: "",
-        },
+        encryptedParams,
         authToken
       );
 
       if (response) {
-        setInvigilatorList(response?.data?.receivedData);
+        const decryptedData = decrypt(response?.data?.receivedData);
+        const DecryptedData = JSON.parse(decryptedData);
+        setInvigilatorList(DecryptedData);
         setRefreshing(false);
       }
     } catch (error) {
@@ -105,20 +143,22 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
         return addToast("Please enter shift details","error");
         }
       const authToken = await checkAuthToken();
+      const Parameter = {
+        operation: "insert",
+        tblName: "tbl_invigilator_duty",
+        data: { employeeId: invigilatorData.employeeId,
+        invigilatorName: invigilatorData.invigilatorName,
+        date:parseExcelDate(invigilatorData.date),
+        shift:invigilatorData.shift,
+        room:invigilatorData.room,
+        duty_status:invigilatorData.duty_status,},
+        conditionString: `employeeId = '${invigilatorData.employeeId}' AND date = '${parseExcelDate(invigilatorData.date)}' AND shift = '${invigilatorData.shift}'`,
+        checkAvailability: true,
+        customQuery: "",
+      };
+      const encryptedParams = encrypt(JSON.stringify(Parameter));
       const response = await insert(
-        {
-          operation: "insert",
-          tblName: "tbl_invigilator_duty",
-          data: { employeeId: invigilatorData.employeeId,
-          invigilatorName: invigilatorData.invigilatorName,
-          date:parseExcelDate(invigilatorData.date),
-          shift:invigilatorData.shift,
-          room:invigilatorData.room,
-          duty_status:invigilatorData.duty_status,},
-          conditionString: `employeeId = '${invigilatorData.employeeId}' AND date = '${parseExcelDate(invigilatorData.date)}' AND shift = '${invigilatorData.shift}'`,
-          checkAvailability: true,
-          customQuery: "",
-        },
+        encryptedParams,
         authToken
       );
 
@@ -147,20 +187,22 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
           return addToast("Please enter shift details","error");
           }
       const authToken = await checkAuthToken();
-      const response = await update(
-        {
-          operation: "update",
-          tblName: "tbl_invigilator_duty",
-          data: {
-            date:parseExcelDate(invigilatorData.date),
-            shift:invigilatorData.shift,
-            room:invigilatorData.room,
-            duty_status:invigilatorData.duty_status,
-          },
-          conditionString: `PK_InvigilatorDutyId = ${invigilatorData.PK_InvigilatorDutyId}`,
-          checkAvailability: "",
-          customQuery: "",
+      const Parameter ={
+        operation: "update",
+        tblName: "tbl_invigilator_duty",
+        data: {
+          date:parseExcelDate(invigilatorData.date),
+          shift:invigilatorData.shift,
+          room:invigilatorData.room,
+          duty_status:invigilatorData.duty_status,
         },
+        conditionString: `PK_InvigilatorDutyId = ${invigilatorData.PK_InvigilatorDutyId}`,
+        checkAvailability: "",
+        customQuery: "",
+      };
+      const encryptedParams = encrypt(JSON.stringify(Parameter));
+      const response = await update(
+        encryptedParams,
         authToken
       );
 
@@ -422,6 +464,21 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
       setRefreshing(true);
       handleGetInigilatorDuty(date);
     }, []);
+
+    const clearSearchText = () => {
+      setSearchText('');
+    };
+
+    const handleSearchData = async(searchText) => {
+      setSearchText(searchText);
+      const searchTextLower = searchText.toLowerCase();
+      let FilteredData = invigilatorList?.filter((item) => 
+        item?.invigilatorName.toLowerCase().includes(searchTextLower) ||  item?.employeeId.toLowerCase().includes(searchTextLower)
+      );
+      console.log(FilteredData);
+      // setTempStudentDetails(FilteredData);
+    }
+
   useEffect(() => {
     handleGetInigilatorDuty();
   }, [UserAccess]);
@@ -583,15 +640,48 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
           </View>
         </View>
    ): (
-    <View style={styles.userListWrap}>
+    <View>
+    {/* <View style={styles.topdetails}>
+           <View style={styles.searchWrap}>
+           <TextInput
+            style={styles.searchBox}
+            placeholder="Search By Invigilator Name, System Id ..."
+            onChangeText={handleSearchData}
+            value={searchText}
+            onIconPress={clearSearchText}
+          />
+
+          {searchText.length > 0 && (
+            <Pressable onPress={clearSearchText} style={styles.crossIcon} >
+              <Entypo name="circle-with-cross" size={20} alignItems="center" />
+            </Pressable>
+          )}
+          
+          </View>
+          </View> */}
+          <View style={styles.userListWrap}>
     <View style={{flexDirection:"row", justifyContent:"space-between",alignItems:"center"}}>
       <Text style={styles.header}>Invigilator Duties:</Text>      
       <View style={styles.addWrap}>
         {UserAccess?.create === 1 &&    
-          ( <Text >
-          
+          ( <Text >         
            <View style={{flexDirection:"row",justifyContent:"space-between",}} >
-        
+           {/* <View style={styles.searchWrap}>
+           <TextInput
+            style={styles.searchBox}
+            placeholder="Search By Invigilator Name, System Id ..."
+            onChangeText={handleSearchData}
+            value={searchText}
+            onIconPress={clearSearchText}
+          />
+
+          {searchText.length > 0 && (
+            <Pressable onPress={clearSearchText} style={styles.crossIcon} >
+              <Entypo name="circle-with-cross" size={20} alignItems="center" />
+            </Pressable>
+          )}
+          
+          </View> */}
           <Pressable  style={{marginRight:20}}  onPress={() => handleDownload()}>
           <Text><FontAwesome5 title="Download Sample Data" name="download" size={20} color="purple" /></Text>
         </Pressable>
@@ -629,10 +719,10 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
                     <Text style={[styles.tableHeaderText,{width:80} ]}>Actions </Text>
                     
                   </View>
-          )} renderItem={({ item }) => (  
+          )} renderItem={({ item,index }) => (  
             refreshing ? <ShimmerEffect/> :
            ( <View style={styles.listItem}>
-              <Text style={[styles.listItemText, {width:20}]}>{item.PK_InvigilatorDutyId}</Text>
+              <Text style={[styles.listItemText, {width:20}]}>{index + 1}</Text>
               <Text style={[styles.listItemText, {width:120, textAlign:"center"}]}>{item.employeeId}</Text>
               <Text style={[styles.listItemText, {width:180, textAlign:"center"}]}>{item.invigilatorName}</Text>
               <Text style={[styles.listItemText, {width:120, textAlign:"center"}]}>{item.room}</Text>
@@ -646,10 +736,10 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
                     {item.updated_at ? new Date(item.updated_at.split('T')[0]).toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }) : 'N/A'}
                     </Text>
                     <Text style={[styles.listItemText, {width:120, display: "inline-block" , textAlign:"center"}]} numberOfLines={1}>
-                      {item.created_by ? created_by:'N/A'}
+                      {item.created_by ? item.created_by:'N/A'}
                     </Text>
                     <Text style={[styles.listItemText, {width:120, display: "inline-block",textAlign:"center" }]} numberOfLines={1}>
-                      {item.updated_by ? updated_by:'N/A'}
+                      {item.updated_by ? item.updated_by:'N/A'}
                     </Text> 
               {UserAccess?.update === 1  ? <Pressable style={[{width:80}, {alignItems:"center"}]} onPress={() => handleEditInvigilator(item)}>
               <Text style={styles.listItemEditText}><Feather name="edit" size={16} color="green" /></Text>
@@ -670,6 +760,8 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
                     onPageChange={handlePageChange}
               />
     </View>
+          </View>
+    
    ))
     }
   
@@ -886,6 +978,25 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
     position: "absolute",
     top: 27,
     right: 15
-  }
+  },
+  searchBox: {
+    height: 40,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    padding:10,
+    marginBottom: 8,
+    marginTop: 10
+  },
+  searchWrap:{
+    padding: 10,
+    width:"100%",
+    position: "relative"
+    // width:'auto',
+  },
+  topdetails:{
+    flexDirection:"row",
+    justifyContent:"space-between",
+   },
 });
   

@@ -197,8 +197,8 @@ const pickFile = async () => {
 
   const checkAuthToken = useCallback(async () => {
     try {
-    const authToken = await AsyncStorage.getItem("authToken");
-    if (!authToken) {
+      const authToken = atob(await AsyncStorage.getItem(btoa("authToken")));
+      if (!authToken) {
       addToast("Authentication token is not available", "error");
     }
     return authToken;

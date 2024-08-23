@@ -5,6 +5,7 @@ import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { parse, format,parseISO } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
+import CryptoJS from 'crypto-js';
 
 const { width, height } = Dimensions.get('window');
 
@@ -20,13 +21,42 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
   const { addToast } = useToast();
 
   const checkAuthToken = useCallback(async () => {
-    const authToken = await AsyncStorage.getItem("authToken");
+    const authToken = atob(await AsyncStorage.getItem(btoa("authToken")));
     if (!authToken) {
       addToast("Authentication token is not available", "error");
       throw new Error("Authentication token is not available");
     }
     return authToken;
   }, [addToast]);
+
+  const decrypt = (encryptedData) => {
+    const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
+    const [iv, encrypted] = encryptedData.split(':');
+    const ivBytes = CryptoJS.enc.Hex.parse(iv);
+    const encryptedBytes = CryptoJS.enc.Hex.parse(encrypted);
+    const decrypted = CryptoJS.AES.decrypt(
+      { ciphertext: encryptedBytes },
+      CryptoJS.enc.Utf8.parse(encryptScreteKey),
+      {
+        iv: ivBytes,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7,
+      }
+    );
+    return decrypted.toString(CryptoJS.enc.Utf8);
+  };
+
+  const encrypt = (text) => {
+    const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
+    const iv = CryptoJS.lib.WordArray.random(16);
+    const encrypted = CryptoJS.AES.encrypt(text, CryptoJS.enc.Utf8.parse(encryptScreteKey), {
+      iv: iv,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7,
+    });
+  
+    return iv.toString() + ':' + encrypted.toString();
+  };
 
   const handleGetDateView = async () => {
     let CurrentDate = new Date().toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-');
@@ -39,8 +69,8 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
           data: '',
           conditionString: '',
           checkAvailability: '',
-          customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW WHERE EXAM_DT >= '${CurrentDate}' ORDER BY EXAM_DT ASC`,
-          // customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW  ORDER BY EXAM_DT ASC`,
+          // customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW WHERE EXAM_DT >= '${CurrentDate}' ORDER BY EXAM_DT ASC`,
+          customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW  ORDER BY EXAM_DT ASC`,
           viewType:'Campus_View'
         },
         authToken
@@ -63,25 +93,29 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
     let CurrentDate = new Date().toLocaleDateString('en-GB', { year: '2-digit', month: '2-digit', day: '2-digit' }).split('/').reverse().join('-');
     try {
       const authToken = await checkAuthToken();
+      const Parameter =  {
+        operation: "custom",
+        tblName: "tbl_invigilator_duty",
+        data: '',
+        conditionString: '',
+        checkAvailability: '',
+        customQuery: `SELECT DISTINCT date, room, shift FROM tbl_invigilator_duty WHERE employeeId = '${userData?.username}' AND date >= '${CurrentDate}' ORDER BY date ASC`,
+      };
+      const encryptedParams = encrypt(JSON.stringify(Parameter));
       const response = await fetch(
-        {
-          operation: "custom",
-          tblName: "tbl_invigilator_duty",
-          data: '',
-          conditionString: '',
-          checkAvailability: '',
-          customQuery: `SELECT DISTINCT date, room, shift FROM tbl_invigilator_duty WHERE employeeId = '${userData?.username}' AND date >= '${CurrentDate}' ORDER BY date ASC`,
-        },
+        encryptedParams,
         authToken
       );
   
       if (response) {
-        setInvigilatorData(response?.data?.receivedData);
-        const ExamDateArray = response?.data?.receivedData.filter((item, index, self) => index === self.findIndex((t) => t.date === item.date)).map((item) => ({ EXAM_DT: item.date }));
+        const decryptedData = decrypt(response?.data?.receivedData);
+        const DecryptedData = JSON.parse(decryptedData);
+        setInvigilatorData(DecryptedData);
+        const ExamDateArray = DecryptedData.filter((item, index, self) => index === self.findIndex((t) => t.date === item.date)).map((item) => ({ EXAM_DT: item.date }));
         setExamDates(ExamDateArray);
-        setExamSelectedDate(response?.data?.receivedData?.[0]?.date);
-        const RoomArray = response?.data?.receivedData.filter((item) => item.date === response?.data?.receivedData?.[0]?.date).map((item) => ({ room: item.room, shift: item.shift }));
-        handleGetRoomView(response?.data?.receivedData?.[0]?.date, RoomArray);
+        setExamSelectedDate(DecryptedData?.[0]?.date);
+        const RoomArray = DecryptedData.filter((item) => item.date === response?.data?.receivedData?.[0]?.date).map((item) => ({ room: item.room, shift: item.shift }));
+        handleGetRoomView(DecryptedData?.[0]?.date, RoomArray);
       }
     } catch (error) {
       setRefreshing(false);

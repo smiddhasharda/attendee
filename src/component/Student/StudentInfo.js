@@ -1,21 +1,24 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, Text, StyleSheet, ScrollView, TextInput, Pressable, ActivityIndicator, Image,Dimensions,RefreshControl } from "react-native";
+import { View, Text, StyleSheet, ScrollView, TextInput, Pressable, ActivityIndicator, Image,Dimensions,RefreshControl,TouchableOpacity  } from "react-native";
 import { Ionicons, FontAwesome, AntDesign, MaterialCommunityIcons, MaterialIcons, Entypo, FontAwesome6, } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import CodeScanner from "../../globalComponent/CodeScanner/CodeScanner";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { insert, fetch, update, remove, view, } from "../../AuthService/AuthService";
+import { insert, fetch, update, remove, view, photoView, } from "../../AuthService/AuthService";
 import DropDownPicker from "react-native-dropdown-picker";
 import CheckBox from "expo-checkbox";
 import { parseISO, format, differenceInSeconds, addMinutes, subMinutes, isSameDay,isBefore } from 'date-fns';
 import { toZonedTime, fromZonedTime } from 'date-fns-tz';
-
+import CryptoJS from 'crypto-js';
+import PopUpModal from "../Modals/PopUpModal";
 const { width, height } = Dimensions.get('window');
 const isMobile = width < 768; 
 
 const StudentInfo = ({ navigation }) => {
 
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
   const route = useRoute();
   const { addToast } = useToast();
   const [studentDetails, setStudentDetails] = useState({});
@@ -46,7 +49,7 @@ const StudentInfo = ({ navigation }) => {
     { label: 'UFM', value: 'UFM' },
   ];
   const checkAuthToken = useCallback(async () => {
-    const authToken = await AsyncStorage.getItem("authToken");
+    const authToken = atob(await AsyncStorage.getItem(btoa("authToken")));
 
     if (!authToken) {
       addToast("Authentication token not available", "error");
@@ -55,6 +58,35 @@ const StudentInfo = ({ navigation }) => {
 
     return authToken;
   }, [addToast]);
+
+  const decrypt = (encryptedData) => {
+    const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
+    const [iv, encrypted] = encryptedData.split(':');
+    const ivBytes = CryptoJS.enc.Hex.parse(iv);
+    const encryptedBytes = CryptoJS.enc.Hex.parse(encrypted);
+    const decrypted = CryptoJS.AES.decrypt(
+      { ciphertext: encryptedBytes },
+      CryptoJS.enc.Utf8.parse(encryptScreteKey),
+      {
+        iv: ivBytes,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7,
+      }
+    );
+    return decrypted.toString(CryptoJS.enc.Utf8);
+  };
+
+  const encrypt = (text) => {
+    const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
+    const iv = CryptoJS.lib.WordArray.random(16);
+    const encrypted = CryptoJS.AES.encrypt(text, CryptoJS.enc.Utf8.parse(encryptScreteKey), {
+      iv: iv,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7,
+    });
+  
+    return iv.toString() + ':' + encrypted.toString();
+  };
 
   const handleMainCopyChange = (copyNumber, index) => {
     const updatedCopies = [...copiesData];
@@ -200,47 +232,54 @@ const StudentInfo = ({ navigation }) => {
   
         const authToken = await checkAuthToken();
         let CopyArray = copiesData?.length > 0 ? copiesData?.map((item) => `'${item?.mainCopy}'`) : `""`;
+        const Parameter = {
+          operation: "custom",
+          tblName: "tbl_copy_master",
+          data: '',
+          conditionString: "",
+          checkAvailability: "",
+          customQuery: `Select * from tbl_copy_master Where copyNumber in (${CopyArray})`,
+        };
+        const encryptedParams = encrypt(JSON.stringify(Parameter));  
         const CopyExistResponse = await fetch(
-          {
-            operation: "custom",
-            tblName: "tbl_copy_master",
-            data: '',
-            conditionString: "",
-            checkAvailability: "",
-            customQuery: `Select * from tbl_copy_master Where copyNumber in (${CopyArray})`,
-          },
+          encryptedParams,
           authToken
         );
         if (CopyExistResponse.data.receivedData?.length > 0) {
+          const decryptedData = decrypt(CopyExistResponse?.data?.receivedData);
+          const DecryptedData = JSON.parse(decryptedData);
+          
           // ${CopyExistResponse.data.receivedData?.map((item) => item.copyNumber)}
-          addToast(`Copy Number Already Linked With Previous Student : ${CopyExistResponse.data.receivedData?.map((item) => item.copyNumber)} `, "error",false);
+          addToast(`Copy Number Already Linked With Previous Student : ${DecryptedData?.map((item) => item.copyNumber)} `, "error",false);
         } else {
-          const response = await insert(
-            {
-              operation: "insert",
-              tblName: "tbl_report_master",
-              data: {
-                EMPLID: studentDetails.EMPLID,
-                NAME_FORMAL: studentDetails.NAME_FORMAL,
-                STRM: studentDetails.STRM,
-                ADM_APPL_NBR: studentDetails.CAMPUS_ID,
-                DESCR: studentDetails.DESCR,
-                DESCR2: studentDetails.DESCR2,
-                DESCR3: studentDetails.DESCR3,
-                EXAM_DT: exam_Dt,
-                ROOM_NBR: room_Nbr,
-                EXAM_START_TIME: startTime,
-                CATALOG_NBR: catlog_Nbr,
-                PTP_SEQ_CHAR: seat_Nbr,
-                Attendece_Status: attendenceStatus,
-                Status: status,
-                SU_PAPER_ID: courseDetails.SU_PAPER_ID,
-                DESCR100: courseDetails.DESCR100,
-              },
-              conditionString: `EMPLID = '${studentDetails.EMPLID}' AND EXAM_DT = '${exam_Dt}' AND ROOM_NBR = '${room_Nbr}' AND EXAM_START_TIME = '${startTime}'`,
-              checkAvailability: true,
-              customQuery: "",
+          const Parameter ={
+            operation: "insert",
+            tblName: "tbl_report_master",
+            data: {
+              EMPLID: studentDetails.EMPLID,
+              NAME_FORMAL: studentDetails.NAME_FORMAL,
+              STRM: studentDetails.STRM,
+              ADM_APPL_NBR: studentDetails.CAMPUS_ID,
+              DESCR: studentDetails.DESCR,
+              DESCR2: studentDetails.DESCR2,
+              DESCR3: studentDetails.DESCR3,
+              EXAM_DT: exam_Dt,
+              ROOM_NBR: room_Nbr,
+              EXAM_START_TIME: startTime,
+              CATALOG_NBR: catlog_Nbr,
+              PTP_SEQ_CHAR: seat_Nbr,
+              Attendece_Status: attendenceStatus,
+              Status: status,
+              SU_PAPER_ID: courseDetails.SU_PAPER_ID,
+              DESCR100: courseDetails.DESCR100,
             },
+            conditionString: `EMPLID = '${studentDetails.EMPLID}' AND EXAM_DT = '${exam_Dt}' AND ROOM_NBR = '${room_Nbr}' AND EXAM_START_TIME = '${startTime}'`,
+            checkAvailability: true,
+            customQuery: "",
+          };
+          const encryptedParams = encrypt(JSON.stringify(Parameter));
+          const response = await insert(
+            encryptedParams,
             authToken
           );
   
@@ -257,15 +296,17 @@ const StudentInfo = ({ navigation }) => {
               return newItem;
             });
   
+            const Parameter1 = {
+              operation: "insert",
+              tblName: "tbl_copy_master",
+              data: studentCopyWithId,
+              conditionString: "",
+              checkAvailability: "",
+              customQuery: "",
+            };
+            const encryptedParams1 = encrypt(JSON.stringify(Parameter1));
             const NewResponse = await insert(
-              {
-                operation: "insert",
-                tblName: "tbl_copy_master",
-                data: studentCopyWithId,
-                conditionString: "",
-                checkAvailability: "",
-                customQuery: "",
-              },
+              encryptedParams1,
               authToken
             );
   
@@ -285,22 +326,26 @@ const StudentInfo = ({ navigation }) => {
   const handleGetCopyData = async () => {
     try {
       const authToken = await checkAuthToken();
+      const Parameter = {
+        operation: "custom",
+        tblName: "tbl_report_master",
+        data: "",
+        conditionString: "",
+        checkAvailability: "",
+        customQuery: `select JSON_ARRAYAGG(json_object('PK_Report_Id',p.PK_Report_Id,'Status',p.Status,'copyData',( SELECT CAST( CONCAT('[', GROUP_CONCAT( JSON_OBJECT( 'PK_CopyId',q.PK_CopyId,'FK_ReportId', q.FK_ReportId,'EMPLID', q.EMPLID,'copyNumber',q.copyNumber,'alternateCopyNumber1',q.alternateCopyNumber1,'alternateCopyNumber2',q.alternateCopyNumber2,'alternateCopyNumber3',q.alternateCopyNumber3,'alternateCopyNumber4',q.alternateCopyNumber4,'alternateCopyNumber5',q.alternateCopyNumber5,'alternateCopyNumber6',q.alternateCopyNumber6) ), ']') AS JSON ) FROM tbl_copy_master q WHERE q.FK_ReportId = p.PK_Report_Id ))) AS ReportData from tbl_report_master p where PK_Report_Id = ${reportId}`,
+      };
+      const encryptedParams = encrypt(JSON.stringify(Parameter));  
       const response = await fetch(
-        {
-          operation: "custom",
-          tblName: "tbl_report_master",
-          data: "",
-          conditionString: "",
-          checkAvailability: "",
-          customQuery: `select JSON_ARRAYAGG(json_object('PK_Report_Id',p.PK_Report_Id,'Status',p.Status,'copyData',( SELECT CAST( CONCAT('[', GROUP_CONCAT( JSON_OBJECT( 'PK_CopyId',q.PK_CopyId,'FK_ReportId', q.FK_ReportId,'EMPLID', q.EMPLID,'copyNumber',q.copyNumber,'alternateCopyNumber1',q.alternateCopyNumber1,'alternateCopyNumber2',q.alternateCopyNumber2,'alternateCopyNumber3',q.alternateCopyNumber3,'alternateCopyNumber4',q.alternateCopyNumber4,'alternateCopyNumber5',q.alternateCopyNumber5,'alternateCopyNumber6',q.alternateCopyNumber6) ), ']') AS JSON ) FROM tbl_copy_master q WHERE q.FK_ReportId = p.PK_Report_Id ))) AS ReportData from tbl_report_master p where PK_Report_Id = ${reportId}`,
-        },
+        encryptedParams,
         authToken
       );
 
       if (response) {
-        setStatus(response?.data?.receivedData?.[0]?.ReportData?.[0]?.Status);
+        const decryptedData = decrypt(response?.data?.receivedData);
+        const DecryptedData = JSON.parse(decryptedData);
+        setStatus(DecryptedData?.[0]?.ReportData?.[0]?.Status);
         let CopyFetchDetails =
-          response?.data?.receivedData?.[0]?.ReportData?.[0]?.copyData?.map((item, index) => ({
+        DecryptedData?.[0]?.ReportData?.[0]?.copyData?.map((item, index) => ({
             id: index,
             mainCopy: item.copyNumber,
             alternateCopies: [
@@ -313,7 +358,7 @@ const StudentInfo = ({ navigation }) => {
             ].filter(Boolean),
           }));
         setCopiesData(CopyFetchDetails || []);
-        let TempcopyList = response?.data?.receivedData?.[0]?.ReportData?.[0]?.copyData?.map(
+        let TempcopyList = DecryptedData?.[0]?.ReportData?.[0]?.copyData?.map(
           (item) => item.PK_CopyId
         );
         setCopyList(TempcopyList);
@@ -503,62 +548,70 @@ const StudentInfo = ({ navigation }) => {
   
         const authToken = await checkAuthToken();
         let copyArray = copiesData?.length > 0 ? copiesData.map(item => `'${item?.mainCopy}'`).join(",") : `""`;
+        const Parameter = {
+          operation: "custom",
+          tblName: "tbl_copy_master",
+          data: '',
+          conditionString: "",
+          checkAvailability: "",
+          customQuery: `SELECT * FROM tbl_copy_master WHERE PK_CopyId NOT IN (${copyList?.length > 0 ? copyList : `""`}) AND copyNumber IN (${copyArray})`,
+        };
+        const encryptedParams = encrypt(JSON.stringify(Parameter));
         const copyExistResponse = await fetch(
-          {
-            operation: "custom",
-            tblName: "tbl_copy_master",
-            data: '',
-            conditionString: "",
-            checkAvailability: "",
-            customQuery: `SELECT * FROM tbl_copy_master WHERE PK_CopyId NOT IN (${copyList?.length > 0 ? copyList : `""`}) AND copyNumber IN (${copyArray})`,
-          },
+          encryptedParams,
           authToken
         );
   
         if (copyExistResponse.data.receivedData?.length > 0) {
+          const decryptedData = decrypt(copyExistResponse?.data?.receivedData);
+        const DecryptedData = JSON.parse(decryptedData);
           // ${copyExistResponse.data.receivedData.map(item => item.copyNumber).join(", ")}
-          addToast(`Copy Number Already Linked With Previous Student : ${copyExistResponse.data.receivedData?.map((item) => item.copyNumber)} `, "error",false);
+          addToast(`Copy Number Already Linked With Previous Student : ${DecryptedData?.map((item) => item.copyNumber)} `, "error",false);
         } else {
-          const response = await update(
-            {
-              operation: "update",
-              tblName: "tbl_report_master",
-              data: {
-                EMPLID: studentDetails.EMPLID,
-                NAME_FORMAL: studentDetails.NAME_FORMAL,
-                STRM: studentDetails.STRM,
-                ADM_APPL_NBR: studentDetails.CAMPUS_ID,
-                DESCR: studentDetails.DESCR,
-                DESCR2: studentDetails.DESCR2,
-                DESCR3: studentDetails.DESCR3,
-                EXAM_DT: exam_Dt,
-                ROOM_NBR: room_Nbr,
-                EXAM_START_TIME: startTime,
-                CATALOG_NBR: catlog_Nbr,
-                PTP_SEQ_CHAR: seat_Nbr,
-                Attendece_Status: attendenceStatus,
-                Status: status,
-                SU_PAPER_ID: courseDetails.SU_PAPER_ID,
-                DESCR100: courseDetails.DESCR100,
-              },
-              conditionString: `PK_Report_Id = ${reportId}`,
-              checkAvailability: "",
-              customQuery: "",
+          const Parameter1 = {
+            operation: "update",
+            tblName: "tbl_report_master",
+            data: {
+              EMPLID: studentDetails.EMPLID,
+              NAME_FORMAL: studentDetails.NAME_FORMAL,
+              STRM: studentDetails.STRM,
+              ADM_APPL_NBR: studentDetails.CAMPUS_ID,
+              DESCR: studentDetails.DESCR,
+              DESCR2: studentDetails.DESCR2,
+              DESCR3: studentDetails.DESCR3,
+              EXAM_DT: exam_Dt,
+              ROOM_NBR: room_Nbr,
+              EXAM_START_TIME: startTime,
+              CATALOG_NBR: catlog_Nbr,
+              PTP_SEQ_CHAR: seat_Nbr,
+              Attendece_Status: attendenceStatus,
+              Status: status,
+              SU_PAPER_ID: courseDetails.SU_PAPER_ID,
+              DESCR100: courseDetails.DESCR100,
             },
+            conditionString: `PK_Report_Id = ${reportId}`,
+            checkAvailability: "",
+            customQuery: "",
+          };
+          const encryptedParams1 = encrypt(JSON.stringify(Parameter1));
+          const response = await update(
+            encryptedParams1,
             authToken
           );
   
           if (response && (copiesData?.length > 0 || copyList?.length > 0)) {
             if (copyList?.length > 0) {
+              const Parameter2 = {
+                operation: "delete",
+                tblName: "tbl_copy_master",
+                data: "",
+                conditionString: `PK_CopyId IN (${copyList})`,
+                checkAvailability: "",
+                customQuery: "",
+              };
+              const encryptedParams2 = encrypt(JSON.stringify(Parameter2));
               const deleteResponse = await remove(
-                {
-                  operation: "delete",
-                  tblName: "tbl_copy_master",
-                  data: "",
-                  conditionString: `PK_CopyId IN (${copyList})`,
-                  checkAvailability: "",
-                  customQuery: "",
-                },
+                encryptedParams2,
                 authToken
               );
   
@@ -574,16 +627,18 @@ const StudentInfo = ({ navigation }) => {
                   });
                   return newItem;
                 });
-  
+                const Parameter3 = {
+                  operation: "insert",
+                  tblName: "tbl_copy_master",
+                  data: studentCopyWithId,
+                  conditionString: "",
+                  checkAvailability: "",
+                  customQuery: "",
+                };
+                const encryptedParams3 = encrypt(JSON.stringify(Parameter3));
+
                 const newResponse = await insert(
-                  {
-                    operation: "insert",
-                    tblName: "tbl_copy_master",
-                    data: studentCopyWithId,
-                    conditionString: "",
-                    checkAvailability: "",
-                    customQuery: "",
-                  },
+                  encryptedParams3,
                   authToken
                 );
   
@@ -607,16 +662,17 @@ const StudentInfo = ({ navigation }) => {
                 });
                 return newItem;
               });
-  
+              const Parameter4 = {
+                operation: "insert",
+                tblName: "tbl_copy_master",
+                data: studentCopyWithId,
+                conditionString: "",
+                checkAvailability: "",
+                customQuery: "",
+              };
+              const encryptedParams4 = encrypt(JSON.stringify(Parameter4));
               const newResponse = await insert(
-                {
-                  operation: "insert",
-                  tblName: "tbl_copy_master",
-                  data: studentCopyWithId,
-                  conditionString: "",
-                  checkAvailability: "",
-                  customQuery: "",
-                },
+                encryptedParams4,
                 authToken
               );
   
@@ -677,25 +733,45 @@ const StudentInfo = ({ navigation }) => {
       handleAuthErrors(error);
     }
   };
+  // const handleGetStudentPicture = async () => {
+  //   try {
+  //     const authToken = await checkAuthToken();
+  //     const response = await view(
+  //       {
+  //         operation: "blobFromOracle",
+  //         tblName: "PS_S_PRD_PHOTO_VW",
+  //         data: '',
+  //         conditionString: `EMPLID = '${system_Id}'`,
+  //         checkAvailability: '',
+  //         customQuery: `SELECT EMPLOYEE_PHOTO,DERIVED_STUPHOTO,EMPLID FROM PS_S_PRD_PHOTO_VW Where EMPLID = '${system_Id}' `,
+  //         // customQuery: `SELECT EMPLOYEE_PHOTO,DERIVED_STUPHOTO,EMPLID FROM PS_S_PRD_PHOTO_VW Where EMPLID = 2023000230 `,
+  //         viewType: 'CAMPUS2_View'
+  //       },
+  //       authToken
+  //     );
+  //     if (response) {
+  //       setStudentPicture(response?.data?.receivedData?.[0]?.EMPLOYEE_PHOTO || '');
+  //       setStudentSign(response?.data?.receivedData?.[0]?.DERIVED_STUPHOTO || '');
+  //       setLoading(false);
+  //     }
+  //   } catch (error) {
+  //     setLoading(false);
+  //     handleAuthErrors(error);
+  //   }
+  // };
+
   const handleGetStudentPicture = async () => {
     try {
       const authToken = await checkAuthToken();
-      const response = await view(
+      const response = await photoView(
         {
-          operation: "blobFromOracle",
-          tblName: "PS_S_PRD_PHOTO_VW",
-          data: '',
-          conditionString: `EMPLID = '${system_Id}'`,
-          checkAvailability: '',
-          customQuery: `SELECT EMPLOYEE_PHOTO,DERIVED_STUPHOTO,EMPLID FROM PS_S_PRD_PHOTO_VW Where EMPLID = '${system_Id}' `,
-          // customQuery: `SELECT EMPLOYEE_PHOTO,DERIVED_STUPHOTO,EMPLID FROM PS_S_PRD_PHOTO_VW Where EMPLID = 2023000230 `,
-          viewType: 'CAMPUS2_View'
+          data: system_Id
         },
         authToken
       );
       if (response) {
-        setStudentPicture(response?.data?.receivedData?.[0]?.EMPLOYEE_PHOTO || '');
-        setStudentSign(response?.data?.receivedData?.[0]?.DERIVED_STUPHOTO || '');
+        setStudentPicture(response?.data?.receivedData?.[0]?.STUDENT_PHOTO || '');
+        setStudentSign(response?.data?.receivedData?.[0]?.STUDENT_SIGN || '');
         setLoading(false);
       }
     } catch (error) {
@@ -975,14 +1051,13 @@ const StudentInfo = ({ navigation }) => {
             <View style={[styles.infoContainer,{flexDirection:"row"}]}>
               <View style={[styles.userDetailWrap,{marginRight:0}]}>
                 {studentPicture ? (
-              <Image
+                  <Pressable onPress={()=> setModalVisible(true)}>
+                  <Image
             source={{ uri: `data:image/png;base64,${studentPicture}` }}
-            style={styles.studProfile}
-
-
-
-            
+            style={styles.studProfile}            
           />
+                  </Pressable>
+             
           ) : (
                 <FontAwesome name="user" size={40} color="#fff" style={styles.studProfile} />        
               )} 
@@ -1044,6 +1119,20 @@ const StudentInfo = ({ navigation }) => {
               )} 
                     </View> */}
               </View>
+              <PopUpModal
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+        animationType="slide">
+        <View style={styles.modalContainer}>
+          {/* <TouchableOpacity style={styles.modalCloseButton} onPress={() => setModalVisible(false)}>
+            <Text style={styles.modalCloseText}>Close</Text>
+          </TouchableOpacity> */}
+          <View style={styles.modalView}>
+          <Image    source={{ uri: `data:image/png;base64,${studentPicture}` }} style={{position:"static" , width:250, height:420}}/>
+          
+          </View>
+        </View>
+      </PopUpModal>
             </View>
           </View>
           <View style={styles.studentInfoWrap}>
@@ -2008,8 +2097,10 @@ userDetailWrap: {
   display: "flex",
   // justifyContent: 'center'
 },
+ 
 infopWrap:{
   flexDirection:"row",
 },
+
 
 });

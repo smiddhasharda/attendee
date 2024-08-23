@@ -1,35 +1,34 @@
 import React, {useState} from 'react';
-import {Alert, Modal, StyleSheet, Text, Pressable, View} from 'react-native';
-
+import {Alert, Modal, StyleSheet, Text, Pressable, View,Dimensions} from 'react-native';
+import Entypo from '@expo/vector-icons/Entypo';
 const PopUpModal = ( { visible, onRequestClose, animationType, children }) => {
-  const [modalVisible, setModalVisible] = useState(false);
+  // const [modalVisible, setModalVisible] = useState(false);
+  const { width, height } = Dimensions.get('window');
+  const isMobile = width < 768; 
   return (
     <View style={styles.centeredView}>
       <Modal
-        animationType="slide"
+        animationType={animationType}
         transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
-          setModalVisible(!modalVisible);
-        }}>
+        visible={visible}
+        onRequestClose={onRequestClose}>
         <View style={styles.centeredView}>
-          <View style={styles.modalView}>
+          <View style={[styles.modalView,{width:isMobile?"90%":''}]}>
           {children}
             {/* <Text style={styles.modalText}>Hello World!</Text> */}
             <Pressable
               style={[styles.button, styles.buttonClose]}
-              onPress={() => setModalVisible(!modalVisible)}>
-              <Text style={styles.textStyle}>Hide Modal</Text>
+              onPress={onRequestClose}>
+              <Entypo name="squared-cross" size={24} color="red" />
             </Pressable>
           </View>
         </View>
       </Modal>
-      <Pressable
+      {/* <Pressable
         style={[styles.button, styles.buttonOpen]}
         onPress={() => setModalVisible(true)}>
         <Text style={styles.textStyle}>Show Modal</Text>
-      </Pressable>
+      </Pressable> */}
     </View>
   );
 };
@@ -55,6 +54,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
+ 
   },
   button: {
     borderRadius: 20,
@@ -65,7 +65,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#F194FF',
   },
   buttonClose: {
-    backgroundColor: '#2196F3',
+    // backgroundColor: '#2196F3',
+    position:"absolute",
+    padding:0,
+    top:0,
+    right:0,
   },
   textStyle: {
     color: 'white',

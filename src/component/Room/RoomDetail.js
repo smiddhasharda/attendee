@@ -8,7 +8,7 @@ import { fetch, view } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import { parse, format,parseISO } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
-
+import CryptoJS from 'crypto-js';
 
 function RoomDetail({navigation}) {
   const [isScanning, setIsScanning] = useState(false);
@@ -23,7 +23,7 @@ function RoomDetail({navigation}) {
   const UserAccess = userAccess?.module?.find((item)=> item?.FK_ModuleId === 7);
 
   const checkAuthToken = useCallback(async () => {
-    const authToken = await AsyncStorage.getItem("authToken");
+    const authToken = atob(await AsyncStorage.getItem(btoa("authToken")));
 
     if (!authToken) {
       addToast("Authentication token is not available", "error");
@@ -32,6 +32,35 @@ function RoomDetail({navigation}) {
 
     return authToken;
   }, [addToast]);
+
+  const decrypt = (encryptedData) => {
+    const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
+    const [iv, encrypted] = encryptedData.split(':');
+    const ivBytes = CryptoJS.enc.Hex.parse(iv);
+    const encryptedBytes = CryptoJS.enc.Hex.parse(encrypted);
+    const decrypted = CryptoJS.AES.decrypt(
+      { ciphertext: encryptedBytes },
+      CryptoJS.enc.Utf8.parse(encryptScreteKey),
+      {
+        iv: ivBytes,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7,
+      }
+    );
+    return decrypted.toString(CryptoJS.enc.Utf8);
+  };
+
+  const encrypt = (text) => {
+    const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
+    const iv = CryptoJS.lib.WordArray.random(16);
+    const encrypted = CryptoJS.AES.encrypt(text, CryptoJS.enc.Utf8.parse(encryptScreteKey), {
+      iv: iv,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7,
+    });
+  
+    return iv.toString() + ':' + encrypted.toString();
+  };
 
   const fetchStudentDetails = (date, room) => {
     setLoading(true);
@@ -79,19 +108,24 @@ const remainingHeight = height - 190;
  const handleGetReportData = async () => {
     try {
       const authToken = await checkAuthToken();
+      const Parameter = {
+        operation: "custom",
+        tblName: "tbl_report_master",
+        data: '',
+        conditionString:'',
+        checkAvailability: '',
+        customQuery: `select PK_Report_Id,EMPLID,Status,EXAM_START_TIME from tbl_report_master where EXAM_DT = '${exam_Dt}' AND ROOM_NBR = '${room_Nbr}' AND EXAM_START_TIME = '${startTime}' `, 
+      };
+      const encryptedParams = encrypt(JSON.stringify(Parameter));
+
       const response = await fetch(
-        {
-          operation: "custom",
-          tblName: "tbl_report_master",
-          data: '',
-          conditionString:'',
-          checkAvailability: '',
-          customQuery: `select PK_Report_Id,EMPLID,Status,EXAM_START_TIME from tbl_report_master where EXAM_DT = '${exam_Dt}' AND ROOM_NBR = '${room_Nbr}' AND EXAM_START_TIME = '${startTime}' `, 
-        },
+        encryptedParams,
         authToken
       );
       if (response) {
-        setPresentStudentList(response?.data?.receivedData)
+        const decryptedData = decrypt(response?.data?.receivedData);
+        const DecryptedData = JSON.parse(decryptedData);
+        setPresentStudentList(DecryptedData)
       }
     } catch (error) {
       handleAuthErrors(error);

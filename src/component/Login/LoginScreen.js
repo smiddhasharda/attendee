@@ -55,7 +55,7 @@ const LoginScreen = ({ navigation }) => {
     try {
       const result =  await login('tbl_user_master', `email_id = '${loginData.email.replace(/\s+/g, '').trim()}' AND OTP = ${loginData.OTP.replace(/\s+/g, '').trim()} AND isActive = 1`);
       if (result.length > 0) {
-        const userRoleArray = await AsyncStorage.getItem('userRolePermission') || '[]';
+        const userRoleArray = atob(await AsyncStorage.getItem(btoa('userRolePermission'))) || '[]';
         const userRolePermission = JSON.parse(userRoleArray);
         navigation.replace('PostLogin', { userRolePermission });
       }
@@ -85,7 +85,7 @@ const LoginScreen = ({ navigation }) => {
       try {
         const result = await login('tbl_user_master', `email_id = '${loginData.email.replace(/\s+/g, '').trim()}' AND Password = '${loginData.password.replace(/\s+/g, '').trim()}'`);;
         if (result.length > 0) {
-          const userRoleArray = await AsyncStorage.getItem('userRolePermission') || [];
+          const userRoleArray = atob(await AsyncStorage.getItem(btoa('userRolePermission'))) || [];
           const userRolePermission = JSON.parse(userRoleArray) || [];
           navigation.replace('PostLogin', { userRolePermission });
         }
