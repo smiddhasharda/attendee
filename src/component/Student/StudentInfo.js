@@ -246,10 +246,9 @@ const StudentInfo = ({ navigation }) => {
           encryptedParams,
           authToken
         );
-        if (CopyExistResponse.data.receivedData?.length > 0) {
-          const decryptedData = decrypt(CopyExistResponse?.data?.receivedData);
-          const DecryptedData = JSON.parse(decryptedData);
-          
+        const decryptedData = decrypt(CopyExistResponse?.data?.receivedData);
+        const DecryptedData = JSON.parse(decryptedData);
+        if (DecryptedData?.length > 0) {
           // ${CopyExistResponse.data.receivedData?.map((item) => item.copyNumber)}
           addToast(`Copy Number Already Linked With Previous Student : ${DecryptedData?.map((item) => item.copyNumber)} `, "error",false);
         } else {
@@ -562,10 +561,9 @@ const StudentInfo = ({ navigation }) => {
           encryptedParams,
           authToken
         );
-  
-        if (copyExistResponse.data.receivedData?.length > 0) {
-          const decryptedData = decrypt(copyExistResponse?.data?.receivedData);
+        const decryptedData = decrypt(copyExistResponse?.data?.receivedData);
         const DecryptedData = JSON.parse(decryptedData);
+        if (DecryptedData?.length > 0) {    
           // ${copyExistResponse.data.receivedData.map(item => item.copyNumber).join(", ")}
           addToast(`Copy Number Already Linked With Previous Student : ${DecryptedData?.map((item) => item.copyNumber)} `, "error",false);
         } else {

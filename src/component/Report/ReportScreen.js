@@ -837,58 +837,144 @@ const WebColumnsByRoom = useMemo(() => [
        saveAs(csvFile);
      };
 
-     const handleExportRowsAsPDFByCategory = (rows) => {
-        const doc = new jsPDF('l', 'mm', 'a4'); // 'l' for landscape
-        const tableData = rows?.map(({ original }) => [
-           `${original.CATALOG_NBR || '-'}`,
-            `${original.TotalStudents || '-'}`,
-            `${original.PresentStudents || '-'}`,
-            `${original.AbsentStudents || '-'}`,
-            `${original.UFMStudents || '-'}`,
-            `${original.DebarredStudents || '-'}`,
-            `${parseExcelDate(original.EXAM_DT) || '-'}`,
-            `${convertedTime(original.EXAM_START_TIME) || '-'}`,
-            `${original.DESCR || '-'}`
-        ]);
+    //  const handleExportRowsAsPDFByCategory = (rows) => {
+    //     const doc = new jsPDF('l', 'mm', 'a4'); // 'l' for landscape
+    //     const tableData = rows?.map(({ original }) => [
+    //        `${original.CATALOG_NBR || '-'}`,
+    //         `${original.TotalStudents || '-'}`,
+    //         `${original.PresentStudents || '-'}`,
+    //         `${original.AbsentStudents || '-'}`,
+    //         `${original.UFMStudents || '-'}`,
+    //         `${original.DebarredStudents || '-'}`,
+    //         `${parseExcelDate(original.EXAM_DT) || '-'}`,
+    //         `${convertedTime(original.EXAM_START_TIME) || '-'}`,
+    //         `${original.DESCR || '-'}`
+    //     ]);
     
-        autoTable(doc, {
-            head: [tableHeadByCatelog],
-            body: tableData,
-            theme: 'striped',
-            styles: {
-                fontSize: 7, // Reduce font size
-                cellPadding: 1, // Reduce cell padding
-                overflow: 'linebreak'
-            },
-            headStyles: {
-                fillColor: [22, 160, 133],
-                textColor: [255, 255, 255],
-                fontSize: 9, // Adjust font size for header
-                halign: 'center'
-            },
-            bodyStyles: {
-                valign: 'middle',
-                halign: 'center'
-            },
-            alternateRowStyles: {
-                fillColor: [240, 240, 240]
-            },
-            columnStyles: {
-                0: { cellWidth:  25},
-                1: { cellWidth: 25 },
-                2: { cellWidth: 25 },
-                3: { cellWidth: 25 },
-                4: { cellWidth: 25 },
-                5: { cellWidth: 25 },
-                6: { cellWidth: 25 },
-                7: { cellWidth: 25 },
-                8: { cellWidth: 60 },
-            },
-            margin: { top: 20, bottom: 20, left: 20, right: 20 }
-        });
+    //     autoTable(doc, {
+    //         head: [tableHeadByCatelog],
+    //         body: tableData,
+    //         theme: 'striped',
+    //         styles: {
+    //             fontSize: 7, // Reduce font size
+    //             cellPadding: 1, // Reduce cell padding
+    //             overflow: 'linebreak'
+    //         },
+    //         headStyles: {
+    //             fillColor: [22, 160, 133],
+    //             textColor: [255, 255, 255],
+    //             fontSize: 9, // Adjust font size for header
+    //             halign: 'center'
+    //         },
+    //         bodyStyles: {
+    //             valign: 'middle',
+    //             halign: 'center'
+    //         },
+    //         alternateRowStyles: {
+    //             fillColor: [240, 240, 240]
+    //         },
+    //         columnStyles: {
+    //             0: { cellWidth:  25},
+    //             1: { cellWidth: 25 },
+    //             2: { cellWidth: 25 },
+    //             3: { cellWidth: 25 },
+    //             4: { cellWidth: 25 },
+    //             5: { cellWidth: 25 },
+    //             6: { cellWidth: 25 },
+    //             7: { cellWidth: 25 },
+    //             8: { cellWidth: 60 },
+    //         },
+    //         margin: { top: 20, bottom: 20, left: 20, right: 20 }
+    //     });
     
-        doc.save(`ReportByCategory-${currentDate}.pdf`);
-    };
+    //     doc.save(`ReportByCategory-${currentDate}.pdf`);
+    // };
+
+    
+const handleExportRowsAsPDFByCategory = (rows) => {
+  const doc = new jsPDF('p', 'mm', 'a4');
+  const pageWidth = doc.internal.pageSize.width;
+  const pageHeight = doc.internal.pageSize.height;
+  const margin = 10;
+
+  // Group rows by room number
+  const groupedByShift = rows.reduce((acc, row) => {
+      const shift = row.original.EXAM_START_TIME || 'Unknown Time';
+      if (!acc[shift]) {
+          acc[shift] = [];
+      }
+      acc[shift].push(row);
+      return acc;
+  }, {});
+
+  // Iterate over each room group and add each to a new page in the PDF
+  Object.keys(groupedByShift).forEach((shift, index) => {
+      if (index !== 0) doc.addPage(); // Add a new page for each room after the first one
+
+      const shiftRows = groupedByShift[shift];
+
+      // Add logo (if available)
+      try {
+          doc.addImage(Shrdalogo, 'PNG', margin, margin, 40, 20);
+      } catch (error) {
+          console.warn('Failed to add logo to PDF:', error);
+      }
+
+      // Add header
+      doc.setFillColor(223, 76, 6);
+      doc.rect(0, 0, pageWidth, 50, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(24);
+      doc.text('Sharda University', pageWidth / 2, 20, { align: 'center' });
+      doc.setFontSize(18);
+      doc.text('Attendance Record', pageWidth / 2, 30, { align: 'center' });
+      doc.text('Examination (Session 2024-2025)', pageWidth / 2, 40, { align: 'center' });
+
+      // Add room info
+      doc.setTextColor(0);
+      doc.setFontSize(12);
+      doc.text(`Date: ${parseExcelDate(shiftRows?.[0]?.original?.EXAM_DT) || '-'}`, pageWidth - margin, 60, { align: 'right' });
+      doc.text(`Shift: ${convertedTime(shiftRows?.[0]?.original.EXAM_START_TIME) || '-'}`, pageWidth - margin, 70, { align: 'right' });
+
+      // Add main table
+      const mainTableHeaders = [
+          [
+              { content: 'S. No.', rowSpan: 1 },
+              { content: 'Course Code', rowSpan: 1 },
+              { content: 'Total', rowSpan: 1 },
+              { content: 'Present', rowSpan: 1 },
+              { content: 'Absent', rowSpan: 1 }
+          ]
+      ];
+
+      const mainTableBody = shiftRows.map((row, index) => [
+          index + 1,
+          row.original.CATALOG_NBR || '-',
+          row.original.TotalStudents || '-',
+          row.original.PresentStudents || '-',
+          row.original.AbsentStudents || '-'
+      ]);
+
+      autoTable(doc, {
+          head: mainTableHeaders,
+          body: mainTableBody,
+          startY: 80,
+          theme: 'grid',
+          styles: { fontSize: 10, cellPadding: 2 },
+          headStyles: { fillColor: [242, 242, 242], textColor: [0, 0, 0], fontStyle: 'bold' },
+      });
+
+      // Add footer
+      doc.setFillColor(223, 76, 6);
+      doc.rect(0, pageHeight - 20, pageWidth, 20, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(12);
+      doc.text('© 2023 Sharda Tech Pvt. Ltd. All Rights Reserved.', pageWidth / 2, pageHeight - 10, { align: 'center' });
+  });
+
+  // Save the single PDF with all rooms
+  doc.save(`AnswerSheetSummary-AllCatelog-${parseExcelDate(rows?.[0]?.original?.EXAM_DT) || '-'}.pdf`);
+};
     
      const csvOptionsByRoom = {
         fieldSeparator: ',',
@@ -1203,6 +1289,8 @@ const handleExportRowsAsPDFByRoom = (rows) => {
     // Save the single PDF with all rooms
     doc.save(`AnswerSheetSummary-AllRooms-${parseExcelDate(rows?.[0]?.original?.EXAM_DT) || '-'}.pdf`);
 };
+
+
 
 
     const renderTable = () => {
