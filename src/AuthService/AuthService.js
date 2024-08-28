@@ -1,6 +1,7 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL } from '@env';
+import CryptoJS from 'crypto-js';
 
 // const API_URL = 'http://localhost:3502/api';
 
@@ -47,6 +48,35 @@ const request = async (method, endpoint, data, authToken,params) => {
   }
 };
 
+const decrypt = (encryptedData) => {
+  const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
+  const [iv, encrypted] = encryptedData.split(':');
+  const ivBytes = CryptoJS.enc.Hex.parse(iv);
+  const encryptedBytes = CryptoJS.enc.Hex.parse(encrypted);
+  const decrypted = CryptoJS.AES.decrypt(
+    { ciphertext: encryptedBytes },
+    CryptoJS.enc.Utf8.parse(encryptScreteKey),
+    {
+      iv: ivBytes,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7,
+    }
+  );
+  return decrypted.toString(CryptoJS.enc.Utf8);
+};
+
+const encrypt = (text) => {
+  const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
+  const iv = CryptoJS.lib.WordArray.random(16);
+  const encrypted = CryptoJS.AES.encrypt(text, CryptoJS.enc.Utf8.parse(encryptScreteKey), {
+    iv: iv,
+    mode: CryptoJS.mode.CBC,
+    padding: CryptoJS.pad.Pkcs7,
+  });
+
+  return iv.toString() + ':' + encrypted.toString();
+};
+
 const handleAsyncStorageError = (error) => {
   console.error('Error while interacting with AsyncStorage:', error);
   throw new Error('AsyncStorage operation failed');
@@ -54,8 +84,11 @@ const handleAsyncStorageError = (error) => {
 
 const login = async (tblName, conditionString) => {
   try {
-    const response = await request('post', 'login', { tblName, conditionString });
-    const { token,userRole,userData } = response?.data;
+    const Parameter = encrypt(JSON.stringify({tblName,conditionString}))
+    const response = await request('post', 'login',Parameter);
+    const decryptedData = decrypt(response?.data?.receivedData);
+    const DecryptedData = JSON.parse(decryptedData);
+    const { token,userRole,userData } = DecryptedData;
     // const { token, expirationTimestamp,userRole,userData } = response;
 
     await AsyncStorage.setItem(btoa('userRolePermission'), userRole ? btoa(JSON?.stringify(userRole)) : '').catch(handleAsyncStorageError);
@@ -72,16 +105,17 @@ const register = async (tblName, conditionString) => {
   return request('post', 'register', { tblName, conditionString });
 };
 const emailVerify = async (tblName, conditionString,viewTblName,viewConditionString) => {
-  return request('post', 'emailVerify', { tblName, conditionString, viewTblName, viewConditionString });
+  const Parameter = encrypt(JSON.stringify({ tblName, conditionString, viewTblName, viewConditionString }))
+  return request('post', 'emailVerify',Parameter);
 };
 
 const logout = async () => {
   try {
-    await AsyncStorage.removeItem('authToken').catch(handleAsyncStorageError);
-    // await AsyncStorage.removeItem('tokenExpiration').catch(handleAsyncStorageError);
-    await AsyncStorage.removeItem('credentials').catch(handleAsyncStorageError);
-    await AsyncStorage.removeItem('userRolePermission').catch(handleAsyncStorageError);
-    await AsyncStorage.removeItem('userData').catch(handleAsyncStorageError);
+    await AsyncStorage.removeItem(btoa('authToken')).catch(handleAsyncStorageError);
+    // await AsyncStorage.removeItem(btoa('tokenExpiration')).catch(handleAsyncStorageError);
+    await AsyncStorage.removeItem(btoa('credentials')).catch(handleAsyncStorageError);
+    await AsyncStorage.removeItem(btoa('userRolePermission')).catch(handleAsyncStorageError);
+    await AsyncStorage.removeItem(btoa('userData')).catch(handleAsyncStorageError);
   } catch (error) {
     handleAsyncStorageError(error);
   }
