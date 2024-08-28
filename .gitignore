@@ -2,6 +2,7 @@
 
 # dependencies
 node_modules/
+/resources/assets/
 
 # Expo
 .expo/
@@ -30,6 +31,10 @@ yarn-error.*
 
 # local env files
 .env*.local
-
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env
 # typescript
 *.tsbuildinfo
