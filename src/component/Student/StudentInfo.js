@@ -1120,28 +1120,27 @@ const StudentInfo = ({ navigation }) => {
                     </View> */}
               </View>
               <PopUpModal
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-        animationType="slide">
-        <View style={styles.modalContainer}>
-          {/* <TouchableOpacity style={styles.modalCloseButton} onPress={() => setModalVisible(false)}>
-            <Text style={styles.modalCloseText}>Close</Text>
-          </TouchableOpacity> */}
-          <View style={styles.modalView}>
-          <Image    source={{ uri: `data:image/png;base64,${studentPicture}` }} style={{position:"static" , width:250, height:420}}/>
-          
-          </View>
-        </View>
-      </PopUpModal>
+                visible={modalVisible}
+                onRequestClose={() => setModalVisible(false)}
+                animationType="slide">
+                <View style={styles.modalContainer}>
+                  {/* <TouchableOpacity style={styles.modalCloseButton} onPress={() => setModalVisible(false)}>
+                    <Text style={styles.modalCloseText}>Close</Text>
+                  </TouchableOpacity> */}
+                  <View style={styles.modalView}>
+                  <Image    source={{ uri: `data:image/png;base64,${studentPicture}` }} style={{position:"static" , width:250, height:420}}/>
+                  
+                  </View>
+                </View>
+            </PopUpModal>
             </View>
           </View>
-          <View style={styles.studentInfoWrap}>
-      
+          <View style={styles.studentInfoWrap}>   
             <View style={styles.infoContainer}>
             <View style={{ borderBottomColor:"#ccc",borderBottomWidth:1,padding:10, marginBottom:10}}>
             <Text style={styles.infoHeader}>Exam Info:</Text>
             </View>
-            <View style={styles.infopWrap}>
+            <View style={[styles.infopWrap,]}>
               <View style={[styles.infoItem,]}>
                 <Text style={[styles.label,{width:"40%"}]}>Paper Id:</Text>
                 <Text style={styles.value}>
@@ -1155,9 +1154,10 @@ const StudentInfo = ({ navigation }) => {
                 </Text>
               </View>
               </View>
-              <View style={styles.infoItem}>
-                <Text style={styles.label}>Course Name:</Text>
-                <Text style={styles.value}>{courseDetails?.DESCR100 || ""}</Text>
+              <View style={{flexDirection:isMobile?"column":"row", }}>
+              <View style={[styles.infoItem,{maxWidth:isMobile?'250px':"100%"}]}>
+                <Text style={[styles.label ,]}>Course Name:</Text>
+                <Text style={[styles.value,]}>{courseDetails?.DESCR100 || ""}</Text>
               </View>
               <View style={styles.infoItem}>
                 <Text style={styles.label}>Room No:</Text>
@@ -1167,6 +1167,8 @@ const StudentInfo = ({ navigation }) => {
                 <Text style={styles.label}>Seat No:</Text>
                 <Text style={styles.value}>{seat_Nbr}</Text>
               </View>
+              </View>
+              <View style={{flexDirection:isMobile?"column":"row", }}>
               <View style={styles.infoItem}>
                 <Text style={styles.label}>Class Status:</Text>
                 <Text style={[styles.value, {marginBottom: 10}, getAttendenceStatuscolor()]}>
@@ -1207,6 +1209,7 @@ const StudentInfo = ({ navigation }) => {
                   listItemContainerStyle={{ height: 30 }}
                   listItemLabelStyle={{ fontSize: 14 }}
                 /> */}
+              </View>
               </View>
             </View>
           </View>
