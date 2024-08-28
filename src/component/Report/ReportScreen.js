@@ -1152,7 +1152,7 @@ const handleExportRowsAsPDFByRoom = (rows) => {
         doc.text('SHARDA UNIVERSITY', pageWidth / 2, 15, { align: 'center' });
         doc.setFontSize(14);
         doc.text('ANSWER SHEET SUMMARY REPORT', pageWidth / 2, 25, { align: 'center' });
-        doc.text('End-Semester Examination (2023-24)', pageWidth / 2, 35, { align: 'center' });
+        doc.text('Examination (2024-25)', pageWidth / 2, 35, { align: 'center' });
 
         // Add room info
         doc.setTextColor(0);
