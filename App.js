@@ -6,7 +6,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Provider as PaperProvider } from 'react-native-paper';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Provider } from "react-redux";
-import store from "./src/redux/store";
+// import store from "./src/redux/store";
 import { ToastProvider } from "./src/globalComponent/ToastContainer/ToastContext";
 import { RoleProvider } from "./src/component/Roles/RoleContext";
 // import { RefreshProvider, RefreshContext } from "./src/globalComponent/Refresh/RefreshContext";
@@ -57,7 +57,7 @@ const AppContent = () => {
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {
-        const authToken =  atob(await AsyncStorage.getItem(btoa("authToken")));
+        const authToken =  await AsyncStorage.getItem(btoa("authToken"));
         setInitialRoute(authToken ? "PostLogin" : "Home");
       } catch (error) {
         console.error("Error reading authToken from AsyncStorage:", error);
@@ -77,7 +77,7 @@ const AppContent = () => {
     </View>
   );
   const renderRouting = () => (
-    <Provider store={store}>
+    // <Provider store={store}>
       <PaperProvider>
         <StatusBar barStyle="light-content" backgroundColor="#6a51ae" />
         <ToastProvider>
@@ -159,7 +159,7 @@ const AppContent = () => {
           </RoleProvider>
         </ToastProvider>
       </PaperProvider>
-    </Provider>
+    // </Provider>
   );
 
   return (
