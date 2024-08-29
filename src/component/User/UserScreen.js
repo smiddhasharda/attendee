@@ -115,6 +115,7 @@ const UserScreen = ({userAccess}) => {
           email_id: userData.emailId,
           username:userData.username,
           isActive: userData.status,
+          status:'External',
           isVerified: 1
         },
         conditionString: `username = '${userData.emailId}' OR email_id = '${userData.emailId}'` ,
@@ -248,7 +249,7 @@ const UserScreen = ({userAccess}) => {
         data: '',
         conditionString: '',
         checkAvailability: '',
-        customQuery: `select JSON_ARRAYAGG(json_object('user_id',p.user_id,'username',username,'password',p.password,'name',p.name,'contact_number',p.contact_number,'email_id',p.email_id,'profile_image_url',p.profile_image_url,'isActive',p.isActive,'rolePermission',( SELECT CAST( CONCAT('[', GROUP_CONCAT( JSON_OBJECT( 'Id',q.PK_user_role_permissionId,'FK_userId', q.FK_userId,'FK_RoleId', q.FK_RoleId,'isActive',q.isActive) ), ']') AS JSON ) FROM tbl_user_role_permission q WHERE q.FK_userId = p.user_id ))) AS UserMaster from tbl_user_master p`,
+        customQuery: `select JSON_ARRAYAGG(json_object('user_id',p.user_id,'username',username,'password',p.password,'name',p.name,'contact_number',p.contact_number,'email_id',p.email_id,'profile_image_url',p.profile_image_url,'status',p.status,'isActive',p.isActive,'rolePermission',( SELECT CAST( CONCAT('[', GROUP_CONCAT( JSON_OBJECT( 'Id',q.PK_user_role_permissionId,'FK_userId', q.FK_userId,'FK_RoleId', q.FK_RoleId,'isActive',q.isActive) ), ']') AS JSON ) FROM tbl_user_role_permission q WHERE q.FK_userId = p.user_id ))) AS UserMaster from tbl_user_master p`,
       };
       const encryptedParams = encrypt(JSON.stringify(Parameter));
       const response = await fetch(
@@ -748,6 +749,7 @@ const UserScreen = ({userAccess}) => {
               <Text style={[styles.tableHeaderText,{width:120}, ]}>Employee Id</Text>
               <Text style={[styles.tableHeaderText,{width:200,textAlign:"center"}, ]}>Name</Text>
               <Text style={[styles.tableHeaderText, {width:170,textAlign:"center"} ]}>Mob.No</Text>
+              <Text style={[styles.tableHeaderText,{width:200,textAlign:"center"}  ]}>User Status</Text>
               <Text style={[styles.tableHeaderText,{width:90,textAlign:"center"}  ]}>Status</Text>
               <Text style={[styles.tableHeaderText,{width:120 ,textAlign:"center"}, ]}>Created Date</Text>
               <Text style={[styles.tableHeaderText,{width:120 ,textAlign:"center"}, ]}>Updated Date</Text>
@@ -762,6 +764,7 @@ const UserScreen = ({userAccess}) => {
               <Text style={[styles.listItemText,{width:120}]}>{item.username}</Text>
               <Text style={[styles.listItemText,{width:200,textAlign:"center"}]}>{item.name}</Text>
               <Text style={[styles.listItemText, {width:170,textAlign:"center"}]}>{item.contact_number}</Text>
+              <Text style={[styles.listItemText, {width:200,textAlign:"center"}]}>{item.status} User</Text>
                     <View style={[styles.listItemText, {display:"inline-block", alignItems:"center", textAlign:"center", width:90}]}>
                       <Pressable style={{display:"inline-block" ,alignItems:"center"} } onPress={() =>UserAccess?.update === 1 ? handleUserStatus(item.user_id, item?.isActive) : ''}>
                     <Text style={[styles.listItemText,  item.isActive ? styles.actionbtn : styles.inactivebtn,]}>{item.isActive ? "Active" : "Inactive"}</Text>

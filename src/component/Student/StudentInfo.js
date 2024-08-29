@@ -18,6 +18,7 @@ const isMobile = width < 768;
 const StudentInfo = ({ navigation }) => {
 
   const [modalVisible, setModalVisible] = useState(false);
+  const [modalData, setModalData] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
   const route = useRoute();
   const { addToast } = useToast();
@@ -245,10 +246,9 @@ const StudentInfo = ({ navigation }) => {
           encryptedParams,
           authToken
         );
-        if (CopyExistResponse.data.receivedData?.length > 0) {
-          const decryptedData = decrypt(CopyExistResponse?.data?.receivedData);
-          const DecryptedData = JSON.parse(decryptedData);
-          
+        const decryptedData = decrypt(CopyExistResponse?.data?.receivedData);
+        const DecryptedData = JSON.parse(decryptedData);
+        if (DecryptedData?.length > 0) {
           // ${CopyExistResponse.data.receivedData?.map((item) => item.copyNumber)}
           addToast(`Copy Number Already Linked With Previous Student : ${DecryptedData?.map((item) => item.copyNumber)} `, "error",false);
         } else {
@@ -561,10 +561,9 @@ const StudentInfo = ({ navigation }) => {
           encryptedParams,
           authToken
         );
-  
-        if (copyExistResponse.data.receivedData?.length > 0) {
-          const decryptedData = decrypt(copyExistResponse?.data?.receivedData);
+        const decryptedData = decrypt(copyExistResponse?.data?.receivedData);
         const DecryptedData = JSON.parse(decryptedData);
+        if (DecryptedData?.length > 0) {    
           // ${copyExistResponse.data.receivedData.map(item => item.copyNumber).join(", ")}
           addToast(`Copy Number Already Linked With Previous Student : ${DecryptedData?.map((item) => item.copyNumber)} `, "error",false);
         } else {
@@ -1051,7 +1050,7 @@ const StudentInfo = ({ navigation }) => {
             <View style={[styles.infoContainer,{flexDirection:"row"}]}>
               <View style={[styles.userDetailWrap,{marginRight:0}]}>
                 {studentPicture ? (
-                  <Pressable onPress={()=> setModalVisible(true)}>
+                  <Pressable onPress={()=> [setModalVisible(true),setModalData(studentPicture)]}>
                   <Image
             source={{ uri: `data:image/png;base64,${studentPicture}` }}
             style={styles.studProfile}            
@@ -1062,11 +1061,12 @@ const StudentInfo = ({ navigation }) => {
                 <FontAwesome name="user" size={40} color="#fff" style={styles.studProfile} />        
               )} 
                 {studentSign ? (
+                  <Pressable onPress={()=> [setModalVisible(true),setModalData(studentSign)]}>
               <Image 
             source={{ uri: `data:image/png;base64,${studentSign}` }}
             style={[styles.signature ,isMobile ?styles.signaturemob:styles.signature]} 
-            
           />
+           </Pressable>
           ) : (
                 <FontAwesome6 name="signature" size={34} color="black" />        
               )} 
@@ -1121,14 +1121,14 @@ const StudentInfo = ({ navigation }) => {
               </View>
               <PopUpModal
                 visible={modalVisible}
-                onRequestClose={() => setModalVisible(false)}
+                onRequestClose={() => [setModalVisible(false),setModalData('')]}
                 animationType="slide">
                 <View style={styles.modalContainer}>
                   {/* <TouchableOpacity style={styles.modalCloseButton} onPress={() => setModalVisible(false)}>
                     <Text style={styles.modalCloseText}>Close</Text>
                   </TouchableOpacity> */}
                   <View style={styles.modalView}>
-                  <Image    source={{ uri: `data:image/png;base64,${studentPicture}` }} style={{position:"static" , width:250, height:420}}/>
+                  <Image    source={{ uri: `data:image/png;base64,${modalData}` }} style={{position:"static" , width:250, height:420}}/>
                   
                   </View>
                 </View>
