@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback,useContext } from 'react';
-import { View, Text, FlatList, StyleSheet, Pressable, ActivityIndicator, Dimensions } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Pressable, ActivityIndicator, Dimensions,Platform } from 'react-native';
 import { view, fetch } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -46,16 +46,35 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
     return decrypted.toString(CryptoJS.enc.Utf8);
   };
 
-  const encrypt = (text) => {
+  const generateIV = () => {
+    if (Platform.OS === 'web') {
+      // For web, use CryptoJS's random generator
+      return CryptoJS.lib.WordArray.random(16);
+    } else {
+      // For React Native, use a simple random number generator
+      const arr = new Uint8Array(16);
+      for (let i = 0; i < 16; i++) {
+        arr[i] = Math.floor(Math.random() * 256);
+      }
+      return CryptoJS.lib.WordArray.create(arr);
+    }
+  };
+  
+  const encrypt = (plaintext) => {
     const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
-    const iv = CryptoJS.lib.WordArray.random(16);
-    const encrypted = CryptoJS.AES.encrypt(text, CryptoJS.enc.Utf8.parse(encryptScreteKey), {
+    const iv = generateIV();
+    const key = CryptoJS.enc.Utf8.parse(encryptScreteKey);
+    
+    const encrypted = CryptoJS.AES.encrypt(plaintext, key, {
       iv: iv,
       mode: CryptoJS.mode.CBC,
-      padding: CryptoJS.pad.Pkcs7,
+      padding: CryptoJS.pad.Pkcs7
     });
   
-    return iv.toString() + ':' + encrypted.toString();
+    const encryptedBase64 = encrypted.toString();
+    const ivHex = CryptoJS.enc.Hex.stringify(iv);
+  
+    return `${ivHex}:${encryptedBase64}`;
   };
 
   const handleGetDateView = async () => {
