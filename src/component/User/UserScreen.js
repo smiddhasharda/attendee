@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import {View, Text, TextInput, FlatList, StyleSheet, Pressable, LayoutAnimation, Dimensions} from "react-native";
+import {View, Text, TextInput, FlatList, StyleSheet, Pressable, LayoutAnimation, Dimensions,Platform} from "react-native";
 import { insert, fetch, update } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -84,16 +84,35 @@ const UserScreen = ({userAccess}) => {
     return decrypted.toString(CryptoJS.enc.Utf8);
   };
 
-  const encrypt = (text) => {
+  const generateIV = () => {
+    if (Platform.OS === 'web') {
+      // For web, use CryptoJS's random generator
+      return CryptoJS.lib.WordArray.random(16);
+    } else {
+      // For React Native, use a simple random number generator
+      const arr = new Uint8Array(16);
+      for (let i = 0; i < 16; i++) {
+        arr[i] = Math.floor(Math.random() * 256);
+      }
+      return CryptoJS.lib.WordArray.create(arr);
+    }
+  };
+  
+  const encrypt = (plaintext) => {
     const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
-    const iv = CryptoJS.lib.WordArray.random(16);
-    const encrypted = CryptoJS.AES.encrypt(text, CryptoJS.enc.Utf8.parse(encryptScreteKey), {
+    const iv = generateIV();
+    const key = CryptoJS.enc.Utf8.parse(encryptScreteKey);
+    
+    const encrypted = CryptoJS.AES.encrypt(plaintext, key, {
       iv: iv,
       mode: CryptoJS.mode.CBC,
-      padding: CryptoJS.pad.Pkcs7,
+      padding: CryptoJS.pad.Pkcs7
     });
   
-    return iv.toString() + ':' + encrypted.toString();
+    const encryptedBase64 = encrypted.toString();
+    const ivHex = CryptoJS.enc.Hex.stringify(iv);
+  
+    return `${ivHex}:${encryptedBase64}`;
   };
 
   const handleAddUser = async () => {
@@ -115,6 +134,7 @@ const UserScreen = ({userAccess}) => {
           email_id: userData.emailId,
           username:userData.username,
           isActive: userData.status,
+          status:'External',
           isVerified: 1
         },
         conditionString: `username = '${userData.emailId}' OR email_id = '${userData.emailId}'` ,
@@ -248,7 +268,7 @@ const UserScreen = ({userAccess}) => {
         data: '',
         conditionString: '',
         checkAvailability: '',
-        customQuery: `select JSON_ARRAYAGG(json_object('user_id',p.user_id,'username',username,'password',p.password,'name',p.name,'contact_number',p.contact_number,'email_id',p.email_id,'profile_image_url',p.profile_image_url,'isActive',p.isActive,'rolePermission',( SELECT CAST( CONCAT('[', GROUP_CONCAT( JSON_OBJECT( 'Id',q.PK_user_role_permissionId,'FK_userId', q.FK_userId,'FK_RoleId', q.FK_RoleId,'isActive',q.isActive) ), ']') AS JSON ) FROM tbl_user_role_permission q WHERE q.FK_userId = p.user_id ))) AS UserMaster from tbl_user_master p`,
+        customQuery: `select JSON_ARRAYAGG(json_object('user_id',p.user_id,'username',username,'password',p.password,'name',p.name,'contact_number',p.contact_number,'email_id',p.email_id,'profile_image_url',p.profile_image_url,'status',p.status,'isActive',p.isActive,'rolePermission',( SELECT CAST( CONCAT('[', GROUP_CONCAT( JSON_OBJECT( 'Id',q.PK_user_role_permissionId,'FK_userId', q.FK_userId,'FK_RoleId', q.FK_RoleId,'isActive',q.isActive) ), ']') AS JSON ) FROM tbl_user_role_permission q WHERE q.FK_userId = p.user_id ))) AS UserMaster from tbl_user_master p`,
       };
       const encryptedParams = encrypt(JSON.stringify(Parameter));
       const response = await fetch(
@@ -748,6 +768,7 @@ const UserScreen = ({userAccess}) => {
               <Text style={[styles.tableHeaderText,{width:120}, ]}>Employee Id</Text>
               <Text style={[styles.tableHeaderText,{width:200,textAlign:"center"}, ]}>Name</Text>
               <Text style={[styles.tableHeaderText, {width:170,textAlign:"center"} ]}>Mob.No</Text>
+              <Text style={[styles.tableHeaderText,{width:200,textAlign:"center"}  ]}>User Status</Text>
               <Text style={[styles.tableHeaderText,{width:90,textAlign:"center"}  ]}>Status</Text>
               <Text style={[styles.tableHeaderText,{width:120 ,textAlign:"center"}, ]}>Created Date</Text>
               <Text style={[styles.tableHeaderText,{width:120 ,textAlign:"center"}, ]}>Updated Date</Text>
@@ -762,6 +783,7 @@ const UserScreen = ({userAccess}) => {
               <Text style={[styles.listItemText,{width:120}]}>{item.username}</Text>
               <Text style={[styles.listItemText,{width:200,textAlign:"center"}]}>{item.name}</Text>
               <Text style={[styles.listItemText, {width:170,textAlign:"center"}]}>{item.contact_number}</Text>
+              <Text style={[styles.listItemText, {width:200,textAlign:"center"}]}>{item.status} User</Text>
                     <View style={[styles.listItemText, {display:"inline-block", alignItems:"center", textAlign:"center", width:90}]}>
                       <Pressable style={{display:"inline-block" ,alignItems:"center"} } onPress={() =>UserAccess?.update === 1 ? handleUserStatus(item.user_id, item?.isActive) : ''}>
                     <Text style={[styles.listItemText,  item.isActive ? styles.actionbtn : styles.inactivebtn,]}>{item.isActive ? "Active" : "Inactive"}</Text>

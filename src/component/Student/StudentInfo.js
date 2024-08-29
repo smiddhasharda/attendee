@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, Text, StyleSheet, ScrollView, TextInput, Pressable, ActivityIndicator, Image,Dimensions,RefreshControl,TouchableOpacity  } from "react-native";
+import { View, Text, StyleSheet, ScrollView, TextInput, Pressable, ActivityIndicator, Image,Dimensions,RefreshControl,Platform  } from "react-native";
 import { Ionicons, FontAwesome, AntDesign, MaterialCommunityIcons, MaterialIcons, Entypo, FontAwesome6, } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
@@ -78,16 +78,35 @@ const StudentInfo = ({ navigation }) => {
     return decrypted.toString(CryptoJS.enc.Utf8);
   };
 
-  const encrypt = (text) => {
+  const generateIV = () => {
+    if (Platform.OS === 'web') {
+      // For web, use CryptoJS's random generator
+      return CryptoJS.lib.WordArray.random(16);
+    } else {
+      // For React Native, use a simple random number generator
+      const arr = new Uint8Array(16);
+      for (let i = 0; i < 16; i++) {
+        arr[i] = Math.floor(Math.random() * 256);
+      }
+      return CryptoJS.lib.WordArray.create(arr);
+    }
+  };
+  
+  const encrypt = (plaintext) => {
     const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
-    const iv = CryptoJS.lib.WordArray.random(16);
-    const encrypted = CryptoJS.AES.encrypt(text, CryptoJS.enc.Utf8.parse(encryptScreteKey), {
+    const iv = generateIV();
+    const key = CryptoJS.enc.Utf8.parse(encryptScreteKey);
+    
+    const encrypted = CryptoJS.AES.encrypt(plaintext, key, {
       iv: iv,
       mode: CryptoJS.mode.CBC,
-      padding: CryptoJS.pad.Pkcs7,
+      padding: CryptoJS.pad.Pkcs7
     });
   
-    return iv.toString() + ':' + encrypted.toString();
+    const encryptedBase64 = encrypted.toString();
+    const ivHex = CryptoJS.enc.Hex.stringify(iv);
+  
+    return `${ivHex}:${encryptedBase64}`;
   };
 
   const handleMainCopyChange = (copyNumber, index) => {
@@ -247,10 +266,9 @@ const StudentInfo = ({ navigation }) => {
           encryptedParams,
           authToken
         );
-        if (CopyExistResponse.data.receivedData?.length > 0) {
-          const decryptedData = decrypt(CopyExistResponse?.data?.receivedData);
-          const DecryptedData = JSON.parse(decryptedData);
-          
+        const decryptedData = decrypt(CopyExistResponse?.data?.receivedData);
+        const DecryptedData = JSON.parse(decryptedData);
+        if (DecryptedData?.length > 0) {
           // ${CopyExistResponse.data.receivedData?.map((item) => item.copyNumber)}
           addToast(`Copy Number Already Linked With Previous Student : ${DecryptedData?.map((item) => item.copyNumber)} `, "error",false);
         } else {
@@ -564,10 +582,9 @@ const StudentInfo = ({ navigation }) => {
           encryptedParams,
           authToken
         );
-  
-        if (copyExistResponse.data.receivedData?.length > 0) {
-          const decryptedData = decrypt(copyExistResponse?.data?.receivedData);
+        const decryptedData = decrypt(copyExistResponse?.data?.receivedData);
         const DecryptedData = JSON.parse(decryptedData);
+        if (DecryptedData?.length > 0) {    
           // ${copyExistResponse.data.receivedData.map(item => item.copyNumber).join(", ")}
           addToast(`Copy Number Already Linked With Previous Student : ${DecryptedData?.map((item) => item.copyNumber)} `, "error",false);
         } else {
