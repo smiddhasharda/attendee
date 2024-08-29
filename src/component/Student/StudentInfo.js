@@ -19,6 +19,7 @@ const isMobile = width < 768;
 const StudentInfo = ({ navigation }) => {
 
   const [modalVisible, setModalVisible] = useState(false);
+  const[modalstyle,setModalStyle]=useState('')
   const [modalData, setModalData] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
   const route = useRoute();
@@ -1072,10 +1073,10 @@ const StudentInfo = ({ navigation }) => {
             <View style={[styles.infoContainer,{flexDirection:"row"}]}>
               <View style={[styles.userDetailWrap,{marginRight:0}]}>
                 {studentPicture ? (
-                  <Pressable onPress={()=> setModalVisible(true)} style={styles.stuprofWrap}>
+                  <Pressable onPress={()=> [setModalVisible(true),setModalData(studentPicture)]} style={styles.stuprofWrap}>
                   <Image
                     source={{ uri: `data:image/png;base64,${studentPicture}` }}
-                    style={[styles.studProfile, ]}     
+                    style={styles.studProfile}     
                   // resizeMode="cover"       
                 />
                   </Pressable>           
@@ -1083,10 +1084,11 @@ const StudentInfo = ({ navigation }) => {
                 <FontAwesome name="user" size={40} color="#fff" style={styles.defaultstudProfile} />        
               )}
                 {studentSign ? (
-                  <Pressable onPress={()=> [setModalVisible(true),setModalData(studentSign)]}  style={styles.stusigWrap}>
+                  <Pressable onPress={()=> [setModalVisible(true),setModalData(studentSign),  setModalStyle({ width: 210, height: "auto" })]}  style={styles.stusigWrap}>
               <Image 
             source={{ uri: `data:image/png;base64,${studentSign}` }}
             style={[styles.signature ,isMobile ?styles.signaturemob:styles.signature]} 
+            
             // resizeMode="contain"    
           />
           </Pressable>
@@ -1144,15 +1146,15 @@ const StudentInfo = ({ navigation }) => {
               <PopUpModal
                 visible={modalVisible}
                 // onRequestClose={() => setModalVisible(false)}
-                onRequestClose={() => [setModalVisible(false),setModalData('')]}
+                onRequestClose={() => [setModalVisible(false),setModalData(''),setModalStyle('') ]}
                 animationType="slide">
                 <View style={styles.modalContainer}>
                   {/* <TouchableOpacity style={styles.modalCloseButton} onPress={() => setModalVisible(false)}>
                     <Text style={styles.modalCloseText}>Close</Text>
                   </TouchableOpacity> */}
                   <View style={styles.modalView}>
-                  <Image  source={{ uri: `data:image/png;base64,${studentPicture}` }}   style={{position:"static" ,  width:350, height:250}}    />
-                  <Image  source={{ uri: `data:image/png;base64,${modalData}` }} style={{position:"static" , width:350, height:"auto"}} />                 
+                  <Image    source={{ uri: `data:image/png;base64,${modalData}` }} style={[styles.modelimage, modalstyle]}/>
+                  {/* <Image  source={{ uri: `data:image/png;base64,${modalData}` }} style={{position:"static" ,         width:isMobile ?210:250, height:"auto"}} />                  */}
                   </View>
                 </View>
             </PopUpModal>
@@ -1188,17 +1190,20 @@ const StudentInfo = ({ navigation }) => {
                 <Text style={[styles.label ,]}>Course Name:</Text>
                 <Text style={[styles.value,]}>{courseDetails?.DESCR100 || ""}</Text>
               </View>
-              <View style={styles.examinfoItem}>
-                <Text style={styles.label}>Room No:</Text>
-                <Text style={styles.value}>{room_Nbr}</Text>
-              </View>
-              <View style={styles.examinfoItem}>
-                <Text style={styles.label}>Seat No:</Text>
-                <Text style={styles.value}>{seat_Nbr}</Text>
-              </View>
+          <View style={{flexDirection:isMobile? "row":""}}>
+                <View style={styles.examinfoItem}>
+                  <Text style={styles.label}>Room No:</Text>
+                  <Text style={styles.value}>{room_Nbr}</Text>
+                </View>
+                <View style={styles.examinfoItem}>
+                  <Text style={styles.label}>Seat No:</Text>
+                  <Text style={styles.value}>{seat_Nbr}</Text>
+                </View>
+                </View>
+
               </View>
                 {/* Class Status and Attendance Status */}
-          <View style={[styles.detailsSection, { flexDirection: isMobile ? "column" : "row" }]}>
+          <View style={[styles.detailsSection, { flexDirection: isMobile ? "row" : "row" }]}>
               {/* <View style={{flexDirection:isMobile?"column":"row", }}> */}
               <View style={styles.examinfoItem}>
                 <Text style={styles.label}>Class Status:</Text>
@@ -1208,6 +1213,7 @@ const StudentInfo = ({ navigation }) => {
               </View>
               <View style={[styles.examinfoItem, styles.studStatus]}>
                 <Text style={[styles.label]}>Status</Text>
+                <View style={{flexDirection:isMobile?'row' :"row" ,}}>
                 <View style={styles.attStatus}>
                   <CheckBox value={status === "Present"} onValueChange={(item) =>setStatus("Present")} color={getStatuscolor()} disabled={((!isActive && !(userAccess?.label === "Admin")) || disabledStatus === "Absent")} />                
                   <Text style={[styles.value, styles.customValue]}>Present</Text>
@@ -1220,7 +1226,7 @@ const StudentInfo = ({ navigation }) => {
                 <CheckBox value={status === "UFM"} onValueChange={() => setStatus("UFM")} color={getStatuscolor()} disabled={((!isActive && !(userAccess?.label === "Admin"))) || disabledStatus === "Absent"} />
                 <Text style={[styles.value, styles.customValue]}>UFM</Text>
                 </View>
-                
+                </View>
                 
 
                 {/* <DropDownPicker
@@ -1485,8 +1491,7 @@ const StudentInfo = ({ navigation }) => {
           {/* -------------------------------------------------- New AnsweSheet code-------------------------------------------- */}
           <View>
             <View
-              style={{ flexDirection: "row", justifyContent: "space-between" }}
-            >
+              style={{ flexDirection: "row", justifyContent: "space-between" }}>
               <Text style={styles.addAnsheading}>Answersheet</Text>
               {((copiesData?.length < 4 && isActive && attendenceStatus != 'Debarred')) && (
                 <AntDesign style={styles.addicon} name="pluscircleo" size={24} color="black" onPress={handleAddCopy} />
@@ -1634,7 +1639,6 @@ const StudentInfo = ({ navigation }) => {
               </Text>
             )}
           </View>
-
         <View style={styles.buttonWrap}>
         {((copiesData?.length > 0 || status === "Absent") && ((isActive) || userAccess?.label === "Admin") ) && (<Pressable style={styles.submitButton} onPress={reportId ? handleStudentInfoUpdate : handleStudentInfoSubmit} >
             <Text style={styles.addButtonText}> {" "} {reportId ? "Update" : "Submit"} </Text>
@@ -1759,7 +1763,7 @@ const styles = StyleSheet.create({
    marginBottom: 10,
     flex: 1,
     minWidth: '45%',
-    flexDirection:"row"
+    // flexDirection:"row"
   },
   label: {
     fontWeight: "bold",
@@ -2013,11 +2017,11 @@ const styles = StyleSheet.create({
     
   },
   stuprofWrap:{
-  width: isMobile? '' :"90%",
+  width: isMobile? '' :"80%",
   height:isMobile? '' :250
   },
   stusigWrap:{
-    width: isMobile? '' :"90%",
+    width: isMobile? '' :"80%",
     // height:isMobile? '' :250
   },
   defaultstudProfile:{
@@ -2056,6 +2060,12 @@ stuimge: {
   // width:50,
   // height:64,
   },
+  modelimage:{
+    position:"static" ,
+     width:250,
+      height:420
+    },
+
   copiesdataWrap: {
     marginTop: 10,
     backgroundColor: "rgb(240 243 245)",
@@ -2162,7 +2172,7 @@ stuimge: {
     fontWeight: "bold"
   },
   attStatus: {
-    width: 75,
+    width: isMobile ? 62:75,
     flexDirection: "column",
     marginRight: 0,
   },
@@ -2207,6 +2217,6 @@ detailsSection: {
   marginBottom: 10,
 },
 courseName: {
-  maxWidth: isMobile ? '100%' : '50%',
+  minWidth: isMobile ? '100%' : '100%',
 }
 });
