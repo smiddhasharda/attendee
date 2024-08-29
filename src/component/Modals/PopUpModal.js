@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     margin: 20,
     backgroundColor: 'white',
     borderRadius: 20,
-    padding: 35,
+    padding: 25,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
@@ -68,8 +68,8 @@ const styles = StyleSheet.create({
     // backgroundColor: '#2196F3',
     position:"absolute",
     padding:0,
-    top:0,
-    right:0,
+    top:4,
+    right:4,
   },
   textStyle: {
     color: 'white',

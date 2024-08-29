@@ -12,6 +12,7 @@ import { parseISO, format, differenceInSeconds, addMinutes, subMinutes, isSameDa
 import { toZonedTime, fromZonedTime } from 'date-fns-tz';
 import CryptoJS from 'crypto-js';
 import PopUpModal from "../Modals/PopUpModal";
+import { borderRadius } from "@mui/system";
 const { width, height } = Dimensions.get('window');
 const isMobile = width < 768; 
 
@@ -277,7 +278,7 @@ const StudentInfo = ({ navigation }) => {
             data: {
               EMPLID: studentDetails.EMPLID,
               NAME_FORMAL: studentDetails.NAME_FORMAL,
-              STRM: studentDetails.STRM,
+              STRM: courseDetails.STRM,
               ADM_APPL_NBR: studentDetails.CAMPUS_ID,
               DESCR: studentDetails.DESCR,
               DESCR2: studentDetails.DESCR2,
@@ -291,6 +292,7 @@ const StudentInfo = ({ navigation }) => {
               Status: status,
               SU_PAPER_ID: courseDetails.SU_PAPER_ID,
               DESCR100: courseDetails.DESCR100,
+              EXAM_TYPE_CD:courseDetails.EXAM_TYPE_CD,
             },
             conditionString: `EMPLID = '${studentDetails.EMPLID}' AND EXAM_DT = '${exam_Dt}' AND ROOM_NBR = '${room_Nbr}' AND EXAM_START_TIME = '${startTime}'`,
             checkAvailability: true,
@@ -592,7 +594,7 @@ const StudentInfo = ({ navigation }) => {
             data: {
               EMPLID: studentDetails.EMPLID,
               NAME_FORMAL: studentDetails.NAME_FORMAL,
-              STRM: studentDetails.STRM,
+              STRM: courseDetails.STRM,
               ADM_APPL_NBR: studentDetails.CAMPUS_ID,
               DESCR: studentDetails.DESCR,
               DESCR2: studentDetails.DESCR2,
@@ -606,6 +608,7 @@ const StudentInfo = ({ navigation }) => {
               Status: status,
               SU_PAPER_ID: courseDetails.SU_PAPER_ID,
               DESCR100: courseDetails.DESCR100,
+              EXAM_TYPE_CD:courseDetails.EXAM_TYPE_CD,
             },
             conditionString: `PK_Report_Id = ${reportId}`,
             checkAvailability: "",
@@ -808,7 +811,7 @@ const StudentInfo = ({ navigation }) => {
           data: "",
           conditionString: "",
           checkAvailability: "",
-          customQuery: `SELECT DISTINCT CATALOG_NBR, DESCR100,EXAM_TIME_CODE FROM PS_S_PRD_EX_TME_VW WHERE CATALOG_NBR = '${catlog_Nbr}'`,
+          customQuery: `SELECT DISTINCT CATALOG_NBR, DESCR100,EXAM_TIME_CODE,EXAM_TYPE_CD,STRM FROM PS_S_PRD_EX_TME_VW WHERE CATALOG_NBR = '${catlog_Nbr}'`,
           viewType: 'Campus_View'
         },
         authToken
@@ -1069,25 +1072,26 @@ const StudentInfo = ({ navigation }) => {
             <View style={[styles.infoContainer,{flexDirection:"row"}]}>
               <View style={[styles.userDetailWrap,{marginRight:0}]}>
                 {studentPicture ? (
-                  <Pressable onPress={()=> [setModalVisible(true),setModalData(studentPicture)]}>
+                  <Pressable onPress={()=> setModalVisible(true)} style={styles.stuprofWrap}>
                   <Image
-            source={{ uri: `data:image/png;base64,${studentPicture}` }}
-            style={styles.studProfile}            
-          />
-                  </Pressable>
-             
+                    source={{ uri: `data:image/png;base64,${studentPicture}` }}
+                    style={[styles.studProfile, ]}     
+                  // resizeMode="cover"       
+                />
+                  </Pressable>           
           ) : (
-                <FontAwesome name="user" size={40} color="#fff" style={styles.studProfile} />        
-              )} 
+                <FontAwesome name="user" size={40} color="#fff" style={styles.defaultstudProfile} />        
+              )}
                 {studentSign ? (
-                  <Pressable onPress={()=> [setModalVisible(true),setModalData(studentSign)]}>
+                  <Pressable onPress={()=> [setModalVisible(true),setModalData(studentSign)]}  style={styles.stusigWrap}>
               <Image 
             source={{ uri: `data:image/png;base64,${studentSign}` }}
             style={[styles.signature ,isMobile ?styles.signaturemob:styles.signature]} 
+            // resizeMode="contain"    
           />
-           </Pressable>
+          </Pressable>
           ) : (
-                <FontAwesome6 name="signature" size={34} color="black" />        
+                <FontAwesome6 name="signature" size={34} color="black" style={styles.defaultstudSign}  />        
               )} 
               </View>
               <View style={[styles.infoItemWrap]}>
@@ -1114,8 +1118,7 @@ const StudentInfo = ({ navigation }) => {
                     <View style={styles.infoItem}>
                       <Text style={styles.label1}>Program:</Text>
                       <Text style={styles.value1} numberOfLines={1} > {studentDetails?.DESCR2 || ""}</Text>
-                    </View>
-               
+                    </View>              
                     <View style={styles.infoItem}>
                       <Text style={styles.label1}>Branch:</Text>
                       <Text style={styles.value1} numberOfLines={1}> {studentDetails?.DESCR3 || ""}</Text>
@@ -1140,6 +1143,7 @@ const StudentInfo = ({ navigation }) => {
               </View>
               <PopUpModal
                 visible={modalVisible}
+                // onRequestClose={() => setModalVisible(false)}
                 onRequestClose={() => [setModalVisible(false),setModalData('')]}
                 animationType="slide">
                 <View style={styles.modalContainer}>
@@ -1147,8 +1151,8 @@ const StudentInfo = ({ navigation }) => {
                     <Text style={styles.modalCloseText}>Close</Text>
                   </TouchableOpacity> */}
                   <View style={styles.modalView}>
-                  <Image    source={{ uri: `data:image/png;base64,${modalData}` }} style={{position:"static" , width:250, height:420}}/>
-                  
+                  <Image  source={{ uri: `data:image/png;base64,${studentPicture}` }}   style={{position:"static" ,  width:350, height:250}}    />
+                  <Image  source={{ uri: `data:image/png;base64,${modalData}` }} style={{position:"static" , width:350, height:"auto"}} />                 
                   </View>
                 </View>
             </PopUpModal>
@@ -1156,45 +1160,53 @@ const StudentInfo = ({ navigation }) => {
           </View>
           <View style={styles.studentInfoWrap}>   
             <View style={styles.infoContainer}>
-            <View style={{ borderBottomColor:"#ccc",borderBottomWidth:1,padding:10, marginBottom:10}}>
+            {/* <View style={{ borderBottomColor:"#ccc",borderBottomWidth:1,padding:10, marginBottom:10}}> */}
+            <View style={styles.headerSection}>
             <Text style={styles.infoHeader}>Exam Info:</Text>
             </View>
-            <View style={[styles.infopWrap,]}>
-              <View style={[styles.infoItem,]}>
-                <Text style={[styles.label,{width:"40%"}]}>Paper Id:</Text>
+              {/* Exam Details */}
+            {/* <View style={[styles.infopWrap,]}> */}
+            <View style={styles.detailsSection}>
+              <View style={[styles.examinfoItem,]}>
+                <Text style={[styles.label,]}>Paper Id:</Text>
                 <Text style={styles.value}>
                   {courseDetails?.EXAM_TIME_CODE || ""}
                 </Text>
               </View>
-              <View style={styles.infoItem}>
-                <Text style={[styles.label,{width:"60%"}]}>Course Code:</Text>
+              <View style={styles.examinfoItem}>
+                <Text style={[styles.label,]}>Course Code:</Text>
                 <Text style={styles.value}>
                   {courseDetails?.CATALOG_NBR || ""}
                 </Text>
               </View>
               </View>
-              <View style={{flexDirection:isMobile?"column":"row", }}>
-              <View style={[styles.infoItem,{maxWidth:isMobile?'250px':"100%"}]}>
+                  {/* Course Name, Room No, Seat No */}
+              {/* <View style={{flexDirection:isMobile?"column":"row", }}> */}
+              <View style={[styles.detailsSection, { flexDirection: isMobile ? "column" : "row" }]}>
+              {/* <View style={[styles.infoItem,{maxWidth:isMobile?'250px':"100%"}]}> */}
+              <View style={[styles.examinfoItem, styles.courseName]}>
                 <Text style={[styles.label ,]}>Course Name:</Text>
                 <Text style={[styles.value,]}>{courseDetails?.DESCR100 || ""}</Text>
               </View>
-              <View style={styles.infoItem}>
+              <View style={styles.examinfoItem}>
                 <Text style={styles.label}>Room No:</Text>
                 <Text style={styles.value}>{room_Nbr}</Text>
               </View>
-              <View style={styles.infoItem}>
+              <View style={styles.examinfoItem}>
                 <Text style={styles.label}>Seat No:</Text>
                 <Text style={styles.value}>{seat_Nbr}</Text>
               </View>
               </View>
-              <View style={{flexDirection:isMobile?"column":"row", }}>
-              <View style={styles.infoItem}>
+                {/* Class Status and Attendance Status */}
+          <View style={[styles.detailsSection, { flexDirection: isMobile ? "column" : "row" }]}>
+              {/* <View style={{flexDirection:isMobile?"column":"row", }}> */}
+              <View style={styles.examinfoItem}>
                 <Text style={styles.label}>Class Status:</Text>
                 <Text style={[styles.value, {marginBottom: 10}, getAttendenceStatuscolor()]}>
                   {attendenceStatus}
                 </Text>
               </View>
-              <View style={[styles.infoItem, styles.studStatus]}>
+              <View style={[styles.examinfoItem, styles.studStatus]}>
                 <Text style={[styles.label]}>Status</Text>
                 <View style={styles.attStatus}>
                   <CheckBox value={status === "Present"} onValueChange={(item) =>setStatus("Present")} color={getStatuscolor()} disabled={((!isActive && !(userAccess?.label === "Admin")) || disabledStatus === "Absent")} />                
@@ -1738,20 +1750,27 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     maxWidth:250,
-    // flexDirection: "column",
     justifyContent: "flex-start",
     marginBottom: 10,
     alignItems: "center" 
+ 
+  },
+  examinfoItem:{
+   marginBottom: 10,
+    flex: 1,
+    minWidth: '45%',
+    flexDirection:"row"
   },
   label: {
     fontWeight: "bold",
     color: "#333",
-    width: "35%",
-    display: "inline-block"
+    // width: "35%",
+    display: "inline-block",
+    marginRight:8,
   },
   value: {
     color: "#555",
-    width: "65%",
+    // width: "65%",
   },
   label1: {
     fontWeight: "bold",
@@ -1960,18 +1979,28 @@ const styles = StyleSheet.create({
   },
 
   signature:{
-  width:170,
-  height:50,
+  // width:232,
+  height:80,
+  width: "100%",
+  height:80,
   borderWidth:1,
-  borderColor:"#dadada"
+  borderColor:"#dadada",
+  display: "flex",
+  // flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  textAlign: "center",
+  verticalAlign: "middle",
+  // borderRadius:6,
+  marginTop:10,
   },
 
   studProfile: {
     // width: 100,
     // height: 100,
-    width: isMobile ? 54 : 170,
-    height:isMobile ? 66 : 215,
-    backgroundColor: '#dfdfdf',
+    width: isMobile ? 54 : "100%",
+    height:isMobile ? 66 : 250,
+    backgroundColor: 'green',
     // borderRadius: 50,
     display: "flex",
     flexDirection: "column",
@@ -1979,7 +2008,49 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     textAlign: "center",
     verticalAlign: "middle",
-    marginBottom: 20
+    marginBottom: 20,
+    borderRadius:6,
+    
+  },
+  stuprofWrap:{
+  width: isMobile? '' :"90%",
+  height:isMobile? '' :250
+  },
+  stusigWrap:{
+    width: isMobile? '' :"90%",
+    // height:isMobile? '' :250
+  },
+  defaultstudProfile:{
+    width: isMobile ? 54 : "90%",
+    height:isMobile ? 66 : 250,
+    backgroundColor: '#ccc',
+    // borderRadius: 50,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    textAlign: "center",
+    verticalAlign: "middle",
+    marginBottom: 20,
+    borderRadius:6,
+  },
+  defaultstudSign:{
+    width: isMobile ? 54 : "90%",
+    height:isMobile ? 66 : 80,
+    backgroundColor: '#ccc',
+    // borderRadius: 50,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    textAlign: "center",
+    verticalAlign: "middle",
+    marginBottom: 20,
+    borderRadius:6,
+  },
+stuimge: {
+    width: 250,
+    height: "auto",
   },
   studProfilemob:{
   // width:50,
@@ -2123,6 +2194,19 @@ userDetailWrap: {
 infopWrap:{
   flexDirection:"row",
 },
-
-
+headerSection:{
+  borderBottomColor: "#ccc",
+  borderBottomWidth: 1,
+  paddingBottom: 10,
+  marginBottom: 10
+},
+detailsSection: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  flexWrap: 'wrap',
+  marginBottom: 10,
+},
+courseName: {
+  maxWidth: isMobile ? '100%' : '50%',
+}
 });
