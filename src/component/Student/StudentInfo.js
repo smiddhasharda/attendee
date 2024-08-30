@@ -1098,35 +1098,35 @@ const StudentInfo = ({ navigation }) => {
               </View>
               <View style={[styles.infoItemWrap]}>
                     <View style={styles.infoItem}>
-                      <Text style={styles.label1}>Name:</Text>
-                      <Text style={styles.value1} numberOfLines={1}>
+                      <Text style={styles.label1}>Name: </Text>
+                      <Text style={[styles.value1,{fontWeight:'600'}]} numberOfLines={1}>
                         {" "}
                         {studentDetails?.NAME_FORMAL || ""}{" "}
                       </Text>
                     </View>
                     <View style={styles.infoItem}>
-                      <Text style={styles.label1}>System Id:</Text>
+                      <Text style={styles.label1}>System Id: </Text>
                       <Text style={styles.value1} numberOfLines={1}> {studentDetails?.EMPLID || ""} </Text>
                     </View>
                     <View style={styles.infoItem}>
-                      <Text style={styles.label1} >Roll No:</Text>
-                      <Text style={styles.value1} numberOfLines={1}> {studentDetails?.CAMPUS_ID || ""}
+                      <Text style={[styles.label1,]} >Roll No: </Text>
+                      <Text style={[styles.value1,{fontWeight:'600'}]} numberOfLines={1}> {studentDetails?.CAMPUS_ID || ""}
                       </Text>
                     </View>
                     <View style={styles.infoItem}>
-                      <Text style={styles.label1} >School:</Text>
+                      <Text style={styles.label1} >School: </Text>
                       <Text style={styles.value1} numberOfLines={1} ellipsizeMode='tail'> {studentDetails?.DESCR || ""}</Text>
                     </View>
                     <View style={styles.infoItem}>
-                      <Text style={styles.label1}>Program:</Text>
+                      <Text style={styles.label1}>Program: </Text>
                       <Text style={styles.value1} numberOfLines={1}  ellipsizeMode='tail' > {studentDetails?.DESCR2 || ""}</Text>
                     </View>              
                     <View style={styles.infoItem}>
-                      <Text style={styles.label1}>Branch:</Text>
+                      <Text style={styles.label1}>Branch: </Text>
                       <Text style={styles.value1} numberOfLines={1}> {studentDetails?.DESCR3 || ""}</Text>
                     </View>
                     <View style={styles.infoItem}>
-                      <Text style={styles.label1}>Semester:</Text>
+                      <Text style={styles.label1}>Semester: </Text>
                       <Text style={styles.value1} numberOfLines={1}> {studentDetails?.ACAD_LEVEL_BOT || "0"}</Text>
                   
                     </View>
@@ -1169,17 +1169,23 @@ const StudentInfo = ({ navigation }) => {
               {/* Exam Details */}
             {/* <View style={[styles.infopWrap,]}> */}
             <View style={styles.detailsSection}>
+            
               <View style={[styles.examinfoItem,]}>
+              <View style={{flexDirection:isMobile?"column":"row"}}>
                 <Text style={[styles.label,]}>Paper Id:</Text>
                 <Text style={styles.value}>
                   {courseDetails?.EXAM_TIME_CODE || ""}
                 </Text>
               </View>
+              </View>
               <View style={styles.examinfoItem}>
+              <View style={{flexDirection:isMobile?"column":"row"}}>
+            
                 <Text style={[styles.label,]}>Course Code:</Text>
-                <Text style={styles.value}>
+                <Text style={[styles.value,{fontWeight:'600'}]}>
                   {courseDetails?.CATALOG_NBR || ""}
                 </Text>
+              </View>
               </View>
               </View>
                   {/* Course Name, Room No, Seat No */}
@@ -1187,17 +1193,23 @@ const StudentInfo = ({ navigation }) => {
               <View style={[styles.detailsSection, { flexDirection: isMobile ? "column" : "row" }]}>
               {/* <View style={[styles.infoItem,{maxWidth:isMobile?'250px':"100%"}]}> */}
               <View style={[styles.examinfoItem, styles.courseName]}>
+              <View style={{flexDirection:isMobile?"column":"row"}}>
                 <Text style={[styles.label ,]}>Course Name:</Text>
                 <Text style={[styles.value,]}>{courseDetails?.DESCR100 || ""}</Text>
               </View>
-          <View style={{flexDirection:isMobile? "row":""}}>
+              </View>
+          <View style={{flexDirection:isMobile? "row":"row" , minWidth:isMobile?'':"100%"}}>
                 <View style={styles.examinfoItem}>
+                <View style={{flexDirection:isMobile?"column":"row"}}>
                   <Text style={styles.label}>Room No:</Text>
                   <Text style={styles.value}>{room_Nbr}</Text>
                 </View>
+                </View>
                 <View style={styles.examinfoItem}>
+                <View style={{flexDirection:isMobile?"column":"row"}}>
                   <Text style={styles.label}>Seat No:</Text>
                   <Text style={styles.value}>{seat_Nbr}</Text>
+                  </View>
                 </View>
                 </View>
 
@@ -1206,12 +1218,15 @@ const StudentInfo = ({ navigation }) => {
           <View style={[styles.detailsSection, { flexDirection: isMobile ? "row" : "row" }]}>
               {/* <View style={{flexDirection:isMobile?"column":"row", }}> */}
               <View style={styles.examinfoItem}>
-                <Text style={styles.label}>Class Status:</Text>
-                <Text style={[styles.value, {marginBottom: 10}, getAttendenceStatuscolor()]}>
+              <View style={{flexDirection:isMobile?"row":"row"}}>
+                <Text style={[styles.label,]}>Class Status:</Text>
+                <Text style={[styles.value, {marginBottom: 10,textAlign:"center"}, getAttendenceStatuscolor()]}>
                   {attendenceStatus}
                 </Text>
               </View>
+              </View>
               <View style={[styles.examinfoItem, styles.studStatus]}>
+              <View style={{flexDirection:isMobile?"column":"row"}}>
                 <Text style={[styles.label]}>Status</Text>
                 <View style={{flexDirection:isMobile?'row' :"row" ,}}>
                 <View style={styles.attStatus}>
@@ -1225,6 +1240,7 @@ const StudentInfo = ({ navigation }) => {
                 <View style={styles.attStatus}>
                 <CheckBox value={status === "UFM"} onValueChange={() => setStatus("UFM")} color={getStatuscolor()} disabled={((!isActive && !(userAccess?.label === "Admin"))) || disabledStatus === "Absent"} />
                 <Text style={[styles.value, styles.customValue]}>UFM</Text>
+                </View>
                 </View>
                 </View>
                 
@@ -1664,7 +1680,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   studentInfoWrap: {
-    marginBottom: 20,
+    marginBottom: 8,
     borderRadius: 8,
     padding: 5,
     //overflow: "hidden"
@@ -1773,7 +1789,7 @@ const styles = StyleSheet.create({
     marginRight:8,
   },
   value: {
-    color: "#555",
+    color: "rgb(17, 65, 102)",
     // width: "65%",
   },
   label1: {
@@ -1783,9 +1799,9 @@ const styles = StyleSheet.create({
     display: "inline-block"
   },
   value1: {
-    color: "#555",
+    color: "rgb(17, 65, 102)",
     overflow: 'hidden',
-    fontWeight:"600"
+
 
   },
   // table: {
