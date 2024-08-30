@@ -1084,7 +1084,7 @@ const StudentInfo = ({ navigation }) => {
                 <FontAwesome name="user" size={40} color="#fff" style={styles.defaultstudProfile} />        
               )}
                 {studentSign ? (
-                  <Pressable onPress={()=> [setModalVisible(true),setModalData(studentSign),  setModalStyle({ width: 210, height: "auto" })]}  style={styles.stusigWrap}>
+                  <Pressable onPress={()=> [setModalVisible(true),setModalData(studentSign),  setModalStyle({ width: 300, height: 150,})]}  style={styles.stusigWrap}>
               <Image 
             source={{ uri: `data:image/png;base64,${studentSign}` }}
             style={[styles.signature ,isMobile ?styles.signaturemob:styles.signature]} 
@@ -1119,7 +1119,7 @@ const StudentInfo = ({ navigation }) => {
                     </View>
                     <View style={styles.infoItem}>
                       <Text style={styles.label1}>Program:</Text>
-                      <Text style={styles.value1} numberOfLines={1} > {studentDetails?.DESCR2 || ""}</Text>
+                      <Text style={styles.value1} numberOfLines={1}  ellipsizeMode='tail' > {studentDetails?.DESCR2 || ""}</Text>
                     </View>              
                     <View style={styles.infoItem}>
                       <Text style={styles.label1}>Branch:</Text>
@@ -1785,6 +1785,7 @@ const styles = StyleSheet.create({
   value1: {
     color: "#555",
     overflow: 'hidden',
+    fontWeight:"600"
 
   },
   // table: {
