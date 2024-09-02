@@ -734,20 +734,24 @@ const StudentInfo = ({ navigation }) => {
   const handleGetStudentInfo = async () => {
     try {
       const authToken = await checkAuthToken();
+      const Parameter = {
+        operation: "fetch",
+        tblName: "PS_S_PRD_STDNT_VW",
+        data: "",
+        conditionString: `EMPLID = '${system_Id}'`,
+        checkAvailability: "",
+        customQuery: "",
+        viewType: 'Campus_View'
+      };
+      const encryptedParams = encrypt(JSON.stringify(Parameter));
       const response = await view(
-        {
-          operation: "fetch",
-          tblName: "PS_S_PRD_STDNT_VW",
-          data: "",
-          conditionString: `EMPLID = '${system_Id}'`,
-          checkAvailability: "",
-          customQuery: "",
-          viewType: 'Campus_View'
-        },
+        encryptedParams,
         authToken
       );
       if (response) {
-        setStudentDetails(response?.data?.receivedData?.[0]);
+        const decryptedData = decrypt(response?.data?.receivedData);
+        const DecryptedData = JSON.parse(decryptedData);
+        setStudentDetails(DecryptedData?.[0]);
         // setLoading(false);
       }
     } catch (error) {
@@ -805,20 +809,25 @@ const StudentInfo = ({ navigation }) => {
   const handleGetStudentCouseInfo = async () => {
     try {
       const authToken = await checkAuthToken();
+      const Parameter = {
+        operation: "custom",
+        tblName: "PS_S_PRD_EX_TME_VW",
+        data: "",
+        conditionString: "",
+        checkAvailability: "",
+        customQuery: `SELECT DISTINCT CATALOG_NBR, DESCR100,EXAM_TIME_CODE,EXAM_TYPE_CD,STRM FROM PS_S_PRD_EX_TME_VW WHERE CATALOG_NBR = '${catlog_Nbr}'`,
+        viewType: 'Campus_View'
+      };
+      const encryptedParams = encrypt(JSON.stringify(Parameter));
+      
       const response = await view(
-        {
-          operation: "custom",
-          tblName: "PS_S_PRD_EX_TME_VW",
-          data: "",
-          conditionString: "",
-          checkAvailability: "",
-          customQuery: `SELECT DISTINCT CATALOG_NBR, DESCR100,EXAM_TIME_CODE,EXAM_TYPE_CD,STRM FROM PS_S_PRD_EX_TME_VW WHERE CATALOG_NBR = '${catlog_Nbr}'`,
-          viewType: 'Campus_View'
-        },
+        encryptedParams,
         authToken
       );
       if (response) {
-        setCourseDetails(response?.data?.receivedData?.[0] || []);
+        const decryptedData = decrypt(response?.data?.receivedData);
+        const DecryptedData = JSON.parse(decryptedData);
+        setCourseDetails(DecryptedData?.[0] || []);
         // setLoading(false);
       }
     } catch (error) {
@@ -829,20 +838,24 @@ const StudentInfo = ({ navigation }) => {
   const handleGetStudentAttendenceInfo = async () => {
     try {
       const authToken = await checkAuthToken();
+      const Parameter = {
+        operation: "custom",
+        tblName: "PS_S_PRD_CT_ATT_VW",
+        data: "",
+        conditionString: "",
+        checkAvailability: "",
+        customQuery: `SELECT DISTINCT PS_S_PRD_CT_ATT_VW.PERCENTAGE,PS_S_PRD_TRS_AT_VW.PERCENTCHG FROM PS_S_PRD_CT_ATT_VW JOIN PS_S_PRD_TRS_AT_VW ON PS_S_PRD_TRS_AT_VW.EMPLID = PS_S_PRD_CT_ATT_VW.EMPLID WHERE PS_S_PRD_CT_ATT_VW.EMPLID = '${system_Id}' AND PS_S_PRD_CT_ATT_VW.CATALOG_NBR = '${catlog_Nbr}' AND PS_S_PRD_CT_ATT_VW.STRM = '${current_Term}'`,
+        viewType: 'Campus_View',
+      };
+      const encryptedParams = encrypt(JSON.stringify(Parameter));
       const response = await view(
-        {
-          operation: "custom",
-          tblName: "PS_S_PRD_CT_ATT_VW",
-          data: "",
-          conditionString: "",
-          checkAvailability: "",
-          customQuery: `SELECT DISTINCT PS_S_PRD_CT_ATT_VW.PERCENTAGE,PS_S_PRD_TRS_AT_VW.PERCENTCHG FROM PS_S_PRD_CT_ATT_VW JOIN PS_S_PRD_TRS_AT_VW ON PS_S_PRD_TRS_AT_VW.EMPLID = PS_S_PRD_CT_ATT_VW.EMPLID WHERE PS_S_PRD_CT_ATT_VW.EMPLID = '${system_Id}' AND PS_S_PRD_CT_ATT_VW.CATALOG_NBR = '${catlog_Nbr}' AND PS_S_PRD_CT_ATT_VW.STRM = '${current_Term}'`,
-          viewType: 'Campus_View',
-        },
+        encryptedParams,
         authToken
       );
       if (response) {
-        let AttendenceDetials = response?.data?.receivedData?.[0] || ''
+        const decryptedData = decrypt(response?.data?.receivedData);
+        const DecryptedData = JSON.parse(decryptedData);
+        let AttendenceDetials = DecryptedData?.[0] || ''
         let AttendenceStatus = AttendenceDetials ? AttendenceDetials.PERCENTAGE >= AttendenceDetials.PERCENTCHG ? "Eligible" : "Debarred" : "Not Defined";
         setAttendenceStatus(AttendenceStatus);
         setStatus(AttendenceStatus === "Debarred" ? "Absent" : "Present");

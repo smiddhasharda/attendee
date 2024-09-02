@@ -8,6 +8,7 @@ import { bulkupload,view } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import { FontAwesome} from '@expo/vector-icons'; 
 import Pagination from '../Pagination/PaginationComponent';
+import CryptoJS from 'crypto-js';
 
 const BulkUpload = (props) => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -19,6 +20,54 @@ const BulkUpload = (props) => {
 
   const pageSize = 10;
   const duplicatePageSize = 10;
+
+  const decrypt = (encryptedData) => {
+    const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
+    const [iv, encrypted] = encryptedData.split(':');
+    const ivBytes = CryptoJS.enc.Hex.parse(iv);
+    const encryptedBytes = CryptoJS.enc.Hex.parse(encrypted);
+    const decrypted = CryptoJS.AES.decrypt(
+      { ciphertext: encryptedBytes },
+      CryptoJS.enc.Utf8.parse(encryptScreteKey),
+      {
+        iv: ivBytes,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7,
+      }
+    );
+    return decrypted.toString(CryptoJS.enc.Utf8);
+  };
+
+  const generateIV = () => {
+    if (Platform.OS === 'web') {
+      // For web, use CryptoJS's random generator
+      return CryptoJS.lib.WordArray.random(16);
+    } else {
+      // For React Native, use a simple random number generator
+      const arr = new Uint8Array(16);
+      for (let i = 0; i < 16; i++) {
+        arr[i] = Math.floor(Math.random() * 256);
+      }
+      return CryptoJS.lib.WordArray.create(arr);
+    }
+  };
+  
+  const encrypt = (plaintext) => {
+    const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
+    const iv = generateIV();
+    const key = CryptoJS.enc.Utf8.parse(encryptScreteKey);
+    
+    const encrypted = CryptoJS.AES.encrypt(plaintext, key, {
+      iv: iv,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7
+    });
+  
+    const encryptedBase64 = encrypted.toString();
+    const ivHex = CryptoJS.enc.Hex.stringify(iv);
+  
+    return `${ivHex}:${encryptedBase64}`;
+  };
 
 const pickFile = async () => {
   try {
@@ -212,20 +261,24 @@ const pickFile = async () => {
     try {
       const authToken = await checkAuthToken();
       let EmployeeeSearch = excelData?.map((data) => `'${data.employeeId}'`).join();
+      const Parameter = {
+        operation: "custom",
+        tblName: "PS_SU_PSFT_COEM_VW",
+        data: '',
+        conditionString: '',
+        checkAvailability: '',
+        customQuery: `SELECT DISPLAY_NAME, EMPLID FROM PS_SU_PSFT_COEM_VW WHERE EMPLID IN (${EmployeeeSearch})`,
+        viewType: 'HRMS_View'
+      };
+      const encryptedParams = encrypt(JSON.stringify(Parameter));
+
       const response = await view(
-        {
-          operation: "custom",
-          tblName: "PS_SU_PSFT_COEM_VW",
-          data: '',
-          conditionString: '',
-          checkAvailability: '',
-          customQuery: `SELECT DISPLAY_NAME, EMPLID FROM PS_SU_PSFT_COEM_VW WHERE EMPLID IN (${EmployeeeSearch})`,
-          viewType: 'HRMS_View'
-        },
+        encryptedParams,
         authToken
       );
-  
-      const dbEmployeeIds = new Set(response?.data?.receivedData?.map(emp => emp.EMPLID));
+      const decryptedData = decrypt(response?.data?.receivedData);
+      const DecryptedData = JSON.parse(decryptedData);
+      const dbEmployeeIds = new Set(DecryptedData?.map(emp => emp.EMPLID));
       const missingEmployeeIds = excelData.filter(data => !dbEmployeeIds.has(data.employeeId));
   
       if (missingEmployeeIds.length === 0) {
