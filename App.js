@@ -93,7 +93,7 @@ const AppContent = () => {
                     <View style={{ backgroundColor: "#f2f7ff", flex: 1}} />
                   ),
                   headerLeft: () => (
-                    <View style={{paddingLeft: 35}}>
+                    <View style={{paddingLeft: isMobile? 0:35}}>
                     <Image
                       source={logoImage}
                       style={[styles.logo ,{height:isMobile ? 50 : 40} ]}
