@@ -897,12 +897,13 @@ const StudentInfo = ({ navigation }) => {
           borderRadius:4,
           borderColor:'red',
           color: 'white',
-          marginRight: 54,
-          padding: 6,
-          width: 75,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center"
+          // marginRight: 54,
+          padding: 5,
+          fontSize:12,
+          // width: 75,
+          // display: "flex",
+          // alignItems: "center",
+          // justifyContent: "center"
         };
       case 'Not Defined':
         return {
@@ -910,12 +911,13 @@ const StudentInfo = ({ navigation }) => {
           borderRadius:4,
           borderColor:'grey',
           color: 'white',
-          marginRight: 54,
-          padding: 6,
-          width: 110,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center"
+          // marginRight: 54,
+          padding: 5,
+          fontSize:12,
+          // width: 110,
+          // display: "flex",
+          // alignItems: "center",
+          // justifyContent: "center"
         };    
       default:
         return {
@@ -925,12 +927,13 @@ const StudentInfo = ({ navigation }) => {
           textAlign: "center",
           borderColor:'green',
           color: 'white',
-          marginRight: 54,
+          fontSize:12,
+          // marginRight: 54,
           padding: 4,
-          width: 75,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center"
+          // width: 75,
+          // display: "flex",
+          // alignItems: "center",
+          // justifyContent: "center"
         };
     }
   }
@@ -1098,35 +1101,35 @@ const StudentInfo = ({ navigation }) => {
               </View>
               <View style={[styles.infoItemWrap]}>
                     <View style={styles.infoItem}>
-                      <Text style={styles.label1}>Name:</Text>
-                      <Text style={styles.value1} numberOfLines={1}>
+                      <Text style={styles.label1}>Name: </Text>
+                      <Text style={[styles.value1,{fontWeight:'600'}]} numberOfLines={1}>
                         {" "}
                         {studentDetails?.NAME_FORMAL || ""}{" "}
                       </Text>
                     </View>
                     <View style={styles.infoItem}>
-                      <Text style={styles.label1}>System Id:</Text>
+                      <Text style={styles.label1}>System Id: </Text>
                       <Text style={styles.value1} numberOfLines={1}> {studentDetails?.EMPLID || ""} </Text>
                     </View>
                     <View style={styles.infoItem}>
-                      <Text style={styles.label1} >Roll No:</Text>
-                      <Text style={styles.value1} numberOfLines={1}> {studentDetails?.CAMPUS_ID || ""}
+                      <Text style={[styles.label1,]} >Roll No: </Text>
+                      <Text style={[styles.value1,{fontWeight:'600'}]} numberOfLines={1}> {studentDetails?.CAMPUS_ID || ""}
                       </Text>
                     </View>
                     <View style={styles.infoItem}>
-                      <Text style={styles.label1} >School:</Text>
+                      <Text style={styles.label1} >School: </Text>
                       <Text style={styles.value1} numberOfLines={1} ellipsizeMode='tail'> {studentDetails?.DESCR || ""}</Text>
                     </View>
                     <View style={styles.infoItem}>
-                      <Text style={styles.label1}>Program:</Text>
+                      <Text style={styles.label1}>Program: </Text>
                       <Text style={styles.value1} numberOfLines={1}  ellipsizeMode='tail' > {studentDetails?.DESCR2 || ""}</Text>
                     </View>              
                     <View style={styles.infoItem}>
-                      <Text style={styles.label1}>Branch:</Text>
+                      <Text style={styles.label1}>Branch: </Text>
                       <Text style={styles.value1} numberOfLines={1}> {studentDetails?.DESCR3 || ""}</Text>
                     </View>
                     <View style={styles.infoItem}>
-                      <Text style={styles.label1}>Semester:</Text>
+                      <Text style={styles.label1}>Semester: </Text>
                       <Text style={styles.value1} numberOfLines={1}> {studentDetails?.ACAD_LEVEL_BOT || "0"}</Text>
                   
                     </View>
@@ -1169,17 +1172,23 @@ const StudentInfo = ({ navigation }) => {
               {/* Exam Details */}
             {/* <View style={[styles.infopWrap,]}> */}
             <View style={styles.detailsSection}>
+            
               <View style={[styles.examinfoItem,]}>
+              <View style={{flexDirection:isMobile?"column":"row"}}>
                 <Text style={[styles.label,]}>Paper Id:</Text>
                 <Text style={styles.value}>
                   {courseDetails?.EXAM_TIME_CODE || ""}
                 </Text>
               </View>
+              </View>
               <View style={styles.examinfoItem}>
+              <View style={{flexDirection:isMobile?"column":"row"}}>
+            
                 <Text style={[styles.label,]}>Course Code:</Text>
-                <Text style={styles.value}>
+                <Text style={[styles.value,{fontWeight:'600'}]}>
                   {courseDetails?.CATALOG_NBR || ""}
                 </Text>
+              </View>
               </View>
               </View>
                   {/* Course Name, Room No, Seat No */}
@@ -1187,44 +1196,60 @@ const StudentInfo = ({ navigation }) => {
               <View style={[styles.detailsSection, { flexDirection: isMobile ? "column" : "row" }]}>
               {/* <View style={[styles.infoItem,{maxWidth:isMobile?'250px':"100%"}]}> */}
               <View style={[styles.examinfoItem, styles.courseName]}>
+              <View style={{flexDirection:isMobile?"column":"row"}}>
                 <Text style={[styles.label ,]}>Course Name:</Text>
                 <Text style={[styles.value,]}>{courseDetails?.DESCR100 || ""}</Text>
               </View>
-          <View style={{flexDirection:isMobile? "row":""}}>
+              </View>
+          <View style={{flexDirection:isMobile? "row":"row" , minWidth:isMobile?'':"100%"}}>
                 <View style={styles.examinfoItem}>
+                <View style={{flexDirection:isMobile?"column":"row"}}>
                   <Text style={styles.label}>Room No:</Text>
                   <Text style={styles.value}>{room_Nbr}</Text>
                 </View>
+                </View>
                 <View style={styles.examinfoItem}>
+                <View style={{flexDirection:isMobile?"column":"row"}}>
                   <Text style={styles.label}>Seat No:</Text>
                   <Text style={styles.value}>{seat_Nbr}</Text>
+                  </View>
                 </View>
                 </View>
 
               </View>
                 {/* Class Status and Attendance Status */}
-          <View style={[styles.detailsSection, { flexDirection: isMobile ? "row" : "row" }]}>
+          <View style={[styles.detailsSection, { flexDirection: isMobile ? "column" : "row" }]}>
               {/* <View style={{flexDirection:isMobile?"column":"row", }}> */}
-              <View style={styles.examinfoItem}>
-                <Text style={styles.label}>Class Status:</Text>
-                <Text style={[styles.value, {marginBottom: 10}, getAttendenceStatuscolor()]}>
+              <View style={[styles.examinfoItem,{minWidth:isMobile?"100%":''}]}>
+              <View style={{flexDirection:isMobile?"row":"row" ,}}>
+                <Text style={[styles.label,]}>Class Status:</Text>
+                <Text style={[styles.value, {marginBottom: 10,textAlign:"center"}, getAttendenceStatuscolor()]}>
                   {attendenceStatus}
                 </Text>
               </View>
+              </View>
               <View style={[styles.examinfoItem, styles.studStatus]}>
+              <View style={{flexDirection:isMobile?"row":"row"}}>
                 <Text style={[styles.label]}>Status</Text>
                 <View style={{flexDirection:isMobile?'row' :"row" ,}}>
                 <View style={styles.attStatus}>
+                <View style={{flexDirection:isMobile?'row' :"row" , marginTop:isMobile?2:3}}>
                   <CheckBox value={status === "Present"} onValueChange={(item) =>setStatus("Present")} color={getStatuscolor()} disabled={((!isActive && !(userAccess?.label === "Admin")) || disabledStatus === "Absent")} />                
                   <Text style={[styles.value, styles.customValue]}>Present</Text>
+                  </View>
                 </View>
                 <View style={styles.attStatus}>
+                <View style={{flexDirection:isMobile?'row' :"row" , marginTop:isMobile?2:3}}>
                 <CheckBox value={status === "Absent"} onValueChange={() => setStatus("Absent")} color={getStatuscolor()} disabled={((!isActive && !(userAccess?.label === "Admin"))) || disabledStatus === "Absent"} />
                 <Text style={[styles.value, styles.customValue]}>Absent</Text>
+              </View>
                 </View>
                 <View style={styles.attStatus}>
+                <View style={{flexDirection:isMobile?'row' :"row" , marginTop:isMobile?2:3}}>
                 <CheckBox value={status === "UFM"} onValueChange={() => setStatus("UFM")} color={getStatuscolor()} disabled={((!isActive && !(userAccess?.label === "Admin"))) || disabledStatus === "Absent"} />
                 <Text style={[styles.value, styles.customValue]}>UFM</Text>
+                </View>
+                </View>
                 </View>
                 </View>
                 
@@ -1664,7 +1689,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   studentInfoWrap: {
-    marginBottom: 20,
+    marginBottom: 8,
     borderRadius: 8,
     padding: 5,
     //overflow: "hidden"
@@ -1773,7 +1798,7 @@ const styles = StyleSheet.create({
     marginRight:8,
   },
   value: {
-    color: "#555",
+    color: "rgb(17, 65, 102)",
     // width: "65%",
   },
   label1: {
@@ -1783,9 +1808,9 @@ const styles = StyleSheet.create({
     display: "inline-block"
   },
   value1: {
-    color: "#555",
+    color: "rgb(17, 65, 102)",
     overflow: 'hidden',
-    fontWeight:"600"
+
 
   },
   // table: {
@@ -2169,11 +2194,12 @@ stuimge: {
 
   customValue:{
     fontSize: 12,
-    marginTop: 5,
-    fontWeight: "bold"
+    // marginTop: isMobile ?'' :'',
+    fontWeight: "bold",
+    marginLeft:isMobile?5:5
   },
   attStatus: {
-    width: isMobile ? 62:75,
+    width: isMobile ? 75:75,
     flexDirection: "column",
     marginRight: 0,
   },
@@ -2215,7 +2241,7 @@ detailsSection: {
   flexDirection: 'row',
   justifyContent: 'space-between',
   flexWrap: 'wrap',
-  marginBottom: 10,
+  // marginBottom: 10,
 },
 courseName: {
   minWidth: isMobile ? '100%' : '100%',
