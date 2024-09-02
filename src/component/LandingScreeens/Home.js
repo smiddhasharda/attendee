@@ -2,8 +2,11 @@ import { View, Text, StyleSheet, SafeAreaView, Pressable, Image, ScrollView, Dim
 import React from 'react';
 import { useNavigation } from '@react-navigation/native'; 
 import {Icons,MaterialCommunityIcons,FontAwesome5 ,MaterialIcons ,AntDesign,FontAwesome6,Feather}from '@expo/vector-icons'
+import { style } from '@mui/system';
 // import MyCarousel from '../ImageSlider/MyCarousel';
-const Home = () => {<MaterialIcons name="smartphone" size={24} color="black" />
+const { width, height } = Dimensions.get('window');
+const isMobile = width < 768; 
+const Home = () => {
 
   const navigation = useNavigation(); 
   const handleLoginNavigation = () => {
@@ -12,8 +15,7 @@ const Home = () => {<MaterialIcons name="smartphone" size={24} color="black" />
   const handlePrivacy = () => {
     navigation.navigate('Privacy');
   };
-  const { width, height } = Dimensions.get('window');
-  const isMobile = width < 768; 
+ 
   return (
     <ScrollView contentContainerStyle={styles.scrollView}>
       <SafeAreaView style={styles.safeArea}>
@@ -37,8 +39,8 @@ const Home = () => {<MaterialIcons name="smartphone" size={24} color="black" />
 
             {/* Features Section */}
             <View style={[styles.featuresWrap, { flexDirection : isMobile ? "column" : "row" }]}>
-              <View style={{ width: isMobile?"100%":"60%" }}>
-                <h1 style={styles.SecHeading}>Easily Track Student Attendance</h1>
+              <View style={{ order: isMobile ? 2 : 1, width: isMobile?"100%":"60%" }}>
+                <Text style={styles.secHeading}>Easily Track Student Attendance</Text>
                 <View style={styles.listItem}>
                   <View style={styles.leftSection}>
                     <Image style={styles.secImage} source={require('../../local-assets/track-icon.png')} />
@@ -77,11 +79,12 @@ const Home = () => {<MaterialIcons name="smartphone" size={24} color="black" />
                     <Image style={styles.playIcon} source={require('../../local-assets/google-play.png')} />
                   </View>
                   <View style={styles.playRightSection}>
-                    <Text style={styles.download}>Download <br/>The App</Text>
+                    <Text style={styles.download}>Download The App</Text>
                   </View>
                 </View>
               </View>
-              <View style={{ width: isMobile?"100%":"40%" }}>
+
+              <View style={{  order: isMobile ? 1 : 2,width: isMobile?"100%":"40%" }}>
               <Image style={[styles.featureImg]} source={require('../../local-assets/room-left.png')} />
               </View>
             </View>
@@ -130,43 +133,42 @@ const Home = () => {<MaterialIcons name="smartphone" size={24} color="black" />
             </View>
           </View> */}
 
-          {/* Footer Section */}
-            {/* <View style={[styles.footerContainer ,{paddingVertical:isMobile? 24: 50 ,paddingHorizontal:isMobile ? 0 :50}]}>
-              <View style={[styles.footerContent,{flexDirection:isMobile ? "column":"row"}]}>
-                <View style={[styles.leftSection,{width:isMobile?"100%":'30%'}]}>
-                  <Text style={[styles.footerHeading,{fontSize:isMobile?15:18, marginBottom:isMobile?14:10}]} onPress={handlePrivacy}>
-                    Privacy Policy
-                  </Text>
-                  <Text style={[styles.footerDescription,{fontSize:isMobile?14:'' ,marginBottom:isMobile?20:14}]}>
-                    Affiliation: University Grants Commission has empowered Sharda University to award degrees under Section 22 of UGC Act 1956.
-                  </Text>
-                </View>
-
-                <View style={[styles.middleSection,{width:isMobile?"100%":"30%"}]}>
-                  <Text style={[styles.footerHeading,{fontSize:isMobile?15:18 ,marginBottom:isMobile?14:10}]}>Sharda University</Text>
-                  <Text style={styles.footerAddress}>
-                    Plot No. 32-34, Knowledge Park III, Greater Noida, U.P.-201310
-                  </Text>
-                </View>
-
-                <View style={[styles.rightSection,{width:isMobile?"100%":''}]}>
-                  <Text style={[styles.footerHeading,{fontSize:isMobile?15:18 ,marginBottom:isMobile?14:10}]}>Contact Us</Text>
-                  <Text style={[styles.footerContact,{fontSize:isMobile?14:16}]}>
-                    <FontAwesome6 name="phone" size={16} color="#fff" /> +91-0120-4570000
-                  </Text>
-                  <Text style={[styles.footerContact,{fontSize:isMobile?14:16}]}>
-                    <Feather name="smartphone" size={16} color="#fff" /> +91-92055 86066
-                  </Text>
+          {/* Footer Section  */}
+        {/* Footer Section */}
+        <View style={styles.footer}>
+          <View style={[styles.footerSection ,{flexDirection:isMobile?"column":"row"}] }>
+          <Text style={[styles.affiliation, { width: isMobile ? "100%" : '32%', marginBottom: isMobile ? 20 : '' }]}>
+                <Text style={{ fontWeight: "600" }}>Affiliation:</Text> University Grants Commission has empowered Sharda University to award degrees under Section 22 of UGC Act 1956.
+              </Text>
+            <View style={[styles.address,{width:isMobile?"100%":'32%',marginBottom:isMobile?20:''}]}>
+              <View style={styles.addressIconWrap}>
+                <Image style={styles.iconImg} source={require('../../local-assets/map.png')} />
+                <View style={styles.textWrapper}>
+                  <Text style={styles.footerText}>Sharda University</Text>
+                  <Text style={styles.footerText}>Plot No. 32-34, Knowledge Park III, Greater Noida, UP - 201310</Text>  
                 </View>
               </View>
-              <View style={[styles.footerBottom,{paddingTop:isMobile?10 :20}]}>
-                <Text style={styles.copyrightText}>
-                  Copyright © Sharda University 2024. All Rights Reserved
-                </Text>
-              </View>
-            </View> */}
-
+            </View>
+            <View style={[styles.contactDetails,{width:isMobile?"100%":"",}]}>
+              <View style={styles.addressIconWrap}>
+                <Image style={styles.iconImgphone} source={require('../../local-assets/call.png')} />
+                <View style={styles.textWrapper}>
+                  <Text style={styles.footerText}>+91-120-4570000</Text>
+                  <Text style={styles.footerText}>+91-92055 88466</Text>
+                </View>
+              </View>  
+            </View>
+          </View>
+          <View style={styles.copyright}>
+            <Text style={styles.link}>
+              Copyright © Sharda University 2024. All Rights Reserved
+            </Text>
+            <Text style={styles.privacy} onPress={handlePrivacy}>
+                Privacy Policy
+            </Text>
+          </View>
         </View>
+     </View>
       </SafeAreaView>
     </ScrollView>
   );
@@ -188,20 +190,20 @@ const styles = StyleSheet.create({
   },
   mainSection: {
     flex: 1,
-    maxWidth: 1140,
-    paddingRight: 15,
-    paddingLeft: 15,
+    maxWidth: isMobile ? "100%" : 1140,
+    paddingRight: isMobile ? 8 : 15,
+    paddingLeft: isMobile ? 8 : 15,
     marginRight: 'auto',
     marginLeft: 'auto',
-    fontFamily: ['Lato', 'sans-serif'],
-    width: '100%',  // Ensure it takes full width within the maxWidth
+    // fontFamily: ['Lato', 'sans-serif'],
+    width: '100%'  // Ensure it takes full width within the maxWidth
   },
-  SecHeading: {
-    fontSize: 34,
+  secHeading: {
+    fontSize: isMobile?20:34,
     fontWeight: 'bold',
     marginVertical: 10,
     paddingBottom: 20,
-    fontFamily: ['Lato', 'sans-serif'],
+    // fontFamily: ['Lato', 'sans-serif'],
     // color:"#00ade3"
   },
   listItem: {
@@ -210,7 +212,7 @@ const styles = StyleSheet.create({
     marginBottom: 20, // Space between list items
     maxWidth: '100%',
     width: '100%',
-    fontFamily: ['Lato', 'sans-serif']
+    // fontFamily: ['Lato', 'sans-serif']
   },
   leftSection: {
     flex: 13, // 13% of the width
@@ -225,30 +227,33 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   playLeftSection: {
-    flex: 28, // 28% of the width
+    // flex: 28, // 28% of the width
     marginRight: 10, // Space between the image and the text
   },
   playRightSection: {
-    flex: 72, // 72% of the width
+    // flex: 72, // 72% of the width
+    justifyContent:"center"
   },
   download: {
     fontSize: 14,
-    fontWeight: 700,
+    fontWeight: "700",
+    width:70,
+    textAlign:"center"
   },
   playIcon: {
-    width: 160,
-    height: 54
+    width: isMobile?120:160,
+    height: isMobile?40 :54
   },
   heading: {
-    fontSize: 18,
+    fontSize: isMobile?16:18,
     fontWeight: 'bold',
     marginBottom: 5,
-    fontFamily: ['Lato', 'sans-serif']
+    // fontFamily: ['Lato', 'sans-serif']
   },
   paragraph: {
-    fontSize: 14,
+    fontSize: isMobile ?12:14,
     color: '#000',
-    fontFamily: ['Lato', 'sans-serif']
+    // fontFamily: ['Lato', 'sans-serif']
   },
   heroSection: {
     position: 'relative',
@@ -329,10 +334,10 @@ const styles = StyleSheet.create({
     height: 500,
     resizeMode: 'contain',
   },
-  secImage: {
-    width: 75,
-    height: 75
-  },
+  // secImage: {
+  //   width: 75,
+  //   height: 75
+  // },
   getAppSection: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -469,5 +474,85 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
     textAlign: 'center',
+
   },
+  footer: {
+    backgroundColor: '#f0f4f8',
+    paddingVertical: isMobile ? 8 :20,
+    paddingHorizontal: isMobile ? 8 :15,
+    borderTopWidth: 1,
+    borderColor: '#d1d1d1',
+    alignItems: 'center',
+  },
+  footerSection: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    paddingHorizontal: 20,
+    marginBottom: 10,
+  },
+  affiliation: {
+    fontSize: 12,
+    color: '#333',
+    width: '32%',
+    textAlign: 'left',
+  },
+  address: {
+    
+    width: '32%',
+    justifyContent: 'center',
+  },
+  contactDetails: {
+    // width:"32%",
+    justifyContent: 'center',
+  },
+  addressIconWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+ 
+  },
+  iconImg: {
+    width: 19,
+    height: 26,
+    marginRight: 10,
+  },
+  iconImgphone:{
+   width:16,
+   height:26,
+   marginRight:10
+  },
+  textWrapper: {
+    // flex: 1,
+ 
+  },
+  // textBold: {
+  //   fontWeight: 'bold',
+  //   marginBottom: 5,
+  // },
+  copyright: {
+    flexDirection: isMobile?"column":'row',
+    justifyContent: 'center',
+    marginTop: isMobile?0:20,
+  },
+  privacy:{
+    borderLeftWidth:isMobile?0:1,
+    borderLeftColor:"#ccc",
+    marginLeft:10,
+    paddingLeft:10,
+    fontSize:12,
+    textAlign:isMobile?"center":'',
+    textDecorationLine:"underline",
+    color:"#1A73E8"
+  },
+  footerText:{
+    fontSize:12,
+  },
+  link: {
+    // color: '#1A73E8',
+    fontSize: 12,
+    // marginHorizontal: 10,
+    // textDecorationLine: 'underline',
+  },
+ 
 });
