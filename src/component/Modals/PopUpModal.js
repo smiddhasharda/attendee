@@ -13,7 +13,7 @@ const PopUpModal = ( { visible, onRequestClose, animationType, children }) => {
         visible={visible}
         onRequestClose={onRequestClose}>
         <View style={styles.centeredView}>
-          <View style={[styles.modalView,{width:isMobile?"90%":''}]}>
+          <View style={[styles.modalView,{width:isMobile?"90%": '50%', height: 'auto'}]}>
           {children}
             {/* <Text style={styles.modalText}>Hello World!</Text> */}
             <Pressable
@@ -41,8 +41,8 @@ const styles = StyleSheet.create({
     marginTop: 22,
   },
   modalView: {
-    margin: 20,
-    backgroundColor: 'white',
+    //margin: 20,
+    // backgroundColor: 'green',
     borderRadius: 20,
     padding: 25,
     alignItems: 'center',

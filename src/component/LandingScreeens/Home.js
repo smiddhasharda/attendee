@@ -19,52 +19,79 @@ const Home = () => {<MaterialIcons name="smartphone" size={24} color="black" />
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.homeWrap}>
 
-          {/* Hero Section */}
-          <View style={styles.heroSection}>
+          {/* Slider Section */}
+          {/* <View style={styles.heroSection}>
             <Image style={[styles.heroImage,{height:isMobile?320:460}]} source={require('../../local-assets/banner-img.jpg')} />
             <View style={[styles.overlay,]}>
               <Text style={[styles.heroText ,{ fontSize: isMobile ? 40 : 60 ,width:isMobile?"100%" :"50%" }]}>Easily Track Student Attendance </Text>
             </View>
             <View>
-            <Pressable onPress={handleLoginNavigation} style={styles.loginBtn}>
-              <Text  style={styles.loginText}>Login</Text>
-            </Pressable>
+              <Pressable onPress={handleLoginNavigation} style={styles.loginBtn}>
+                <Text  style={styles.loginText}>Login</Text>
+              </Pressable>
             </View>
+          </View> */}
+
+          {/* Main Section */}
+          <View style={[styles.mainSection]}>
+
+            {/* Features Section */}
+            <View style={[styles.featuresWrap, { flexDirection : isMobile ? "column" : "row" }]}>
+              <View style={{ width: isMobile?"100%":"60%" }}>
+                <h1 style={styles.SecHeading}>Easily Track Student Attendance</h1>
+                <View style={styles.listItem}>
+                  <View style={styles.leftSection}>
+                    <Image style={styles.secImage} source={require('../../local-assets/track-icon.png')} />
+                  </View>
+                  <View style={styles.rightSection}>
+                    <Text style={styles.heading}>Exam Tracking</Text>
+                    <Text style={styles.paragraph}>
+                      Stay on top of all your exams with real-time tracking. Our app ensures you’re always updated on exam schedules and changes.
+                    </Text>
+                  </View>
+                </View>
+                <View style={styles.listItem}>
+                  <View style={styles.leftSection}>
+                    <Image style={styles.secImage} source={require('../../local-assets/eye-icon.png')} />
+                  </View>
+                  <View style={styles.rightSection}>
+                    <Text style={styles.heading}>Invigilator</Text>
+                    <Text style={styles.paragraph}>
+                      Seamlessly manage invigilation duties with our dedicated features. Get quick access to your exam locations and related tasks.
+                    </Text>
+                  </View>
+                </View>
+                <View style={styles.listItem}>
+                  <View style={styles.leftSection}>
+                    <Image style={styles.secImage} source={require('../../local-assets/scan-icon.png')} />
+                  </View>
+                  <View style={styles.rightSection}>
+                    <Text style={styles.heading}>Barcode Scanning</Text>
+                    <Text style={styles.paragraph}>
+                      Simplify attendance tracking with barcode scanning. Quickly and accurately register student attendance during exams.
+                    </Text>
+                  </View>
+                </View>
+                <View style={styles.listItem}>
+                  <View style={styles.playLeftSection}>
+                    <Image style={styles.playIcon} source={require('../../local-assets/google-play.png')} />
+                  </View>
+                  <View style={styles.playRightSection}>
+                    <Text style={styles.download}>Download <br/>The App</Text>
+                  </View>
+                </View>
+              </View>
+              <View style={{ width: isMobile?"100%":"40%" }}>
+              <Image style={[styles.featureImg]} source={require('../../local-assets/room-left.png')} />
+              </View>
+            </View>
+
           </View>
 
-          {/* Carousel Section */}
-          {/* <View style={styles.carouselContainer}>
-            <ScrollView
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}
-              pagingEnabled 
-              contentContainerStyle={{ width: screenWidth * 4 }} 
-            >
-              <Image
-                style={[styles.carouselImage, { width: screenWidth }]}
-                source={require('../../local-assets/loginbg.jpghome-img')}
-              />
-              <Image
-                style={[styles.carouselImage, { width: screenWidth }]}
-                source={require('../../local-assets/loginbg.jpg')}
-              />
-              <Image
-                style={[styles.carouselImage, { width: screenWidth }]}
-                source={require('../../local-assets/loginbg.jpg')}
-              />
-              <Image
-                style={[styles.carouselImage, { width: screenWidth }]}
-                source={require('../../local-assets/loginbg.jpg')}
-              />
-             
-            </ScrollView>
-          </View> */}
-       {/* <MyCarousel/> */}
-          {/* Productivity Section */}
-          <View style={[styles.productivitySection,{flexDirection:isMobile? "column" :"row"}]}>
+          {/* Features Section */}
+          {/* <View style={[styles.productivitySection,{flexDirection:isMobile? "column" :"row"}]}>
             <View style={[styles.productivityItem,{width:isMobile?"100%" :'30%' ,marginBottom:isMobile?15:0 ,marginTop:isMobile?15:0}]}>
             <MaterialIcons name="credit-score" size={40} color="rgb(0 93 84)" />
-              {/* <Image style={styles.productivityImage} source={require('../../local-assets/download (1).png')} /> */}
               <Text style={styles.productivityTitle}>Exam Tracking</Text>
               <Text style={styles.productivityDescription}>
               Stay on top of all your exams with real-time tracking. Our app ensures you’re always updated on exam schedules and changes.
@@ -85,10 +112,10 @@ const Home = () => {<MaterialIcons name="smartphone" size={24} color="black" />
               Simplify attendance tracking with barcode scanning. Quickly and accurately register student attendance during exams.
               </Text>
             </View>           
-          </View>
+          </View> */}
 
           {/* Get App Section */}
-          <View style={[styles.getAppSection,{flexDirection:isMobile?"column":"row"}]}>
+          {/* <View style={[styles.getAppSection,{flexDirection:isMobile?"column":"row"}]}>
             <View style={{ width: isMobile?"100%":"50%" }}>
               <Image style={[styles.appimg]} source={require('../../local-assets/room-left.png')} />
             </View>
@@ -99,47 +126,46 @@ const Home = () => {<MaterialIcons name="smartphone" size={24} color="black" />
               </Text>
               <View style={[styles.downloadButtons,]}>
                 <Image style={styles.downloadBtn} source={require('../../local-assets/google-play.png')} />
-                {/* Add more buttons for iOS or others as needed */}
               </View>
             </View>
-          </View>
+          </View> */}
 
-          {/* Footer */}
-            <View style={[styles.footerContainer ,{paddingVertical:isMobile? 24: 50 ,paddingHorizontal:isMobile ? 0 :50}]}>
-            <View style={[styles.footerContent,{flexDirection:isMobile ? "column":"row"}]}>
-              <View style={[styles.leftSection,{width:isMobile?"100%":'30%'}]}>
-                <Text style={[styles.footerHeading,{fontSize:isMobile?15:18, marginBottom:isMobile?14:10}]} onPress={handlePrivacy}>
-                  Privacy Policy
-                </Text>
-                {/* <Text style={[styles.footerLink,{fontSize:isMobile?15:16}]}>Terms and Conditions</Text> */}
-                <Text style={[styles.footerDescription,{fontSize:isMobile?14:'' ,marginBottom:isMobile?20:14}]}>
-                  Affiliation: University Grants Commission has empowered Sharda University to award degrees under Section 22 of UGC Act 1956.
+          {/* Footer Section */}
+            {/* <View style={[styles.footerContainer ,{paddingVertical:isMobile? 24: 50 ,paddingHorizontal:isMobile ? 0 :50}]}>
+              <View style={[styles.footerContent,{flexDirection:isMobile ? "column":"row"}]}>
+                <View style={[styles.leftSection,{width:isMobile?"100%":'30%'}]}>
+                  <Text style={[styles.footerHeading,{fontSize:isMobile?15:18, marginBottom:isMobile?14:10}]} onPress={handlePrivacy}>
+                    Privacy Policy
+                  </Text>
+                  <Text style={[styles.footerDescription,{fontSize:isMobile?14:'' ,marginBottom:isMobile?20:14}]}>
+                    Affiliation: University Grants Commission has empowered Sharda University to award degrees under Section 22 of UGC Act 1956.
+                  </Text>
+                </View>
+
+                <View style={[styles.middleSection,{width:isMobile?"100%":"30%"}]}>
+                  <Text style={[styles.footerHeading,{fontSize:isMobile?15:18 ,marginBottom:isMobile?14:10}]}>Sharda University</Text>
+                  <Text style={styles.footerAddress}>
+                    Plot No. 32-34, Knowledge Park III, Greater Noida, U.P.-201310
+                  </Text>
+                </View>
+
+                <View style={[styles.rightSection,{width:isMobile?"100%":''}]}>
+                  <Text style={[styles.footerHeading,{fontSize:isMobile?15:18 ,marginBottom:isMobile?14:10}]}>Contact Us</Text>
+                  <Text style={[styles.footerContact,{fontSize:isMobile?14:16}]}>
+                    <FontAwesome6 name="phone" size={16} color="#fff" /> +91-0120-4570000
+                  </Text>
+                  <Text style={[styles.footerContact,{fontSize:isMobile?14:16}]}>
+                    <Feather name="smartphone" size={16} color="#fff" /> +91-92055 86066
+                  </Text>
+                </View>
+              </View>
+              <View style={[styles.footerBottom,{paddingTop:isMobile?10 :20}]}>
+                <Text style={styles.copyrightText}>
+                  Copyright © Sharda University 2024. All Rights Reserved
                 </Text>
               </View>
+            </View> */}
 
-              <View style={[styles.middleSection,{width:isMobile?"100%":"30%"}]}>
-                <Text style={[styles.footerHeading,{fontSize:isMobile?15:18 ,marginBottom:isMobile?14:10}]}>Sharda University</Text>
-                <Text style={styles.footerAddress}>
-                  Plot No. 32-34, Knowledge Park III, Greater Noida, U.P.-201310
-                </Text>
-              </View>
-
-              <View style={[styles.rightSection,{width:isMobile?"100%":''}]}>
-                <Text style={[styles.footerHeading,{fontSize:isMobile?15:18 ,marginBottom:isMobile?14:10}]}>Contact Us</Text>
-                <Text style={[styles.footerContact,{fontSize:isMobile?14:16}]}>
-                  <FontAwesome6 name="phone" size={16} color="#fff" /> +91-0120-4570000
-                </Text>
-                <Text style={[styles.footerContact,{fontSize:isMobile?14:16}]}>
-                  <Feather name="smartphone" size={16} color="#fff" /> +91-92055 86066
-                </Text>
-              </View>
-            </View>
-            <View style={[styles.footerBottom,{paddingTop:isMobile?10 :20}]}>
-              <Text style={styles.copyrightText}>
-                Copyright © Sharda University 2024. All Rights Reserved
-              </Text>
-            </View>
-          </View>
         </View>
       </SafeAreaView>
     </ScrollView>
@@ -151,7 +177,7 @@ export default Home;
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#f2f7ff',
   },
   scrollView: {
     flexGrow: 1,
@@ -160,8 +186,73 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
   },
+  mainSection: {
+    flex: 1,
+    maxWidth: 1140,
+    paddingRight: 15,
+    paddingLeft: 15,
+    marginRight: 'auto',
+    marginLeft: 'auto',
+    fontFamily: ['Lato', 'sans-serif'],
+    width: '100%',  // Ensure it takes full width within the maxWidth
+  },
+  SecHeading: {
+    fontSize: 34,
+    fontWeight: 'bold',
+    marginVertical: 10,
+    paddingBottom: 20,
+    fontFamily: ['Lato', 'sans-serif'],
+    // color:"#00ade3"
+  },
+  listItem: {
+    flexDirection: 'row',
+    //alignItems: 'center',
+    marginBottom: 20, // Space between list items
+    maxWidth: '100%',
+    width: '100%',
+    fontFamily: ['Lato', 'sans-serif']
+  },
+  leftSection: {
+    flex: 13, // 13% of the width
+    marginRight: 10, // Space between the image and the text
+  },
+  rightSection: {
+    flex: 87, // 87% of the width
+  },
+  secImage: {
+    width: '100%', // Make sure the image takes the full width of the left section
+    height: 50, // Adjust the height as needed
+    resizeMode: 'contain',
+  },
+  playLeftSection: {
+    flex: 28, // 28% of the width
+    marginRight: 10, // Space between the image and the text
+  },
+  playRightSection: {
+    flex: 72, // 72% of the width
+  },
+  download: {
+    fontSize: 14,
+    fontWeight: 700,
+  },
+  playIcon: {
+    width: 160,
+    height: 54
+  },
+  heading: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 5,
+    fontFamily: ['Lato', 'sans-serif']
+  },
+  paragraph: {
+    fontSize: 14,
+    color: '#000',
+    fontFamily: ['Lato', 'sans-serif']
+  },
   heroSection: {
     position: 'relative',
+    backgroundColor: '#f2f7ff'
   },
   heroImage: {
     width: '100%',
@@ -194,36 +285,53 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     backgroundColor: '#dadada',
   },
-  productivityItem: {
-    width: "30%",
+  // productivityItem: {
+  //   width: "30%",
+  //   alignItems: 'center',
+  //   backgroundColor:"#fff",
+  //   padding:10,
+  //   borderRadius:10,
+  //   // marginBottom:20,
+  //   shadowColor: '#00ade3',
+  //   shadowOpacity: 0.3,
+  //   shadowRadius: 8,
+  //   // shadowOffset: { width: 0, height: 5 },
+  //   // elevation: 5,
+  // },
+  // productivityImage: {
+  //   width: 80,
+  //   height: 80,
+  //   resizeMode: 'contain',
+  //   marginBottom: 10,
+  // },
+  // productivityTitle: {
+  //   fontSize: 18,
+  //   fontWeight: 'bold',
+  //   marginVertical: 10,
+  //   textAlign: 'center',
+  //   // color:"#00ade3"
+  // },
+  // productivityDescription: {
+  //   fontSize: 14,
+  //   color: '#666',
+  //   textAlign: 'center',
+  // },
+  featuresWrap:{
+    flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor:"#fff",
-    padding:10,
-    borderRadius:10,
-    // marginBottom:20,
-    shadowColor: '#00ade3',
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    // shadowOffset: { width: 0, height: 5 },
-    // elevation: 5,
+    justifyContent: 'space-between',
+    paddingVertical: 15,
+    paddingHorizontal: 15,
+    width: '100%',  // Ensure the flex container takes the full width
   },
-  productivityImage: {
-    width: 80,
-    height: 80,
+  featureImg: {
+    width: '100%',
+    height: 500,
     resizeMode: 'contain',
-    marginBottom: 10,
   },
-  productivityTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginVertical: 10,
-    textAlign: 'center',
-    // color:"#00ade3"
-  },
-  productivityDescription: {
-    fontSize: 14,
-    color: '#666',
-    textAlign: 'center',
+  secImage: {
+    width: 75,
+    height: 75
   },
   getAppSection: {
     flexDirection: 'row',
@@ -233,7 +341,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     backgroundColor: '#fff',
     borderBottomColor: '#ddd',
-  
   },
   appimg: {
     width: '100%',
@@ -265,9 +372,7 @@ const styles = StyleSheet.create({
   },
   downloadButtons: {
     flexDirection: 'row',
-    justifyContent: 'flex-start',
- 
- 
+    justifyContent: 'flex-start', 
   },
   downloadBtn: {
     width: 200,
@@ -286,18 +391,18 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 20,
   },
-  leftSection: {
-    width:"30%",
-    paddingHorizontal: 10,
-  },
-  middleSection: {
-    width:"30%",
-    paddingHorizontal: 10,
-  },
-  rightSection: {
-    width:"30%",
-    paddingHorizontal: 10,
-  },
+  // leftSection: {
+  //   width:"30%",
+  //   paddingHorizontal: 10,
+  // },
+  // middleSection: {
+  //   width:"30%",
+  //   paddingHorizontal: 10,
+  // },
+  // rightSection: {
+  //   width:"30%",
+  //   paddingHorizontal: 10,
+  // },
   footerHeading: {
     fontSize: 18,
     color: '#fff',
@@ -314,6 +419,7 @@ const styles = StyleSheet.create({
     color: '#ccc',
     // marginTop: 8,
     lineHeight: 22,
+    
   },
   footerAddress: {
     fontSize: 14,
