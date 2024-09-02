@@ -91,24 +91,28 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
     const CurrentDate = `${day}-${month}-${year}`;
     try {
       const authToken = await checkAuthToken();
-      const response = await view(
-        {
-          operation: "custom",
+      const Parameter =  {
+        operation: "custom",
           tblName: "PS_S_PRD_EX_TME_VW",
           data: '',
           conditionString: '',
           checkAvailability: '',
-          customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW WHERE EXAM_DT >= '${CurrentDate}' ORDER BY EXAM_DT ASC`,
-          // customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW  ORDER BY EXAM_DT ASC`,
+          // customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW WHERE EXAM_DT >= '${CurrentDate}' ORDER BY EXAM_DT ASC`,
+          customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW  ORDER BY EXAM_DT ASC`,
           viewType:'Campus_View'
-        },
+        };
+      const encryptedParams = encrypt(JSON.stringify(Parameter));
+      const response = await view(
+        encryptedParams,
         authToken
       );
 
       if (response) {
-        setExamDates(response?.data?.receivedData);
-        setExamSelectedDate(response?.data?.receivedData?.[0]?.EXAM_DT || '');
-        handleGetRoomView(response?.data?.receivedData?.[0]?.EXAM_DT || '');
+        const decryptedData = decrypt(response?.data?.receivedData);
+        const DecryptedData = JSON.parse(decryptedData);
+        setExamDates(DecryptedData);
+        setExamSelectedDate(DecryptedData?.[0]?.EXAM_DT || '');
+        handleGetRoomView(DecryptedData?.[0]?.EXAM_DT || '');
       }
     } catch (error) {
       setLoading(false);
@@ -199,21 +203,26 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
   
       const customQuery = `SELECT DISTINCT PS_S_PRD_EX_RME_VW.EXAM_DT, PS_S_PRD_EX_RME_VW.ROOM_NBR, PS_S_PRD_EX_TME_VW.EXAM_START_TIME FROM PS_S_PRD_EX_RME_VW JOIN PS_S_PRD_EX_TME_VW ON PS_S_PRD_EX_RME_VW.EXAM_DT = PS_S_PRD_EX_TME_VW.EXAM_DT AND PS_S_PRD_EX_RME_VW.CATALOG_NBR = PS_S_PRD_EX_TME_VW.CATALOG_NBR WHERE PS_S_PRD_EX_RME_VW.EXAM_DT = '${formattedDate}' ${roomShiftConditions} ORDER BY PS_S_PRD_EX_TME_VW.EXAM_START_TIME,PS_S_PRD_EX_RME_VW.ROOM_NBR`;
   
+      const Parameter = {
+        operation: "custom",
+        tblName: "PS_S_PRD_EX_RME_VW",
+        data: '',
+        conditionString: '',
+        checkAvailability: '',
+        customQuery: customQuery,
+        viewType: 'Campus_View'
+      };
+      const encryptedParams = encrypt(JSON.stringify(Parameter));
+
       const response = await view(
-        {
-          operation: "custom",
-          tblName: "PS_S_PRD_EX_RME_VW",
-          data: '',
-          conditionString: '',
-          checkAvailability: '',
-          customQuery: customQuery,
-          viewType: 'Campus_View'
-        },
+        encryptedParams,
         authToken
       );
   
       if (response) {
-        setRoomDetails(response?.data?.receivedData);
+        const decryptedData = decrypt(response?.data?.receivedData);
+        const DecryptedData = JSON.parse(decryptedData);
+        setRoomDetails(DecryptedData);
       }
       setLoading(false);
       setRefreshing(false);
