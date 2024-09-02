@@ -897,12 +897,13 @@ const StudentInfo = ({ navigation }) => {
           borderRadius:4,
           borderColor:'red',
           color: 'white',
-          marginRight: 54,
-          padding: 6,
-          width: 75,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center"
+          // marginRight: 54,
+          padding: 5,
+          fontSize:12,
+          // width: 75,
+          // display: "flex",
+          // alignItems: "center",
+          // justifyContent: "center"
         };
       case 'Not Defined':
         return {
@@ -910,12 +911,13 @@ const StudentInfo = ({ navigation }) => {
           borderRadius:4,
           borderColor:'grey',
           color: 'white',
-          marginRight: 54,
-          padding: 6,
-          width: 110,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center"
+          // marginRight: 54,
+          padding: 5,
+          fontSize:12,
+          // width: 110,
+          // display: "flex",
+          // alignItems: "center",
+          // justifyContent: "center"
         };    
       default:
         return {
@@ -925,12 +927,13 @@ const StudentInfo = ({ navigation }) => {
           textAlign: "center",
           borderColor:'green',
           color: 'white',
-          marginRight: 54,
+          fontSize:12,
+          // marginRight: 54,
           padding: 4,
-          width: 75,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center"
+          // width: 75,
+          // display: "flex",
+          // alignItems: "center",
+          // justifyContent: "center"
         };
     }
   }
@@ -1215,10 +1218,10 @@ const StudentInfo = ({ navigation }) => {
 
               </View>
                 {/* Class Status and Attendance Status */}
-          <View style={[styles.detailsSection, { flexDirection: isMobile ? "row" : "row" }]}>
+          <View style={[styles.detailsSection, { flexDirection: isMobile ? "column" : "row" }]}>
               {/* <View style={{flexDirection:isMobile?"column":"row", }}> */}
-              <View style={styles.examinfoItem}>
-              <View style={{flexDirection:isMobile?"row":"row"}}>
+              <View style={[styles.examinfoItem,{minWidth:isMobile?"100%":''}]}>
+              <View style={{flexDirection:isMobile?"row":"row" ,}}>
                 <Text style={[styles.label,]}>Class Status:</Text>
                 <Text style={[styles.value, {marginBottom: 10,textAlign:"center"}, getAttendenceStatuscolor()]}>
                   {attendenceStatus}
@@ -1226,20 +1229,26 @@ const StudentInfo = ({ navigation }) => {
               </View>
               </View>
               <View style={[styles.examinfoItem, styles.studStatus]}>
-              <View style={{flexDirection:isMobile?"column":"row"}}>
+              <View style={{flexDirection:isMobile?"row":"row"}}>
                 <Text style={[styles.label]}>Status</Text>
                 <View style={{flexDirection:isMobile?'row' :"row" ,}}>
                 <View style={styles.attStatus}>
+                <View style={{flexDirection:isMobile?'row' :"row" , marginTop:isMobile?2:3}}>
                   <CheckBox value={status === "Present"} onValueChange={(item) =>setStatus("Present")} color={getStatuscolor()} disabled={((!isActive && !(userAccess?.label === "Admin")) || disabledStatus === "Absent")} />                
                   <Text style={[styles.value, styles.customValue]}>Present</Text>
+                  </View>
                 </View>
                 <View style={styles.attStatus}>
+                <View style={{flexDirection:isMobile?'row' :"row" , marginTop:isMobile?2:3}}>
                 <CheckBox value={status === "Absent"} onValueChange={() => setStatus("Absent")} color={getStatuscolor()} disabled={((!isActive && !(userAccess?.label === "Admin"))) || disabledStatus === "Absent"} />
                 <Text style={[styles.value, styles.customValue]}>Absent</Text>
+              </View>
                 </View>
                 <View style={styles.attStatus}>
+                <View style={{flexDirection:isMobile?'row' :"row" , marginTop:isMobile?2:3}}>
                 <CheckBox value={status === "UFM"} onValueChange={() => setStatus("UFM")} color={getStatuscolor()} disabled={((!isActive && !(userAccess?.label === "Admin"))) || disabledStatus === "Absent"} />
                 <Text style={[styles.value, styles.customValue]}>UFM</Text>
+                </View>
                 </View>
                 </View>
                 </View>
@@ -2185,11 +2194,12 @@ stuimge: {
 
   customValue:{
     fontSize: 12,
-    marginTop: 5,
-    fontWeight: "bold"
+    // marginTop: isMobile ?'' :'',
+    fontWeight: "bold",
+    marginLeft:isMobile?5:5
   },
   attStatus: {
-    width: isMobile ? 62:75,
+    width: isMobile ? 75:75,
     flexDirection: "column",
     marginRight: 0,
   },
@@ -2231,7 +2241,7 @@ detailsSection: {
   flexDirection: 'row',
   justifyContent: 'space-between',
   flexWrap: 'wrap',
-  marginBottom: 10,
+  // marginBottom: 10,
 },
 courseName: {
   minWidth: isMobile ? '100%' : '100%',
