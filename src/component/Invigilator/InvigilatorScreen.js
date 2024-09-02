@@ -240,22 +240,26 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
       const authToken = await checkAuthToken();
       const formattedDate = SelectedDate ? new Date(SelectedDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }).toUpperCase().replace(/ /g, '-') : '';
       const customQuery = `SELECT DISTINCT ROOM_NBR FROM PS_S_PRD_EX_RME_VW WHERE EXAM_DT = '${formattedDate}' order by ROOM_NBR`;
-
-      const response = await view(
-        {
-          operation: "custom",
+      const Parameter = {
+        operation: "custom",
           tblName: "PS_S_PRD_EX_RME_VW",
           data: '',
           conditionString: '',
           checkAvailability: '',
           customQuery: customQuery,
           viewType:'Campus_View'
-        },
+      };
+      const encryptedParams = encrypt(JSON.stringify(Parameter));
+
+      const response = await view(
+        encryptedParams,
         authToken
       );
 
       if (response) {
-        let RoomData = response?.data?.receivedData?.map((item) => ({label : item?.ROOM_NBR , value : item?.ROOM_NBR }));
+        const decryptedData = decrypt(response?.data?.receivedData);
+        const DecryptedData = JSON.parse(decryptedData);
+        let RoomData = DecryptedData?.map((item) => ({label : item?.ROOM_NBR , value : item?.ROOM_NBR }));
         setRoomList(RoomData);
       }
     } catch (error) {
@@ -374,21 +378,26 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
   const handleGetEmployeeSearch = async () => {
     try {
       const authToken = await checkAuthToken();
+      const Parameter = {
+        operation: "custom",
+        tblName: "PS_SU_PSFT_COEM_VW",
+        data: '',
+        conditionString: '',
+        checkAvailability: '',
+        customQuery: `SELECT DISPLAY_NAME, EMPLID FROM PS_SU_PSFT_COEM_VW WHERE EMPLID = '${searchedEmployee}'`,
+        viewType: 'HRMS_View'
+      };
+      const encryptedParams = encrypt(JSON.stringify(Parameter));
+
       const response = await view(
-        {
-          operation: "custom",
-          tblName: "PS_SU_PSFT_COEM_VW",
-          data: '',
-          conditionString: '',
-          checkAvailability: '',
-          customQuery: `SELECT DISPLAY_NAME, EMPLID FROM PS_SU_PSFT_COEM_VW WHERE EMPLID = '${searchedEmployee}'`,
-          viewType: 'HRMS_View'
-        },
+        encryptedParams,
         authToken
       );
   
       if (response) {
-        let EmployeeData = response?.data?.receivedData?.[0]
+        const decryptedData = decrypt(response?.data?.receivedData);
+        const DecryptedData = JSON.parse(decryptedData);
+        let EmployeeData = DecryptedData?.[0]
         setInvigilatorData({ ...invigilatorData, invigilatorName: EmployeeData?.DISPLAY_NAME,employeeId:EmployeeData?.EMPLID });
       }
     } catch (error) {
@@ -428,24 +437,39 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
   };
 
   const handleGetDateView = async (date) => {
-    let CurrentDate = new Date().toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-');
+    // let CurrentDate = new Date().toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-');
+    const Date = new Date();
+    const day = Date.toLocaleDateString('en-GB', { day: '2-digit' });
+    const monthIndex = Date.getMonth();
+    const year = Date.toLocaleDateString('en-GB', { year: '2-digit' });
+    
+    // Array of month abbreviations
+    const monthAbbreviations = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+    const month = monthAbbreviations[monthIndex];
+    
+    const CurrentDate = `${day}-${month}-${year}`;
     try {
       const authToken = await checkAuthToken();
+      const Parameter = {
+        operation: "custom",
+        tblName: "PS_S_PRD_EX_TME_VW",
+        data: '',
+        conditionString: '',
+        checkAvailability: '',
+        customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW WHERE EXAM_DT >= '${CurrentDate}' ORDER BY EXAM_DT ASC`,
+        viewType:'Campus_View'
+      };
+      const encryptedParams = encrypt(JSON.stringify(Parameter));
+
       const response = await view(
-        {
-          operation: "custom",
-          tblName: "PS_S_PRD_EX_TME_VW",
-          data: '',
-          conditionString: '',
-          checkAvailability: '',
-          customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW WHERE EXAM_DT >= '${CurrentDate}' ORDER BY EXAM_DT ASC`,
-          viewType:'Campus_View'
-        },
+        encryptedParams,
         authToken
       );
  
       if (response) {
-        let ExamDates = response?.data?.receivedData?.map((item) => ({label : `${parseAndFormatDate(item?.EXAM_DT)}` , value : item?.EXAM_DT}));
+        const decryptedData = decrypt(response?.data?.receivedData);
+        const DecryptedData = JSON.parse(decryptedData);
+        let ExamDates = DecryptedData?.map((item) => ({label : `${parseAndFormatDate(item?.EXAM_DT)}` , value : item?.EXAM_DT}));
         // let UpdatedDate = response?.data?.receivedData?.find((item)=>item?.EXAM_DT === date) ? ExamDates : ExamDates?.push({label :`${parseAndFormatDate(date)}` , value: date }); 
         setExamDates(ExamDates);
       }
@@ -459,19 +483,23 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
      
     try {
     const authToken = await checkAuthToken();
-    const response = await view(
-    {
-    operation: "custom",
+    const Parameter = {
+      operation: "custom",
     tblName: "PS_S_PRD_EX_TME_VW",
     data: "",
     conditionString: "",
     checkAvailability: "",
     customQuery:`SELECT DISTINCT EXAM_START_TIME  FROM PS_S_PRD_EX_TME_VW WHERE EXAM_DT = '${formattedDate}'` ,
-  },
+ };
+    const encryptedParams = encrypt(JSON.stringify(Parameter));
+    const response = await view(
+      encryptedParams,
     authToken
     );
     if (response) {
-      let ExamDates = response?.data?.receivedData?.map((item) => ({label : convertedTime(item.EXAM_START_TIME) , value : item.EXAM_START_TIME}));
+      const decryptedData = decrypt(response?.data?.receivedData);
+        const DecryptedData = JSON.parse(decryptedData);
+      let ExamDates = DecryptedData?.map((item) => ({label : convertedTime(item.EXAM_START_TIME) , value : item.EXAM_START_TIME}));
       setShiftList(ExamDates);
     }
     } catch (error) {
