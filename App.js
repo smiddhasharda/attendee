@@ -89,17 +89,20 @@ const AppContent = () => {
                 name="Home"
                 component={Home}
                 options={({ navigation }) => ({
+                  headerBackground: () => (
+                    <View style={{ backgroundColor: "#f2f7ff", flex: 1}} />
+                  ),
                   headerLeft: () => (
-                    <View style={{padding:10}}>
+                    <View style={{paddingLeft: 35}}>
                     <Image
                       source={logoImage}
-                      style={[styles.logo ,{height:isMobile?50 :40} ]}
+                      style={[styles.logo ,{height:isMobile ? 50 : 40} ]}
                     />
                   </View>
                   ),
           
                   headerRight: () => (
-                    <View style={{padding:isMobile?0:20}}>
+                    <View style={{paddingRight:isMobile ? 0 : 35}}>
                     <Pressable
                       style={styles.loginBtn}
                       onPress={() => navigation.replace('Login')} 
@@ -192,13 +195,15 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   loginBtn: {
-    backgroundColor: 'rgb(17, 65, 102)',
+    backgroundColor: 'transparent',
     paddingVertical: 8,
     paddingHorizontal: 20,
-    borderRadius: 20,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: '#4b67ac'
   },
   loginText: {
-    color: '#fff',
+    color: '#4b67ac',
     fontWeight: 'bold',
     fontSize: 16,
     textAlign: 'center',
