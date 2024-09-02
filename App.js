@@ -125,7 +125,7 @@ const AppContent = () => {
                   name="Privacy"
                   component={Privacy}
                   options={({ route }) => ({
-                    title: `Private Policy`,
+                    title: `Privacy Policy`,
                   })}
                 />
                 <Stack.Screen
