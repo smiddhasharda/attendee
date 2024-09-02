@@ -17,7 +17,6 @@ const { width, height } = Dimensions.get('window');
 const isMobile = width < 768; 
 
 const StudentInfo = ({ navigation }) => {
-
   const [modalVisible, setModalVisible] = useState(false);
   const[modalstyle,setModalStyle]=useState('')
   const [modalData, setModalData] = useState('');
@@ -29,8 +28,7 @@ const StudentInfo = ({ navigation }) => {
   const [studentSign, setStudentSign] = useState('');
   const [courseDetails, setCourseDetails] = useState({});
   const [timeLeft, setTimeLeft] = useState('Attendance Not Started');
-  const { room_Nbr, catlog_Nbr, system_Id, seat_Nbr, exam_Dt, startTime, reportId, userAccess, current_Term } = route.params;
-
+  const { room_Nbr, catlog_Nbr, system_Id, seat_Nbr, exam_Dt, startTime, reportId, userAccess, current_Term,userData } = route.params;
   const UserAccess = userAccess?.module?.find((item) => item?.FK_ModuleId === 6);
   const [copiesData, setCopiesData] = useState([]);
   const [tempCopyNumber, setTempNumber] = useState("");
@@ -294,6 +292,7 @@ const StudentInfo = ({ navigation }) => {
               SU_PAPER_ID: courseDetails.SU_PAPER_ID,
               DESCR100: courseDetails.DESCR100,
               EXAM_TYPE_CD:courseDetails.EXAM_TYPE_CD,
+              created_by:`${userData?.name} (${userData?.username})`
             },
             conditionString: `EMPLID = '${studentDetails.EMPLID}' AND EXAM_DT = '${exam_Dt}' AND ROOM_NBR = '${room_Nbr}' AND EXAM_START_TIME = '${startTime}'`,
             checkAvailability: true,
@@ -334,7 +333,7 @@ const StudentInfo = ({ navigation }) => {
   
             if (NewResponse) {
               addToast("Student details are updated successfully!", "success");
-              navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation: navigation, userAccess });
+              navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation: navigation,userData:userData, userAccess });
             }
           }
         }
@@ -610,6 +609,7 @@ const StudentInfo = ({ navigation }) => {
               SU_PAPER_ID: courseDetails.SU_PAPER_ID,
               DESCR100: courseDetails.DESCR100,
               EXAM_TYPE_CD:courseDetails.EXAM_TYPE_CD,
+              updated_by:`${userData?.name} (${userData?.username})`
             },
             conditionString: `PK_Report_Id = ${reportId}`,
             checkAvailability: "",
@@ -666,11 +666,11 @@ const StudentInfo = ({ navigation }) => {
   
                 if (newResponse) {
                   addToast("Student details are updated successfully!", "success");
-                  navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation, userAccess });
+                  navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime,userData:userData, navigation, userAccess });
                 }
               } else {
                 addToast("Student details are updated successfully!", "success");
-                navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation, userAccess });
+                navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime,userData:userData, navigation, userAccess });
               }
             } else if (copiesData?.length > 0) {
               const studentCopyWithId = copiesData.map(item => {
@@ -700,12 +700,12 @@ const StudentInfo = ({ navigation }) => {
   
               if (newResponse) {
                 addToast("Student details are updated successfully!", "success");
-                navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime, navigation, userAccess });
+                navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt,userData:userData, startTime, navigation, userAccess });
               }
             }
           } else {
             addToast("Student details are updated successfully!", "success");
-            navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime, navigation, userAccess });
+            navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt,userData:userData, startTime, navigation, userAccess });
           }
         }
       }

@@ -428,7 +428,17 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
   };
 
   const handleGetDateView = async (date) => {
-    let CurrentDate = new Date().toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-');
+    // let CurrentDate = new Date().toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-');
+    const Date = new Date();
+    const day = Date.toLocaleDateString('en-GB', { day: '2-digit' });
+    const monthIndex = Date.getMonth();
+    const year = Date.toLocaleDateString('en-GB', { year: '2-digit' });
+    
+    // Array of month abbreviations
+    const monthAbbreviations = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+    const month = monthAbbreviations[monthIndex];
+    
+    const CurrentDate = `${day}-${month}-${year}`;
     try {
       const authToken = await checkAuthToken();
       const response = await view(
