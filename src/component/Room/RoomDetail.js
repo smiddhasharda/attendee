@@ -19,7 +19,7 @@ function RoomDetail({navigation}) {
   const [loading, setLoading] = useState(false);
   const [presentStudentList, setPresentStudentList] = useState();
   const [searchText, setSearchText] = useState('');
-  const { room_Nbr, exam_Dt,startTime,userAccess } = route.params;
+  const { room_Nbr, exam_Dt,startTime,userAccess,userData } = route.params;
   const UserAccess = userAccess?.module?.find((item)=> item?.FK_ModuleId === 7);
 
   const checkAuthToken = useCallback(async () => {
@@ -95,7 +95,7 @@ function RoomDetail({navigation}) {
     navigation.setOptions({ headerShown: true});
    let studentData = studentDetails?.filter((data)=> data.EMPLID === ScannedData)?.[0] || '';
    if(studentData){
-    navigation.navigate("StudentInfo", { room_Nbr: studentData.ROOM_NBR ,exam_Dt: studentData.EXAM_DT,catlog_Nbr: studentData.CATALOG_NBR ,system_Id:studentData.EMPLID, seat_Nbr: studentData.PTP_SEQ_CHAR ,startTime: startTime,current_Term:studentData.STRM,reportId: presentStudentList?.filter((item)=>item.EMPLID === Number(studentData.EMPLID))?.[0]?.PK_Report_Id ,userAccess });
+    navigation.navigate("StudentInfo", { room_Nbr: studentData.ROOM_NBR ,exam_Dt: studentData.EXAM_DT,catlog_Nbr: studentData.CATALOG_NBR ,system_Id:studentData.EMPLID, seat_Nbr: studentData.PTP_SEQ_CHAR ,startTime: startTime,current_Term:studentData.STRM,reportId: presentStudentList?.filter((item)=>item.EMPLID === Number(studentData.EMPLID))?.[0]?.PK_Report_Id,userData:userData ,userAccess });
    }
    else{
     addToast("Student not available in this room!", "error");
@@ -357,7 +357,7 @@ const formattedShiftTimePrefix = formatShiftTimePrefix(startTime);
               tempStudentDetails.map((studentData, index) => (             
                 <Pressable 
                   key={studentData.EMPLID}  // Use a unique identifier from studentData, such as EMPLID
-                  onPress={() => UserAccess?.create === 1 ?  navigation.navigate("StudentInfo", { room_Nbr: studentData.ROOM_NBR ,exam_Dt: studentData.EXAM_DT,catlog_Nbr: studentData.CATALOG_NBR ,system_Id:studentData.EMPLID, seat_Nbr: studentData.PTP_SEQ_CHAR ,startTime: startTime,current_Term:studentData.STRM,reportId: presentStudentList?.filter((item)=>item.EMPLID === Number(studentData.EMPLID))?.[0]?.PK_Report_Id ,userAccess }) : ''} >
+                  onPress={() => UserAccess?.create === 1 ?  navigation.navigate("StudentInfo", { room_Nbr: studentData.ROOM_NBR ,exam_Dt: studentData.EXAM_DT,catlog_Nbr: studentData.CATALOG_NBR ,system_Id:studentData.EMPLID, seat_Nbr: studentData.PTP_SEQ_CHAR ,startTime: startTime,current_Term:studentData.STRM,reportId: presentStudentList?.filter((item)=>item.EMPLID === Number(studentData.EMPLID))?.[0]?.PK_Report_Id ,userData:userData,userAccess }) : ''} >
                          
                     <View style={[styles.box,getStatuscolor(presentStudentList?.filter((item) => item.EMPLID === Number(studentData.EMPLID))?.[0]?.Status)]} key={studentData.EMPLID}>
                       <View style={styles.boxtext}>
