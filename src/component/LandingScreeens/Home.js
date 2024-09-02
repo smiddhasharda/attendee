@@ -38,56 +38,111 @@ const Home = () => {
           <View style={[styles.mainSection]}>
 
             {/* Features Section */}
-            <View style={[styles.featuresWrap, { flexDirection : isMobile ? "column" : "row" }]}>
-              <View style={{ order: isMobile ? 2 : 1, width: isMobile?"100%":"60%" }}>
-                <Text style={styles.secHeading}>Easily Track Student Attendance</Text>
-                <View style={styles.listItem}>
-                  <View style={styles.leftSection}>
-                    <Image style={styles.secImage} source={require('../../local-assets/track-icon.png')} />
-                  </View>
-                  <View style={styles.rightSection}>
-                    <Text style={styles.heading}>Exam Tracking</Text>
-                    <Text style={styles.paragraph}>
-                      Stay on top of all your exams with real-time tracking. Our app ensures you’re always updated on exam schedules and changes.
-                    </Text>
-                  </View>
-                </View>
-                <View style={styles.listItem}>
-                  <View style={styles.leftSection}>
-                    <Image style={styles.secImage} source={require('../../local-assets/eye-icon.png')} />
-                  </View>
-                  <View style={styles.rightSection}>
-                    <Text style={styles.heading}>Invigilator</Text>
-                    <Text style={styles.paragraph}>
-                      Seamlessly manage invigilation duties with our dedicated features. Get quick access to your exam locations and related tasks.
-                    </Text>
-                  </View>
-                </View>
-                <View style={styles.listItem}>
-                  <View style={styles.leftSection}>
-                    <Image style={styles.secImage} source={require('../../local-assets/scan-icon.png')} />
-                  </View>
-                  <View style={styles.rightSection}>
-                    <Text style={styles.heading}>Barcode Scanning</Text>
-                    <Text style={styles.paragraph}>
-                      Simplify attendance tracking with barcode scanning. Quickly and accurately register student attendance during exams.
-                    </Text>
-                  </View>
-                </View>
-                <View style={styles.listItem}>
-                  <View style={styles.playLeftSection}>
-                    <Image style={styles.playIcon} source={require('../../local-assets/google-play.png')} />
-                  </View>
-                  <View style={styles.playRightSection}>
-                    <Text style={styles.download}>Download The App</Text>
-                  </View>
-                </View>
-              </View>
+           {/* Features Section */}
+<View style={[styles.featuresWrap, { flexDirection: isMobile ? "column" : "row" }]}>
+  {isMobile ? (
+    <>
+      <View style={{  width: "100%" }}>
+        <Image style={styles.featureImg} source={require('../../local-assets/room-left.png')} />
+      </View>
+      <View style={{  width: "100%" }}>
+        <Text style={styles.secHeading}>Easily Track Student Attendance</Text>
+        <View style={styles.listItem}>
+          <View style={styles.leftSection}>
+            <Image style={styles.secImage} source={require('../../local-assets/track-icon.png')} />
+          </View>
+          <View style={styles.rightSection}>
+            <Text style={styles.heading}>Exam Tracking</Text>
+            <Text style={styles.paragraph}>
+              Stay on top of all your exams with real-time tracking. Our app ensures you’re always updated on exam schedules and changes.
+            </Text>
+          </View>
+        </View>
+        <View style={styles.listItem}>
+          <View style={styles.leftSection}>
+            <Image style={styles.secImage} source={require('../../local-assets/eye-icon.png')} />
+          </View>
+          <View style={styles.rightSection}>
+            <Text style={styles.heading}>Invigilator</Text>
+            <Text style={styles.paragraph}>
+              Seamlessly manage invigilation duties with our dedicated features. Get quick access to your exam locations and related tasks.
+            </Text>
+          </View>
+        </View>
+        <View style={styles.listItem}>
+          <View style={styles.leftSection}>
+            <Image style={styles.secImage} source={require('../../local-assets/scan-icon.png')} />
+          </View>
+          <View style={styles.rightSection}>
+            <Text style={styles.heading}>Barcode Scanning</Text>
+            <Text style={styles.paragraph}>
+              Simplify attendance tracking with barcode scanning. Quickly and accurately register student attendance during exams.
+            </Text>
+          </View>
+        </View>
+        <View style={styles.listItem}>
+          <View style={styles.playLeftSection}>
+            <Image style={styles.playIcon} source={require('../../local-assets/google-play.png')} />
+          </View>
+          <View style={styles.playRightSection}>
+            <Text style={styles.download}>Download The App</Text>
+          </View>
+        </View>
+      </View>
+    </>
+  ) : (
+    <>
+      <View style={{  width: "60%" }}>
+        <Text style={styles.secHeading}>Easily Track Student Attendance</Text>
+        <View style={styles.listItem}>
+          <View style={styles.leftSection}>
+            <Image style={styles.secImage} source={require('../../local-assets/track-icon.png')} />
+          </View>
+          <View style={styles.rightSection}>
+            <Text style={styles.heading}>Exam Tracking</Text>
+            <Text style={styles.paragraph}>
+              Stay on top of all your exams with real-time tracking. Our app ensures you’re always updated on exam schedules and changes.
+            </Text>
+          </View>
+        </View>
+        <View style={styles.listItem}>
+          <View style={styles.leftSection}>
+            <Image style={styles.secImage} source={require('../../local-assets/eye-icon.png')} />
+          </View>
+          <View style={styles.rightSection}>
+            <Text style={styles.heading}>Invigilator</Text>
+            <Text style={styles.paragraph}>
+              Seamlessly manage invigilation duties with our dedicated features. Get quick access to your exam locations and related tasks.
+            </Text>
+          </View>
+        </View>
+        <View style={styles.listItem}>
+          <View style={styles.leftSection}>
+            <Image style={styles.secImage} source={require('../../local-assets/scan-icon.png')} />
+          </View>
+          <View style={styles.rightSection}>
+            <Text style={styles.heading}>Barcode Scanning</Text>
+            <Text style={styles.paragraph}>
+              Simplify attendance tracking with barcode scanning. Quickly and accurately register student attendance during exams.
+            </Text>
+          </View>
+        </View>
+        <View style={styles.listItem}>
+          <View style={styles.playLeftSection}>
+            <Image style={styles.playIcon} source={require('../../local-assets/google-play.png')} />
+          </View>
+          <View style={styles.playRightSection}>
+            <Text style={styles.download}>Download The App</Text>
+          </View>
+        </View>
+      </View>
+      <View style={{ width: "40%" }}>
+        <Image style={styles.featureImg} source={require('../../local-assets/room-left.png')} />
+      </View>
+    </>
+  )}
+</View>
 
-              <View style={{  order: isMobile ? 1 : 2,width: isMobile?"100%":"40%" }}>
-              <Image style={[styles.featureImg]} source={require('../../local-assets/room-left.png')} />
-              </View>
-            </View>
 
           </View>
 
