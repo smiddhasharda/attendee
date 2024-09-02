@@ -73,8 +73,11 @@ const Home = () => {<MaterialIcons name="smartphone" size={24} color="black" />
                   </View>
                 </View>
                 <View style={styles.listItem}>
-                  <View style={styles.leftSection}>
-                    <Image style={styles.secImage} source={require('../../local-assets/google-play.png')} />
+                  <View style={styles.playLeftSection}>
+                    <Image style={styles.playIcon} source={require('../../local-assets/google-play.png')} />
+                  </View>
+                  <View style={styles.playRightSection}>
+                    <Text style={styles.download}>Download <br/>The App</Text>
                   </View>
                 </View>
               </View>
@@ -190,40 +193,62 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     marginRight: 'auto',
     marginLeft: 'auto',
+    fontFamily: ['Lato', 'sans-serif'],
     width: '100%',  // Ensure it takes full width within the maxWidth
   },
   SecHeading: {
     fontSize: 34,
     fontWeight: 'bold',
     marginVertical: 10,
-    fontFamily: 'Lato',
+    paddingBottom: 20,
+    fontFamily: ['Lato', 'sans-serif'],
     // color:"#00ade3"
   },
   listItem: {
     flexDirection: 'row',
     //alignItems: 'center',
     marginBottom: 20, // Space between list items
+    maxWidth: '100%',
+    width: '100%',
+    fontFamily: ['Lato', 'sans-serif']
   },
   leftSection: {
-    flex: 15, // 15% of the width
+    flex: 13, // 13% of the width
     marginRight: 10, // Space between the image and the text
   },
   rightSection: {
-    flex: 85, // 85% of the width
+    flex: 87, // 87% of the width
   },
   secImage: {
     width: '100%', // Make sure the image takes the full width of the left section
     height: 50, // Adjust the height as needed
     resizeMode: 'contain',
   },
+  playLeftSection: {
+    flex: 28, // 28% of the width
+    marginRight: 10, // Space between the image and the text
+  },
+  playRightSection: {
+    flex: 72, // 72% of the width
+  },
+  download: {
+    fontSize: 14,
+    fontWeight: 700,
+  },
+  playIcon: {
+    width: 160,
+    height: 54
+  },
   heading: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 5,
+    fontFamily: ['Lato', 'sans-serif']
   },
   paragraph: {
     fontSize: 14,
-    color: '#666',
+    color: '#000',
+    fontFamily: ['Lato', 'sans-serif']
   },
   heroSection: {
     position: 'relative',
@@ -260,37 +285,37 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     backgroundColor: '#dadada',
   },
-  productivityItem: {
-    width: "30%",
-    alignItems: 'center',
-    backgroundColor:"#fff",
-    padding:10,
-    borderRadius:10,
-    // marginBottom:20,
-    shadowColor: '#00ade3',
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    // shadowOffset: { width: 0, height: 5 },
-    // elevation: 5,
-  },
-  productivityImage: {
-    width: 80,
-    height: 80,
-    resizeMode: 'contain',
-    marginBottom: 10,
-  },
-  productivityTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginVertical: 10,
-    textAlign: 'center',
-    // color:"#00ade3"
-  },
-  productivityDescription: {
-    fontSize: 14,
-    color: '#666',
-    textAlign: 'center',
-  },
+  // productivityItem: {
+  //   width: "30%",
+  //   alignItems: 'center',
+  //   backgroundColor:"#fff",
+  //   padding:10,
+  //   borderRadius:10,
+  //   // marginBottom:20,
+  //   shadowColor: '#00ade3',
+  //   shadowOpacity: 0.3,
+  //   shadowRadius: 8,
+  //   // shadowOffset: { width: 0, height: 5 },
+  //   // elevation: 5,
+  // },
+  // productivityImage: {
+  //   width: 80,
+  //   height: 80,
+  //   resizeMode: 'contain',
+  //   marginBottom: 10,
+  // },
+  // productivityTitle: {
+  //   fontSize: 18,
+  //   fontWeight: 'bold',
+  //   marginVertical: 10,
+  //   textAlign: 'center',
+  //   // color:"#00ade3"
+  // },
+  // productivityDescription: {
+  //   fontSize: 14,
+  //   color: '#666',
+  //   textAlign: 'center',
+  // },
   featuresWrap:{
     flexDirection: 'row',
     alignItems: 'center',
@@ -347,9 +372,7 @@ const styles = StyleSheet.create({
   },
   downloadButtons: {
     flexDirection: 'row',
-    justifyContent: 'flex-start',
- 
- 
+    justifyContent: 'flex-start', 
   },
   downloadBtn: {
     width: 200,
@@ -368,18 +391,18 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 20,
   },
-  leftSection: {
-    width:"30%",
-    paddingHorizontal: 10,
-  },
-  middleSection: {
-    width:"30%",
-    paddingHorizontal: 10,
-  },
-  rightSection: {
-    width:"30%",
-    paddingHorizontal: 10,
-  },
+  // leftSection: {
+  //   width:"30%",
+  //   paddingHorizontal: 10,
+  // },
+  // middleSection: {
+  //   width:"30%",
+  //   paddingHorizontal: 10,
+  // },
+  // rightSection: {
+  //   width:"30%",
+  //   paddingHorizontal: 10,
+  // },
   footerHeading: {
     fontSize: 18,
     color: '#fff',
@@ -396,6 +419,7 @@ const styles = StyleSheet.create({
     color: '#ccc',
     // marginTop: 8,
     lineHeight: 22,
+    
   },
   footerAddress: {
     fontSize: 14,
