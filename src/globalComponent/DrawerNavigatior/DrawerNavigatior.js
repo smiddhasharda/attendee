@@ -136,23 +136,30 @@ const CustomDrawerContent = ({ ...props }) => {
       formData.append("data", "");
       formData.append("fileParam", "profile_image_url");
       formData.append("conditionString", `user_id = ${props.userData?.user_id}`);
-
-      const { fileName, uri, mimeType } = file?.[0];
-      const response1 = await fetch(uri);
-      const blob = await response1.blob();
-      const ProfilePics = new File([blob], fileName, { type: mimeType });
-      formData.append("profile_pics", ProfilePics);
+  
+      // Ensure 'file' exists and has the expected structure
+      if (file?.length > 0) {
+        const { fileName, uri, mimeType } = file[0];
+        const response1 = await fetch(uri);
+        const blob = await response1.blob();
+        const profilePics = new File([blob], fileName, { type: mimeType });
+        formData.append("profile_pics", profilePics);
+      } else {
+        throw new Error('No file selected');
+      }
+            
+      // Adjusted API call to send FormData
       const response = await multer(formData, authToken);
-    
       if (response) {
         await AsyncStorage.removeItem("userData");
         await handleGetUserData();
-        addToast(`User profile is updated successfully!`, "success");
+        addToast("User profile updated successfully!", "success");
       }
     } catch (error) {
       handleAuthErrors(error);
     }
   };
+  
 
   const handleAuthErrors = (error) => {
     switch (error.message) {
