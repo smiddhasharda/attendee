@@ -807,7 +807,7 @@ const UserScreen = ({userAccess,userData}) => {
               <Text style={[styles.tableHeaderText, {width:170,textAlign:"center"} ]}>Mob.No</Text>
               <Text style={[styles.tableHeaderText,{width:200,textAlign:"center"}  ]}>User Status</Text>
               <Text style={[styles.tableHeaderText,{width:90,textAlign:"center"}  ]}>Status</Text>
-              <Text style={[styles.tableHeaderText,{width:90,textAlign:"center"}  ]}>Attempt Status</Text>
+              <Text style={[styles.tableHeaderText,{width:120,textAlign:"center"}  ]}>Attempt Status</Text>
               <Text style={[styles.tableHeaderText,{width:120 ,textAlign:"center"}, ]}>Created Date</Text>
               <Text style={[styles.tableHeaderText,{width:120 ,textAlign:"center"}, ]}>Updated Date</Text>
               <Text style={[styles.tableHeaderText,{width:120,textAlign:"center"}, ]}>Created By</Text>
@@ -827,7 +827,7 @@ const UserScreen = ({userAccess,userData}) => {
                     <Text style={[styles.listItemText,  item.isActive ? styles.actionbtn : styles.inactivebtn,]}>{item.isActive ? "Active" : "Inactive"}</Text>
                     </Pressable>     
                     </View>  
-                    <View style={[styles.listItemText, {display:"inline-block", alignItems:"center", textAlign:"center", width:90}]}>
+                    <View style={[styles.listItemText, {display:"inline-block", alignItems:"center", textAlign:"center", width:120}]}>
                       <Pressable style={{display:"inline-block" ,alignItems:"center"} } onPress={() =>UserAccess?.update === 1 ? handleUserAttemptStatus(item.user_id) : ''}>
                     <Text style={[styles.listItemText,  item.firstLoginStatus === 3 ? styles.inactivebtn : styles.actionbtn,]}>{ `${3 - item.firstLoginStatus} Remains`}</Text>
                     </Pressable>     
@@ -1068,7 +1068,7 @@ const styles = StyleSheet.create({
   actionbtn:{
     backgroundColor:"#0CB551",
     borderRadius:4,
-    width:60,
+    // width:60,
     padding:5, 
     color:"#fff",
     textAlign:"center",
@@ -1077,7 +1077,7 @@ const styles = StyleSheet.create({
 inactivebtn:{
  backgroundColor:"red",
     borderRadius:4,
-    width:60,
+    // width:60,
     padding:5, 
     color:"#fff",
     textAlign:"center",
