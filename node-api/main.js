@@ -10,6 +10,7 @@ const oracledb = require("oracledb");
 const corsOptions = require("./config/corsOptions.js");
 const credentials = require("./middlewares/credentials.js");
 const { logger } = require("./middlewares/logEvents.js");
+const axios = require("axios");
 //const { parse, format } = require('date-fns');
 //const { utcToZonedTime } = require('date-fns-tz');
 // const { parseISO, format } = require('date-fns');
@@ -17,6 +18,9 @@ const { logger } = require("./middlewares/logEvents.js");
 // const { parse, formatISO, addMinutes } = require('date-fns');
 const { parse, formatISO, addMinutes } = require('date-fns');
 const XLSX = require("xlsx");
+
+const crypto = require('crypto');
+
 
 const dotenv = require("dotenv");
 dotenv.config(); // Load variables from .env file
@@ -54,6 +58,47 @@ if (!secretKey) {
   );
   process.exit(1);
 }
+
+const algorithm = 'aes-256-cbc';
+// const key = crypto.randomBytes(16).toString('hex');
+// console.log(key); 
+const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
+
+const iv = crypto.randomBytes(16);
+const key_in_bytes = Buffer.from(encryptScreteKey);
+
+const encrypt = (text) => {
+  const cipher = crypto.createCipheriv(algorithm, key_in_bytes, iv);
+  let encrypted = cipher.update(text, 'utf8', 'hex');
+  encrypted += cipher.final('hex');
+  return `${iv.toString('hex')}:${encrypted}`;
+};
+
+const decrypt = (encryptedData) => {
+  if (!encryptedData) {
+    throw new Error('No data provided for decryption');
+  }
+
+  const [ivHex, encryptedBase64] = encryptedData.split(':');
+
+  // Ensure the split parts are valid
+  if (!ivHex || !encryptedBase64) {
+    throw new Error('Invalid encrypted data format');
+  }
+
+  const iv = Buffer.from(ivHex, 'hex');
+  const encrypted = Buffer.from(encryptedBase64, 'base64');
+
+  const encryptSecretKey = Buffer.from('b305723a4d2e49a443e064a111e3e280'); // Ensure this matches your encryption key
+
+  const decipher = crypto.createDecipheriv(algorithm, encryptSecretKey, iv);
+  let decrypted = decipher.update(encrypted);
+  decrypted = Buffer.concat([decrypted, decipher.final()]);
+
+  return decrypted.toString('utf8');
+};
+
+
 
 // Configure nodemailer transporter for sending emails
 const transporter = nodemailer.createTransport({
@@ -202,7 +247,7 @@ const transporter = nodemailer.createTransport({
       jwt.verify(actualToken, secretKey, (err, user) => {
         if (err) {
           if (err.name === "TokenExpiredError") {
-            return res.status(401).json({ error: "Token has expired" });
+            return res.status(401).json({ error: "Token is expired, please log in again" });
           } else {
             console.error("Token verification error:", err);
             return res.status(403).json({ error: "Forbidden" });
@@ -241,7 +286,9 @@ const transporter = nodemailer.createTransport({
     // Email Verified
     app.post("/api/emailVerify", async (req, res) => {
       try {
-        const { tblName, conditionString,viewTblName,viewConditionString } = req.body;
+        const encryptedQuery = req.body.data;
+        const decryptedQuery = JSON.parse(decrypt(encryptedQuery));
+        const { tblName, conditionString,viewTblName,viewConditionString } = decryptedQuery;
     
         // Query user data from the main table
         const [rows] = await pool.query(`SELECT * FROM ?? WHERE ${conditionString}`, [tblName]);
@@ -280,7 +327,6 @@ const transporter = nodemailer.createTransport({
               });
     
           if (viewRows.rows.length > 0 ) {
-            console.log(viewRows.rows[0])
             const viewUserData = viewRows.rows[0];
             const otp = Math.floor(100000 + Math.random() * 900000);
     
@@ -365,25 +411,127 @@ const transporter = nodemailer.createTransport({
     //   }
     // });
 
+    // app.post("/api/login", async (req, res) => {
+    //   try {
+    //     const encryptedQuery = req.body.data;
+    //     const decryptedQuery = JSON.parse(decrypt(encryptedQuery));
+    //     const { tblName, conditionString,secondaryCondition } = decryptedQuery;
+    //     // Use parameterized queries to avoid SQL injection
+    //     const [rows] = await pool.query(
+    //       `SELECT * FROM ?? WHERE ${conditionString}`, [tblName]
+    //     );
+    
+    //     if (rows.length > 0) {
+    //       const userData = rows[0];
+    
+    //       // Simplify and log the user role query for debugging
+    //       const userRoleQuery = ` SELECT JSON_ARRAYAGG( JSON_OBJECT( 'FK_userId', p.FK_userId, 'FK_RoleId', p.FK_RoleId, 'rolePermission', ( SELECT JSON_ARRAYAGG( JSON_OBJECT( 'PK_RoleId', r.PK_RoleId, 'roleName', r.roleName ) ) FROM tbl_role_master r WHERE r.PK_RoleId = p.FK_RoleId ), 'modulePermission', ( SELECT JSON_ARRAYAGG( JSON_OBJECT( 'PK_role_module_permissionId', q.PK_role_module_permissionId, 'FK_RoleId', q.FK_RoleId, 'FK_ModuleId', q.FK_ModuleId, 'create', q.create, 'read', q.read, 'update', q.update, 'delete', q.delete, 'special', q.special, 'moduleMaster', ( SELECT JSON_ARRAYAGG( JSON_OBJECT( 'PK_ModuleId', s.PK_ModuleId, 'moduleName', s.moduleName ) ) FROM tbl_module_master s WHERE s.PK_ModuleId = q.FK_ModuleId ) ) ) FROM tbl_role_module_permission q WHERE q.FK_RoleId = p.FK_RoleId ) ) ) AS UserRoleData FROM tbl_user_role_permission p WHERE p.FK_userId = ? ORDER BY p.FK_RoleId ASC; `;
+    
+    //       const [UserRole] = await pool.query(userRoleQuery, [userData.user_id]);
+    
+    //       const token = jwt.sign(
+    //         {
+    //           id: userData.user_id,
+    //           username: userData.username,
+    //         },
+    //         secretKey
+    //       );
+    
+    //       const userRole = UserRole?.[0]?.UserRoleData;
+    //       const EncryptedData = encrypt(JSON.stringify({ token, userRole, userData }));
+    //       res.status(200).json({ message: "login successful", receivedData: EncryptedData });
+    //     } else {
+    //       const [result] = await pool.query(
+    //         `SELECT * FROM ?? WHERE ${secondaryCondition}`, [tblName]
+    //       );
+    //       if(result.length > 0){
+    //         let Attempt =  result?.firstLoginStatus + 1;
+    //         const [insertRows] = await pool.query("INSERT INTO tbl_user_master (firstLoginStatus) VALUES (?)", [
+    //           Attempt
+    //         ]);
+    //         if (insertRows.affectedRows > 0) {
+    //           res.status(401).json({ error: `Invalid credentials , you have to try ${Attempt} attempt` });
+    //        } else {
+    //          res.status(401).json({ error: `Invalid credentials , you have zero attempt left, Please contact admin to unlock your Id` });
+    //        }
+    //       }
+    //       else{
+    //         res.status(401).json({ error: "Invalid credentials" });
+    //       }
+    //     }
+    //   } catch (error) {
+    //     console.error("Login error:",  error);
+    //     res.status(500).json({ error: "Internal server error" });
+    //   }
+    // });
+
     app.post("/api/login", async (req, res) => {
       try {
-        const { tblName, conditionString } = req.body;
-        // Log the incoming request for debugging
-        console.log("Login Request:", req.body);
+        const encryptedQuery = req.body.data;
+        const decryptedQuery = JSON.parse(decrypt(encryptedQuery));
+        const { tblName, conditionString, secondaryCondition } = decryptedQuery;
     
         // Use parameterized queries to avoid SQL injection
-        const [rows] = await pool.query(
-          `SELECT * FROM ?? WHERE ${conditionString}`, [tblName]
-        );
+        const [rows] = await pool.query(`SELECT * FROM ?? WHERE ${conditionString}`, [tblName]);
     
         if (rows.length > 0) {
           const userData = rows[0];
+          
+          // Reset the firstLoginStatus on successful login
+          await pool.query("UPDATE tbl_user_master SET firstLoginStatus = 0 WHERE user_id = ?", [userData.user_id]);
     
-          // Simplify and log the user role query for debugging
-          const userRoleQuery = ` SELECT JSON_ARRAYAGG( JSON_OBJECT( 'FK_userId', p.FK_userId, 'FK_RoleId', p.FK_RoleId, 'rolePermission', ( SELECT JSON_ARRAYAGG( JSON_OBJECT( 'PK_RoleId', r.PK_RoleId, 'roleName', r.roleName ) ) FROM tbl_role_master r WHERE r.PK_RoleId = p.FK_RoleId ), 'modulePermission', ( SELECT JSON_ARRAYAGG( JSON_OBJECT( 'PK_role_module_permissionId', q.PK_role_module_permissionId, 'FK_RoleId', q.FK_RoleId, 'FK_ModuleId', q.FK_ModuleId, 'create', q.create, 'read', q.read, 'update', q.update, 'delete', q.delete, 'special', q.special, 'moduleMaster', ( SELECT JSON_ARRAYAGG( JSON_OBJECT( 'PK_ModuleId', s.PK_ModuleId, 'moduleName', s.moduleName ) ) FROM tbl_module_master s WHERE s.PK_ModuleId = q.FK_ModuleId ) ) ) FROM tbl_role_module_permission q WHERE q.FK_RoleId = p.FK_RoleId ) ) ) AS UserRoleData FROM tbl_user_role_permission p WHERE p.FK_userId = ? ORDER BY p.FK_RoleId ASC; `;
+          // Fetch user roles and permissions
+          const userRoleQuery = `
+            SELECT JSON_ARRAYAGG(
+              JSON_OBJECT(
+                'FK_userId', p.FK_userId,
+                'FK_RoleId', p.FK_RoleId,
+                'rolePermission', (
+                  SELECT JSON_ARRAYAGG(
+                    JSON_OBJECT(
+                      'PK_RoleId', r.PK_RoleId,
+                      'roleName', r.roleName
+                    )
+                  )
+                  FROM tbl_role_master r
+                  WHERE r.PK_RoleId = p.FK_RoleId
+                ),
+                'modulePermission', (
+                  SELECT JSON_ARRAYAGG(
+                    JSON_OBJECT(
+                      'PK_role_module_permissionId', q.PK_role_module_permissionId,
+                      'FK_RoleId', q.FK_RoleId,
+                      'FK_ModuleId', q.FK_ModuleId,
+                      'create', q.create,
+                      'read', q.read,
+                      'update', q.update,
+                      'delete', q.delete,
+                      'special', q.special,
+                      'moduleMaster', (
+                        SELECT JSON_ARRAYAGG(
+                          JSON_OBJECT(
+                            'PK_ModuleId', s.PK_ModuleId,
+                            'moduleName', s.moduleName
+                          )
+                        )
+                        FROM tbl_module_master s
+                        WHERE s.PK_ModuleId = q.FK_ModuleId
+                      )
+                    )
+                  )
+                  FROM tbl_role_module_permission q
+                  WHERE q.FK_RoleId = p.FK_RoleId
+                )
+              )
+            ) AS UserRoleData
+            FROM tbl_user_role_permission p
+            WHERE p.FK_userId = ?
+            ORDER BY p.FK_RoleId ASC;
+          `;
     
           const [UserRole] = await pool.query(userRoleQuery, [userData.user_id]);
     
+          // Generate JWT token
           const token = jwt.sign(
             {
               id: userData.user_id,
@@ -393,16 +541,40 @@ const transporter = nodemailer.createTransport({
           );
     
           const userRole = UserRole?.[0]?.UserRoleData;
-    
-          res.status(200).json({ token, userRole, userData });
+          const EncryptedData = encrypt(JSON.stringify({ token, userRole, userData }));
+          res.status(200).json({ message: "Login successful", receivedData: EncryptedData });
         } else {
-          res.status(401).json({ error: "Invalid credentials" });
+          const [result] = await pool.query(`SELECT * FROM ?? WHERE ${secondaryCondition}`, [tblName]);
+    
+          if (result.length > 0) {
+            const firstLoginStatus = result[0].firstLoginStatus;
+            
+            if (firstLoginStatus < 3) {
+              const Attempt = firstLoginStatus + 1;
+              const [updateResult] = await pool.query(
+                "UPDATE tbl_user_master SET firstLoginStatus = ? WHERE user_id = ?",
+                [Attempt, result[0].user_id]
+              );
+    
+              if (updateResult.affectedRows > 0) {
+                res.status(401).json({ error: `Invalid credentials, you have ${3 - Attempt} attempts left.` });
+              } else {
+                res.status(401).json({ error: "Failed to update login attempt count." });
+              }
+            } else {
+              res.status(401).json({ error: "Invalid credentials, you have zero attempts left. Please contact admin to unlock your account." });
+            }
+          } else {
+            res.status(401).json({ error: "Invalid credentials" });
+          }
         }
       } catch (error) {
-        console.error("Login error:", error.message || error);
+        console.error("Login error:", error);
         res.status(500).json({ error: "Internal server error" });
       }
     });
+    
+    
     
     
 
@@ -560,6 +732,8 @@ const transporter = nodemailer.createTransport({
     // insert operation API
     app.post("/api/insert", authenticateToken, async (req, res) => {
       try {
+        const encryptedQuery = req.body.data;
+        const decryptedQuery = JSON.parse(decrypt(encryptedQuery));
         const {
           operation,
           tblName,
@@ -567,7 +741,7 @@ const transporter = nodemailer.createTransport({
           conditionString,
           checkAvailability,
           customQuery,
-        } = req.body;
+        } = decryptedQuery;
         if (operation === undefined || tblName === undefined) {
           return res
             .status(400)
@@ -628,7 +802,7 @@ const transporter = nodemailer.createTransport({
             res.status(400).json({ error: "Invalid operation type" });
         }
       } catch (error) {
-        console.error("Error:", error.message || error);
+        console.error("Error:",error);
         res.status(500).json({ error: "Internal server error" });
       }
     });
@@ -636,6 +810,8 @@ const transporter = nodemailer.createTransport({
     // update operation API
     app.put("/api/update", authenticateToken, async (req, res) => {
       try {
+        const encryptedQuery = req.body.data;
+        const decryptedQuery = JSON.parse(decrypt(encryptedQuery));
         const {
           operation,
           tblName,
@@ -643,7 +819,7 @@ const transporter = nodemailer.createTransport({
           conditionString,
           checkAvailability,
           customQuery,
-        } = req.body;
+        } = decryptedQuery;
         if (!operation || !tblName) {
           return res
             .status(400)
@@ -748,22 +924,78 @@ const transporter = nodemailer.createTransport({
     });
 
     // fetch operation API
+    // app.get("/api/fetch", authenticateToken, async (req, res) => {
+    //   try {
+    //     const {
+    //       operation,
+    //       tblName,
+    //       data,
+    //       conditionString,
+    //       checkAvailability,
+    //       customQuery,
+    //     } = req.query;
+    //     if (!operation || !tblName) {
+    //       return res
+    //         .status(400)
+    //         .json({ error: "Operation and table are required" });
+    //     }
+
+    //     if (checkAvailability) {
+    //       const [checkRows] = await pool.query(
+    //         `SELECT * FROM ${tblName} WHERE ${conditionString}`
+    //       );
+    //       if (checkRows.length > 0) {
+    //         return res.status(400).json({ error: "Data already exists" });
+    //       }
+    //     }
+    //     switch (operation) {
+    //       case "fetch":
+    //         const [selectRows] = await pool.query(
+    //           `SELECT * FROM ${tblName} ${
+    //             conditionString ? "WHERE " + conditionString : ""
+    //           }`
+    //         );
+    //         return  res.status(200).json({ message: "Fetch successful", receivedData: selectRows });
+    //       case "custom":
+    //         const [customRows] = await pool.query(customQuery);
+    //         return  res.status(200).json({
+    //           message: "Custom query successful",
+    //           receivedData: customRows,
+    //         });
+    //       default:
+    //         return res.status(400).json({ error: "Invalid operation type" });
+    //     }
+    //   } catch (error) {
+    //     console.error("Error in fetch:", error.message || error);
+    //     return res.status(500).json({ error: "Internal server error" });
+    //   }
+    // });
+
     app.get("/api/fetch", authenticateToken, async (req, res) => {
       try {
+        const encryptedQuery = req.query.data;
+        const decryptedQuery = JSON.parse(decrypt(encryptedQuery));
         const {
           operation,
           tblName,
-          data,
           conditionString,
           checkAvailability,
           customQuery,
-        } = req.query;
+        } = decryptedQuery;
+        // const {
+        //   operation,
+        //   tblName,
+        //   data,
+        //   conditionString,
+        //   checkAvailability,
+        //   customQuery,
+        // } = req.query;
         if (!operation || !tblName) {
           return res
             .status(400)
             .json({ error: "Operation and table are required" });
         }
-
+    
         if (checkAvailability) {
           const [checkRows] = await pool.query(
             `SELECT * FROM ${tblName} WHERE ${conditionString}`
@@ -772,6 +1004,9 @@ const transporter = nodemailer.createTransport({
             return res.status(400).json({ error: "Data already exists" });
           }
         }
+    
+        let responseData;
+    
         switch (operation) {
           case "fetch":
             const [selectRows] = await pool.query(
@@ -779,16 +1014,23 @@ const transporter = nodemailer.createTransport({
                 conditionString ? "WHERE " + conditionString : ""
               }`
             );
-            return  res.status(200).json({ message: "Fetch successful", receivedData: selectRows });
+            responseData = selectRows;
+            break;
           case "custom":
             const [customRows] = await pool.query(customQuery);
-            return  res.status(200).json({
-              message: "Custom query successful",
-              receivedData: customRows,
-            });
+            responseData = customRows;
+            break;
           default:
             return res.status(400).json({ error: "Invalid operation type" });
         }
+    
+        // Encrypt the response data
+        const encryptedData = encrypt(JSON.stringify(responseData));
+        return res.status(200).json({
+          message: "Operation successful",
+          receivedData: encryptedData,
+        });
+    
       } catch (error) {
         console.error("Error in fetch:", error.message || error);
         return res.status(500).json({ error: "Internal server error" });
@@ -805,7 +1047,7 @@ const transporter = nodemailer.createTransport({
           conditionString,
           checkAvailability,
           customQuery,
-        } = req.body;
+        } = req.body.data;
         if (operation === undefined || tblName === undefined) {
           return res
             .status(400)
@@ -859,7 +1101,6 @@ const transporter = nodemailer.createTransport({
         try {
           const { tblName, data, conditionString, fileParam } = req.body;
           const file = req.file?.filename;
-
           if (!tblName) {
             return res
               .status(400)
@@ -1119,7 +1360,7 @@ function parseShiftTime(timeString) {
       authenticateToken,
       async (req, res) => {
         try {
-          const { tblName, conditionString, checkAvailability, checkColumn } = req.body;
+          const { tblName, conditionString, checkAvailability, checkColumn } = req.body.data;
           const file = req.file;
           if (!tblName) {
             return res.status(400).json({ error: 'Table name is required' });
@@ -1193,7 +1434,9 @@ function parseShiftTime(timeString) {
 
     app.get("/api/view", authenticateToken, async (req, res) => {
       try {
-        const { operation, tblName, data, conditionString, checkAvailability, customQuery, viewType } = req.query;
+        const encryptedQuery = req.query.data;
+        const decryptedQuery = JSON.parse(decrypt(encryptedQuery));
+        const { operation, tblName, data, conditionString, checkAvailability, customQuery, viewType } = decryptedQuery;
         let viewSetup;
     
         if (!operation || !tblName) {
@@ -1221,7 +1464,7 @@ function parseShiftTime(timeString) {
             return res.status(400).json({ error: "Data already exists" });
           }
         }
-    
+        let responseData;
         switch (operation) {
           case "fetch":
             const selectRows = await viewSetup.execute(
@@ -1232,10 +1475,13 @@ function parseShiftTime(timeString) {
               console.error("Error fetching data:", error.message || error);
               throw error;
             });
-            return res.status(200).json({
-              message: "Fetch successful",
-              receivedData: selectRows?.rows,
-            });
+
+            responseData = selectRows?.rows;
+            break;
+            // return res.status(200).json({
+            //   message: "Fetch successful",
+            //   receivedData: selectRows?.rows,
+            // });
     
           case "custom":
             const customRows = await viewSetup.execute(
@@ -1246,10 +1492,12 @@ function parseShiftTime(timeString) {
               console.error("Error executing custom query:", error.message || error);
               throw error;
             });
-            return res.status(200).json({
-              message: "Fetch successful",
-              receivedData: customRows?.rows,
-            });
+            responseData = customRows?.rows;
+            break;
+            // return res.status(200).json({
+            //   message: "Fetch successful",
+            //   receivedData: customRows?.rows,
+            // });
     
             case "blobFromOracle":
                 const result = await viewSetup.execute(
@@ -1285,16 +1533,57 @@ function parseShiftTime(timeString) {
                     DERIVED_STUPHOTO: base64SignPhoto
                   };
                 });
-            
-                return res.status(200).json({
-                  message: "Fetch successful",
-                  receivedData: processedRows,
-                })
+                responseData = processedRows;
+                break;
+                // return res.status(200).json({
+                //   message: "Fetch successful",
+                //   receivedData: processedRows,
+                // })
+
+                default:
+                  return res.status(400).json({ error: "Invalid operation type" }); 
 }
+ // Encrypt the response data
+ const encryptedData = encrypt(JSON.stringify(responseData));
+ return res.status(200).json({
+   message: "Fetch successful",
+   receivedData: encryptedData,
+ });
       } catch (error) {
-        console.error("Error in view fetch:", error.message || error);
+        console.error("Error in view fetch:", error);
         return res.status(500).json({ error: "Internal server error" });
       }
+    });
+
+    app.get('/api/photoView',authenticateToken, async (req, res) => {
+      try {  
+        const { data } = req.query.data;
+        const baseURL = 'http://13.127.108.48:8020/PSIGW/RESTListeningConnector/PSFT_HR/ExecuteQuery.v1/public/SU_EMPL_PHOTO/JSON/NONFILE'
+        // const baseURL = 'http://13.127.108.48:8020/PSIGW/RESTListeningConnector/PSFT_HR/ExecuteQuery.v1/public/TEST_EMPL_PHOTO/JSON/NONFILE';
+    const params = new URLSearchParams({
+      isconnectedquery: 'N',
+      maxrows: '1',
+      prompt_uniquepromptname: 'BIND1',
+      prompt_fieldvalue: data,
+      json_resp: 'true',
+    }).toString();
+
+    const url = `${baseURL}?${params}`;
+
+        const response = await axios.get(url, {
+          auth: {
+            username: 'product_api',
+            password: 'Sharda@12#$',
+          }
+        });
+        return res.status(200).json({
+          message: "Fetch successful",
+          receivedData: response.data.data.query.rows,
+        });
+        // res.json(response.data);
+      } catch (error) {
+        console.error('Error occurred:', error.message);
+        return res.status(500).json({ error: "Internal server error" });      }
     });
 
     // Start the server
