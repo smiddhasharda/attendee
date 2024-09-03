@@ -19,8 +19,7 @@ const Home = () => {
   return (
     <ScrollView contentContainerStyle={styles.scrollView}>
       <SafeAreaView style={styles.safeArea}>
-        <View style={styles.homeWrap}>
-
+        <View style={styles.homeWrap}> 
           {/* Slider Section */}
           {/* <View style={styles.heroSection}>
             <Image style={[styles.heroImage,{height:isMobile?320:460}]} source={require('../../local-assets/banner-img.jpg')} />
@@ -43,7 +42,7 @@ const Home = () => {
   {isMobile ? (
     <>
       <View style={{  width: "100%" }}>
-        <Image style={styles.featureImg} source={require('../../local-assets/room-left.png')} />
+        <Image style={styles.featureImg} source={require('../../local-assets/phone.png')} />
       </View>
       <View style={{  width: "100%" }}>
         <Text style={styles.secHeading}>Easily Track Student Attendance</Text>
@@ -137,7 +136,7 @@ const Home = () => {
         </View>
       </View>
       <View style={{ width: "40%" }}>
-        <Image style={styles.featureImg} source={require('../../local-assets/room-left.png')} />
+        <Image style={styles.featureImg} source={require('../../local-assets/phone.png')} />
       </View>
     </>
   )}
