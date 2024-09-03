@@ -53,7 +53,6 @@ const request = async (method, endpoint, data, authToken,params) => {
   } catch (error) {
     if (axios.isAxiosError(error)) {
       if (error.response) {
-        console.log(error)
         throw new Error(error.response?.data?.error || 'Request failed');
       } else if (error.request) {
         throw new Error('No response received from the server');
@@ -117,9 +116,9 @@ const handleAsyncStorageError = (error) => {
   throw new Error('AsyncStorage operation failed');
 };
 
-const login = async (tblName, conditionString) => {
+const login = async (tblName, conditionString,secondaryCondition) => {
   try {
-    const Parameter = encrypt(JSON.stringify({tblName,conditionString}))
+    const Parameter = encrypt(JSON.stringify({tblName,conditionString,secondaryCondition}))
     const response = await request('post', 'login',Parameter);
     const decryptedData = decrypt(response?.data?.receivedData);
     const DecryptedData = JSON.parse(decryptedData);
