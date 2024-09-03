@@ -23,7 +23,7 @@ import CryptoJS from 'crypto-js';
 
 // Screen components
 const RoleComponent = ({ navigation,userAccess, userData }) => <RoleScreen navigation={navigation} userData={userData} userAccess={userAccess} />;
-// const ModuleComponent = ({ navigation,userAccess, userData }) => <ModuleScreen userAccess={userAccess}  />;
+// const ModuleComponent = ({ navigation,userAccess, userData }) => <ModuleScreen navigation={navigation} userAccess={userAccess} userData={userData} />;
 const DashboardComponent = ({ navigation,userAccess, userData }) => <DashboardScreen navigation={navigation} userData={userData} userAccess={userAccess}  />;
 const UserComponent = ({ navigation,userAccess, userData }) => <UserScreen navigation={navigation} userData={userData} userAccess={userAccess}  />;
 const ManagePasswordComponent = ({navigation,userAccess, userData }) => <ManagePasswordScreen navigation={navigation} userData={userData} userAccess={userAccess}  />;

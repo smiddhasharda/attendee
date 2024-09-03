@@ -17,7 +17,7 @@ import Pagination from "../../globalComponent/Pagination/PaginationComponent";
 import { ScrollView } from "react-native-gesture-handler";
 import CryptoJS from 'crypto-js';
 
-const ModuleScreen = ({ userAccess }) => {
+const ModuleScreen = ({ userAccess,userData }) => {
   const userAccessForModule = userAccess?.module?.find(item => item?.FK_ModuleId === 3);
   const { addToast } = useToast();
 
@@ -132,7 +132,7 @@ const paginatedData = moduleList.slice((currentPage - 1) * pageSize, currentPage
       addToast("Enter the module name!", "error");
     }
     else {
-      handleModuleOperation('insert', { moduleName: moduleData.moduleName, description: moduleData.moduleDescription, isActive: moduleData.moduleStatus, }, "Module Add Successful");
+      handleModuleOperation('insert', { moduleName: moduleData.moduleName, description: moduleData.moduleDescription, isActive: moduleData.moduleStatus,created_by:`${userData?.name} (${userData?.username})` }, "Module Add Successful");
     }
   }, [handleModuleOperation, moduleData]);
 
@@ -141,7 +141,7 @@ const paginatedData = moduleList.slice((currentPage - 1) * pageSize, currentPage
       addToast("Enter the module name!", "error");
     }
     else {
-      handleModuleOperation('update', { moduleName: moduleData.moduleName, description: moduleData.moduleDescription, isActive: moduleData.moduleStatus, }, "Module Update Successful", `PK_ModuleId = ${moduleData.moduleId}`);
+      handleModuleOperation('update', { moduleName: moduleData.moduleName, description: moduleData.moduleDescription, isActive: moduleData.moduleStatus,updated_by:`${userData?.name} (${userData?.username})` }, "Module Update Successful", `PK_ModuleId = ${moduleData.moduleId}`);
     }
   }, [handleModuleOperation, moduleData]);
 
@@ -168,7 +168,7 @@ const paginatedData = moduleList.slice((currentPage - 1) * pageSize, currentPage
   }, [checkAuthToken]);
 
   const handleModuleStatus = useCallback(async (moduleId, status) => {
-    handleModuleOperation('update', { isActive: !status }, `Module ${status === 0 ? "Active" : "Inactive"} Successful`, `PK_ModuleId = ${moduleId}`);
+    handleModuleOperation('update', { isActive: !status,updated_by:`${userData?.name} (${userData?.username})` }, `Module ${status === 0 ? "Active" : "Inactive"} Successful`, `PK_ModuleId = ${moduleId}`);
   }, [handleModuleOperation]);
 
   const handleEditModule = useCallback((selectedModule) => {

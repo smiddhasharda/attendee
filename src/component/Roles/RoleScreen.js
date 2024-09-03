@@ -11,7 +11,7 @@ import Pagination from "../../globalComponent/Pagination/PaginationComponent";
 import ShimmerEffect from "../../globalComponent/Refresh/ShimmerEffect";
 import CryptoJS from 'crypto-js';
 
-const RoleScreen = ({userAccess}) => {
+const RoleScreen = ({userAccess,userData}) => {
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 2 );
   const [refreshing, setRefreshing] = useState(false);
   const { addToast } = useToast();
@@ -119,6 +119,7 @@ const RoleScreen = ({userAccess}) => {
             roleName: roleData.roleName,
             description: roleData.roleDescription,
             isActive: roleData.roleStatus,
+            created_by:`${userData?.name} (${userData?.username})`
           },
           conditionString: `role_name='${roleData.roleName}'`,
           checkAvailability: true,
@@ -135,6 +136,7 @@ const RoleScreen = ({userAccess}) => {
             const rolePermissionsWithId = roleData?.modulePermissions?.map(
               (permissions) => ({
                 FK_RoleId: response?.data?.receivedData?.insertId,
+                created_by:`${userData?.name} (${userData?.username})`,
                 ...permissions,
               })
             );
@@ -185,6 +187,7 @@ const RoleScreen = ({userAccess}) => {
           roleName: roleData.roleName,
           description: roleData.roleDescription,
           isActive: roleData.roleStatus,
+          updated_by:`${userData?.name} (${userData?.username})`
         },
         conditionString: `PK_RoleId = ${roleData.roleId}`,
         checkAvailability: "",
@@ -205,6 +208,7 @@ const RoleScreen = ({userAccess}) => {
                 : {
                     Id: 0,
                     FK_RoleId: roleData?.roleId,
+                    updated_by:`${userData?.name} (${userData?.username})`,
                     ...permissions,
                   }
           );
@@ -270,7 +274,7 @@ const RoleScreen = ({userAccess}) => {
       const Parameter = {
         operation: "update",
         tblName: "tbl_role_master",
-        data: { isActive: !status },
+        data: { isActive: !status, updated_by:`${userData?.name} (${userData?.username})` },
         conditionString: `PK_RoleId = ${roleId}`,
         checkAvailability: "",
         customQuery: "",
