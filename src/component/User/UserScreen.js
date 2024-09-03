@@ -345,10 +345,7 @@ const UserScreen = ({userAccess,userData}) => {
       );
 
       if (response) {
-        addToast(
-          `User ${status === 0 ? "Active" : "Inactive"} Successful`,
-          "success"
-        );
+        addToast(`Reset Attempts Successful`, "success" );
         handleGetUserList();
       }
     } catch (error) {
