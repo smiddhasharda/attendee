@@ -17,7 +17,6 @@ const { width, height } = Dimensions.get('window');
 const isMobile = width < 768; 
 
 const StudentInfo = ({ navigation }) => {
-
   const [modalVisible, setModalVisible] = useState(false);
   const[modalstyle,setModalStyle]=useState('')
   const [modalData, setModalData] = useState('');
@@ -29,8 +28,7 @@ const StudentInfo = ({ navigation }) => {
   const [studentSign, setStudentSign] = useState('');
   const [courseDetails, setCourseDetails] = useState({});
   const [timeLeft, setTimeLeft] = useState('Attendance Not Started');
-  const { room_Nbr, catlog_Nbr, system_Id, seat_Nbr, exam_Dt, startTime, reportId, userAccess, current_Term } = route.params;
-
+  const { room_Nbr, catlog_Nbr, system_Id, seat_Nbr, exam_Dt, startTime, reportId, userAccess, current_Term,userData } = route.params;
   const UserAccess = userAccess?.module?.find((item) => item?.FK_ModuleId === 6);
   const [copiesData, setCopiesData] = useState([]);
   const [tempCopyNumber, setTempNumber] = useState("");
@@ -294,6 +292,7 @@ const StudentInfo = ({ navigation }) => {
               SU_PAPER_ID: courseDetails.SU_PAPER_ID,
               DESCR100: courseDetails.DESCR100,
               EXAM_TYPE_CD:courseDetails.EXAM_TYPE_CD,
+              created_by:`${userData?.name} (${userData?.username})`
             },
             conditionString: `EMPLID = '${studentDetails.EMPLID}' AND EXAM_DT = '${exam_Dt}' AND ROOM_NBR = '${room_Nbr}' AND EXAM_START_TIME = '${startTime}'`,
             checkAvailability: true,
@@ -334,7 +333,7 @@ const StudentInfo = ({ navigation }) => {
   
             if (NewResponse) {
               addToast("Student details are updated successfully!", "success");
-              navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation: navigation, userAccess });
+              navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation: navigation,userData:userData, userAccess });
             }
           }
         }
@@ -610,6 +609,7 @@ const StudentInfo = ({ navigation }) => {
               SU_PAPER_ID: courseDetails.SU_PAPER_ID,
               DESCR100: courseDetails.DESCR100,
               EXAM_TYPE_CD:courseDetails.EXAM_TYPE_CD,
+              updated_by:`${userData?.name} (${userData?.username})`
             },
             conditionString: `PK_Report_Id = ${reportId}`,
             checkAvailability: "",
@@ -666,11 +666,11 @@ const StudentInfo = ({ navigation }) => {
   
                 if (newResponse) {
                   addToast("Student details are updated successfully!", "success");
-                  navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation, userAccess });
+                  navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime,userData:userData, navigation, userAccess });
                 }
               } else {
                 addToast("Student details are updated successfully!", "success");
-                navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation, userAccess });
+                navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime,userData:userData, navigation, userAccess });
               }
             } else if (copiesData?.length > 0) {
               const studentCopyWithId = copiesData.map(item => {
@@ -700,12 +700,12 @@ const StudentInfo = ({ navigation }) => {
   
               if (newResponse) {
                 addToast("Student details are updated successfully!", "success");
-                navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime, navigation, userAccess });
+                navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt,userData:userData, startTime, navigation, userAccess });
               }
             }
           } else {
             addToast("Student details are updated successfully!", "success");
-            navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime, navigation, userAccess });
+            navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt,userData:userData, startTime, navigation, userAccess });
           }
         }
       }
@@ -734,20 +734,24 @@ const StudentInfo = ({ navigation }) => {
   const handleGetStudentInfo = async () => {
     try {
       const authToken = await checkAuthToken();
+      const Parameter = {
+        operation: "fetch",
+        tblName: "PS_S_PRD_STDNT_VW",
+        data: "",
+        conditionString: `EMPLID = '${system_Id}'`,
+        checkAvailability: "",
+        customQuery: "",
+        viewType: 'Campus_View'
+      };
+      const encryptedParams = encrypt(JSON.stringify(Parameter));
       const response = await view(
-        {
-          operation: "fetch",
-          tblName: "PS_S_PRD_STDNT_VW",
-          data: "",
-          conditionString: `EMPLID = '${system_Id}'`,
-          checkAvailability: "",
-          customQuery: "",
-          viewType: 'Campus_View'
-        },
+        encryptedParams,
         authToken
       );
       if (response) {
-        setStudentDetails(response?.data?.receivedData?.[0]);
+        const decryptedData = decrypt(response?.data?.receivedData);
+        const DecryptedData = JSON.parse(decryptedData);
+        setStudentDetails(DecryptedData?.[0]);
         // setLoading(false);
       }
     } catch (error) {
@@ -805,20 +809,25 @@ const StudentInfo = ({ navigation }) => {
   const handleGetStudentCouseInfo = async () => {
     try {
       const authToken = await checkAuthToken();
+      const Parameter = {
+        operation: "custom",
+        tblName: "PS_S_PRD_EX_TME_VW",
+        data: "",
+        conditionString: "",
+        checkAvailability: "",
+        customQuery: `SELECT DISTINCT CATALOG_NBR, DESCR100,EXAM_TIME_CODE,EXAM_TYPE_CD,STRM FROM PS_S_PRD_EX_TME_VW WHERE CATALOG_NBR = '${catlog_Nbr}'`,
+        viewType: 'Campus_View'
+      };
+      const encryptedParams = encrypt(JSON.stringify(Parameter));
+      
       const response = await view(
-        {
-          operation: "custom",
-          tblName: "PS_S_PRD_EX_TME_VW",
-          data: "",
-          conditionString: "",
-          checkAvailability: "",
-          customQuery: `SELECT DISTINCT CATALOG_NBR, DESCR100,EXAM_TIME_CODE,EXAM_TYPE_CD,STRM FROM PS_S_PRD_EX_TME_VW WHERE CATALOG_NBR = '${catlog_Nbr}'`,
-          viewType: 'Campus_View'
-        },
+        encryptedParams,
         authToken
       );
       if (response) {
-        setCourseDetails(response?.data?.receivedData?.[0] || []);
+        const decryptedData = decrypt(response?.data?.receivedData);
+        const DecryptedData = JSON.parse(decryptedData);
+        setCourseDetails(DecryptedData?.[0] || []);
         // setLoading(false);
       }
     } catch (error) {
@@ -829,20 +838,24 @@ const StudentInfo = ({ navigation }) => {
   const handleGetStudentAttendenceInfo = async () => {
     try {
       const authToken = await checkAuthToken();
+      const Parameter = {
+        operation: "custom",
+        tblName: "PS_S_PRD_CT_ATT_VW",
+        data: "",
+        conditionString: "",
+        checkAvailability: "",
+        customQuery: `SELECT DISTINCT PS_S_PRD_CT_ATT_VW.PERCENTAGE,PS_S_PRD_TRS_AT_VW.PERCENTCHG FROM PS_S_PRD_CT_ATT_VW JOIN PS_S_PRD_TRS_AT_VW ON PS_S_PRD_TRS_AT_VW.EMPLID = PS_S_PRD_CT_ATT_VW.EMPLID WHERE PS_S_PRD_CT_ATT_VW.EMPLID = '${system_Id}' AND PS_S_PRD_CT_ATT_VW.CATALOG_NBR = '${catlog_Nbr}' AND PS_S_PRD_CT_ATT_VW.STRM = '${current_Term}'`,
+        viewType: 'Campus_View',
+      };
+      const encryptedParams = encrypt(JSON.stringify(Parameter));
       const response = await view(
-        {
-          operation: "custom",
-          tblName: "PS_S_PRD_CT_ATT_VW",
-          data: "",
-          conditionString: "",
-          checkAvailability: "",
-          customQuery: `SELECT DISTINCT PS_S_PRD_CT_ATT_VW.PERCENTAGE,PS_S_PRD_TRS_AT_VW.PERCENTCHG FROM PS_S_PRD_CT_ATT_VW JOIN PS_S_PRD_TRS_AT_VW ON PS_S_PRD_TRS_AT_VW.EMPLID = PS_S_PRD_CT_ATT_VW.EMPLID WHERE PS_S_PRD_CT_ATT_VW.EMPLID = '${system_Id}' AND PS_S_PRD_CT_ATT_VW.CATALOG_NBR = '${catlog_Nbr}' AND PS_S_PRD_CT_ATT_VW.STRM = '${current_Term}'`,
-          viewType: 'Campus_View',
-        },
+        encryptedParams,
         authToken
       );
       if (response) {
-        let AttendenceDetials = response?.data?.receivedData?.[0] || ''
+        const decryptedData = decrypt(response?.data?.receivedData);
+        const DecryptedData = JSON.parse(decryptedData);
+        let AttendenceDetials = DecryptedData?.[0] || ''
         let AttendenceStatus = AttendenceDetials ? AttendenceDetials.PERCENTAGE >= AttendenceDetials.PERCENTCHG ? "Eligible" : "Debarred" : "Not Defined";
         setAttendenceStatus(AttendenceStatus);
         setStatus(AttendenceStatus === "Debarred" ? "Absent" : "Present");

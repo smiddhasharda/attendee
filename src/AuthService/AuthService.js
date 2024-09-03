@@ -19,11 +19,26 @@ const request = async (method, endpoint, data, authToken,params) => {
       params: params || {},
     };
 
+    // if (method === 'get') {
+    //   config.params = { ...config.params, data: data } ;
+    // } else {
+    //   config.data = {data : data};
+    // }
+
+
     if (method === 'get') {
-      config.params = { ...config.params, data: data } ;
+      config.params = { ...config.params, data: data };
     } else {
-      config.data = {data : data};
+      // Wrapping FormData inside another object
+      if (data instanceof FormData) {
+        // If it's FormData, it should not be wrapped with an additional 'data' key
+        config.data = data;
+      } else {
+        // For other data types, continue wrapping it
+        config.data = { data: data };
+      }
     }
+
 
     const response = await axios(config);
 
@@ -156,7 +171,7 @@ const remove = async (data, authToken) => {
 const common = async (data, authToken) => {
   return request('post', 'common', data, authToken);
 };
-const multer = async (data, authToken) => {     
+const multer = async (data, authToken) => {
   return request('post', 'multer', data, authToken);
 };
 const bulkupload = async (data, authToken) => {  
