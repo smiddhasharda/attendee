@@ -152,7 +152,7 @@ const Privacy = () => {
 
                     <Text style={styles.subheading}>Information Collection And Use</Text>
                     <Text style={styles.text}>
-                        While using our website, we may ask you to provide us with certain personally identifiable information that can be used to contact or identify you. Personally identifiable information may be included, but is not limited to your Name, Email Address, Phone Numbers & Address.
+                        While using our website, we may ask you to provide us with certain personally identifiable information that can be used to contact or identify you. Personally identifiable information may include, but is not limited to your Name, Email Address, Phone Numbers & Address.
                     </Text>
 
                     <Text style={styles.subheading}>Log Data</Text>
@@ -193,17 +193,17 @@ const Privacy = () => {
 
                     <Text style={styles.subheading}>Changes To This Privacy Policy</Text>
 
-                    <Text style={styles.text}>
+                    {/* <Text style={styles.text}>
                         This Privacy Policy is effective as of (27/08/2019) and will remain in effect except with respect to any changes in its provisions in the future, which will be in effect immediately after being posted on this page.
-                    </Text>
+                    </Text> */}
 
                     <Text style={styles.text}>
                         We reserve the right to update or change our Privacy Policy at any time and you should check this Privacy Policy periodically. Your continued use of the Service after we post any modifications to the Privacy Policy on this page will constitute your acknowledgment of the modifications and your consent to abide and be bound by the modified Privacy Policy.
                     </Text>
 
-                    <Text style={styles.text}>
+                    {/* <Text style={styles.text}>
                         If we make any material changes to this Privacy Policy, we will notify you either through the email address you have provided us, or by placing a prominent notice on our website.
-                    </Text>
+                    </Text> */}
 
                 </View>
             </ScrollView>
