@@ -310,6 +310,7 @@ const StudentInfo = ({ navigation }) => {
                 FK_ReportId: response?.data?.receivedData?.insertId,
                 copyNumber: item.mainCopy,
                 EMPLID: studentDetails.EMPLID,
+                created_by:`${userData?.name} (${userData?.username})`
               };
               item.alternateCopies.forEach((copy, index) => {
                 newItem[`alternateCopyNumber${index + 1}`] = copy;
@@ -643,6 +644,7 @@ const StudentInfo = ({ navigation }) => {
                     FK_ReportId: reportId,
                     copyNumber: item.mainCopy,
                     EMPLID: studentDetails.EMPLID,
+                    created_by:`${userData?.name} (${userData?.username})`
                   };
                   item.alternateCopies.forEach((copy, index) => {
                     newItem[`alternateCopyNumber${index + 1}`] = copy;
@@ -678,6 +680,7 @@ const StudentInfo = ({ navigation }) => {
                   FK_ReportId: reportId,
                   copyNumber: item.mainCopy,
                   EMPLID: studentDetails.EMPLID,
+                  created_by:`${userData?.name} (${userData?.username})`
                 };
                 item.alternateCopies.forEach((copy, index) => {
                   newItem[`alternateCopyNumber${index + 1}`] = copy;

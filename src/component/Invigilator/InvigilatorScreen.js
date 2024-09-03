@@ -12,7 +12,7 @@ import Pagination from "../../globalComponent/Pagination/PaginationComponent";
 import ShimmerEffect from '../../globalComponent/Refresh/ShimmerEffect';
 import CryptoJS from 'crypto-js';
 
- const InvigilatorScreen = ({userAccess}) => {
+ const InvigilatorScreen = ({userAccess,userData}) => {
   const [refreshing, setRefreshing] = useState(false);
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 8 );
   const { addToast } = useToast();
@@ -170,7 +170,9 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
         date:parseExcelDate(invigilatorData.date),
         shift:invigilatorData.shift,
         room:invigilatorData.room,
-        duty_status:invigilatorData.duty_status,},
+        duty_status:invigilatorData.duty_status,
+        created_by:`${userData?.name} (${userData?.username})`
+      },
         conditionString: `employeeId = '${invigilatorData.employeeId}' AND date = '${parseExcelDate(invigilatorData.date)}' AND shift = '${invigilatorData.shift}'`,
         checkAvailability: true,
         customQuery: "",
@@ -214,6 +216,7 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
           shift:invigilatorData.shift,
           room:invigilatorData.room,
           duty_status:invigilatorData.duty_status,
+          updated_by:`${userData?.name} (${userData?.username})`
         },
         conditionString: `PK_InvigilatorDutyId = ${invigilatorData.PK_InvigilatorDutyId}`,
         checkAvailability: "",

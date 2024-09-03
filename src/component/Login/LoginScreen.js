@@ -53,7 +53,7 @@ const LoginScreen = ({ navigation }) => {
 
   const loginUser = async () => {
     try {
-      const result =  await login('tbl_user_master', `email_id = '${loginData.email.replace(/\s+/g, '').trim()}' AND OTP = ${loginData.OTP.replace(/\s+/g, '').trim()} AND isActive = 1`);
+      const result =  await login('tbl_user_master', `email_id = '${loginData.email.replace(/\s+/g, '').trim()}' AND OTP = ${loginData.OTP.replace(/\s+/g, '').trim()} AND isActive = 1 AND firstLoginStatus <= 3`,`email_id = '${loginData.email.replace(/\s+/g, '').trim()}' AND isActive = 1 `);
       if (result.length > 0) {
         const userRoleArray = atob(await AsyncStorage.getItem(btoa('userRolePermission'))) || '[]';
         const userRolePermission = JSON.parse(userRoleArray);
@@ -83,14 +83,14 @@ const LoginScreen = ({ navigation }) => {
       setPasswordTooltipVisible(true);
     } else {
       try {
-        const result = await login('tbl_user_master', `email_id = '${loginData.email.replace(/\s+/g, '').trim()}' AND Password = '${loginData.password.replace(/\s+/g, '').trim()}'`);;
+        const result = await login('tbl_user_master', `email_id = '${loginData.email.replace(/\s+/g, '').trim()}' AND Password = '${loginData.password.replace(/\s+/g, '').trim()}' AND isActive = 1 AND firstLoginStatus <= 3`,`email_id = '${loginData.email.replace(/\s+/g, '').trim()}' AND isActive = 1 `);;
         if (result.length > 0) {
           const userRoleArray = atob(await AsyncStorage.getItem(btoa('userRolePermission'))) || [];
           const userRolePermission = JSON.parse(userRoleArray) || [];
           navigation.replace('PostLogin', { userRolePermission });
         }
       } catch (error) {
-        handleAdminLoginError(error);
+        addToast(error.message, 'error');
       }
     }
   };
@@ -102,17 +102,8 @@ const LoginScreen = ({ navigation }) => {
       addToast('Token is expired, please log in again', 'error');
       navigation.replace('Login');
     } else {
-      addToast('Login failed, please try again later', 'error');
-    }
-  };
-  const handleAdminLoginError = (error) => {
-    if (error.message === 'Invalid credentials') {
-      addToast('Invalid Credential', 'error');
-    } else if (error.message === 'Token has expired') {
-      addToast('Token is expired, please log in again', 'error');
-      navigation.replace('Login');
-    } else {
-      addToast('Login failed, please try again later', 'error');
+      addToast(error.message, 'error');
+      // addToast('Login failed, please try again later', 'error');
     }
   };
 

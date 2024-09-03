@@ -173,7 +173,7 @@ const ManagePasswordScreen = ({
           const Parameter1 = {
             operation: "update",
             tblName: "tbl_user_master",
-            data: { password: password.newPassword},
+            data: { password: password.newPassword,updatedBy:`${userData?.name} (${userData?.username})`},
             conditionString: `user_id = ${userData.user_id}`,
             checkAvailability: "",
             customQuery: "",

@@ -14,11 +14,11 @@ import Pagination from "../../globalComponent/Pagination/PaginationComponent";
 import ShimmerEffect from "../../globalComponent/Refresh/ShimmerEffect";
 import CryptoJS from 'crypto-js';
 
-const UserScreen = ({userAccess}) => { 
+const UserScreen = ({userAccess,userData}) => { 
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 4 );
   const [refreshing, setRefreshing] = useState(false);
   const { addToast } = useToast();
-  const [userData, setUserData] = useState({
+  const [userDetails, setUserDetails] = useState({
     userId: '',
     name: '',
     password: '',
@@ -127,17 +127,19 @@ const UserScreen = ({userAccess}) => {
         operation: "insert",
         tblName: "tbl_user_master",
         data: {
-          username: userData.emailId,
-          name: userData.name,           
-          password: userData.password,
-          contact_number: userData.contactNumber,
-          email_id: userData.emailId,
-          username:userData.username,
-          isActive: userData.status,
+          username: userDetails.emailId,
+          name: userDetails.name,           
+          password: userDetails.password,
+          contact_number: userDetails.contactNumber,
+          email_id: userDetails.emailId,
+          username:userDetails.username,
+          isActive: userDetails.status,
           status:'External',
-          isVerified: 1
+          isVerified: 1,
+          firstLoginStatus:0,
+          createdBy:`${userData?.name} (${userData?.username})`
         },
-        conditionString: `username = '${userData.emailId}' OR email_id = '${userData.emailId}'` ,
+        conditionString: `username = '${userDetails.emailId}' OR email_id = '${userDetails.emailId}'` ,
         checkAvailability: true,
         customQuery: '',
       };
@@ -148,10 +150,11 @@ const UserScreen = ({userAccess}) => {
       );
 
       if (response) {
-        if (userData?.rolePermissions) {
-          const rolePermissionsWithId = userData?.rolePermissions?.map(
+        if (userDetails?.rolePermissions) {
+          const rolePermissionsWithId = userDetails?.rolePermissions?.map(
             (permissions) => ({
               FK_userId: response?.data?.receivedData?.insertId,
+              created_by:`${userData?.name} (${userData?.username})`,
               ...permissions,
             })
           );
@@ -198,14 +201,16 @@ const UserScreen = ({userAccess}) => {
         operation: "update",
         tblName: "tbl_user_master",
         data: {
-          name: userData.name,           
-          password: userData.password,
-          contact_number: userData.contactNumber,
-          email_id: userData.emailId,
-          username:userData.username,
-          isActive: userData.status,
+          name: userDetails.name,           
+          password: userDetails.password,
+          contact_number: userDetails.contactNumber,
+          email_id: userDetails.emailId,
+          username:userDetails.username,
+          isActive: userDetails.status,
+          firstLoginStatus:0,
+          updatedBy:`${userData?.name} (${userData?.username})`
         },
-        conditionString: `user_id = ${userData.userId}`,
+        conditionString: `user_id = ${userDetails.userId}`,
         checkAvailability: '',
         customQuery: '',
       };
@@ -216,14 +221,15 @@ const UserScreen = ({userAccess}) => {
       );
 
       if (response) {
-        if (userData?.rolePermissions) {
-          const rolePermissionsWithId = userData?.rolePermissions?.map(
+        if (userDetails?.rolePermissions) {
+          const rolePermissionsWithId = userDetails?.rolePermissions?.map(
             (permissions) => (
               permissions?.Id
                 ? { ...permissions }
                 : {
                     Id: 0,
-                    FK_userId: userData?.userId,
+                    FK_userId: userDetails?.userId,
+                    updated_by:`${userData?.name} (${userData?.username})`,
                     ...permissions,
                   }
             )
@@ -268,7 +274,7 @@ const UserScreen = ({userAccess}) => {
         data: '',
         conditionString: '',
         checkAvailability: '',
-        customQuery: `select JSON_ARRAYAGG(json_object('user_id',p.user_id,'username',username,'password',p.password,'name',p.name,'contact_number',p.contact_number,'email_id',p.email_id,'profile_image_url',p.profile_image_url,'status',p.status,'isActive',p.isActive,'rolePermission',( SELECT CAST( CONCAT('[', GROUP_CONCAT( JSON_OBJECT( 'Id',q.PK_user_role_permissionId,'FK_userId', q.FK_userId,'FK_RoleId', q.FK_RoleId,'isActive',q.isActive) ), ']') AS JSON ) FROM tbl_user_role_permission q WHERE q.FK_userId = p.user_id ))) AS UserMaster from tbl_user_master p`,
+        customQuery: `select JSON_ARRAYAGG(json_object('user_id',p.user_id,'username',username,'password',p.password,'name',p.name,'contact_number',p.contact_number,'email_id',p.email_id,'profile_image_url',p.profile_image_url,'status',p.status,'createdBy',p.createdBy,'updatedBy',p.updatedBy,'createdDate',p.createdDate,'updatedDate',p.updatedDate,'firstLoginStatus',p.firstLoginStatus,'isActive',p.isActive,'rolePermission',( SELECT CAST( CONCAT('[', GROUP_CONCAT( JSON_OBJECT( 'Id',q.PK_user_role_permissionId,'FK_userId', q.FK_userId,'FK_RoleId', q.FK_RoleId,'isActive',q.isActive) ), ']') AS JSON ) FROM tbl_user_role_permission q WHERE q.FK_userId = p.user_id ))) AS UserMaster from tbl_user_master p`,
       };
       const encryptedParams = encrypt(JSON.stringify(Parameter));
       const response = await fetch(
@@ -295,7 +301,38 @@ const UserScreen = ({userAccess}) => {
       const Parameter ={
         operation: "update",
         tblName: "tbl_user_master",
-        data: { isActive: !status },
+        data: { isActive: !status,firstLoginStatus:0,updatedBy:`${userData?.name} (${userData?.username})` },
+        conditionString: `user_id = ${userId}`,
+        checkAvailability: '',
+        customQuery: '',
+      };
+      const encryptedParams = encrypt(JSON.stringify(Parameter));
+      
+      const response = await update(
+        encryptedParams,
+        authToken
+      );
+
+      if (response) {
+        addToast(
+          `User ${status === 0 ? "Active" : "Inactive"} Successful`,
+          "success"
+        );
+        handleGetUserList();
+      }
+    } catch (error) {
+      handleAuthErrors(error);
+    }
+  };
+
+  const handleUserAttemptStatus = async (userId, status) => {
+    try {
+      const authToken = await checkAuthToken();
+
+      const Parameter ={
+        operation: "update",
+        tblName: "tbl_user_master",
+        data: { firstLoginStatus: 0 },
         conditionString: `user_id = ${userId}`,
         checkAvailability: '',
         customQuery: '',
@@ -320,7 +357,7 @@ const UserScreen = ({userAccess}) => {
   };
 
   const handleEditUser = async (selectedUser) => {
-      setUserData({
+      setUserDetails({
         userId: selectedUser.user_id,
         name: selectedUser.name,
         password: selectedUser.password,
@@ -352,7 +389,7 @@ const UserScreen = ({userAccess}) => {
 
   const handleClose = async () => {
     setUserContainerVisible(false);
-    setUserData({
+    setUserDetails({
       userId: '',
       name: '',
       password: '',
@@ -365,13 +402,13 @@ const UserScreen = ({userAccess}) => {
   };
   const handlePasswordChange = (text) => {
     isPasswordTooltipVisible && setPasswordTooltipVisible(false);
-    setUserData({ ...userData, password: text });
+    setUserDetails({ ...userDetails, password: text });
   };
   const handleEyePress = () => {
     setPasswordVisible((oldValue) => !oldValue);
   };
   const handlePasswordValidation = () => {
-    if (passwordValidator(userData.password)) {
+    if (passwordValidator(userDetails.password)) {
         setPasswordTooltipVisible(false);
       return true;
     } else {
@@ -402,7 +439,7 @@ const UserScreen = ({userAccess}) => {
           <TextInput
             style={styles.input}
             placeholder="Password"
-            value={userData.password}
+            value={userDetails.password}
             secureTextEntry={!isPasswordVisible}
             onChangeText={handlePasswordChange}
             enableIcon
@@ -436,7 +473,7 @@ const UserScreen = ({userAccess}) => {
           <TextInput
                style={styles.input}
             placeholder="emailId"
-            value={userData.emailId}
+            value={userDetails.emailId}
             onChangeText={handleEmailChange}
             autoCapitalize="none"
             onFocus={() => setEmailTooltipVisible(false)}
@@ -446,7 +483,7 @@ const UserScreen = ({userAccess}) => {
     );
   };
   const handleEmailValidation = () => {
-    if (emailValidator(userData.emailId)) {
+    if (emailValidator(userDetails.emailId)) {
         setEmailTooltipVisible(false);
       return true;
     } else {
@@ -457,7 +494,7 @@ const UserScreen = ({userAccess}) => {
   };
   const handleEmailChange = (text) => {
     isEmailTooltipVisible && setEmailTooltipVisible(false);
-    setUserData({ ...userData, emailId: text });
+    setUserDetails({ ...userDetails, emailId: text });
   };
 
   const renderNameInput = () => {
@@ -479,7 +516,7 @@ const UserScreen = ({userAccess}) => {
           <TextInput
             style={styles.input}
             placeholder="Name"
-            value={userData.name}
+            value={userDetails.name}
             onChangeText={handleNameChange}
             onFocus={() => setNameTooltipVisible(false)}
           />
@@ -506,7 +543,7 @@ const UserScreen = ({userAccess}) => {
           <TextInput
             style={styles.input}
             placeholder="Employee Id"
-            value={userData.username}
+            value={userDetails.username}
             onChangeText={handleEmployeeIdChange}
             onFocus={() => setEmplyIdTooltipVisible(false)}
           />
@@ -515,7 +552,7 @@ const UserScreen = ({userAccess}) => {
     );
   };
   const handleNameValidation = () => {
-    if (userData.name) {
+    if (userDetails.name) {
       setNameTooltipVisible(false);
       return true;
     } else {
@@ -525,7 +562,7 @@ const UserScreen = ({userAccess}) => {
     }
   };
   const handleEmployeeIdValidation = () => {
-    if (userData.username) {
+    if (userDetails.username) {
       setEmplyIdTooltipVisible(false);
       return true;
     } else {
@@ -536,12 +573,12 @@ const UserScreen = ({userAccess}) => {
   };
   const handleNameChange = (text) => {
     isNameTooltipVisible && setNameTooltipVisible(false);
-    setUserData({ ...userData, name: text });
+    setUserDetails({ ...userDetails, name: text });
   };
 
   const handleEmployeeIdChange = (text) => {
     isEmailTooltipVisible && setEmplyIdTooltipVisible(false);
-    setUserData({ ...userData, username: text });
+    setUserDetails({ ...userDetails, username: text });
   };
 
   const renderContactNumberInput = () => {
@@ -563,7 +600,7 @@ const UserScreen = ({userAccess}) => {
           <TextInput
             style={styles.input}
             placeholder="Contact Number "
-            value={userData.contactNumber}
+            value={userDetails.contactNumber}
             onChangeText={handleContactNumberChange}
             onFocus={() => setContactNumberTooltipVisible(false)}
           />
@@ -572,7 +609,7 @@ const UserScreen = ({userAccess}) => {
     );
   };
   const handleContactNumberValidation = () => {
-    if (userData.contactNumber) {
+    if (userDetails.contactNumber) {
       setContactNumberTooltipVisible(false);
       return true;
     } else {
@@ -583,10 +620,10 @@ const UserScreen = ({userAccess}) => {
   };
   const handleContactNumberChange = (text) => {
     isContactNumberTooltipVisible && setContactNumberTooltipVisible(false);
-    setUserData({ ...userData, contactNumber: text });
+    setUserDetails({ ...userDetails, contactNumber: text });
   };
   const handleUpdatePermissions = (role,permission) => {
-    setUserData((prevData) => {
+    setUserDetails((prevData) => {
       const updatedRolePermissions = prevData?.rolePermissions ? [...prevData.rolePermissions] : [];
       const existingRoleIndex = updatedRolePermissions.findIndex(
         (data) => data?.FK_RoleId === role?.PK_RoleId
@@ -616,7 +653,7 @@ const UserScreen = ({userAccess}) => {
     });
   };
   const getRolePermission = (role, permission) => {
-    const roleData = userData?.rolePermissions?.find(
+    const roleData = userDetails?.rolePermissions?.find(
       (item) => item?.FK_RoleId === role?.PK_RoleId
     );
     return roleData?.[permission] || false;
@@ -726,7 +763,7 @@ const UserScreen = ({userAccess}) => {
           {renderContactNumberInput()}
           {renderRoleList()}
           <View style={styles.adddetails}>
-          {userData.userId ? (
+          {userDetails.userId ? (
             <View style={styles.buttonContainer}>
               <Pressable  style={styles.addbtnWrap} onPress={() => handleUpdateUser()}>
                     <Text  numberOfLines={1} style={styles.addbtntext }  >Update User</Text>
@@ -770,6 +807,7 @@ const UserScreen = ({userAccess}) => {
               <Text style={[styles.tableHeaderText, {width:170,textAlign:"center"} ]}>Mob.No</Text>
               <Text style={[styles.tableHeaderText,{width:200,textAlign:"center"}  ]}>User Status</Text>
               <Text style={[styles.tableHeaderText,{width:90,textAlign:"center"}  ]}>Status</Text>
+              <Text style={[styles.tableHeaderText,{width:90,textAlign:"center"}  ]}>Attempt Status</Text>
               <Text style={[styles.tableHeaderText,{width:120 ,textAlign:"center"}, ]}>Created Date</Text>
               <Text style={[styles.tableHeaderText,{width:120 ,textAlign:"center"}, ]}>Updated Date</Text>
               <Text style={[styles.tableHeaderText,{width:120,textAlign:"center"}, ]}>Created By</Text>
@@ -789,17 +827,22 @@ const UserScreen = ({userAccess}) => {
                     <Text style={[styles.listItemText,  item.isActive ? styles.actionbtn : styles.inactivebtn,]}>{item.isActive ? "Active" : "Inactive"}</Text>
                     </Pressable>     
                     </View>  
+                    <View style={[styles.listItemText, {display:"inline-block", alignItems:"center", textAlign:"center", width:90}]}>
+                      <Pressable style={{display:"inline-block" ,alignItems:"center"} } onPress={() =>UserAccess?.update === 1 ? handleUserAttemptStatus(item.user_id) : ''}>
+                    <Text style={[styles.listItemText,  item.firstLoginStatus === 3 ? styles.inactivebtn : styles.actionbtn,]}>{ `${3 - item.firstLoginStatus} Remains`}</Text>
+                    </Pressable>     
+                    </View>  
                     <Text style={[styles.listItemText, { width: 120, display: "inline-block",textAlign:"center" }]} numberOfLines={1}>
-                      {item.created_at ? new Date(item.created_at.split('T')[0]).toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }) : 'N/A'}
+                      {item.createdDate ? new Date(item.createdDate.split('T')[0]).toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }) : 'N/A'}
                     </Text>
                     <Text style={[styles.listItemText, { width: 120, display: "inline-block",textAlign:"center" }]} numberOfLines={1}>
-                    {item.created_at ? new Date(item.created_at.split('T')[0]).toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }) : 'N/A'}
+                    {item.updatedDate ? new Date(item.updatedDate.split('T')[0]).toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }) : 'N/A'}
                     </Text>   
                     <Text style={[styles.listItemText, { width: 120, display: "inline-block",textAlign:"center" }]} numberOfLines={1}>
-                      {item.created_by ? item.created_by: 'N/A'}
+                      {item.createdBy ? item.createdBy: 'N/A'}
                     </Text>
                     <Text style={[styles.listItemText, { width: 120, display: "inline-block",textAlign:"center" }]} numberOfLines={1}>
-                    {item.updated_by ? item.updated_by: 'N/A'}
+                    {item.updatedBy ? item.updatedBy: 'N/A'}
                     </Text>
               <View style={{width:60, display:"inline-block", alignItems:"center",textAlign:"center"}}>
               {UserAccess?.update === 1 ? 
