@@ -1096,11 +1096,14 @@ const StudentInfo = ({ navigation }) => {
                   <Image
                     source={{ uri: `data:image/png;base64,${studentPicture}` }}
                     style={styles.studProfile}     
-                  // resizeMode="cover"       
+          
                 />
                   </Pressable>           
           ) : (
-                <FontAwesome name="user" size={40} color="#fff" style={styles.defaultstudProfile} />        
+            <View style={styles.nophotoTextWrap}>
+                <FontAwesome name="user" size={40} color="#fff" style={styles.defaultstudProfile} />
+                <Text style={styles.nophotoText}>No Photo Available</Text>
+                </View>     
               )}
                 {studentSign ? (
                   <Pressable onPress={()=> [setModalVisible(true),setModalData(studentSign),  setModalStyle({ width: 300, height: 150,})]}  style={styles.stusigWrap}>
@@ -1112,7 +1115,10 @@ const StudentInfo = ({ navigation }) => {
           />
           </Pressable>
           ) : (
-                <FontAwesome6 name="signature" size={34} color="black" style={styles.defaultstudSign}  />        
+            <View style={styles.nosignatureTextWrap}>
+                <FontAwesome6 name="signature" size={34} color="black" style={styles.defaultstudSign}  /> 
+                <Text style={styles.nosignatureText}>No Signature </Text>
+                </View>       
               )} 
               </View>
               <View style={[styles.infoItemWrap]}>
@@ -1172,7 +1178,7 @@ const StudentInfo = ({ navigation }) => {
                     <Text style={styles.modalCloseText}>Close</Text>
                   </TouchableOpacity> */}
                   <View style={styles.modalView}>
-                  <Image    source={{ uri: `data:image/png;base64,${modalData}` }} style={[styles.modelimage, modalstyle]}/>
+                  <Image    source={{ uri: `data:image/png;base64,${modalData}` }} style={[styles.modelimage, modalstyle] } resizeMode="contain"/>
                   {/* <Image  source={{ uri: `data:image/png;base64,${modalData}` }} style={{position:"static" ,         width:isMobile ?210:250, height:"auto"}} />                  */}
                   </View>
                 </View>
@@ -2104,8 +2110,12 @@ stuimge: {
   },
   modelimage:{
     position:"static" ,
-     width:250,
-      height:420
+    width:250,
+    height:250,
+    //  width:250,
+    //   height:420
+    // maxWidth: '100%',
+    // maxHeight: '100%',
     },
 
   copiesdataWrap: {
@@ -2134,6 +2144,31 @@ stuimge: {
     width: 130,
     textAlign: "center",
     marginBottom: 10,
+  },
+  nophotoTextWrap:{
+    position: 'relative',
+   
+  },
+  nophotoText: {
+    position: 'absolute',
+    color: 'red',
+    fontSize: 12, // Adjust this as needed
+    textAlign: 'center',
+    bottom: 25, // Position the text within the icon or slightly below it
+    right:isMobile? 8 : '',
+    left:isMobile ?'':25
+  },
+  nosignatureTextWrap:{
+    position: 'relative',
+  },
+  nosignatureText:{
+    position: 'absolute',
+    color: 'red',
+    fontSize: 12, // Adjust this as needed
+    textAlign: 'center',
+    bottom: 25, // Position the text within the icon or slightly below it
+    right:isMobile? 8 : '',
+    left:isMobile ?'':25
   },
   tr: {
     flexDirection: "row",

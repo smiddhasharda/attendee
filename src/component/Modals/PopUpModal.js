@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Alert, Modal, StyleSheet, Text, Pressable, View,Dimensions} from 'react-native';
 import Entypo from '@expo/vector-icons/Entypo';
 const PopUpModal = ( { visible, onRequestClose, animationType, children }) => {
-  // const [modalVisible, setModalVisible] = useState(false);
+
   const { width, height } = Dimensions.get('window');
   const isMobile = width < 768; 
   return (
@@ -13,7 +13,7 @@ const PopUpModal = ( { visible, onRequestClose, animationType, children }) => {
         visible={visible}
         onRequestClose={onRequestClose}>
         <View style={styles.centeredView}>
-          <View style={[styles.modalView,{width:isMobile?"90%": '50%', height: 'auto'}]}>
+        <View style={[styles.modalView, { width: isMobile ? '90%' : '70%', maxWidth: 450 }]}>
           {children}
             {/* <Text style={styles.modalText}>Hello World!</Text> */}
             <Pressable
@@ -43,6 +43,7 @@ const styles = StyleSheet.create({
   modalView: {
     //margin: 20,
     // backgroundColor: 'green',
+    backgroundColor:"#fff",
     borderRadius: 20,
     padding: 25,
     alignItems: 'center',

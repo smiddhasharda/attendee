@@ -143,8 +143,12 @@ const Privacy = () => {
                     <Text style={styles.heading}>Privacy Policy</Text>
 
                     <Text style={styles.text}>
-                        Sharda University operates the website https://examination.sharda.ac.in/e-Nirikshak and the corresponding mobile application.
-                    </Text>
+            Sharda University operates the website
+            <Text style={styles.link} onPress={() => Linking.openURL('https://examination.sharda.ac.in/e-Nirikshak')}>
+                https://examination.sharda.ac.in/e-Nirikshak
+            </Text>
+            and the corresponding mobile application.
+        </Text>
 
                     <Text style={styles.text}>
                         This page informs you of our policies regarding the collection, use and disclosure of Personal Information we receive from users of our e-Nirikshak product.
@@ -279,6 +283,6 @@ const styles = StyleSheet.create({
     },
     link: {
         color: '#1E90FF',
-        textDecorationLine: 'underline',
+        // textDecorationLine: 'underline',
     },
 });
