@@ -1193,8 +1193,7 @@ const StudentInfo = ({ navigation }) => {
             </View>
               {/* Exam Details */}
             {/* <View style={[styles.infopWrap,]}> */}
-            <View style={styles.detailsSection}>
-            
+            <View style={styles.detailsSection}>         
               <View style={[styles.examinfoItem,]}>
               <View style={{flexDirection:isMobile?"row":"row"}}>
                 <Text style={[styles.label,]}>Paper Id:</Text>
@@ -1204,8 +1203,7 @@ const StudentInfo = ({ navigation }) => {
               </View>
               </View>
               <View style={styles.examinfoItem}>
-              <View style={{flexDirection:isMobile?"row":"row"}}>
-            
+              <View style={{flexDirection:isMobile?"row":"row"}}>          
                 <Text style={[styles.label,]}>Course Code:</Text>
                 <Text style={[styles.value,{fontWeight:'600'}]}>
                   {courseDetails?.CATALOG_NBR || ""}
@@ -1246,7 +1244,7 @@ const StudentInfo = ({ navigation }) => {
               <View style={[styles.examinfoItem,{minWidth:isMobile?"100%":''}]}>
               <View style={{flexDirection:isMobile?"row":"row" ,}}>
                 <Text style={[styles.label,]}>Class Status:</Text>
-                <Text style={[styles.value, {marginBottom: 10,textAlign:"center"}, getAttendenceStatuscolor()]}>
+                <Text style={[styles.value, {textAlign:"center"}, getAttendenceStatuscolor()]}>
                   {attendenceStatus}
                 </Text>
               </View>
