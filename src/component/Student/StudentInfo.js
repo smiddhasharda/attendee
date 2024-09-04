@@ -1122,9 +1122,9 @@ const StudentInfo = ({ navigation }) => {
               )} 
               </View>
               <View style={[styles.infoItemWrap]}>
-                    <View style={styles.infoItem}>
+                    <View style={[styles.infoItem]}>
                       <Text style={styles.label1}>Name: </Text>
-                      <Text style={[styles.value1,{fontWeight:'600'}]} numberOfLines={1}>
+                      <Text style={[styles.value1,{fontWeight:'600',flexShrink: 1, }]} numberOfLines={0} >
                         {" "}
                         {studentDetails?.NAME_FORMAL || ""}{" "}
                       </Text>
@@ -1140,7 +1140,7 @@ const StudentInfo = ({ navigation }) => {
                     </View>
                     <View style={styles.infoItem}>
                       <Text style={styles.label1} >School: </Text>
-                      <Text style={styles.value1} numberOfLines={1} ellipsizeMode='tail'> {studentDetails?.DESCR || ""}</Text>
+                      <Text style={[styles.value1,{flexShrink:1}]} numberOfLines={0} ellipsizeMode='tail'> {studentDetails?.DESCR || ""}</Text>
                     </View>
                     <View style={styles.infoItem}>
                       <Text style={styles.label1}>Program: </Text>
@@ -1196,7 +1196,7 @@ const StudentInfo = ({ navigation }) => {
             <View style={styles.detailsSection}>
             
               <View style={[styles.examinfoItem,]}>
-              <View style={{flexDirection:isMobile?"column":"row"}}>
+              <View style={{flexDirection:isMobile?"row":"row"}}>
                 <Text style={[styles.label,]}>Paper Id:</Text>
                 <Text style={styles.value}>
                   {courseDetails?.EXAM_TIME_CODE || ""}
@@ -1204,7 +1204,7 @@ const StudentInfo = ({ navigation }) => {
               </View>
               </View>
               <View style={styles.examinfoItem}>
-              <View style={{flexDirection:isMobile?"column":"row"}}>
+              <View style={{flexDirection:isMobile?"row":"row"}}>
             
                 <Text style={[styles.label,]}>Course Code:</Text>
                 <Text style={[styles.value,{fontWeight:'600'}]}>
@@ -1215,29 +1215,30 @@ const StudentInfo = ({ navigation }) => {
               </View>
                   {/* Course Name, Room No, Seat No */}
               {/* <View style={{flexDirection:isMobile?"column":"row", }}> */}
-              <View style={[styles.detailsSection, { flexDirection: isMobile ? "column" : "row" }]}>
+              <View style={[styles.detailsSection, { flexDirection: isMobile ? "" : "row" }]}>
               {/* <View style={[styles.infoItem,{maxWidth:isMobile?'250px':"100%"}]}> */}
-              <View style={[styles.examinfoItem, styles.courseName]}>
-              <View style={{flexDirection:isMobile?"column":"row"}}>
-                <Text style={[styles.label ,]}>Course Name:</Text>
-                <Text style={[styles.value,]}>{courseDetails?.DESCR100 || ""}</Text>
-              </View>
-              </View>
-          <View style={{flexDirection:isMobile? "row":"row" , minWidth:isMobile?'':"100%"}}>
-                <View style={styles.examinfoItem}>
-                <View style={{flexDirection:isMobile?"column":"row"}}>
-                  <Text style={styles.label}>Room No:</Text>
-                  <Text style={styles.value}>{room_Nbr}</Text>
-                </View>
-                </View>
-                <View style={styles.examinfoItem}>
-                <View style={{flexDirection:isMobile?"column":"row"}}>
-                  <Text style={styles.label}>Seat No:</Text>
-                  <Text style={styles.value}>{seat_Nbr}</Text>
+                  <View style={[styles.examinfoItem, styles.courseName]}>
+                  <View style={{flexDirection:isMobile?"row":"row", flexWrap: "wrap", flex: 1 }}>
+                    <Text style={[styles.label ,]}>Course Name:</Text>
+                    <Text style={[styles.value,{flexShrink: 1 ,flex:1}]} >{courseDetails?.DESCR100 || ""} </Text>
                   </View>
-                </View>
-                </View>
+ 
 
+                  </View>
+                  <View style={{flexDirection:isMobile? "row":"row" , minWidth:isMobile?'':"100%"}}>
+                  <View style={[styles.examinfoItem,{minWidth:isMobile?'60%':''} ]}>
+                  <View style={{flexDirection:isMobile?"row":"row"  ,}}>
+                    <Text style={styles.label}>Room No:</Text>
+                    <Text style={styles.value}>{room_Nbr}</Text>
+                  </View>
+                  </View>
+                  <View style={[styles.examinfoItem,{minWidth:isMobile?'40%':''} ]}>
+                  <View style={{flexDirection:isMobile?"row":"row"}}>
+                    <Text style={styles.label}>Seat No:</Text>
+                    <Text style={styles.value}>{seat_Nbr}</Text>
+                    </View>
+                  </View>
+                  </View>
               </View>
                 {/* Class Status and Attendance Status */}
           <View style={[styles.detailsSection, { flexDirection: isMobile ? "column" : "row" }]}>
@@ -1722,7 +1723,6 @@ const styles = StyleSheet.create({
     fontWeight: "600",
  
   },
-
   countWrap:{
     flexDirection:"row",
     alignSelf:"flex-end",
@@ -1731,7 +1731,6 @@ const styles = StyleSheet.create({
     flexDirection:"row",
     alignItems:"center"
   },
-
   countbg1:{
     width:"auto",
     height:"",
@@ -1803,11 +1802,11 @@ const styles = StyleSheet.create({
     maxWidth:250,
     justifyContent: "flex-start",
     marginBottom: 10,
-    alignItems: "center" 
+    alignItems: "flex-start" 
  
   },
   examinfoItem:{
-   marginBottom: 10,
+   marginBottom: isMobile ? 14 :25 ,
     flex: 1,
     minWidth: '45%',
     // flexDirection:"row"
