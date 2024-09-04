@@ -41,7 +41,7 @@ const CustomeImagePicker = ({...props }) => {
    <View style={styles.container}>
     
     {props.imageUri ? (
-             <Image source={{ uri: props.imageUri }} style={{ width: 100, height: 100, borderRadius: 50 }} />
+             <Image source={{ uri: props.imageUri }} style={{ width: 100, height: 100, borderRadius: 50, backgroundColor: "#ffffff" }} />
            ) : (
              <View style={{ width: 100, height: 100, borderRadius: 50, backgroundColor: 'lightgray', justifyContent: 'center', alignItems: 'center' }}>
               <Text style={{ color: 'gray' }}>Placeholder</Text>
