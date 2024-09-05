@@ -9,7 +9,6 @@ import { Ionicons,Feather} from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
 import Pagination from "../../globalComponent/Pagination/PaginationComponent";
 import ShimmerEffect from "../../globalComponent/Refresh/ShimmerEffect";
-import CryptoJS from 'crypto-js';
 
 const RoleScreen = ({userAccess,userData}) => {
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 2 );
@@ -57,54 +56,6 @@ const RoleScreen = ({userAccess,userData}) => {
     return authToken;
   }, [addToast]);
 
-  const decrypt = (encryptedData) => {
-    const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
-    const [iv, encrypted] = encryptedData.split(':');
-    const ivBytes = CryptoJS.enc.Hex.parse(iv);
-    const encryptedBytes = CryptoJS.enc.Hex.parse(encrypted);
-    const decrypted = CryptoJS.AES.decrypt(
-      { ciphertext: encryptedBytes },
-      CryptoJS.enc.Utf8.parse(encryptScreteKey),
-      {
-        iv: ivBytes,
-        mode: CryptoJS.mode.CBC,
-        padding: CryptoJS.pad.Pkcs7,
-      }
-    );
-    return decrypted.toString(CryptoJS.enc.Utf8);
-  };
-
-  const generateIV = () => {
-    if (Platform.OS === 'web') {
-      // For web, use CryptoJS's random generator
-      return CryptoJS.lib.WordArray.random(16);
-    } else {
-      // For React Native, use a simple random number generator
-      const arr = new Uint8Array(16);
-      for (let i = 0; i < 16; i++) {
-        arr[i] = Math.floor(Math.random() * 256);
-      }
-      return CryptoJS.lib.WordArray.create(arr);
-    }
-  };
-  
-  const encrypt = (plaintext) => {
-    const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
-    const iv = generateIV();
-    const key = CryptoJS.enc.Utf8.parse(encryptScreteKey);
-    
-    const encrypted = CryptoJS.AES.encrypt(plaintext, key, {
-      iv: iv,
-      mode: CryptoJS.mode.CBC,
-      padding: CryptoJS.pad.Pkcs7
-    });
-  
-    const encryptedBase64 = encrypted.toString();
-    const ivHex = CryptoJS.enc.Hex.stringify(iv);
-  
-    return `${ivHex}:${encryptedBase64}`;
-  };
-
   const handleAddRole = async () => {
     try {
       if (roleData.roleName.replace(/\s+/g, '') === "") {
@@ -121,13 +72,12 @@ const RoleScreen = ({userAccess,userData}) => {
             isActive: roleData.roleStatus,
             created_by:`${userData?.name} (${userData?.username})`
           },
-          conditionString: `role_name='${roleData.roleName}'`,
+          conditionString: `roleName='${roleData.roleName}'`,
           checkAvailability: true,
           customQuery: "",
         };
-        const encryptedParams = encrypt(JSON.stringify(Parameter));
         const response = await insert(
-          encryptedParams,
+          Parameter,
           authToken
         );
   
@@ -149,10 +99,9 @@ const RoleScreen = ({userAccess,userData}) => {
               checkAvailability: true,
               customQuery: "",
             };
-            const encryptedParams1 = encrypt(JSON.stringify(Parameter1));
   
             await insert(
-              encryptedParams1,
+              Parameter1,
               authToken
             );
   
@@ -193,9 +142,8 @@ const RoleScreen = ({userAccess,userData}) => {
         checkAvailability: "",
         customQuery: "",
       };
-      const encryptedParams = encrypt(JSON.stringify(Parameter));
       const response = await update(
-        encryptedParams,
+        Parameter,
         authToken
       );
 
@@ -220,10 +168,9 @@ const RoleScreen = ({userAccess,userData}) => {
             checkAvailability: true,
             customQuery: "",
           };
-          const encryptedParams1 = encrypt(JSON.stringify(Parameter1));
           
           await update(
-            encryptedParams1,
+            Parameter1,
             authToken
           );
 
@@ -249,17 +196,14 @@ const RoleScreen = ({userAccess,userData}) => {
         checkAvailability: "",
         customQuery: `SELECT JSON_ARRAYAGG( JSON_OBJECT( 'PK_RoleId', p.PK_RoleId, 'roleName', p.roleName, 'description', p.description, 'isActive', p.isActive, 'modulePermission', ( SELECT JSON_ARRAYAGG( JSON_OBJECT( 'Id', q.PK_role_module_permissionId, 'FK_RoleId', q.FK_RoleId, 'FK_ModuleId', q.FK_ModuleId, 'create', q.create, 'read', q.read, 'update', q.update, 'delete', q.delete, 'special', q.special ) ) FROM tbl_role_module_permission q WHERE q.FK_RoleId = p.PK_RoleId ) ) ) AS RoleMaster FROM tbl_role_master p; `,
       };
-      const encryptedParams = encrypt(JSON.stringify(Parameter));
       
       const response = await fetch(
-        encryptedParams,
+        Parameter,
         authToken
       );
 
       if (response) {
-        const decryptedData = decrypt(response?.data?.receivedData);
-        const DecryptedData = JSON.parse(decryptedData);
-        setRoleList(DecryptedData?.[0]?.RoleMaster);
+        setRoleList(response?.[0]?.RoleMaster);
         setRefreshing(false);
       }
     } catch (error) {
@@ -279,9 +223,8 @@ const RoleScreen = ({userAccess,userData}) => {
         checkAvailability: "",
         customQuery: "",
       };
-      const encryptedParams = encrypt(JSON.stringify(Parameter));
       const response = await update(
-        encryptedParams,
+        Parameter,
         authToken
       );
 
@@ -318,18 +261,15 @@ const RoleScreen = ({userAccess,userData}) => {
         checkAvailability: "",
         customQuery: "",
       };
-      const encryptedParams = encrypt(JSON.stringify(Parameter));
       
       const response = await fetch(
-        encryptedParams,
+        Parameter,
         authToken
       );
 
       if (response) {
-        const decryptedData = decrypt(response?.data?.receivedData);
-        const DecryptedData = JSON.parse(decryptedData);
-        setModuleList(DecryptedData);
-        let ModulePermissionData = DecryptedData?.map((item) => ({
+        setModuleList(response);
+        let ModulePermissionData = response?.map((item) => ({
           FK_ModuleId: item?.PK_ModuleId,
           create: 0,
           delete: 0,

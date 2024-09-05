@@ -6,15 +6,12 @@ import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import CodeScanner from "../../globalComponent/CodeScanner/CodeScanner";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { insert, fetch, update, remove, view, photoView, } from "../../AuthService/AuthService";
-import DropDownPicker from "react-native-dropdown-picker";
 import CheckBox from "expo-checkbox";
 import { parseISO, format, differenceInSeconds, addMinutes, subMinutes, isSameDay,isBefore } from 'date-fns';
 import { toZonedTime, fromZonedTime } from 'date-fns-tz';
-import CryptoJS from 'crypto-js';
 import PopUpModal from "../Modals/PopUpModal";
-import { borderRadius } from "@mui/system";
 const { width, height } = Dimensions.get('window');
-const isMobile = width < 768; 
+const isMobile = width < 768;
 
 const StudentInfo = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -59,54 +56,6 @@ const StudentInfo = ({ navigation }) => {
 
     return authToken;
   }, [addToast]);
-
-  const decrypt = (encryptedData) => {
-    const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
-    const [iv, encrypted] = encryptedData.split(':');
-    const ivBytes = CryptoJS.enc.Hex.parse(iv);
-    const encryptedBytes = CryptoJS.enc.Hex.parse(encrypted);
-    const decrypted = CryptoJS.AES.decrypt(
-      { ciphertext: encryptedBytes },
-      CryptoJS.enc.Utf8.parse(encryptScreteKey),
-      {
-        iv: ivBytes,
-        mode: CryptoJS.mode.CBC,
-        padding: CryptoJS.pad.Pkcs7,
-      }
-    );
-    return decrypted.toString(CryptoJS.enc.Utf8);
-  };
-
-  const generateIV = () => {
-    if (Platform.OS === 'web') {
-      // For web, use CryptoJS's random generator
-      return CryptoJS.lib.WordArray.random(16);
-    } else {
-      // For React Native, use a simple random number generator
-      const arr = new Uint8Array(16);
-      for (let i = 0; i < 16; i++) {
-        arr[i] = Math.floor(Math.random() * 256);
-      }
-      return CryptoJS.lib.WordArray.create(arr);
-    }
-  };
-  
-  const encrypt = (plaintext) => {
-    const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
-    const iv = generateIV();
-    const key = CryptoJS.enc.Utf8.parse(encryptScreteKey);
-    
-    const encrypted = CryptoJS.AES.encrypt(plaintext, key, {
-      iv: iv,
-      mode: CryptoJS.mode.CBC,
-      padding: CryptoJS.pad.Pkcs7
-    });
-  
-    const encryptedBase64 = encrypted.toString();
-    const ivHex = CryptoJS.enc.Hex.stringify(iv);
-  
-    return `${ivHex}:${encryptedBase64}`;
-  };
 
   const handleMainCopyChange = (copyNumber, index) => {
     const updatedCopies = [...copiesData];
@@ -236,7 +185,7 @@ const StudentInfo = ({ navigation }) => {
         // Check for duplicate mainCopy values
         const uniqueMainCopies = new Set();
         let duplicateFound = false;
-        
+       
         for (const data of copiesData) {
           if (uniqueMainCopies.has(data.mainCopy)) {
             duplicateFound = true;
@@ -244,12 +193,12 @@ const StudentInfo = ({ navigation }) => {
           }
           uniqueMainCopies.add(data.mainCopy);
         }
-        
+       
         if (duplicateFound) {
           addToast("Duplicate copy numbers are not allowed!", "error");
           return;
         }
-  
+ 
         const authToken = await checkAuthToken();
         let CopyArray = copiesData?.length > 0 ? copiesData?.map((item) => `'${item?.mainCopy}'`) : `""`;
         const Parameter = {
@@ -260,16 +209,12 @@ const StudentInfo = ({ navigation }) => {
           checkAvailability: "",
           customQuery: `Select * from tbl_copy_master Where copyNumber in (${CopyArray})`,
         };
-        const encryptedParams = encrypt(JSON.stringify(Parameter));  
         const CopyExistResponse = await fetch(
-          encryptedParams,
+          Parameter,
           authToken
         );
-        const decryptedData = decrypt(CopyExistResponse?.data?.receivedData);
-        const DecryptedData = JSON.parse(decryptedData);
-        if (DecryptedData?.length > 0) {
-          // ${CopyExistResponse.data.receivedData?.map((item) => item.copyNumber)}
-          addToast(`Copy Number Already Linked With Previous Student : ${DecryptedData?.map((item) => item.copyNumber)} `, "error",false);
+        if (CopyExistResponse?.length > 0) {
+          addToast(`Copy Number Already Linked With Previous Student : ${CopyExistResponse?.map((item) => item.copyNumber)} `, "error",false);
         } else {
           const Parameter ={
             operation: "insert",
@@ -298,12 +243,11 @@ const StudentInfo = ({ navigation }) => {
             checkAvailability: true,
             customQuery: "",
           };
-          const encryptedParams = encrypt(JSON.stringify(Parameter));
           const response = await insert(
-            encryptedParams,
+            Parameter,
             authToken
           );
-  
+ 
           if (response) {
             const studentCopyWithId = copiesData.map((item) => {
               let newItem = {
@@ -317,7 +261,7 @@ const StudentInfo = ({ navigation }) => {
               });
               return newItem;
             });
-  
+ 
             const Parameter1 = {
               operation: "insert",
               tblName: "tbl_copy_master",
@@ -326,12 +270,11 @@ const StudentInfo = ({ navigation }) => {
               checkAvailability: "",
               customQuery: "",
             };
-            const encryptedParams1 = encrypt(JSON.stringify(Parameter1));
             const NewResponse = await insert(
-              encryptedParams1,
+              Parameter1,
               authToken
             );
-  
+ 
             if (NewResponse) {
               addToast("Student details are updated successfully!", "success");
               navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation: navigation,userData:userData, userAccess });
@@ -343,7 +286,7 @@ const StudentInfo = ({ navigation }) => {
       handleAuthErrors(error);
     }
   };
-  
+ 
 
   const handleGetCopyData = async () => {
     try {
@@ -356,18 +299,15 @@ const StudentInfo = ({ navigation }) => {
         checkAvailability: "",
         customQuery: `select JSON_ARRAYAGG(json_object('PK_Report_Id',p.PK_Report_Id,'Status',p.Status,'copyData',( SELECT CAST( CONCAT('[', GROUP_CONCAT( JSON_OBJECT( 'PK_CopyId',q.PK_CopyId,'FK_ReportId', q.FK_ReportId,'EMPLID', q.EMPLID,'copyNumber',q.copyNumber,'alternateCopyNumber1',q.alternateCopyNumber1,'alternateCopyNumber2',q.alternateCopyNumber2,'alternateCopyNumber3',q.alternateCopyNumber3,'alternateCopyNumber4',q.alternateCopyNumber4,'alternateCopyNumber5',q.alternateCopyNumber5,'alternateCopyNumber6',q.alternateCopyNumber6) ), ']') AS JSON ) FROM tbl_copy_master q WHERE q.FK_ReportId = p.PK_Report_Id ))) AS ReportData from tbl_report_master p where PK_Report_Id = ${reportId}`,
       };
-      const encryptedParams = encrypt(JSON.stringify(Parameter));  
       const response = await fetch(
-        encryptedParams,
+        Parameter,
         authToken
       );
 
       if (response) {
-        const decryptedData = decrypt(response?.data?.receivedData);
-        const DecryptedData = JSON.parse(decryptedData);
-        setStatus(DecryptedData?.[0]?.ReportData?.[0]?.Status);
+        setStatus(response?.[0]?.ReportData?.[0]?.Status);
         let CopyFetchDetails =
-        DecryptedData?.[0]?.ReportData?.[0]?.copyData?.map((item, index) => ({
+        response?.[0]?.ReportData?.[0]?.copyData?.map((item, index) => ({
             id: index,
             mainCopy: item.copyNumber,
             alternateCopies: [
@@ -380,7 +320,7 @@ const StudentInfo = ({ navigation }) => {
             ].filter(Boolean),
           }));
         setCopiesData(CopyFetchDetails || []);
-        let TempcopyList = DecryptedData?.[0]?.ReportData?.[0]?.copyData?.map(
+        let TempcopyList = response?.[0]?.ReportData?.[0]?.copyData?.map(
           (item) => item.PK_CopyId
         );
         setCopyList(TempcopyList);
@@ -403,7 +343,7 @@ const StudentInfo = ({ navigation }) => {
   //       // Check for duplicate mainCopy values
   //       const uniqueMainCopies = new Set();
   //       let duplicateFound = false;
-        
+       
   //       for (const data of copiesData) {
   //         if (uniqueMainCopies.has(data.mainCopy)) {
   //           duplicateFound = true;
@@ -411,12 +351,12 @@ const StudentInfo = ({ navigation }) => {
   //         }
   //         uniqueMainCopies.add(data.mainCopy);
   //       }
-        
+       
   //       if (duplicateFound) {
   //         addToast("Duplicate copy numbers are not allowed!", "error");
   //         return;
   //       }
-  
+ 
   //       const authToken = await checkAuthToken();
   //       let CopyArray = copiesData?.length > 0 ? copiesData?.map((item) => `'${item?.mainCopy}'`) : `""`;;
   //       const CopyExistResponse = await fetch(
@@ -430,7 +370,7 @@ const StudentInfo = ({ navigation }) => {
   //         },
   //         authToken
   //       );
-  
+ 
   //       if (CopyExistResponse.data.receivedData?.length > 0) {
   //         addToast(`Copy Number Already Exist ${CopyExistResponse.data.receivedData?.map((item) => item.copyNumber)}`, "error");
   //       } else {
@@ -462,7 +402,7 @@ const StudentInfo = ({ navigation }) => {
   //           },
   //           authToken
   //         );
-  
+ 
   //         if (response && (copiesData?.length > 0 || copyList?.length > 0) ) {
   //           if(copyList?.length > 0){
   //             const DeleteResponse = await remove(
@@ -476,7 +416,7 @@ const StudentInfo = ({ navigation }) => {
   //               },
   //               authToken
   //             );
-    
+   
   //             if (DeleteResponse && copiesData?.length > 0) {
   //               const studentCopyWithId = copiesData.map((item) => {
   //                 let newItem = {
@@ -489,7 +429,7 @@ const StudentInfo = ({ navigation }) => {
   //                 });
   //                 return newItem;
   //               });
-    
+   
   //               const NewResponse = await insert(
   //                 {
   //                   operation: "insert",
@@ -501,7 +441,7 @@ const StudentInfo = ({ navigation }) => {
   //                 },
   //                 authToken
   //               );
-    
+   
   //               if (NewResponse) {
   //                 addToast("Student details are updated successfully!", "success");
   //                 navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation: navigation, userAccess, refresh });
@@ -524,12 +464,12 @@ const StudentInfo = ({ navigation }) => {
   //               },
   //               authToken
   //             );
-  
+ 
   //             if (NewResponse) {
   //               addToast("Student details are updated successfully!", "success");
   //               navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation: navigation, userAccess, refresh });
   //             }
-  //           }         
+  //           }        
   //         }
   //         else{
   //           addToast("Student details are updated successfully!", "success");
@@ -542,11 +482,11 @@ const StudentInfo = ({ navigation }) => {
   //     handleAuthErrors(error);
   //   }
   // };
-  
+ 
   const handleStudentInfoUpdate = async () => {
     try {
       const copyEmptyValues = copiesData?.length > 0 ? copiesData.some(data => data.mainCopy === "" || data.alternateCopies.includes("")) : true;
-  
+ 
       if (copyEmptyValues && status !== "Absent") {
         addToast("Please enter the copy details!", "error");
       } else if (status === "Absent" && copiesData?.length > 0) {
@@ -554,7 +494,7 @@ const StudentInfo = ({ navigation }) => {
       } else {
         const uniqueMainCopies = new Set();
         let duplicateFound = false;
-  
+ 
         for (const data of copiesData) {
           if (uniqueMainCopies.has(data.mainCopy)) {
             duplicateFound = true;
@@ -562,12 +502,12 @@ const StudentInfo = ({ navigation }) => {
           }
           uniqueMainCopies.add(data.mainCopy);
         }
-  
+ 
         if (duplicateFound) {
           addToast("Duplicate copy numbers are not allowed!", "error");
           return;
         }
-  
+ 
         const authToken = await checkAuthToken();
         let copyArray = copiesData?.length > 0 ? copiesData.map(item => `'${item?.mainCopy}'`).join(",") : `""`;
         const Parameter = {
@@ -578,16 +518,13 @@ const StudentInfo = ({ navigation }) => {
           checkAvailability: "",
           customQuery: `SELECT * FROM tbl_copy_master WHERE PK_CopyId NOT IN (${copyList?.length > 0 ? copyList : `""`}) AND copyNumber IN (${copyArray})`,
         };
-        const encryptedParams = encrypt(JSON.stringify(Parameter));
         const copyExistResponse = await fetch(
-          encryptedParams,
+          Parameter,
           authToken
         );
-        const decryptedData = decrypt(copyExistResponse?.data?.receivedData);
-        const DecryptedData = JSON.parse(decryptedData);
-        if (DecryptedData?.length > 0) {    
+        if (copyExistResponse?.length > 0) {    
           // ${copyExistResponse.data.receivedData.map(item => item.copyNumber).join(", ")}
-          addToast(`Copy Number Already Linked With Previous Student : ${DecryptedData?.map((item) => item.copyNumber)} `, "error",false);
+          addToast(`Copy Number Already Linked With Previous Student : ${copyExistResponse?.map((item) => item.copyNumber)} `, "error",false);
         } else {
           const Parameter1 = {
             operation: "update",
@@ -616,12 +553,11 @@ const StudentInfo = ({ navigation }) => {
             checkAvailability: "",
             customQuery: "",
           };
-          const encryptedParams1 = encrypt(JSON.stringify(Parameter1));
           const response = await update(
-            encryptedParams1,
+            Parameter1,
             authToken
           );
-  
+ 
           if (response && (copiesData?.length > 0 || copyList?.length > 0)) {
             if (copyList?.length > 0) {
               const Parameter2 = {
@@ -632,12 +568,11 @@ const StudentInfo = ({ navigation }) => {
                 checkAvailability: "",
                 customQuery: "",
               };
-              const encryptedParams2 = encrypt(JSON.stringify(Parameter2));
               const deleteResponse = await remove(
-                encryptedParams2,
+                Parameter2,
                 authToken
               );
-  
+ 
               if (deleteResponse && copiesData?.length > 0) {
                 const studentCopyWithId = copiesData.map(item => {
                   let newItem = {
@@ -659,13 +594,11 @@ const StudentInfo = ({ navigation }) => {
                   checkAvailability: "",
                   customQuery: "",
                 };
-                const encryptedParams3 = encrypt(JSON.stringify(Parameter3));
-
                 const newResponse = await insert(
-                  encryptedParams3,
+                  Parameter3,
                   authToken
                 );
-  
+ 
                 if (newResponse) {
                   addToast("Student details are updated successfully!", "success");
                   navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime,userData:userData, navigation, userAccess });
@@ -695,12 +628,11 @@ const StudentInfo = ({ navigation }) => {
                 checkAvailability: "",
                 customQuery: "",
               };
-              const encryptedParams4 = encrypt(JSON.stringify(Parameter4));
               const newResponse = await insert(
-                encryptedParams4,
+                Parameter4,
                 authToken
               );
-  
+ 
               if (newResponse) {
                 addToast("Student details are updated successfully!", "success");
                 navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt,userData:userData, startTime, navigation, userAccess });
@@ -746,15 +678,12 @@ const StudentInfo = ({ navigation }) => {
         customQuery: "",
         viewType: 'Campus_View'
       };
-      const encryptedParams = encrypt(JSON.stringify(Parameter));
       const response = await view(
-        encryptedParams,
+        Parameter,
         authToken
       );
       if (response) {
-        const decryptedData = decrypt(response?.data?.receivedData);
-        const DecryptedData = JSON.parse(decryptedData);
-        setStudentDetails(DecryptedData?.[0]);
+        setStudentDetails(response?.[0]);
         // setLoading(false);
       }
     } catch (error) {
@@ -799,8 +728,8 @@ const StudentInfo = ({ navigation }) => {
         authToken
       );
       if (response) {
-        setStudentPicture(response?.data?.receivedData?.[0]?.STUDENT_PHOTO || '');
-        setStudentSign(response?.data?.receivedData?.[0]?.STUDENT_SIGN || '');
+        setStudentPicture(response?.[0]?.STUDENT_PHOTO || '');
+        setStudentSign(response?.[0]?.STUDENT_SIGN || '');
         setLoading(false);
       }
     } catch (error) {
@@ -821,16 +750,13 @@ const StudentInfo = ({ navigation }) => {
         customQuery: `SELECT DISTINCT CATALOG_NBR, DESCR100,EXAM_TIME_CODE,EXAM_TYPE_CD,STRM FROM PS_S_PRD_EX_TME_VW WHERE CATALOG_NBR = '${catlog_Nbr}'`,
         viewType: 'Campus_View'
       };
-      const encryptedParams = encrypt(JSON.stringify(Parameter));
-      
+     
       const response = await view(
-        encryptedParams,
+        Parameter,
         authToken
       );
       if (response) {
-        const decryptedData = decrypt(response?.data?.receivedData);
-        const DecryptedData = JSON.parse(decryptedData);
-        setCourseDetails(DecryptedData?.[0] || []);
+        setCourseDetails(response?.[0] || []);
         // setLoading(false);
       }
     } catch (error) {
@@ -850,15 +776,12 @@ const StudentInfo = ({ navigation }) => {
         customQuery: `SELECT DISTINCT PS_S_PRD_CT_ATT_VW.PERCENTAGE,PS_S_PRD_TRS_AT_VW.PERCENTCHG FROM PS_S_PRD_CT_ATT_VW JOIN PS_S_PRD_TRS_AT_VW ON PS_S_PRD_TRS_AT_VW.EMPLID = PS_S_PRD_CT_ATT_VW.EMPLID WHERE PS_S_PRD_CT_ATT_VW.EMPLID = '${system_Id}' AND PS_S_PRD_CT_ATT_VW.CATALOG_NBR = '${catlog_Nbr}' AND PS_S_PRD_CT_ATT_VW.STRM = '${current_Term}'`,
         viewType: 'Campus_View',
       };
-      const encryptedParams = encrypt(JSON.stringify(Parameter));
       const response = await view(
-        encryptedParams,
+        Parameter,
         authToken
       );
       if (response) {
-        const decryptedData = decrypt(response?.data?.receivedData);
-        const DecryptedData = JSON.parse(decryptedData);
-        let AttendenceDetials = DecryptedData?.[0] || ''
+        let AttendenceDetials = response?.[0] || ''
         let AttendenceStatus = AttendenceDetials ? AttendenceDetials.PERCENTAGE >= AttendenceDetials.PERCENTCHG ? "Eligible" : "Debarred" : "Not Defined";
         setAttendenceStatus(AttendenceStatus);
         setStatus(AttendenceStatus === "Debarred" ? "Absent" : "Present");
@@ -893,7 +816,7 @@ const StudentInfo = ({ navigation }) => {
       setLoading(false);
     }
   };
-  
+ 
   const getStatuscolor = () => {
     switch (status) {
       case 'UFM':
@@ -988,15 +911,15 @@ const StudentInfo = ({ navigation }) => {
   //     if (now.getTime() >= start && now.getTime() <= end) {
   //       setIsActive(true);
   //     } else {
-  //       setIsActive(true);   
+  //       setIsActive(true);  
   //       // set false after changes//
-        
+       
   //     }
   //   }, 1000);
 
   //   return () => clearInterval(interval);
   // }, [startTime]);
-  
+ 
   useEffect(() => {
     const interval = setInterval(() => {
       const now = new Date();
@@ -1045,7 +968,7 @@ const StudentInfo = ({ navigation }) => {
       } else {
         setIsActive(false); // make false after changes
         setTimeLeft(now.getTime() > endWindow ? 'Attendance Completed' : 'Attendance Not Started');
-  
+ 
       }
     }, 1000);
 
@@ -1079,14 +1002,14 @@ const StudentInfo = ({ navigation }) => {
               <View style={styles.countWrap}>
                 <View style={styles.countDown}>
                 <Text style={styles.cotext}>Time Left :</Text>
-                  <View style={[styles.countbg1,  timeLeft === 'Attendance Completed' && styles.completeBackground] }>     
+                  <View style={[styles.countbg1,  timeLeft === 'Attendance Completed' && styles.completeBackground] }>    
                     <Text  style={[styles.count,]}>
                     {timeLeft}
                     </Text>
                   </View>
-        
+       
                 </View>
-            
+           
             </View>        
             </View>
             <View style={[styles.infoContainer,{flexDirection:"row"}]}>
@@ -1095,31 +1018,31 @@ const StudentInfo = ({ navigation }) => {
                   <Pressable onPress={()=> [setModalVisible(true),setModalData(studentPicture)]} style={styles.stuprofWrap}>
                   <Image
                     source={{ uri: `data:image/png;base64,${studentPicture}` }}
-                    style={styles.studProfile}     
-          
+                    style={styles.studProfile}    
+         
                 />
-                  </Pressable>           
+                  </Pressable>          
           ) : (
             <View style={styles.nophotoTextWrap}>
                 <FontAwesome name="user" size={40} color="#fff" style={styles.defaultstudProfile} />
                 <Text style={styles.nophotoText}>No Photo Available</Text>
-                </View>     
+                </View>    
               )}
                 {studentSign ? (
                   <Pressable onPress={()=> [setModalVisible(true),setModalData(studentSign),  setModalStyle({ width: 300, height: 150,})]}  style={styles.stusigWrap}>
-              <Image 
+              <Image
             source={{ uri: `data:image/png;base64,${studentSign}` }}
-            style={[styles.signature ,isMobile ?styles.signaturemob:styles.signature]} 
-            
+            style={[styles.signature ,isMobile ?styles.signaturemob:styles.signature]}
+           
             // resizeMode="contain"    
           />
           </Pressable>
           ) : (
             <View style={styles.nosignatureTextWrap}>
-                <FontAwesome6 name="signature" size={34} color="black" style={styles.defaultstudSign}  /> 
+                <FontAwesome6 name="signature" size={34} color="black" style={styles.defaultstudSign}  />
                 <Text style={styles.nosignatureText}>No Signature </Text>
-                </View>       
-              )} 
+                </View>      
+              )}
               </View>
               <View style={[styles.infoItemWrap]}>
                     <View style={[styles.infoItem]}>
@@ -1153,7 +1076,7 @@ const StudentInfo = ({ navigation }) => {
                     <View style={styles.infoItem}>
                       <Text style={styles.label1}>Semester: </Text>
                       <Text style={styles.value1} numberOfLines={1}> {studentDetails?.ACAD_LEVEL_BOT || "0"}</Text>
-                  
+                 
                     </View>
                     {/* <View style={styles.infoItem}>
                       <Text style={styles.label1}>Signature:</Text>
@@ -1161,11 +1084,11 @@ const StudentInfo = ({ navigation }) => {
                       {studentSign ? (
               <Image
             source={{ uri: `data:image/png;base64,${studentSign}` }}
-            style={styles.studProfile} 
+            style={styles.studProfile}
           />
           ) : (
                 <FontAwesome6 name="signature" size={34} color="black" />        
-              )} 
+              )}
                     </View> */}
               </View>
               <PopUpModal
@@ -1185,7 +1108,7 @@ const StudentInfo = ({ navigation }) => {
             </PopUpModal>
             </View>
           </View>
-          <View style={styles.studentInfoWrap}>   
+          <View style={styles.studentInfoWrap}>  
             <View style={styles.infoContainer}>
             {/* <View style={{ borderBottomColor:"#ccc",borderBottomWidth:1,padding:10, marginBottom:10}}> */}
             <View style={styles.headerSection}>
@@ -1193,7 +1116,7 @@ const StudentInfo = ({ navigation }) => {
             </View>
               {/* Exam Details */}
             {/* <View style={[styles.infopWrap,]}> */}
-            <View style={styles.detailsSection}>         
+            <View style={styles.detailsSection}>  
               <View style={[styles.examinfoItem,]}>
               <View style={{flexDirection:isMobile?"row":"row"}}>
                 <Text style={[styles.label,]}>Paper Id:</Text>
@@ -1273,7 +1196,7 @@ const StudentInfo = ({ navigation }) => {
                 </View>
                 </View>
                 </View>
-                
+               
 
                 {/* <DropDownPicker
                   open={open}
@@ -1626,7 +1549,7 @@ const StudentInfo = ({ navigation }) => {
                           {copy.alternateCopies && (
                             <View style={styles.cpoiesmainblock}>
                               <View style={styles.supplyblockWrap}>                                
-                                {copy.alternateCopies.length < 6 ? 
+                                {copy.alternateCopies.length < 6 ?
                                   (<View style={styles.buttoncontainer}>
                                     <Pressable style={styles.addsuplybtn} onPress={() => handleAddAlternateCopy(index)}>
                                       <Text style={{ color: "#fff", textAlign: "center", }}>Add SupplySheet</Text>
@@ -1689,12 +1612,12 @@ const StudentInfo = ({ navigation }) => {
         {((copiesData?.length > 0 || status === "Absent") && ((isActive) || userAccess?.label === "Admin") ) && (<Pressable style={styles.submitButton} onPress={reportId ? handleStudentInfoUpdate : handleStudentInfoSubmit} >
             <Text style={styles.addButtonText}> {" "} {reportId ? "Update" : "Submit"} </Text>
           </Pressable>) }
-          
+         
           <Pressable style={[styles.submitButton,{backgroundColor:"red"}]} onPress={() => navigation.goBack()} >
             <Text style={styles.addButtonText}> Cancel </Text>
           </Pressable>
         </View>
-      
+     
         </View>
       )}
     </ScrollView>
@@ -1800,8 +1723,7 @@ const styles = StyleSheet.create({
     maxWidth:250,
     justifyContent: "flex-start",
     marginBottom: 10,
-    alignItems: "flex-start" 
- 
+    alignItems: "flex-start"
   },
   examinfoItem:{
    marginBottom: isMobile ? 14 :25 ,
@@ -2001,7 +1923,7 @@ const styles = StyleSheet.create({
   answerSheetWrap: {
     flexDirection: "row",
     justifyContent: "space-between",
-  
+ 
     width: "auto",
     alignItems: "center",
   },
@@ -2059,7 +1981,7 @@ const styles = StyleSheet.create({
     verticalAlign: "middle",
     marginBottom: 20,
     borderRadius:6,
-    
+   
   },
   stuprofWrap:{
   width: isMobile? '' :"80%",

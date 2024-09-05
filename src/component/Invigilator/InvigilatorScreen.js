@@ -10,7 +10,6 @@ import { parse, format,parseISO,isBefore } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import Pagination from "../../globalComponent/Pagination/PaginationComponent";
 import ShimmerEffect from '../../globalComponent/Refresh/ShimmerEffect';
-import CryptoJS from 'crypto-js';
 
  const InvigilatorScreen = ({userAccess,userData}) => {
   const [refreshing, setRefreshing] = useState(false);
@@ -65,54 +64,6 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
     return authToken;
   }, [addToast]);
 
-  const decrypt = (encryptedData) => {
-    const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
-    const [iv, encrypted] = encryptedData.split(':');
-    const ivBytes = CryptoJS.enc.Hex.parse(iv);
-    const encryptedBytes = CryptoJS.enc.Hex.parse(encrypted);
-    const decrypted = CryptoJS.AES.decrypt(
-      { ciphertext: encryptedBytes },
-      CryptoJS.enc.Utf8.parse(encryptScreteKey),
-      {
-        iv: ivBytes,
-        mode: CryptoJS.mode.CBC,
-        padding: CryptoJS.pad.Pkcs7,
-      }
-    );
-    return decrypted.toString(CryptoJS.enc.Utf8);
-  };
-
-  const generateIV = () => {
-    if (Platform.OS === 'web') {
-      // For web, use CryptoJS's random generator
-      return CryptoJS.lib.WordArray.random(16);
-    } else {
-      // For React Native, use a simple random number generator
-      const arr = new Uint8Array(16);
-      for (let i = 0; i < 16; i++) {
-        arr[i] = Math.floor(Math.random() * 256);
-      }
-      return CryptoJS.lib.WordArray.create(arr);
-    }
-  };
-  
-  const encrypt = (plaintext) => {
-    const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
-    const iv = generateIV();
-    const key = CryptoJS.enc.Utf8.parse(encryptScreteKey);
-    
-    const encrypted = CryptoJS.AES.encrypt(plaintext, key, {
-      iv: iv,
-      mode: CryptoJS.mode.CBC,
-      padding: CryptoJS.pad.Pkcs7
-    });
-  
-    const encryptedBase64 = encrypted.toString();
-    const ivHex = CryptoJS.enc.Hex.stringify(iv);
-  
-    return `${ivHex}:${encryptedBase64}`;
-  };
-
   const handleGetInigilatorDuty = async () => {
     try {
       const authToken = await checkAuthToken();
@@ -124,16 +75,13 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
         checkAvailability: "",
         customQuery: "SELECT * FROM tbl_invigilator_duty order by PK_InvigilatorDutyId Desc",
       };
-      const encryptedParams = encrypt(JSON.stringify(Parameter));
       const response = await fetch(
-        encryptedParams,
+        Parameter,
         authToken
       );
 
       if (response) {
-        const decryptedData = decrypt(response?.data?.receivedData);
-        const DecryptedData = JSON.parse(decryptedData);
-        setInvigilatorList(DecryptedData);
+        setInvigilatorList(response);
         setRefreshing(false);
       }
     } catch (error) {
@@ -177,9 +125,8 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
         checkAvailability: true,
         customQuery: "",
       };
-      const encryptedParams = encrypt(JSON.stringify(Parameter));
       const response = await insert(
-        encryptedParams,
+        Parameter,
         authToken
       );
 
@@ -222,9 +169,8 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
         checkAvailability: "",
         customQuery: "",
       };
-      const encryptedParams = encrypt(JSON.stringify(Parameter));
       const response = await update(
-        encryptedParams,
+        Parameter,
         authToken
       );
 
@@ -252,17 +198,14 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
           customQuery: customQuery,
           viewType:'Campus_View'
       };
-      const encryptedParams = encrypt(JSON.stringify(Parameter));
 
       const response = await view(
-        encryptedParams,
+        Parameter,
         authToken
       );
 
       if (response) {
-        const decryptedData = decrypt(response?.data?.receivedData);
-        const DecryptedData = JSON.parse(decryptedData);
-        let RoomData = DecryptedData?.map((item) => ({label : item?.ROOM_NBR , value : item?.ROOM_NBR }));
+        let RoomData = response?.map((item) => ({label : item?.ROOM_NBR , value : item?.ROOM_NBR }));
         setRoomList(RoomData);
       }
     } catch (error) {
@@ -390,17 +333,14 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
         customQuery: `SELECT DISPLAY_NAME, EMPLID FROM PS_SU_PSFT_COEM_VW WHERE EMPLID = '${searchedEmployee}'`,
         viewType: 'HRMS_View'
       };
-      const encryptedParams = encrypt(JSON.stringify(Parameter));
 
       const response = await view(
-        encryptedParams,
+        Parameter,
         authToken
       );
   
       if (response) {
-        const decryptedData = decrypt(response?.data?.receivedData);
-        const DecryptedData = JSON.parse(decryptedData);
-        let EmployeeData = DecryptedData?.[0]
+        let EmployeeData = response?.[0]
         setInvigilatorData({ ...invigilatorData, invigilatorName: EmployeeData?.DISPLAY_NAME,employeeId:EmployeeData?.EMPLID });
       }
     } catch (error) {
@@ -462,18 +402,14 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
         customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW WHERE EXAM_DT >= '${CurrentDate}' ORDER BY EXAM_DT ASC`,
         viewType:'Campus_View'
       };
-      const encryptedParams = encrypt(JSON.stringify(Parameter));
 
       const response = await view(
-        encryptedParams,
+        Parameter,
         authToken
       );
  
       if (response) {
-        const decryptedData = decrypt(response?.data?.receivedData);
-        const DecryptedData = JSON.parse(decryptedData);
-        let ExamDates = DecryptedData?.map((item) => ({label : `${parseAndFormatDate(item?.EXAM_DT)}` , value : item?.EXAM_DT}));
-        // let UpdatedDate = response?.data?.receivedData?.find((item)=>item?.EXAM_DT === date) ? ExamDates : ExamDates?.push({label :`${parseAndFormatDate(date)}` , value: date }); 
+        let ExamDates = response?.map((item) => ({label : `${parseAndFormatDate(item?.EXAM_DT)}` , value : item?.EXAM_DT}));
         setExamDates(ExamDates);
       }
     } catch (error) {
@@ -494,15 +430,12 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
     checkAvailability: "",
     customQuery:`SELECT DISTINCT EXAM_START_TIME  FROM PS_S_PRD_EX_TME_VW WHERE EXAM_DT = '${formattedDate}'` ,
  };
-    const encryptedParams = encrypt(JSON.stringify(Parameter));
     const response = await view(
-      encryptedParams,
+    Parameter,
     authToken
     );
     if (response) {
-      const decryptedData = decrypt(response?.data?.receivedData);
-        const DecryptedData = JSON.parse(decryptedData);
-      let ExamDates = DecryptedData?.map((item) => ({label : convertedTime(item.EXAM_START_TIME) , value : item.EXAM_START_TIME}));
+      let ExamDates = response?.map((item) => ({label : convertedTime(item.EXAM_START_TIME) , value : item.EXAM_START_TIME}));
       setShiftList(ExamDates);
     }
     } catch (error) {
@@ -749,7 +682,7 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
         </View>
         </View>
         <ScrollView horizontal>
-        <View style={{maxHeight: tableHeight, minWidth: isMobile ? tableWidth :tableWidth}}>
+        <View style={{maxHeight: tableHeight, minWidth: isMobile ? tableWidth :tableWidth,minHeight:220}}>
           <FlatList 
             data={paginatedData}
             keyExtractor={(item) => item.PK_InvigilatorDutyId.toString()}
@@ -831,6 +764,7 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
     backgroundColor:"#fff",
     padding:20,
     elevation:2,
+  
   },
   userListWrap:{
    backgroundColor:"#fff",
