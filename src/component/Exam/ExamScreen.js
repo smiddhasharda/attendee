@@ -5,7 +5,6 @@ import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { parse, format,parseISO } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
-import CryptoJS from 'crypto-js';
 
 const { width, height } = Dimensions.get('window');
 
@@ -29,54 +28,6 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
     return authToken;
   }, [addToast]);
 
-  const decrypt = (encryptedData) => {
-    const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
-    const [iv, encrypted] = encryptedData.split(':');
-    const ivBytes = CryptoJS.enc.Hex.parse(iv);
-    const encryptedBytes = CryptoJS.enc.Hex.parse(encrypted);
-    const decrypted = CryptoJS.AES.decrypt(
-      { ciphertext: encryptedBytes },
-      CryptoJS.enc.Utf8.parse(encryptScreteKey),
-      {
-        iv: ivBytes,
-        mode: CryptoJS.mode.CBC,
-        padding: CryptoJS.pad.Pkcs7,
-      }
-    );
-    return decrypted.toString(CryptoJS.enc.Utf8);
-  };
-
-  const generateIV = () => {
-    if (Platform.OS === 'web') {
-      // For web, use CryptoJS's random generator
-      return CryptoJS.lib.WordArray.random(16);
-    } else {
-      // For React Native, use a simple random number generator
-      const arr = new Uint8Array(16);
-      for (let i = 0; i < 16; i++) {
-        arr[i] = Math.floor(Math.random() * 256);
-      }
-      return CryptoJS.lib.WordArray.create(arr);
-    }
-  };
-  
-  const encrypt = (plaintext) => {
-    const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
-    const iv = generateIV();
-    const key = CryptoJS.enc.Utf8.parse(encryptScreteKey);
-    
-    const encrypted = CryptoJS.AES.encrypt(plaintext, key, {
-      iv: iv,
-      mode: CryptoJS.mode.CBC,
-      padding: CryptoJS.pad.Pkcs7
-    });
-  
-    const encryptedBase64 = encrypted.toString();
-    const ivHex = CryptoJS.enc.Hex.stringify(iv);
-  
-    return `${ivHex}:${encryptedBase64}`;
-  };
-
   const handleGetDateView = async () => {
     // let CurrentDate = new Date().toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-');
     const date = new Date();
@@ -97,22 +48,19 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
           data: '',
           conditionString: '',
           checkAvailability: '',
-          // customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW WHERE EXAM_DT >= '${CurrentDate}' ORDER BY EXAM_DT ASC`,
-          customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW  ORDER BY EXAM_DT ASC`,
+          customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW WHERE EXAM_DT >= '${CurrentDate}' ORDER BY EXAM_DT ASC`,
+          // customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW  ORDER BY EXAM_DT ASC`,
           viewType:'Campus_View'
         };
-      const encryptedParams = encrypt(JSON.stringify(Parameter));
       const response = await view(
-        encryptedParams,
+        Parameter,
         authToken
       );
 
       if (response) {
-        const decryptedData = decrypt(response?.data?.receivedData);
-        const DecryptedData = JSON.parse(decryptedData);
-        setExamDates(DecryptedData);
-        setExamSelectedDate(DecryptedData?.[0]?.EXAM_DT || '');
-        handleGetRoomView(DecryptedData?.[0]?.EXAM_DT || '');
+        setExamDates(response);
+        setExamSelectedDate(response?.[0]?.EXAM_DT || '');
+        handleGetRoomView(response?.[0]?.EXAM_DT || '');
       }
     } catch (error) {
       setLoading(false);
@@ -144,21 +92,18 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
         checkAvailability: '',
         customQuery: `SELECT DISTINCT date, room, shift FROM tbl_invigilator_duty WHERE employeeId = '${userData?.username}' AND date >= '${CurrentDate}' ORDER BY date ASC`,
       };
-      const encryptedParams = encrypt(JSON.stringify(Parameter));
       const response = await fetch(
-        encryptedParams,
+        Parameter,
         authToken
       );
   
       if (response) {
-        const decryptedData = decrypt(response?.data?.receivedData);
-        const DecryptedData = JSON.parse(decryptedData);
-        setInvigilatorData(DecryptedData);
-        const ExamDateArray = DecryptedData.filter((item, index, self) => index === self.findIndex((t) => t.date === item.date)).map((item) => ({ EXAM_DT: item.date }));
+        setInvigilatorData(response);
+        const ExamDateArray = response.filter((item, index, self) => index === self.findIndex((t) => t.date === item.date)).map((item) => ({ EXAM_DT: item.date }));
         setExamDates(ExamDateArray);
-        setExamSelectedDate(DecryptedData?.[0]?.date);
-        const RoomArray = DecryptedData.filter((item) => item.date === response?.data?.receivedData?.[0]?.date).map((item) => ({ room: item.room, shift: item.shift }));
-        handleGetRoomView(DecryptedData?.[0]?.date, RoomArray);
+        setExamSelectedDate(response?.[0]?.date);
+        const RoomArray = response.filter((item) => item.date === response?.data?.receivedData?.[0]?.date).map((item) => ({ room: item.room, shift: item.shift }));
+        handleGetRoomView(response?.[0]?.date, RoomArray);
       }
     } catch (error) {
       setRefreshing(false);
@@ -185,8 +130,17 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
   const handleGetRoomView = async (SelectedDate, RoomArray) => {
     try {
       const authToken = await checkAuthToken();
-      const formattedDate = SelectedDate ? new Date(SelectedDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }).toUpperCase().replace(/ /g, '-') : '';
-
+      const date = new Date(SelectedDate);
+    const day = date.toLocaleDateString('en-GB', { day: '2-digit' });
+    const monthIndex = date.getMonth();
+    const year = date.toLocaleDateString('en-GB', { year: '2-digit' });
+    
+    // Array of month abbreviations
+    const monthAbbreviations = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+    const month = monthAbbreviations[monthIndex];
+    
+    const formattedDate = SelectedDate ? `${day}-${month}-${year}` : '';
+    
       let roomShiftConditions = '';
   
       if (RoomArray && RoomArray.length > 0) {
@@ -212,17 +166,14 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
         customQuery: customQuery,
         viewType: 'Campus_View'
       };
-      const encryptedParams = encrypt(JSON.stringify(Parameter));
 
       const response = await view(
-        encryptedParams,
+        Parameter,
         authToken
       );
   
       if (response) {
-        const decryptedData = decrypt(response?.data?.receivedData);
-        const DecryptedData = JSON.parse(decryptedData);
-        setRoomDetails(DecryptedData);
+        setRoomDetails(response);
       }
       setLoading(false);
       setRefreshing(false);
