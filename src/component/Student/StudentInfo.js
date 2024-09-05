@@ -1116,8 +1116,7 @@ const StudentInfo = ({ navigation }) => {
             </View>
               {/* Exam Details */}
             {/* <View style={[styles.infopWrap,]}> */}
-            <View style={styles.detailsSection}>
-           
+            <View style={styles.detailsSection}>  
               <View style={[styles.examinfoItem,]}>
               <View style={{flexDirection:isMobile?"row":"row"}}>
                 <Text style={[styles.label,]}>Paper Id:</Text>
@@ -1127,8 +1126,7 @@ const StudentInfo = ({ navigation }) => {
               </View>
               </View>
               <View style={styles.examinfoItem}>
-              <View style={{flexDirection:isMobile?"row":"row"}}>
-           
+              <View style={{flexDirection:isMobile?"row":"row"}}>          
                 <Text style={[styles.label,]}>Course Code:</Text>
                 <Text style={[styles.value,{fontWeight:'600'}]}>
                   {courseDetails?.CATALOG_NBR || ""}
@@ -1726,7 +1724,6 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     marginBottom: 10,
     alignItems: "flex-start"
- 
   },
   examinfoItem:{
    marginBottom: isMobile ? 14 :25 ,

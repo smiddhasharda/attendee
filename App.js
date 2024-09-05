@@ -16,8 +16,8 @@ import StudentInfo from "./src/component/Student/StudentInfo";
 import RoomDetail from "./src/component/Room/RoomDetail";
 import TopHeader from "./src/globalComponent/Header/TopHeader";
 import ToastContainer from './src/globalComponent/ToastContainer/ToastContainer'; 
-import Privacy from "./src/component/LandingScreeens/Privacy";
-import Home from "./src/component/LandingScreeens/Home";
+// import Privacy from "./src/component/LandingScreeens/Privacy";
+// import Home from "./src/component/LandingScreeens/Home";
 // import Shimmer from "./src/component/ShimmerLoader/Shimmer"
  
 const Stack = createNativeStackNavigator();
@@ -25,7 +25,6 @@ global.SERVER_URL = "http://3.111.185.105:3502";
 
 const AppContent = () => {
   // const [refreshing, setRefreshing] = useState(false);
-  // const [initialRoute, setInitialRoute] = useState("Home");
   const [initialRoute, setInitialRoute] = useState("Login");
   const [loading, setLoading] = useState(true);
 
@@ -58,7 +57,6 @@ const AppContent = () => {
     const checkAuthStatus = async () => {
       try {
         const authToken =  await AsyncStorage.getItem(btoa("authToken"));
-        // setInitialRoute(authToken ? "PostLogin" : "Home");
         setInitialRoute(authToken ? "PostLogin" : "Login");
       } catch (error) {
         console.error("Error reading authToken from AsyncStorage:", error);
@@ -86,7 +84,7 @@ const AppContent = () => {
           <RoleProvider>
             <NavigationContainer>
               <Stack.Navigator initialRouteName={initialRoute}>
-              <Stack.Screen
+              {/* <Stack.Screen
                 name="Home"
                 component={Home}
                 options={({ navigation }) => ({
@@ -116,19 +114,19 @@ const AppContent = () => {
                  
                   
                   })}
-              />
+              /> */}
               <Stack.Screen
                   name="Login"
                   component={LoginScreen}
                   options={{ headerShown: false }}
                 />
-                   <Stack.Screen
+                   {/* <Stack.Screen
                   name="Privacy"
                   component={Privacy}
                   options={({ route }) => ({
                     title: `Privacy Policy`,
                   })}
-                />
+                /> */}
                 <Stack.Screen
                   name="PostLogin"
                   component={DrawerNavigator}
