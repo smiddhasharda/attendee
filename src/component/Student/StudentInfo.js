@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { View, Text, StyleSheet, ScrollView, TextInput, Pressable, ActivityIndicator, Image,Dimensions,RefreshControl,Platform  } from "react-native";
-import { Ionicons, FontAwesome, AntDesign, MaterialCommunityIcons, MaterialIcons, Entypo, FontAwesome6, } from "@expo/vector-icons";
+import { Ionicons, FontAwesome, AntDesign, MaterialCommunityIcons, MaterialIcons, Entypo, FontAwesome6,FontAwesome5 ,SimpleLineIcons} from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import CodeScanner from "../../globalComponent/CodeScanner/CodeScanner";
@@ -1102,6 +1102,7 @@ const StudentInfo = ({ navigation }) => {
           ) : (
             <View style={styles.nophotoTextWrap}>
                 <FontAwesome name="user" size={40} color="#fff" style={styles.defaultstudProfile} />
+                {/* <SimpleLineIcons name="user" size={50} color="#fff"  style={styles.defaultstudProfile}  /> */}
                 <Text style={styles.nophotoText}>No Photo Available</Text>
                 </View>     
               )}
@@ -1116,8 +1117,9 @@ const StudentInfo = ({ navigation }) => {
           </Pressable>
           ) : (
             <View style={styles.nosignatureTextWrap}>
-                <FontAwesome6 name="signature" size={34} color="black" style={styles.defaultstudSign}  /> 
-                <Text style={styles.nosignatureText}>No Signature </Text>
+             
+                <AntDesign name="edit" size={34} color="#fff" style={styles.defaultstudSign} />
+                <Text style={styles.nosignatureText}>No Sign </Text>
                 </View>       
               )} 
               </View>
@@ -2067,6 +2069,8 @@ const styles = StyleSheet.create({
   },
   stusigWrap:{
     width: isMobile? '' :"80%",
+ 
+ 
     // height:isMobile? '' :250
   },
   defaultstudProfile:{
@@ -2082,6 +2086,7 @@ const styles = StyleSheet.create({
     verticalAlign: "middle",
     marginBottom: 20,
     borderRadius:6,
+  
   },
   defaultstudSign:{
     width: isMobile ? 54 : "90%",
@@ -2096,6 +2101,7 @@ const styles = StyleSheet.create({
     verticalAlign: "middle",
     marginBottom: 20,
     borderRadius:6,
+    
   },
 stuimge: {
     width: 250,
@@ -2144,28 +2150,51 @@ stuimge: {
   },
   nophotoTextWrap:{
     position: 'relative',
+    justifyContent: 'center',
+ 
+ 
    
   },
   nophotoText: {
-    position: 'absolute',
     color: 'red',
-    fontSize: 12, // Adjust this as needed
+    fontSize: isMobile ? 10 : 16, // Adjust this as needed
     textAlign: 'center',
-    bottom: 25, // Position the text within the icon or slightly below it
-    right:isMobile? 8 : '',
-    left:isMobile ?'':25
+    position: 'absolute',
+    bottom: 0,
+    alignSelf:"center",
+ 
+    bottom: isMobile ?20 :22
+    
+    
+    // position: 'absolute',
+    // color: 'red',
+    // fontSize: 12, // Adjust this as needed
+    // textAlign: 'center',
+    // bottom: 25, // Position the text within the icon or slightly below it
+    // right:isMobile? 8 : '',
+    // left:isMobile ?'':25
   },
   nosignatureTextWrap:{
     position: 'relative',
+    justifyContent: 'center',  // Vertically center the content
+    // alignItems: 'center',      // Horizontally center the content
+  
   },
   nosignatureText:{
-    position: 'absolute',
     color: 'red',
-    fontSize: 12, // Adjust this as needed
+    fontSize: isMobile ? 10 : 16, // Adjust this as needed
     textAlign: 'center',
-    bottom: 25, // Position the text within the icon or slightly below it
-    right:isMobile? 8 : '',
-    left:isMobile ?'':25
+    position: 'absolute',
+    bottom: 0,
+    alignSelf:"center",
+    bottom: isMobile ?22 :22
+    // position: 'absolute',
+    // // color: 'red',
+    // // fontSize: 12, // Adjust this as needed
+    // // textAlign: 'center',
+    // // bottom: 25, // Position the text within the icon or slightly below it
+    // // right:isMobile? 8 : '',
+    // // left:isMobile ?'':25
   },
   tr: {
     flexDirection: "row",
