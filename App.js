@@ -12,7 +12,6 @@ import { RoleProvider } from "./src/component/Roles/RoleContext";
 // import { RefreshProvider, RefreshContext } from "./src/globalComponent/Refresh/RefreshContext";
 import LoginScreen from "./src/component/Login/LoginScreen";
 import DrawerNavigator from "./src/globalComponent/DrawerNavigatior/DrawerNavigatior";
-import InvigilatorScreen from "./src/component/Invigilator/InvigilatorScreen";
 import StudentInfo from "./src/component/Student/StudentInfo";
 import RoomDetail from "./src/component/Room/RoomDetail";
 import TopHeader from "./src/globalComponent/Header/TopHeader";
@@ -150,11 +149,6 @@ const AppContent = () => {
                   name="TopHeader"
                   component={TopHeader}
                   options={{ headerShown: false }}
-                />
-                <Stack.Screen
-                  name="InvigilatorScreen"
-                  component={InvigilatorScreen}
-                  options={TopHeaderCommonConfig}
                 />
                 
               </Stack.Navigator>

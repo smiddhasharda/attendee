@@ -8,7 +8,6 @@ import { fetch, view } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import { parse, format,parseISO } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
-import CryptoJS from 'crypto-js';
 
 function RoomDetail({navigation}) {
   const [isScanning, setIsScanning] = useState(false);
@@ -32,54 +31,6 @@ function RoomDetail({navigation}) {
 
     return authToken;
   }, [addToast]);
-
-  const decrypt = (encryptedData) => {
-    const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
-    const [iv, encrypted] = encryptedData.split(':');
-    const ivBytes = CryptoJS.enc.Hex.parse(iv);
-    const encryptedBytes = CryptoJS.enc.Hex.parse(encrypted);
-    const decrypted = CryptoJS.AES.decrypt(
-      { ciphertext: encryptedBytes },
-      CryptoJS.enc.Utf8.parse(encryptScreteKey),
-      {
-        iv: ivBytes,
-        mode: CryptoJS.mode.CBC,
-        padding: CryptoJS.pad.Pkcs7,
-      }
-    );
-    return decrypted.toString(CryptoJS.enc.Utf8);
-  };
-
-  const generateIV = () => {
-    if (Platform.OS === 'web') {
-      // For web, use CryptoJS's random generator
-      return CryptoJS.lib.WordArray.random(16);
-    } else {
-      // For React Native, use a simple random number generator
-      const arr = new Uint8Array(16);
-      for (let i = 0; i < 16; i++) {
-        arr[i] = Math.floor(Math.random() * 256);
-      }
-      return CryptoJS.lib.WordArray.create(arr);
-    }
-  };
-  
-  const encrypt = (plaintext) => {
-    const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
-    const iv = generateIV();
-    const key = CryptoJS.enc.Utf8.parse(encryptScreteKey);
-    
-    const encrypted = CryptoJS.AES.encrypt(plaintext, key, {
-      iv: iv,
-      mode: CryptoJS.mode.CBC,
-      padding: CryptoJS.pad.Pkcs7
-    });
-  
-    const encryptedBase64 = encrypted.toString();
-    const ivHex = CryptoJS.enc.Hex.stringify(iv);
-  
-    return `${ivHex}:${encryptedBase64}`;
-  };
 
   const fetchStudentDetails = (date, room) => {
     setLoading(true);
@@ -135,16 +86,13 @@ const remainingHeight = height - 190;
         checkAvailability: '',
         customQuery: `select PK_Report_Id,EMPLID,Status,EXAM_START_TIME from tbl_report_master where EXAM_DT = '${exam_Dt}' AND ROOM_NBR = '${room_Nbr}' AND EXAM_START_TIME = '${startTime}' `, 
       };
-      const encryptedParams = encrypt(JSON.stringify(Parameter));
 
       const response = await fetch(
-        encryptedParams,
+        Parameter,
         authToken
       );
       if (response) {
-        const decryptedData = decrypt(response?.data?.receivedData);
-        const DecryptedData = JSON.parse(decryptedData);
-        setPresentStudentList(DecryptedData)
+        setPresentStudentList(response)
       }
     } catch (error) {
       handleAuthErrors(error);
@@ -192,17 +140,13 @@ const formattedShiftTimePrefix = formatShiftTimePrefix(startTime);
         customQuery:`SELECT PS_S_PRD_EX_RME_VW.EXAM_DT,PS_S_PRD_EX_RME_VW.NAME,PS_S_PRD_EX_RME_VW.EMPLID,PS_S_PRD_EX_RME_VW.ROOM_NBR,PS_S_PRD_EX_RME_VW.PTP_SEQ_CHAR,PS_S_PRD_EX_RME_VW.CATALOG_NBR,PS_S_PRD_EX_RME_VW.STRM, PS_S_PRD_EX_TME_VW.EXAM_START_TIME FROM PS_S_PRD_EX_RME_VW JOIN PS_S_PRD_EX_TME_VW ON PS_S_PRD_EX_RME_VW.EXAM_DT = PS_S_PRD_EX_TME_VW.EXAM_DT AND PS_S_PRD_EX_RME_VW.CATALOG_NBR = PS_S_PRD_EX_TME_VW.CATALOG_NBR WHERE PS_S_PRD_EX_RME_VW.EXAM_DT = '${formattedDate}' AND PS_S_PRD_EX_RME_VW.ROOM_NBR = '${SelectedRoom}' AND TO_CHAR(PS_S_PRD_EX_TME_VW.EXAM_START_TIME, 'HH:MI') = '${formattedShiftTime}' AND TO_CHAR(PS_S_PRD_EX_TME_VW.EXAM_START_TIME, '${formattedShiftTimePrefix}') = '${formattedShiftTimePrefix}' ORDER BY TO_NUMBER(PS_S_PRD_EX_RME_VW.PTP_SEQ_CHAR)`,         
         viewType:'Campus_View'
       };
-      const encryptedParams = encrypt(JSON.stringify(Parameter));
       const response = await view(
-        encryptedParams,
-        // AND PS_S_PRD_EX_TME_VW.EXAM_START_TIME ='${formattedShiftTime}'
+        Parameter,
         authToken
       );
       if (response) {
-        const decryptedData = decrypt(response?.data?.receivedData);
-        const DecryptedData = JSON.parse(decryptedData);
-       setStudentDetails(DecryptedData);
-       setTempStudentDetails(DecryptedData);
+       setStudentDetails(response);
+       setTempStudentDetails(response);
         setLoading(false);
       }
     } catch (error) {

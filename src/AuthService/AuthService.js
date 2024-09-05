@@ -1,17 +1,15 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL } from '@env';
-import { Platform } from 'react-native';
-import CryptoJS from 'crypto-js';
-
-// const API_URL = 'http://localhost:3502/api';
+import {encrypt,decrypt} from '../globalComponent/cryptography/cryptography'
+// const API_URL = 'http://3.111.185.105:3502/api';
 
 
 const request = async (method, endpoint, data, authToken,params) => {
   try {
     const headers = authToken ? { Authorization: `Bearer ${authToken}` } : {};
     const url = `${API_URL}/${endpoint}`;
-    
+    const EncryptedData = encrypt(JSON.stringify(data));
     const config = {
       method,
       url,
@@ -27,15 +25,19 @@ const request = async (method, endpoint, data, authToken,params) => {
 
 
     if (method === 'get') {
-      config.params = { ...config.params, data: data };
-    } else {
-      // Wrapping FormData inside another object
+      config.params = { ...config.params, data: EncryptedData };
+    }
+    else if(endpoint === 'multer' || endpoint === 'bulkupload') {
       if (data instanceof FormData) {
-        // If it's FormData, it should not be wrapped with an additional 'data' key
         config.data = data;
       } else {
-        // For other data types, continue wrapping it
-        config.data = { data: data };
+        config.data = data;
+      }
+    } else {
+      if (EncryptedData instanceof FormData) {
+        config.data = EncryptedData;
+      } else {
+        config.data = { data: EncryptedData };
       }
     }
 
@@ -63,54 +65,6 @@ const request = async (method, endpoint, data, authToken,params) => {
   }
 };
 
-const generateIV = () => {
-  if (Platform.OS === 'web') {
-    // For web, use CryptoJS's random generator
-    return CryptoJS.lib.WordArray.random(16);
-  } else {
-    // For React Native, use a simple random number generator
-    const arr = new Uint8Array(16);
-    for (let i = 0; i < 16; i++) {
-      arr[i] = Math.floor(Math.random() * 256);
-    }
-    return CryptoJS.lib.WordArray.create(arr);
-  }
-};
-
-const encrypt = (plaintext) => {
-  const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
-  const iv = generateIV();
-  const key = CryptoJS.enc.Utf8.parse(encryptScreteKey);
-  
-  const encrypted = CryptoJS.AES.encrypt(plaintext, key, {
-    iv: iv,
-    mode: CryptoJS.mode.CBC,
-    padding: CryptoJS.pad.Pkcs7
-  });
-
-  const encryptedBase64 = encrypted.toString();
-  const ivHex = CryptoJS.enc.Hex.stringify(iv);
-
-  return `${ivHex}:${encryptedBase64}`;
-};
-
-const decrypt = (encryptedData) => {
-  const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
-  const [iv, encrypted] = encryptedData.split(':');
-  const ivBytes = CryptoJS.enc.Hex.parse(iv);
-  const encryptedBytes = CryptoJS.enc.Hex.parse(encrypted);
-  const decrypted = CryptoJS.AES.decrypt(
-    { ciphertext: encryptedBytes },
-    CryptoJS.enc.Utf8.parse(encryptScreteKey),
-    {
-      iv: ivBytes,
-      mode: CryptoJS.mode.CBC,
-      padding: CryptoJS.pad.Pkcs7,
-    }
-  );
-  return decrypted.toString(CryptoJS.enc.Utf8);
-};
-
 const handleAsyncStorageError = (error) => {
   console.error('Error while interacting with AsyncStorage:', error);
   throw new Error('AsyncStorage operation failed');
@@ -118,7 +72,7 @@ const handleAsyncStorageError = (error) => {
 
 const login = async (tblName, conditionString,secondaryCondition) => {
   try {
-    const Parameter = encrypt(JSON.stringify({tblName,conditionString,secondaryCondition}))
+    const Parameter = {tblName,conditionString,secondaryCondition};
     const response = await request('post', 'login',Parameter);
     const decryptedData = decrypt(response?.data?.receivedData);
     const DecryptedData = JSON.parse(decryptedData);
@@ -136,11 +90,18 @@ const login = async (tblName, conditionString,secondaryCondition) => {
 };
 
 const register = async (tblName, conditionString) => {
-  return request('post', 'register', { tblName, conditionString });
+  const Parameter = { tblName, conditionString };
+  const response = await request('post', 'register',Parameter );
+    const decryptedData = decrypt(response?.data?.receivedData);
+    const DecryptedData = JSON.parse(decryptedData);
+  return DecryptedData;
 };
 const emailVerify = async (tblName, conditionString,viewTblName,viewConditionString) => {
-  const Parameter = encrypt(JSON.stringify({ tblName, conditionString, viewTblName, viewConditionString }))
-  return request('post', 'emailVerify',Parameter);
+  const Parameter = { tblName, conditionString, viewTblName, viewConditionString };
+  const response = await request('post', 'emailVerify',Parameter);
+    // const decryptedData = decrypt(response?.data?.receivedData);
+    // const DecryptedData = JSON.parse(decryptedData);
+  return response;
 };
 
 const logout = async () => {
@@ -156,30 +117,57 @@ const logout = async () => {
 };
 
 const insert = async (data, authToken) => {
-  return request('post', 'insert', data, authToken);
+  const response = await request('post', 'insert', data, authToken);
+    // const decryptedData = decrypt(response?.data?.receivedData);
+    // const DecryptedData = JSON.parse(decryptedData);
+  return response;
 };
 const update = async (data, authToken) => {
-  return request('put', 'update', data, authToken);
+  const response = await request('put', 'update', data, authToken);
+  // const decryptedData = decrypt(response?.data?.receivedData);
+  // const DecryptedData = JSON.parse(decryptedData);
+return response;
 };
 const fetch = async (data, authToken) => {
-  return request('get', 'fetch', data, authToken);
+  const response = await request('get', 'fetch', data, authToken);
+  const decryptedData = decrypt(response?.data?.receivedData);
+  const DecryptedData = JSON.parse(decryptedData);
+return DecryptedData; 
 };
 const remove = async (data, authToken) => {
-  return request('delete', 'remove', data, authToken);
+  const response = await request('delete', 'remove', data, authToken);
+  const decryptedData = decrypt(response?.data?.receivedData);
+  const DecryptedData = JSON.parse(decryptedData);
+return DecryptedData;
 };
 const common = async (data, authToken) => {
-  return request('post', 'common', data, authToken);
+  const response = await request('post', 'common', data, authToken);
+  const decryptedData = decrypt(response?.data?.receivedData);
+  const DecryptedData = JSON.parse(decryptedData);
+return DecryptedData;
 };
 const multer = async (data, authToken) => {
-  return request('post', 'multer', data, authToken);
+  const response = await request('post', 'multer', data, authToken);
+  // const decryptedData = decrypt(response?.data?.receivedData);
+  // const DecryptedData = JSON.parse(decryptedData);
+return response;
 };
 const bulkupload = async (data, authToken) => {  
-  return request('post', 'bulkupload', data, authToken);
+  const response = await request('post', 'bulkupload', data, authToken);
+  // const decryptedData = decrypt(response?.data?.receivedData);
+  // const DecryptedData = JSON.parse(decryptedData);
+return response;
 };
-const view = async (data, authToken) => {     
-  return request('get', 'view', data, authToken);
+const view = async (data, authToken) => { 
+  const response = await request('get', 'view', data, authToken);
+  const decryptedData = decrypt(response?.data?.receivedData);
+  const DecryptedData = JSON.parse(decryptedData);
+return DecryptedData;    
 };
-const photoView = async (data, authToken) => {     
-  return request('get', 'photoView', data, authToken);
+const photoView = async (data, authToken) => { 
+  const response =  await request('get', 'photoView', data, authToken);
+  const decryptedData = decrypt(response?.data?.receivedData);
+  const DecryptedData = JSON.parse(decryptedData);
+return DecryptedData;    
 }
 export { login, register,emailVerify, logout, insert, update, fetch, remove, common,multer,bulkupload,view,photoView };

@@ -12,7 +12,6 @@ import { ScrollView } from "react-native-gesture-handler";
 import { Ionicons,AntDesign,Feather} from "@expo/vector-icons";
 import Pagination from "../../globalComponent/Pagination/PaginationComponent";
 import ShimmerEffect from "../../globalComponent/Refresh/ShimmerEffect";
-import CryptoJS from 'crypto-js';
 
 const UserScreen = ({userAccess,userData}) => { 
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 4 );
@@ -67,54 +66,6 @@ const UserScreen = ({userAccess,userData}) => {
     return authToken;
   }, [addToast]);
 
-  const decrypt = (encryptedData) => {
-    const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
-    const [iv, encrypted] = encryptedData.split(':');
-    const ivBytes = CryptoJS.enc.Hex.parse(iv);
-    const encryptedBytes = CryptoJS.enc.Hex.parse(encrypted);
-    const decrypted = CryptoJS.AES.decrypt(
-      { ciphertext: encryptedBytes },
-      CryptoJS.enc.Utf8.parse(encryptScreteKey),
-      {
-        iv: ivBytes,
-        mode: CryptoJS.mode.CBC,
-        padding: CryptoJS.pad.Pkcs7,
-      }
-    );
-    return decrypted.toString(CryptoJS.enc.Utf8);
-  };
-
-  const generateIV = () => {
-    if (Platform.OS === 'web') {
-      // For web, use CryptoJS's random generator
-      return CryptoJS.lib.WordArray.random(16);
-    } else {
-      // For React Native, use a simple random number generator
-      const arr = new Uint8Array(16);
-      for (let i = 0; i < 16; i++) {
-        arr[i] = Math.floor(Math.random() * 256);
-      }
-      return CryptoJS.lib.WordArray.create(arr);
-    }
-  };
-  
-  const encrypt = (plaintext) => {
-    const encryptScreteKey = 'b305723a4d2e49a443e064a111e3e280';
-    const iv = generateIV();
-    const key = CryptoJS.enc.Utf8.parse(encryptScreteKey);
-    
-    const encrypted = CryptoJS.AES.encrypt(plaintext, key, {
-      iv: iv,
-      mode: CryptoJS.mode.CBC,
-      padding: CryptoJS.pad.Pkcs7
-    });
-  
-    const encryptedBase64 = encrypted.toString();
-    const ivHex = CryptoJS.enc.Hex.stringify(iv);
-  
-    return `${ivHex}:${encryptedBase64}`;
-  };
-
   const handleAddUser = async () => {
     try {
       const authToken = await checkAuthToken();
@@ -143,9 +94,8 @@ const UserScreen = ({userAccess,userData}) => {
         checkAvailability: true,
         customQuery: '',
       };
-      const encryptedParams = encrypt(JSON.stringify(Parameter));
       const response = await insert(
-        encryptedParams,
+        Parameter,
         authToken
       );
 
@@ -166,10 +116,9 @@ const UserScreen = ({userAccess,userData}) => {
             checkAvailability: "",
             customQuery: "",
           };
-          const encryptedParams1 = encrypt(JSON.stringify(Parameter1));
           
           await insert(
-            encryptedParams1,
+            Parameter1,
             authToken
           );
 
@@ -214,9 +163,8 @@ const UserScreen = ({userAccess,userData}) => {
         checkAvailability: '',
         customQuery: '',
       };
-      const encryptedParams = encrypt(JSON.stringify(Parameter));
       const response = await update(
-        encryptedParams,
+        Parameter,
         authToken
       );
 
@@ -243,10 +191,9 @@ const UserScreen = ({userAccess,userData}) => {
             checkAvailability: true,
             customQuery: "",
           };
-          const encryptedParams1 = encrypt(JSON.stringify(Parameter1));
 
           await update(
-            encryptedParams1,
+            Parameter1,
             authToken
           );
 
@@ -276,16 +223,13 @@ const UserScreen = ({userAccess,userData}) => {
         checkAvailability: '',
         customQuery: `select JSON_ARRAYAGG(json_object('user_id',p.user_id,'username',username,'password',p.password,'name',p.name,'contact_number',p.contact_number,'email_id',p.email_id,'profile_image_url',p.profile_image_url,'status',p.status,'createdBy',p.createdBy,'updatedBy',p.updatedBy,'createdDate',p.createdDate,'updatedDate',p.updatedDate,'firstLoginStatus',p.firstLoginStatus,'isActive',p.isActive,'rolePermission',( SELECT CAST( CONCAT('[', GROUP_CONCAT( JSON_OBJECT( 'Id',q.PK_user_role_permissionId,'FK_userId', q.FK_userId,'FK_RoleId', q.FK_RoleId,'isActive',q.isActive) ), ']') AS JSON ) FROM tbl_user_role_permission q WHERE q.FK_userId = p.user_id ))) AS UserMaster from tbl_user_master p`,
       };
-      const encryptedParams = encrypt(JSON.stringify(Parameter));
       const response = await fetch(
-        encryptedParams,
+        Parameter,
         authToken
       );
 
       if (response) {
-        const decryptedData = decrypt(response?.data?.receivedData);
-        const DecryptedData = JSON.parse(decryptedData);
-        setUserList(DecryptedData?.[0]?.UserMaster);
+        setUserList(response?.[0]?.UserMaster);
         setRefreshing(false);
       }
     } catch (error) {
@@ -306,10 +250,9 @@ const UserScreen = ({userAccess,userData}) => {
         checkAvailability: '',
         customQuery: '',
       };
-      const encryptedParams = encrypt(JSON.stringify(Parameter));
       
       const response = await update(
-        encryptedParams,
+        Parameter,
         authToken
       );
 
@@ -337,10 +280,9 @@ const UserScreen = ({userAccess,userData}) => {
         checkAvailability: '',
         customQuery: '',
       };
-      const encryptedParams = encrypt(JSON.stringify(Parameter));
       
       const response = await update(
-        encryptedParams,
+        Parameter,
         authToken
       );
 
@@ -683,16 +625,13 @@ const UserScreen = ({userAccess,userData}) => {
         checkAvailability: "",
         customQuery: "",
       }
-      const encryptedParams = encrypt(JSON.stringify(Parameter));
       const response = await fetch(
-        encryptedParams,
+        Parameter,
         authToken
       );
 
       if (response) {
-        const decryptedData = decrypt(response?.data?.receivedData);
-        const DecryptedData = JSON.parse(decryptedData);
-        setRoleList(DecryptedData);
+        setRoleList(response);
       }
     } catch (error) {
       handleAuthErrors(error);
