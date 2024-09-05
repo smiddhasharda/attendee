@@ -12,7 +12,6 @@ import { RoleProvider } from "./src/component/Roles/RoleContext";
 // import { RefreshProvider, RefreshContext } from "./src/globalComponent/Refresh/RefreshContext";
 import LoginScreen from "./src/component/Login/LoginScreen";
 import DrawerNavigator from "./src/globalComponent/DrawerNavigatior/DrawerNavigatior";
-import InvigilatorScreen from "./src/component/Invigilator/InvigilatorScreen";
 import StudentInfo from "./src/component/Student/StudentInfo";
 import RoomDetail from "./src/component/Room/RoomDetail";
 import TopHeader from "./src/globalComponent/Header/TopHeader";
@@ -26,7 +25,8 @@ global.SERVER_URL = "http://3.111.185.105:3502";
 
 const AppContent = () => {
   // const [refreshing, setRefreshing] = useState(false);
-  const [initialRoute, setInitialRoute] = useState("Home");
+  // const [initialRoute, setInitialRoute] = useState("Home");
+  const [initialRoute, setInitialRoute] = useState("Login");
   const [loading, setLoading] = useState(true);
 
   // const { triggerRefresh } = useContext(RefreshContext);
@@ -58,7 +58,8 @@ const AppContent = () => {
     const checkAuthStatus = async () => {
       try {
         const authToken =  await AsyncStorage.getItem(btoa("authToken"));
-        setInitialRoute(authToken ? "PostLogin" : "Home");
+        // setInitialRoute(authToken ? "PostLogin" : "Home");
+        setInitialRoute(authToken ? "PostLogin" : "Login");
       } catch (error) {
         console.error("Error reading authToken from AsyncStorage:", error);
       } finally {
@@ -150,11 +151,6 @@ const AppContent = () => {
                   name="TopHeader"
                   component={TopHeader}
                   options={{ headerShown: false }}
-                />
-                <Stack.Screen
-                  name="InvigilatorScreen"
-                  component={InvigilatorScreen}
-                  options={TopHeaderCommonConfig}
                 />
                 
               </Stack.Navigator>
