@@ -6,7 +6,7 @@ import ExamScreen from '../component/Exam/ExamScreen';
 import RoleScreen from '../component/Roles/RoleScreen';
 import StudentInfo from '../component/Student/StudentInfo';
 import { Ionicons } from '@expo/vector-icons'; 
-import { Platform } from 'react-native-web';
+import { Platform } from 'react-native';
 
 const Tab = createBottomTabNavigator();
 const screenOptions={
