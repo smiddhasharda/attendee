@@ -1094,20 +1094,26 @@ const StudentInfo = ({ navigation }) => {
                     </View> */}
               </View>
               <PopUpModal
+                  visible={modalVisible}
+                  onRequestClose={() => {
+                    setModalVisible(false);
+                    setModalData('');
+                  }}
+                  animationType="slide"
+                  imageData={modalData}
+                  sizeMode="auto"
+                >
+                </PopUpModal>
+              {/* <PopUpModal
                 visible={modalVisible}
-                // onRequestClose={() => setModalVisible(false)}
                 onRequestClose={() => [setModalVisible(false),setModalData(''),setModalStyle('') ]}
                 animationType="slide">
                 <View style={styles.modalContainer}>
-                  {/* <TouchableOpacity style={styles.modalCloseButton} onPress={() => setModalVisible(false)}>
-                    <Text style={styles.modalCloseText}>Close</Text>
-                  </TouchableOpacity> */}
                   <View style={styles.modalView}>
                   <Image    source={{ uri: `data:image/png;base64,${modalData}` }} style={[styles.modelimage, modalstyle] } resizeMode="contain"/>
-                  {/* <Image  source={{ uri: `data:image/png;base64,${modalData}` }} style={{position:"static" ,         width:isMobile ?210:250, height:"auto"}} />                  */}
                   </View>
                 </View>
-            </PopUpModal>
+            </PopUpModal> */}
             </View>
           </View>
           <View style={styles.studentInfoWrap}>  
