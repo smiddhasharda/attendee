@@ -22,14 +22,14 @@
 
     <table style="width:600px; margin:0px auto;" cellpadding="0" border="0" cellspacing="0">
 
-        <tr style="background-image:url(../local-assets/home-bg.png); background-size: cover; background-position: 0px -80px;" >
+        <tr style="background-image:url(../../Images/home-bg.png); background-size: cover; background-position: 0px -80px;" >
           
             <td colSpan="2" style="padding:20px;">
                 <table width="100%">
                     <tr>
                         <td>
                             <!-- <p style="color: #fff; font-size:20px">Attandance App</p> -->
-                            <img style="width: 138px;" src="../local-assets/shardalogo.png" width="138" />
+                            <img style="width: 150px;" src="../../Images/shardalogo.png" width="150" />
                         </td>
                         <!-- <td align="right">
                             <ul className="nav-links">
@@ -49,7 +49,7 @@
                         <td align="center" colspan="2">
                             <h2
                                 style="color: white;font-size: 30px;font-family:Arial,'sans-serif'; text-align: center;;">
-                                ACCOUNT VERIFICATION
+                                LOGIN OTP
                             </h2>
                         </td>
                     </tr>
@@ -62,19 +62,21 @@
                 <p style="font-size:16px; font-family:Arial, 'sans-serif'; color:rgb(14, 13, 13);"></p>
                 <h3
                     style="color: black; font-size : 30px; border-left: 2px solid rgb(204, 195, 195); padding-left: 10px; display:block; margin: 0;">
-                    <b>VERIFICATION </br>CODE</b>
+                    <b>OTP </br>VERIFICATION</b>
                 </h3>
                 <p>&nbsp;</p>
-                <p>Thank you for registering with us. Please enter the following verification code to get started.</p>
+                <strong>Dear {{name}},</strong>
                 <p>&nbsp;</p>
-                <p>Verification Code: <b>{{randomotp}}</b></p>
+                <p>Please use the following OTP to get access to your Exam Portal.</p>
                 <p>&nbsp;</p>
-                <p>Once your account is activatied you can use the App Features.</p>
+                <p>Your Otp: <b>{{OTP}}</b></p>
+                <p>&nbsp;</p>
+                <!-- <p>Once your account is activatied you can use the App Features.</p> -->
                 <p>&nbsp;</p>
                 <p>Warm Regards,</p>
                 <p><b>Team COE</b></p>
                 <p>&nbsp;</p>
-                <p>You are receiving this email because you recently created an account with us. If this was not you, please ignore this email.</p>
+               
             </td>
         </tr>
         <!-- <tr>
