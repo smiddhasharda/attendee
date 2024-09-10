@@ -9,15 +9,19 @@ const styles = StyleSheet.create({
   },
   bgimg1: {
     position: 'absolute',
-    transform: [{ skewX: '-65deg' }],
-    top: -180,
-    left: -620,
+    //transform: [{ skewX: '-65deg' }],
+    top: isMobile ? -20:-180,
+    left: isMobile ? -80:-120,
+    width: isMobile ? 250 :450,
+    height: isMobile ? 227 :409
   },
   bgimages2: {
     position: 'absolute',
-    transform: [{ skewX: '162deg' }],
-    top: 190,
-    right: -540,
+    //transform: [{ skewX: '162deg' }],
+    top: isMobile ? 580:250,
+    right: isMobile ? 10:70,
+    width: isMobile ? 250 :450,
+    height: isMobile ? 213 :384
   },
   form: {
     flex: 1,
