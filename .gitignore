@@ -3,9 +3,9 @@
 # dependencies
 node_modules/
 /resources/assets/
+.env
 
 # Expo
-.env
 .expo/
 dist/
 web-build/
