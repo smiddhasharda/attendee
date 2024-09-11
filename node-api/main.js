@@ -5,7 +5,9 @@ const jwt = require("jsonwebtoken");
 const mysql = require("mysql2/promise");
 const nodemailer = require("nodemailer");
 const upload = require("./middlewares/multer.js");
-const path = require("path");
+const handlebars = require('handlebars');
+const path = require('path');
+const fs = require('fs');
 const oracledb = require("oracledb");
 const corsOptions = require("./config/corsOptions.js");
 const credentials = require("./middlewares/credentials.js");
@@ -121,26 +123,26 @@ const transporter = nodemailer.createTransport({
   const viewCampusConfig = {
     user: process.env.VIEW_CAMPUS_USER,
     password: process.env.VIEW_CAMPUS_PASSWORD,
-    connectString: "35.154.115.237:9999/SHARDA",
+    connectString: process.env.VIEW_CONN_STRING,
   };
 
-  const viewCampus2Config = {
-    user: process.env.VIEW_CAMPUS2_USER,
-    password: process.env.VIEW_CAMPUS2_PASSWORD,
-    connectString: "35.154.115.237:9999/SHARDA",
-  };
+  // const viewCampus2Config = {
+  //   user: process.env.VIEW_CAMPUS2_USER,
+  //   password: process.env.VIEW_CAMPUS2_PASSWORD,
+  //   connectString: process.env.VIEW_CONN_STRING,
+  // };
 
   const viewHRMSConfig = {
     user: process.env.VIEW_HRMS_USER,
     password: process.env.VIEW_HRMS_PASSWORD,
-    connectString: "35.154.115.237:9999/SHARDA",
+    connectString: process.env.VIEW_CONN_STRING,
   };
 
-  const viewIdCardConfig = {
-    user: 'CELECT',
-    password: 'BTfdar!Y5',
-    connectString: "35.154.115.237:9999/SHARDA",
-  };
+  // const viewIdCardConfig = {
+  //   user: 'CELECT',
+  //   password: 'BTfdar!Y5',
+  //   connectString: "35.154.115.237:9999/SHARDA",
+  // };
 
   try {
     // Create a promise-based pool
@@ -186,7 +188,7 @@ const transporter = nodemailer.createTransport({
       console.error("Error connecting to MySQL database:", err.message);
     }
     let viewCampusPool;
-    let viewCampus2Pool;
+    // let viewCampus2Pool;
     let viewHRMSPool;
     
     try {
@@ -211,27 +213,27 @@ const transporter = nodemailer.createTransport({
       console.error("Error connecting to Oracle HRMS database:", err.message);
     }
 
-    try {
-      // Oracle Campus 2nd Connection
-      viewCampus2Pool = await oracledb.getConnection(viewCampus2Config);
-      console.log(
-        "Successfully Connected to Oracle database FCM View : ",
-        process.env.VIEW_DATABASE
-      );
-    } catch (err) {
-      console.error("Error connecting to Oracle Campus2 database:", err.message);
-    }
+    // try {
+    //   // Oracle Campus 2nd Connection
+    //   viewCampus2Pool = await oracledb.getConnection(viewCampus2Config);
+    //   console.log(
+    //     "Successfully Connected to Oracle database FCM View : ",
+    //     process.env.VIEW_DATABASE
+    //   );
+    // } catch (err) {
+    //   console.error("Error connecting to Oracle Campus2 database:", err.message);
+    // }
     
-    try {
-      // Oracle HRMS Connection
-      viewIdCardPool = await oracledb.getConnection(viewIdCardConfig);
-      console.log(
-        "Successfully Connected to Oracle database Id Card View : ",
-        process.env.VIEW_DATABASE
-      );
-    } catch (err) {
-      console.error("Error connecting to Oracle Id Card database:", err.message);
-    }
+    // try {
+    //   // Oracle HRMS Connection
+    //   viewIdCardPool = await oracledb.getConnection(viewIdCardConfig);
+    //   console.log(
+    //     "Successfully Connected to Oracle database Id Card View : ",
+    //     process.env.VIEW_DATABASE
+    //   );
+    // } catch (err) {
+    //   console.error("Error connecting to Oracle Id Card database:", err.message);
+    // }
    
     
     
@@ -259,12 +261,23 @@ const transporter = nodemailer.createTransport({
     }
 
     function sendOTP(otp, userData,view) {
+      const replacements = {
+        name: view ? userData?.DISPLAY_NAME :  userData?.name,
+        OTP: otp
+    };
+
+    const filePath = path.join(__dirname, './resources/local-assets/templates/loginotp.html');
+    const source = fs.readFileSync(filePath, 'utf-8').toString();
+    const template = handlebars.compile(source);
+    const htmlToSend = template(replacements);
+
       // Email message options
       const mailOptions = {
         from: process.env.MAIL_FROM,
         to: view ? userData?.EMAILID :  userData?.email_id,
         subject: "Your OTP to Login",
-        text: `Your OTP is: ${otp}`,
+        // text: `Your OTP is: ${otp}`,
+        html: htmlToSend,
       };
       console.log("Mail Option", mailOptions);
       // Send email with OTP
@@ -1360,7 +1373,9 @@ function parseShiftTime(timeString) {
       authenticateToken,
       async (req, res) => {
         try {
-          const { tblName, conditionString, checkAvailability, checkColumn } = req.body.data;
+          // const encryptedQuery = req.body.data;
+          // const decryptedQuery = JSON.parse(decrypt(encryptedQuery));
+          const { tblName, conditionString, checkAvailability, checkColumn } = req.body;
           const file = req.file;
           if (!tblName) {
             return res.status(400).json({ error: 'Table name is required' });
@@ -1443,13 +1458,15 @@ function parseShiftTime(timeString) {
           return res.status(400).json({ error: "Operation and table are required" });
         }
     
-        if (viewType === "CAMPUS2_View") {
-          viewSetup = viewCampus2Pool;
-        } else if (viewType === "HRMS_View") {
+        // if (viewType === "CAMPUS2_View") {
+        //   viewSetup = viewCampus2Pool;
+        // } else
+         if (viewType === "HRMS_View") {
           viewSetup = viewHRMSPool;
-        } else if(viewType === "IDCARD_View"){
-          viewSetup = viewIdCardPool;
-        }
+        } 
+        // else if(viewType === "IDCARD_View"){
+        //   viewSetup = viewIdCardPool;
+        // }
          else {
           viewSetup = viewCampusPool;
         }
@@ -1556,31 +1573,33 @@ function parseShiftTime(timeString) {
     });
 
     app.get('/api/photoView',authenticateToken, async (req, res) => {
-      try {  
-        const { data } = req.query.data;
-        const baseURL = 'http://13.127.108.48:8020/PSIGW/RESTListeningConnector/PSFT_HR/ExecuteQuery.v1/public/SU_EMPL_PHOTO/JSON/NONFILE'
-        // const baseURL = 'http://13.127.108.48:8020/PSIGW/RESTListeningConnector/PSFT_HR/ExecuteQuery.v1/public/TEST_EMPL_PHOTO/JSON/NONFILE';
-    const params = new URLSearchParams({
-      isconnectedquery: 'N',
-      maxrows: '1',
-      prompt_uniquepromptname: 'BIND1',
-      prompt_fieldvalue: data,
-      json_resp: 'true',
-    }).toString();
+      try { 
+        const encryptedQuery = req.query.data;
+        const decryptedQuery = JSON.parse(decrypt(encryptedQuery)); 
+        const { data } = decryptedQuery;
+        const baseURL = process.env.VIEW_PHOTO_API_URL;
+        const params = new URLSearchParams({
+          isconnectedquery: 'N',
+          maxrows: '1',
+          prompt_uniquepromptname: 'BIND1',
+          prompt_fieldvalue: data,
+          json_resp: 'true',
+        }).toString();
 
     const url = `${baseURL}?${params}`;
 
         const response = await axios.get(url, {
           auth: {
-            username: 'product_api',
-            password: 'Sharda@12#$',
+            username: process.env.VIEW_PHOTO_USER,
+            password: process.env.VIEW_PHOTO_PASSWORD,
           }
         });
-        return res.status(200).json({
-          message: "Fetch successful",
-          receivedData: response.data.data.query.rows,
-        });
-        // res.json(response.data);
+        // Encrypt the response data
+      const encryptedData = encrypt(JSON.stringify(response.data.data.query.rows));
+      return res.status(200).json({
+        message: "Fetch successful",
+        receivedData: encryptedData,
+      });
       } catch (error) {
         console.error('Error occurred:', error.message);
         return res.status(500).json({ error: "Internal server error" });      }
