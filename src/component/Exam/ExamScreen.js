@@ -77,16 +77,17 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
 
   const handleGetInvigilatorDutyDate = async () => {
     // let CurrentDate = new Date().toLocaleDateString('en-GB', { year: '2-digit', month: '2-digit', day: '2-digit' }).split('/').reverse().join('-');
-    const date = new Date();
-    const day = date.toLocaleDateString('en-GB', { day: '2-digit' });
-    const monthIndex = date.getMonth();
-    const year = date.toLocaleDateString('en-GB', { year: '2-digit' });
+    // const date = new Date();
+    // const day = date.toLocaleDateString('en-GB', { day: '2-digit' });
+    // const monthIndex = date.getMonth();
+    // const year = date.toLocaleDateString('en-GB', { year: '2-digit' });
 
-    // Array of month abbreviations
-    const monthAbbreviations = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-    const month = monthAbbreviations[monthIndex];
+    // // Array of month abbreviations
+    // const monthAbbreviations = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+    // const month = monthAbbreviations[monthIndex];
 
-    const CurrentDate = `${day}-${month}-${year}`;
+    // const CurrentDate = `${day}-${month}-${year}`;
+    let CurrentDate = new Date().toLocaleDateString('en-GB', { year: '2-digit', month: '2-digit', day: '2-digit' }).split('/').reverse().join('-');
     try {
       const authToken = await checkAuthToken();
       const Parameter =  {
