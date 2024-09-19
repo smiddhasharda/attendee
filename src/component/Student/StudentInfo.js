@@ -1192,7 +1192,7 @@ const StudentInfo = ({ navigation }) => {
               {/* <View style={{flexDirection:isMobile?"column":"row", }}> */}
               <View style={[styles.examinfoItem,{minWidth:isMobile?"100%":''}]}>
               <View style={{flexDirection:isMobile?"row":"row" ,}}>
-                <Text style={[styles.label,]}>Class Status:</Text>
+                <Text style={[styles.label,]}>Attendence Status:</Text>
                 <Text style={[styles.value, {textAlign:"center"}, getAttendenceStatuscolor()]}>
                   {attendenceStatus}
                 </Text>
