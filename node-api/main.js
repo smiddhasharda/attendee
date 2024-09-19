@@ -6,7 +6,7 @@ const mysql = require("mysql2/promise");
 const nodemailer = require("nodemailer");
 const upload = require("./middlewares/multer.js");
 const handlebars = require('handlebars');
-const path = require('path');
+const path = require("path");
 const fs = require('fs');
 const oracledb = require("oracledb");
 const corsOptions = require("./config/corsOptions.js");
@@ -261,7 +261,7 @@ const transporter = nodemailer.createTransport({
     }
 
     function sendOTP(otp, userData,view) {
-      const replacements = {
+       const replacements = {
         name: view ? userData?.DISPLAY_NAME :  userData?.name,
         OTP: otp
     };
@@ -276,10 +276,10 @@ const transporter = nodemailer.createTransport({
         from: process.env.MAIL_FROM,
         to: view ? userData?.EMAILID :  userData?.email_id,
         subject: "Your OTP to Login",
-        // text: `Your OTP is: ${otp}`,
+        //text: `Your OTP is: ${otp}`,
         html: htmlToSend,
       };
-      console.log("Mail Option", mailOptions);
+      //console.log("Mail Option", mailOptions);
       // Send email with OTP
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
@@ -292,6 +292,7 @@ const transporter = nodemailer.createTransport({
       });
     }
 
+    app.use('/node-api/resources', express.static(path.join(__dirname, 'resources')));
     app.use( "/userImg", express.static(path.join(__dirname, "./resources/assets/ProfilePics")) );
     app.use( "/invigilatorDoc", express.static(path.join(__dirname, "./resources/local-assets/BulkuploadDocs")) );
 
@@ -1461,7 +1462,7 @@ function parseShiftTime(timeString) {
         // if (viewType === "CAMPUS2_View") {
         //   viewSetup = viewCampus2Pool;
         // } else
-         if (viewType === "HRMS_View") {
+        if (viewType === "HRMS_View") {
           viewSetup = viewHRMSPool;
         } 
         // else if(viewType === "IDCARD_View"){
