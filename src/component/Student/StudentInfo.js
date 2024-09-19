@@ -800,7 +800,7 @@ const StudentInfo = ({ navigation }) => {
       );
       if(response1?.length > 0){
         let AttendenceDetials = response1?.[0] || ''
-        let AttendenceStatus = AttendenceDetials ? (!['FI', 'FR', 'F'].includes(AttendenceDetials.CLASS_SECTION) && AttendenceDetials.S_NOC_STATUS !== 'NOC' && AttendenceDetials.PERCENTAGE >= AttendenceDetials.PERCENTCHG) ? "Eligible" : "Debarred" : "Not Defined";
+        let AttendenceStatus = AttendenceDetials ? (AttendenceDetials.CLASS_SECTION.startsWith('F') || AttendenceDetials.S_NOC_STATUS === 'NOC' || AttendenceDetials.PERCENTAGE >= AttendenceDetials.PERCENTCHG) ? "Eligible" : "Debarred" : "Not Defined";
         setAttendenceStatus(AttendenceStatus);
         setStatus(AttendenceStatus === "Debarred" ? "Absent" : "Present");
         setDisabledStatus(AttendenceStatus === "Debarred" ? "Absent" : "Present");
@@ -1192,7 +1192,7 @@ const StudentInfo = ({ navigation }) => {
               {/* <View style={{flexDirection:isMobile?"column":"row", }}> */}
               <View style={[styles.examinfoItem,{minWidth:isMobile?"100%":''}]}>
               <View style={{flexDirection:isMobile?"row":"row" ,}}>
-                <Text style={[styles.label,]}>Class Status:</Text>
+                <Text style={[styles.label,]}>Attendence Status:</Text>
                 <Text style={[styles.value, {textAlign:"center"}, getAttendenceStatuscolor()]}>
                   {attendenceStatus}
                 </Text>
