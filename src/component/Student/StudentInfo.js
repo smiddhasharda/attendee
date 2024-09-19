@@ -800,7 +800,7 @@ const StudentInfo = ({ navigation }) => {
       );
       if(response1?.length > 0){
         let AttendenceDetials = response1?.[0] || ''
-        let AttendenceStatus = AttendenceDetials ? (!['FI', 'FR', 'F'].includes(AttendenceDetials.CLASS_SECTION) && AttendenceDetials.S_NOC_STATUS !== 'NOC' && AttendenceDetials.PERCENTAGE >= AttendenceDetials.PERCENTCHG) ? "Eligible" : "Debarred" : "Not Defined";
+        let AttendenceStatus = AttendenceDetials ? (AttendenceDetials.CLASS_SECTION.startsWith('F') || AttendenceDetials.S_NOC_STATUS === 'NOC' || AttendenceDetials.PERCENTAGE >= AttendenceDetials.PERCENTCHG) ? "Eligible" : "Debarred" : "Not Defined";
         setAttendenceStatus(AttendenceStatus);
         setStatus(AttendenceStatus === "Debarred" ? "Absent" : "Present");
         setDisabledStatus(AttendenceStatus === "Debarred" ? "Absent" : "Present");
