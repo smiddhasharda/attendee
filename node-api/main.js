@@ -292,6 +292,7 @@ const transporter = nodemailer.createTransport({
       });
     }
 
+    app.use('/node-api/resources', express.static(path.join(__dirname, 'resources')));
     app.use( "/userImg", express.static(path.join(__dirname, "./resources/assets/ProfilePics")) );
     app.use( "/invigilatorDoc", express.static(path.join(__dirname, "./resources/local-assets/BulkuploadDocs")) );
 
