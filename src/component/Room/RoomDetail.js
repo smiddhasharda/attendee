@@ -119,11 +119,22 @@ const remainingHeight = height - 190;
   };
 
   const handleGetStudentView = async (SelectedDate,SelectedRoom) => {
-    const selectedDate = new Date(SelectedDate);
-const day = selectedDate.getDate().toString().padStart(2, '0');
-const month = selectedDate.toLocaleString('en-GB', { month: 'short' }).toUpperCase();
-const year = selectedDate.getFullYear().toString().slice(-2);
-const formattedDate = `${day}-${month}-${year}`;
+//     const selectedDate = new Date(SelectedDate);
+// const day = selectedDate.getDate().toString().padStart(2, '0');
+// const month = selectedDate.toLocaleString('en-GB', { month: 'short' }).toUpperCase();
+// const year = selectedDate.getFullYear().toString().slice(-2);
+// const formattedDate = `${day}-${month}-${year}`;
+
+const date = new Date(SelectedDate);
+    const day = date.toLocaleDateString('en-GB', { day: '2-digit' });
+    const monthIndex = date.getMonth();
+    const year = date.toLocaleDateString('en-GB', { year: '2-digit' });
+    
+    // Array of month abbreviations
+    const monthAbbreviations = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+    const month = monthAbbreviations[monthIndex];
+    
+    const formattedDate = `${day}-${month}-${year}`;
 
 const formattedShiftTime = formatShiftTime(startTime);
 const formattedShiftTimePrefix = formatShiftTimePrefix(startTime);
@@ -133,7 +144,7 @@ const formattedShiftTimePrefix = formatShiftTimePrefix(startTime);
         operation: "custom",
         tblName: "PS_S_PRD_EX_RME_VW",
         data: '',
-        conditionString: `EXAM_DT = '${new Date(SelectedDate).toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-')}' AND ROOM_NBR = '${SelectedRoom}' ORDER BY CAST(PTP_SEQ_CHAR AS int)`,
+        conditionString: `EXAM_DT = '${formattedDate}' AND ROOM_NBR = '${SelectedRoom}' ORDER BY CAST(PTP_SEQ_CHAR AS int)`,
         checkAvailability: '',
         // customQuery: ` SELECT DISTINCT PS_S_PRD_EX_RME_VW.EMPLID, PS_S_PRD_EX_RME_VW.STRM, PS_S_PRD_EX_RME_VW.CATALOG_NBR, PS_S_PRD_EX_RME_VW.EXAM_DT, PS_S_PRD_EX_RME_VW.ROOM_NBR, PS_S_PRD_EX_RME_VW.PTP_SEQ_CHAR FROM PS_S_PRD_EX_RME_VW JOIN PS_S_PRD_EX_TME_VW ON PS_S_PRD_EX_RME_VW.EXAM_DT = PS_S_PRD_EX_TME_VW.EXAM_DT AND PS_S_PRD_EX_RME_VW.CATALOG_NBR = PS_S_PRD_EX_TME_VW.CATALOG_NBR AND PS_S_PRD_EX_TME_VW.EXAM_START_TIME = '${startTime}' WHERE PS_S_PRD_EX_RME_VW.EXAM_DT = '${new Date(SelectedDate).toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-')}' AND PS_S_PRD_EX_RME_VW.ROOM_NBR = '${SelectedRoom}' ORDER BY CAST(PTP_SEQ_CHAR AS int) `,
         // customQuery: `SELECT DISTINCT PS_S_PRD_EX_RME_VW.EMPLID, PS_S_PRD_EX_RME_VW.STRM, PS_S_PRD_EX_RME_VW.CATALOG_NBR, PS_S_PRD_EX_RME_VW.EXAM_DT, PS_S_PRD_EX_RME_VW.ROOM_NBR, PS_S_PRD_EX_RME_VW.PTP_SEQ_CHAR FROM PS_S_PRD_EX_RME_VW JOIN PS_S_PRD_EX_TME_VW ON PS_S_PRD_EX_RME_VW.EXAM_DT = PS_S_PRD_EX_TME_VW.EXAM_DT AND PS_S_PRD_EX_RME_VW.CATALOG_NBR = PS_S_PRD_EX_TME_VW.CATALOG_NBR AND PS_S_PRD_EX_TME_VW.EXAM_START_TIME = '${startTime}' WHERE PS_S_PRD_EX_RME_VW.EXAM_DT = '${new Date(SelectedDate).toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-')}' AND PS_S_PRD_EX_RME_VW.ROOM_NBR = '${SelectedRoom}' ORDER BY CAST(PS_S_PRD_EX_RME_VW.PTP_SEQ_CHAR AS INT) `,
