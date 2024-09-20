@@ -50,10 +50,10 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
           checkAvailability: '',
 
           //Production Build Exam Query
-          //customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW WHERE EXAM_DT >= '${CurrentDate}' ORDER BY EXAM_DT ASC`,
+          customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW WHERE EXAM_DT >= '${CurrentDate}' ORDER BY EXAM_DT ASC`,
 
           //Local Exam Testing Query
-          customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW  ORDER BY EXAM_DT ASC`,
+          // customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW  ORDER BY EXAM_DT ASC`,
           
           viewType:'Campus_View'
         };
@@ -108,7 +108,7 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
         const ExamDateArray = response.filter((item, index, self) => index === self.findIndex((t) => t.date === item.date)).map((item) => ({ EXAM_DT: item.date }));
         setExamDates(ExamDateArray);
         setExamSelectedDate(response?.[0]?.date);
-        const RoomArray = response.filter((item) => item.date === response?.data?.receivedData?.[0]?.date).map((item) => ({ room: item.room, shift: item.shift }));
+        const RoomArray = response.filter((item) => item.date === response?.[0]?.date).map((item) => ({ room: item.room, shift: item.shift }));
         handleGetRoomView(response?.[0]?.date, RoomArray);
       }
     } catch (error) {

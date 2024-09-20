@@ -292,97 +292,197 @@ const transporter = nodemailer.createTransport({
       });
     }
 
-    app.use('/node-api/resources', express.static(path.join(__dirname, 'resources')));
+    app.use('/examination/e-Nirikshak/node-api/resources', express.static(path.join(__dirname, 'resources')));
     app.use( "/userImg", express.static(path.join(__dirname, "./resources/assets/ProfilePics")) );
     app.use( "/invigilatorDoc", express.static(path.join(__dirname, "./resources/local-assets/BulkuploadDocs")) );
 
 
     // Email Verified
+    // app.post("/api/emailVerify", async (req, res) => {
+    //   try {
+    //     const encryptedQuery = req.body.data;
+    //     const decryptedQuery = JSON.parse(decrypt(encryptedQuery));
+    //     const { tblName, conditionString,viewTblName,viewConditionString } = decryptedQuery;
+    
+    //     // Query user data from the main table
+    //     const [rows] = await pool.query(`SELECT * FROM ?? WHERE ${conditionString}`, [tblName]);
+        
+    //     if (rows.length > 0) {
+    //       const userData = rows[0];
+    //       if(userData.isActive === 0){
+    //         res.status(500).json({ error: "Email Id Not Allowed" });
+    //       }
+    //       else{
+    //         const otp = Math.floor(100000 + Math.random() * 900000);
+    //         // Update the OTP for the user
+    //         const [updateRows] = await pool.query(
+    //           `UPDATE ?? SET otp = ? WHERE user_id = ?`,
+    //           [tblName, otp, userData.user_id]
+    //         );
+      
+    //         if (updateRows.affectedRows > 0) {
+    //           sendOTP(otp, userData);
+    //           res.status(200).json({ message: "Email Sent Successfully" });
+    //         } else {
+    //           res.status(500).json({ error: "Failed to send email" });
+    //         }
+    //       }    
+    //     } else {
+    //       // If user is not found, check the view table
+    //       const viewRows = await viewHRMSPool.execute( `SELECT * FROM ${viewTblName} WHERE ${viewConditionString}`,
+    //          {},
+    //           { outFormat: oracledb.OUT_FORMAT_OBJECT } )
+    //           .catch((error) => {
+    //             console.error(
+    //               "Error checking availability:",
+    //               error.message || error
+    //             );
+    //             throw error;
+    //           });
+    
+    //       if (viewRows.rows.length > 0 ) {
+    //         const viewUserData = viewRows.rows[0];
+    //         const otp = Math.floor(100000 + Math.random() * 900000);
+    
+    //         // Insert new user into main table
+    //         const [insertResult] = await pool.query(
+    //           `INSERT INTO ?? SET username = ?, name = ?, contact_number = ?, email_id = ?, isVerified = '1', otp = ?`,
+    //           [
+    //             tblName,
+    //             viewUserData.EMPLID,
+    //             viewUserData.DISPLAY_NAME,
+    //             viewUserData.PHONE,
+    //             viewUserData.EMAILID,
+    //             otp
+    //           ]
+    //         );
+    
+    //         if (insertResult.affectedRows > 0) {
+    //           const userId = insertResult.insertId;
+    
+    //           // Assign default role to the new user
+    //           const [insertRoleResult] = await pool.query(
+    //             `INSERT INTO tbl_user_role_permission SET FK_userId = ?, FK_RoleId = '2'`,
+    //             [userId]
+    //           );
+    
+    //           if (insertRoleResult.affectedRows > 0) {
+    //             sendOTP(otp, viewUserData,"view");
+    //             res.status(200).json({ message: "Email Sent Successfully" });
+    //           } else {
+    //             res.status(500).json({ error: "Failed to assign role to new user" });
+    //           }
+    
+    //         } else {
+    //           res.status(500).json({ error: "Failed to create new user" });
+    //         }
+    
+    //       } else {
+    //         res.status(401).json({ error: "Invalid Email Id" });
+    //       }
+    //     }
+    //   } catch (error) {
+    //     console.error("Email verification error:", error.message || error);
+    //     res.status(500).json({ error: "Internal server error" });
+    //   }
+    // });
     app.post("/api/emailVerify", async (req, res) => {
       try {
         const encryptedQuery = req.body.data;
         const decryptedQuery = JSON.parse(decrypt(encryptedQuery));
-        const { tblName, conditionString,viewTblName,viewConditionString } = decryptedQuery;
-    
+        const { tblName, conditionString, viewTblName, viewConditionString } =
+          decryptedQuery;
+
         // Query user data from the main table
-        const [rows] = await pool.query(`SELECT * FROM ?? WHERE ${conditionString}`, [tblName]);
-        
+        const [rows] = await pool.query(
+          `SELECT * FROM ?? WHERE ${conditionString}`,
+          [tblName]
+        );
+
         if (rows.length > 0) {
           const userData = rows[0];
-          if(userData.isActive === 0){
+          if (userData.isActive === 0) {
             res.status(500).json({ error: "Email Id Not Allowed" });
-          }
-          else{
+          } else {
             const otp = Math.floor(100000 + Math.random() * 900000);
             // Update the OTP for the user
             const [updateRows] = await pool.query(
               `UPDATE ?? SET otp = ? WHERE user_id = ?`,
               [tblName, otp, userData.user_id]
             );
-      
+
             if (updateRows.affectedRows > 0) {
               sendOTP(otp, userData);
               res.status(200).json({ message: "Email Sent Successfully" });
             } else {
               res.status(500).json({ error: "Failed to send email" });
             }
-          }    
+          }
         } else {
           // If user is not found, check the view table
-          const viewRows = await viewHRMSPool.execute( `SELECT * FROM ${viewTblName} WHERE ${viewConditionString}`,
-             {},
-              { outFormat: oracledb.OUT_FORMAT_OBJECT } )
-              .catch((error) => {
-                console.error(
-                  "Error checking availability:",
-                  error.message || error
-                );
-                throw error;
-              });
-    
-          if (viewRows.rows.length > 0 ) {
+          const viewRows = await viewHRMSPool
+            .execute(
+              `SELECT * FROM ${viewTblName} WHERE ${viewConditionString}`,
+              {},
+              { outFormat: oracledb.OUT_FORMAT_OBJECT }
+            )
+            .catch((error) => {
+              console.error(
+                "Error checking availability:",
+                error.message || error
+              );
+              throw error;
+            });
+
+          if (viewRows.rows.length > 0) {
             const viewUserData = viewRows.rows[0];
             const otp = Math.floor(100000 + Math.random() * 900000);
-    
-            // Insert new user into main table
-            const [insertResult] = await pool.query(
-              `INSERT INTO ?? SET username = ?, name = ?, contact_number = ?, email_id = ?, isVerified = '1', otp = ?`,
-              [
-                tblName,
-                viewUserData.EMPLID,
-                viewUserData.DISPLAY_NAME,
-                viewUserData.PHONE,
-                viewUserData.EMAILID,
-                otp
-              ]
+            const [CheckRow] = await pool.query(
+              `SELECT * FROM ?? WHERE email_id = ?`,
+              [tblName, viewUserData.EMAILID]
             );
-    
-            if (insertResult.affectedRows > 0) {
-              const userId = insertResult.insertId;
-    
-              // Assign default role to the new user
-              const [insertRoleResult] = await pool.query(
-                `INSERT INTO tbl_user_role_permission SET FK_userId = ?, FK_RoleId = '2'`,
-                [userId]
-              );
-    
-              if (insertRoleResult.affectedRows > 0) {
-                sendOTP(otp, viewUserData,"view");
-                res.status(200).json({ message: "Email Sent Successfully" });
-              } else {
-                res.status(500).json({ error: "Failed to assign role to new user" });
-              }
-    
+            if (CheckRow?.length > 0) {
+              res.status(500).json({ error: "Failed to create new user , already exist" });
             } else {
-              res.status(500).json({ error: "Failed to create new user" });
+              // Insert new user into main table
+              const [insertResult] = await pool.query(
+                `INSERT INTO ?? SET username = ?, name = ?, contact_number = ?, email_id = ?, isVerified = '1', otp = ?`,
+                [
+                  tblName,
+                  viewUserData.EMPLID,
+                  viewUserData.DISPLAY_NAME,
+                  viewUserData.PHONE,
+                  viewUserData.EMAILID,
+                  otp,
+                ]
+              );
+
+              if (insertResult.affectedRows > 0) {
+                const userId = insertResult.insertId;
+                // Assign default role to the new user
+                const [insertRoleResult] = await pool.query(
+                  `INSERT INTO tbl_user_role_permission SET FK_userId = ?, FK_RoleId = '2'`,
+                  [userId]
+                );
+
+                if (insertRoleResult.affectedRows > 0) {
+                  sendOTP(otp, viewUserData, "view");
+                  res.status(200).json({ message: "Email Sent Successfully" });
+                } else {
+                  res
+                    .status(500)
+                    .json({ error: "Failed to assign role to new user" });
+                }
+              } else {
+                res.status(500).json({ error: "Failed to create new user" });
+              }
             }
-    
           } else {
             res.status(401).json({ error: "Invalid Email Id" });
           }
         }
       } catch (error) {
-        console.error("Email verification error:", error.message || error);
+        console.error("Email verification error:", error);
         res.status(500).json({ error: "Internal server error" });
       }
     });
