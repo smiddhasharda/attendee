@@ -187,7 +187,23 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
   const handleGetRoomView = async (SelectedDate) => {
     try {
       const authToken = await checkAuthToken();
-      const formattedDate = SelectedDate ? new Date(SelectedDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }).toUpperCase().replace(/ /g, '-') : '';
+      let formattedDate;
+      if(SelectedDate){
+        const date = new Date(SelectedDate);
+    const day = date.toLocaleDateString('en-GB', { day: '2-digit' });
+    const monthIndex = date.getMonth();
+    const year = date.toLocaleDateString('en-GB', { year: '2-digit' });
+    
+    // Array of month abbreviations
+    const monthAbbreviations = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+    const month = monthAbbreviations[monthIndex];
+    
+    formattedDate = `${day}-${month}-${year}`;
+      }
+      else{
+        formattedDate = ''
+      }
+      // const formattedDate = SelectedDate ? new Date(SelectedDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }).toUpperCase().replace(/ /g, '-') : '';
       const customQuery = `SELECT DISTINCT ROOM_NBR FROM PS_S_PRD_EX_RME_VW WHERE EXAM_DT = '${formattedDate}' order by ROOM_NBR`;
       const Parameter = {
         operation: "custom",
@@ -379,12 +395,12 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
     // return `${year}-${month}-${day}`;
   };
 
-  const handleGetDateView = async (date) => {
+  const handleGetDateView = async () => {
     // let CurrentDate = new Date().toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-');
-    const Date = new Date();
-    const day = Date.toLocaleDateString('en-GB', { day: '2-digit' });
-    const monthIndex = Date.getMonth();
-    const year = Date.toLocaleDateString('en-GB', { year: '2-digit' });
+    const date = new Date();
+    const day = date.toLocaleDateString('en-GB', { day: '2-digit' });
+    const monthIndex = date.getMonth();
+    const year = date.toLocaleDateString('en-GB', { year: '2-digit' });
     
     // Array of month abbreviations
     const monthAbbreviations = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
@@ -418,7 +434,24 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
   };
 
   const handleGetShiftList = async (SelectedDate) => {
-    const formattedDate = SelectedDate ? new Date(SelectedDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }).toUpperCase().replace(/ /g, '-') : '';
+    const date = new Date(SelectedDate);
+    let formattedDate
+    if(SelectedDate){
+      const day = date.toLocaleDateString('en-GB', { day: '2-digit' });
+      const monthIndex = date.getMonth();
+      const year = date.toLocaleDateString('en-GB', { year: '2-digit' });
+      
+      // Array of month abbreviations
+      const monthAbbreviations = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+      const month = monthAbbreviations[monthIndex];
+      
+    formattedDate = `${day}-${month}-${year}`;
+    }
+    else{
+    formattedDate = '';
+    }
+
+    // const formattedDate = SelectedDate ? new Date(SelectedDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }).toUpperCase().replace(/ /g, '-') : '';
      
     try {
     const authToken = await checkAuthToken();
@@ -724,7 +757,7 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
                     <Text style={[styles.listItemText, {width:120, display: "inline-block",textAlign:"center" }]} numberOfLines={1}>
                       {item.updated_by ? item.updated_by:'N/A'}
                     </Text> 
-              {UserAccess?.update === 1  ? <Pressable style={[{width:80}, {alignItems:"center"}]} onPress={() => handleEditInvigilator(item)}>
+              {(UserAccess?.update === 1 && parseAndFormatDate(item.date) >= format(new Date(), 'dd-MMMM-yyyy'))  ? <Pressable style={[{width:80}, {alignItems:"center"}]} onPress={() => handleEditInvigilator(item)}>
               <Text style={styles.listItemEditText}><Feather name="edit" size={16} color="green" /></Text>
                 </Pressable> : (<Text>-</Text>)}  
             </View>)
