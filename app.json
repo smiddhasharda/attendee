@@ -2,7 +2,7 @@
   "expo": {
     "name": "eNirikshak",
     "slug": "attendee",
-    "version": "1.1.0",
+    "version": "1.1.2",
     "orientation": "portrait",
     "icon": "./assets/eNirikshak_Logo.png",
     "userInterfaceStyle": "light",
@@ -19,6 +19,7 @@
       "bundleIdentifier": "com.dev.saxena.attendee"
     },
     "android": {
+      "versionCode": 4,
       "adaptiveIcon": {
         "foregroundImage": "./assets/eNirikshak_Logo.png",
         "backgroundColor": "#ffffff"
@@ -31,11 +32,6 @@
     },
     "web": {
       "bundler": "metro"
-       // Remove the comment while making production build & comment the above bundler line.
-      // "bundler": "webpack",
-      // "build": {
-      //   "publicPath": "/e-Nirikshak/"
-      // }
     },
     "plugins": [
       [

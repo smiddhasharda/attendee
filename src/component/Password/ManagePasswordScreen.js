@@ -120,7 +120,7 @@ const ManagePasswordScreen = ({
           Parameter,
           authToken
         );
-        if (response?.data?.receivedData?.length > 0) {
+        if (response?.length > 0) {
           const Parameter1 = {
             operation: "update",
             tblName: "tbl_user_master",

@@ -265,7 +265,7 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
   const handleEditInvigilator = async (selectedData) => {
     const selectedDate = parseISO(selectedData.date);
     const currentDate = new Date();
-    if (!isBefore(selectedDate, currentDate)) {
+    if (selectedDate<currentDate) {
       // Prevent editing if the date is less than the current date
       addToast("You cannot edit past invigilator duties.", "error");
       return;
@@ -757,7 +757,7 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
                     <Text style={[styles.listItemText, {width:120, display: "inline-block",textAlign:"center" }]} numberOfLines={1}>
                       {item.updated_by ? item.updated_by:'N/A'}
                     </Text> 
-              {(UserAccess?.update === 1 && parseAndFormatDate(item.date) >= format(new Date(), 'dd-MMMM-yyyy'))  ? <Pressable style={[{width:80}, {alignItems:"center"}]} onPress={() => handleEditInvigilator(item)}>
+              {UserAccess?.update === 1  ? <Pressable style={[{width:80}, {alignItems:"center"}]} onPress={() => handleEditInvigilator(item)}>
               <Text style={styles.listItemEditText}><Feather name="edit" size={16} color="green" /></Text>
                 </Pressable> : (<Text>-</Text>)}  
             </View>)
