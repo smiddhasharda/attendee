@@ -21,7 +21,8 @@ import ToastContainer from './src/globalComponent/ToastContainer/ToastContainer'
 // import Shimmer from "./src/component/ShimmerLoader/Shimmer"
  
 const Stack = createNativeStackNavigator();
-global.SERVER_URL = "https://attendance.shardatech.org/api";
+global.SERVER_URL = "http://3.111.185.105:3502/api";
+//global.SERVER_URL = "https://attendance.shardatech.org/api";
 
 const AppContent = () => {
   // const [refreshing, setRefreshing] = useState(false);

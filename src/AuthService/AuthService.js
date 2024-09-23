@@ -2,7 +2,8 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 // import { API_URL } from '@env';
 import {encrypt,decrypt} from '../globalComponent/cryptography/cryptography'
-const API_URL = 'https://attendance.shardatech.org/api';
+const API_URL = 'http://3.111.185.105:3502/api';
+//const API_URL = 'https://attendance.shardatech.org/api';
 
 
 const request = async (method, endpoint, data, authToken,params) => {
