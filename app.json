@@ -32,6 +32,11 @@
     },
     "web": {
       "bundler": "metro"
+      // Remove the comment while making production build & comment the above bundler line.
+      // "bundler": "webpack",
+      // "build": {
+      //   "publicPath": "/examination/e-Nirikshak/"
+      // }
     },
     "plugins": [
       [
