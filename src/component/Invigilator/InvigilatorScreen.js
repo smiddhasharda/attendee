@@ -364,7 +364,7 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
     }
   };
     
-  const parseAndFormatDate = (dateString) => {
+  const parseAndFormatDate = (dateString,dateFormat) => {
     const possibleFormats = [
       "yyyy-MM-dd'T'HH:mm:ss.SSSX", // ISO format
       "dd-MMMM-yyyy",               // e.g., 03-July-2023
@@ -387,7 +387,7 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
       return null;
     }
   
-    const formattedDate = format(parsedDate, 'dd-MMMM-yyyy');
+    const formattedDate = format(parsedDate,dateFormat);
     return formattedDate;
   };
   const parseExcelDate = (SelectedDate) => {
@@ -425,7 +425,7 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
       );
  
       if (response) {
-        let ExamDates = response?.map((item) => ({label : `${parseAndFormatDate(item?.EXAM_DT)}` , value : item?.EXAM_DT}));
+        let ExamDates = response?.map((item) => ({label : `${parseAndFormatDate(item?.EXAM_DT,'dd-MMMM-yyyy')}` , value : item?.EXAM_DT}));
         setExamDates(ExamDates);
       }
     } catch (error) {
@@ -739,12 +739,12 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
             refreshing ? <ShimmerEffect/> :
            ( <View style={styles.listItem}>
               <Text style={[styles.listItemText, {width:20}]}>{index + 1}</Text>
-              <Text style={[styles.listItemText, {width:120, textAlign:"center"}]}>{item.employeeId}</Text>
-              <Text style={[styles.listItemText, {width:180, textAlign:"center"}]}>{item.invigilatorName}</Text>
-              <Text style={[styles.listItemText, {width:120, textAlign:"center"}]}>{item.room}</Text>
-              <Text style={[styles.listItemText, {width:120, textAlign:"center"}]}>{parseAndFormatDate(item.date)}</Text>
-              <Text style={[styles.listItemText, {width:120, textAlign:"center"}]}>{convertedTime(item.shift)}</Text>
-              <Text style={[styles.listItemText, {width:120, textAlign:"center"}]}>{item.duty_status}</Text>   
+              <Text style={[styles.listItemText, {width:120, textAlign:"center"}]}>{item.employeeId || '-'}</Text>
+              <Text style={[styles.listItemText, {width:180, textAlign:"center"}]}>{item.invigilatorName || '-'}</Text>
+              <Text style={[styles.listItemText, {width:120, textAlign:"center"}]}>{item.room || '-'}</Text>
+              <Text style={[styles.listItemText, {width:120, textAlign:"center"}]}>{item.date ? parseAndFormatDate(item.date,'dd-MM-yyyy') : '-'}</Text>
+              <Text style={[styles.listItemText, {width:120, textAlign:"center"}]}>{item.shift ? convertedTime(item.shift) : '-'}</Text>
+              <Text style={[styles.listItemText, {width:120, textAlign:"center"}]}>{item.duty_status || '-'}</Text>   
               <Text style={[styles.listItemText, {width:120, display: "inline-block", textAlign:"center" }]} numberOfLines={1}>
                       {item.created_at ? new Date(item.created_at.split('T')[0]).toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }) : 'N/A'}
                     </Text>
