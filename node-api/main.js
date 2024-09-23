@@ -179,39 +179,108 @@ const transporter = nodemailer.createTransport({
     // );
 
 
-    try {
-      // Handle MySQL connection
-      const connection = await pool.getConnection();
-      console.log("Local Connected to MySQL database:", process.env.DB_DATABASE);
-      connection.release();
-    } catch (err) {
-      console.error("Error connecting to MySQL database:", err.message);
-    }
-    let viewCampusPool;
-    // let viewCampus2Pool;
-    let viewHRMSPool;
+    // try {
+    //   // Handle MySQL connection
+    //   const connection = await pool.getConnection();
+    //   console.log("Local Connected to MySQL database:", process.env.DB_DATABASE);
+    //   connection.release();
+    // } catch (err) {
+    //   console.error("Error connecting to MySQL database:", err.message);
+    // }
+    // let viewCampusPool;
+    // // let viewCampus2Pool;
+    // let viewHRMSPool;
     
-    try {
-      // Oracle Campus Connection
-      viewCampusPool = await oracledb.getConnection(viewCampusConfig);
-      console.log(
-        "Successfully Connected to Oracle database Campus View : ",
-        process.env.VIEW_DATABASE
-      );
-    } catch (err) {
-      console.error("Error connecting to Oracle Campus database:", err.message);
-    }
+    // try {
+    //   // Oracle Campus Connection
+    //   viewCampusPool = await oracledb.getConnection(viewCampusConfig);
+    //   console.log(
+    //     "Successfully Connected to Oracle database Campus View : ",
+    //     process.env.VIEW_DATABASE
+    //   );
+    // } catch (err) {
+    //   console.error("Error connecting to Oracle Campus database:", err.message);
+    // }
     
+    // try {
+    //   // Oracle HRMS Connection
+    //   viewHRMSPool = await oracledb.getConnection(viewHRMSConfig);
+    //   console.log(
+    //     "Successfully Connected to Oracle database HRMS View : ",
+    //     process.env.VIEW_DATABASE
+    //   );
+    // } catch (err) {
+    //   console.error("Error connecting to Oracle HRMS database:", err.message);
+    // }
+
+    // Initialize Oracle connections
+let viewCampusPool, viewHRMSPool;
+
+// MySQL Connection
+async function setupMySQLConnection() {
+  try {
+    const connection = await pool.getConnection();
+    console.log("Successfully connected to MySQL database:", process.env.DB_DATABASE);
+    connection.release();
+  } catch (err) {
+    console.error("Error connecting to MySQL database:", err.message);
+  }
+}
+
+// Oracle Campus Connection
+async function setupOracleCampusConnection() {
+  try {
+    viewCampusPool = await oracledb.getConnection(viewCampusConfig);
+    console.log("Successfully connected to Oracle database Campus View");
+  } catch (err) {
+    console.error("Error connecting to Oracle Campus database:", err.message);
+  }
+}
+
+// Oracle HRMS Connection
+async function setupOracleHRMSConnection() {
+  try {
+    viewHRMSPool = await oracledb.getConnection(viewHRMSConfig);
+    console.log("Successfully connected to Oracle database HRMS View");
+  } catch (err) {
+    console.error("Error connecting to Oracle HRMS database:", err.message);
+  }
+}
+
+// Keep MySQL and Oracle connections alive with periodic queries
+async function keepConnectionsAlive() {
+  setInterval(async () => {
     try {
-      // Oracle HRMS Connection
-      viewHRMSPool = await oracledb.getConnection(viewHRMSConfig);
-      console.log(
-        "Successfully Connected to Oracle database HRMS View : ",
-        process.env.VIEW_DATABASE
-      );
-    } catch (err) {
-      console.error("Error connecting to Oracle HRMS database:", err.message);
+      // Keep MySQL connection alive
+      const mysqlConnection = await pool.getConnection();
+      await mysqlConnection.query("SELECT 1");  // Dummy query
+      mysqlConnection.release();
+      console.log("MySQL connection is alive");
+
+      // Keep Oracle Campus connection alive
+      if (viewCampusPool) {
+        await viewCampusPool.execute("SELECT 1 FROM DUAL"); // Dummy query for Oracle
+        console.log("Oracle Campus connection is alive");
+      }
+
+      // Keep Oracle HRMS connection alive
+      if (viewHRMSPool) {
+        await viewHRMSPool.execute("SELECT 1 FROM DUAL"); // Dummy query for Oracle
+        console.log("Oracle HRMS connection is alive");
+      }
+    } catch (error) {
+      console.error("Error keeping connections alive:", error.message);
     }
+  }, 8 * 60 * 60 * 1000); // Run the keep-alive every 8 hours
+}
+
+// Initialize all connections
+(async () => {
+  await setupMySQLConnection();
+  await setupOracleCampusConnection();
+  await setupOracleHRMSConnection();
+  keepConnectionsAlive(); // Start the keep-alive process
+})();
 
     // try {
     //   // Oracle Campus 2nd Connection
@@ -292,9 +361,9 @@ const transporter = nodemailer.createTransport({
       });
     }
 
-    app.use('/examination/e-Nirikshak/node-api/resources', express.static(path.join(__dirname, 'resources')));
-    app.use( "/userImg", express.static(path.join(__dirname, "./resources/assets/ProfilePics")) );
-    app.use( "/invigilatorDoc", express.static(path.join(__dirname, "./resources/local-assets/BulkuploadDocs")) );
+    app.use('/node-api/resources', express.static(path.join(__dirname, 'resources')));
+    app.use( "/api/userImg", express.static(path.join(__dirname, "./resources/assets/ProfilePics")) );
+    app.use( "/api/invigilatorDoc", express.static(path.join(__dirname, "./resources/local-assets/BulkuploadDocs")) );
 
 
     // Email Verified
@@ -1575,7 +1644,7 @@ function parseShiftTime(timeString) {
         if (checkAvailability) {
           const checkRows = await viewSetup.execute(`SELECT * FROM ${tblName} WHERE ${conditionString}`)
             .catch((error) => {
-              console.error("Error checking availability:", error.message || error);
+              console.error("Error checking availability:", error);
               throw error;
             });
           if (checkRows && checkRows.rows.length > 0) {
@@ -1583,6 +1652,7 @@ function parseShiftTime(timeString) {
           }
         }
         let responseData;
+        //console.log("Custom Query", customQuery);
         switch (operation) {
           case "fetch":
             const selectRows = await viewSetup.execute(
@@ -1590,7 +1660,7 @@ function parseShiftTime(timeString) {
               {},
               { outFormat: oracledb.OUT_FORMAT_OBJECT }
             ).catch((error) => {
-              console.error("Error fetching data:", error.message || error);
+              console.error("Error fetching data:", error);
               throw error;
             });
 
@@ -1607,7 +1677,7 @@ function parseShiftTime(timeString) {
               {},
               { outFormat: oracledb.OUT_FORMAT_OBJECT }
             ).catch((error) => {
-              console.error("Error executing custom query:", error.message || error);
+              console.error("Error executing custom query:", error);
               throw error;
             });
             responseData = customRows?.rows;
@@ -1696,13 +1766,14 @@ function parseShiftTime(timeString) {
           }
         });
         // Encrypt the response data
+      //console.log("Photo Response", response.data.data.query.rows);
       const encryptedData = encrypt(JSON.stringify(response.data.data.query.rows));
       return res.status(200).json({
         message: "Fetch successful",
         receivedData: encryptedData,
       });
       } catch (error) {
-        console.error('Error occurred:', error.message);
+        console.error('Error occurred:', error);
         return res.status(500).json({ error: "Internal server error" });      }
     });
 
@@ -1711,7 +1782,7 @@ function parseShiftTime(timeString) {
       console.log(`Server is running on SERVER_PORT: ${PORT}`);
     });
   } catch (error) {
-    console.error("Database connection error:", error.message || error);
+    console.error("Database connection error:", error);
     process.exit(1); // Exit the process in case of a connection error
   }
 })();
