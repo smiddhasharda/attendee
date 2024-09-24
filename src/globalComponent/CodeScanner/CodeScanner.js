@@ -102,6 +102,7 @@ export default function CodeScanner({ onScannedData, onCancel, BarCodeTypes }) {
         enableTorch={isTorchOn}
         focusDepth={1}
         zoom={0.1}
+        facing='back'
       >
         <View style={styles.overlay}>
           <View style={[styles.frame, { width: frameSize, height: frameSize }]} />
