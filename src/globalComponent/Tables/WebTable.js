@@ -90,7 +90,7 @@ const WebTable = ({ columns, data,handleExportRows,handleExportData,handleRefres
         animation: 'pulse',
         height: 28,
       }}
-    rowCount={data?.length || 0}
+    // rowCount={data?.length || 0}
   />
   </ScrollView>
   </ScrollView>
