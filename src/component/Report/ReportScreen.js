@@ -1,5 +1,5 @@
 import React, { useState, useEffect,useCallback,useMemo  } from 'react';
-import { View, ScrollView, StyleSheet,FlatList ,Pressable,Text,Platform } from 'react-native';
+import { View, ScrollView, StyleSheet,FlatList ,Pressable,Text,Platform,ActivityIndicator } from 'react-native';
 import { saveAs } from 'file-saver';
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -20,6 +20,8 @@ if (Platform.OS === 'web') {
 }
 
 const ReportScreen = ({userAccess}) => {
+  const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
     const [currentTab, setCurrentTab] = useState('ReportByStudents');
   const currentDate = new Date();
   const pastMonthDate = new Date();
@@ -41,8 +43,19 @@ const ReportScreen = ({userAccess}) => {
   const [examSelectedDate, setExamSelectedDate] = useState("");
   const { addToast } = useToast();
 
+  const fetchDetails = async () => {
+    setLoading(true);
+    setRefreshing(true);
+    await handleGetExamDateList().then(() => {
+      setLoading(false);
+    }).catch(() => {
+      setLoading(false);
+    });
+  };
+  
+
   useEffect(() => {
-    handleGetExamDateList();
+    fetchDetails();
   }, [userAccess,startDate,endDate]);
 
 
@@ -75,14 +88,15 @@ const ReportScreen = ({userAccess}) => {
     
     
       if (response) {
+        setRefreshing(false);
         setExamDates(response || []);
         setExamSelectedDate(response?.[0]?.EXAM_DT);
-        handleGetExamRoomList(response?.[0]?.EXAM_DT);
-        handleGetExamReport(response?.[0]?.EXAM_DT);
-        handleGetExamReportByCategory(response?.[0]?.EXAM_DT);
-        handleGetExamReportByRoom(response?.[0]?.EXAM_DT);
-        handleGetSchoolList(response?.[0]?.EXAM_DT);
-        handleGetShiftList(response?.[0]?.EXAM_DT);
+        await handleGetExamRoomList(response?.[0]?.EXAM_DT);
+        await handleGetExamReport(response?.[0]?.EXAM_DT);
+        await handleGetExamReportByCategory(response?.[0]?.EXAM_DT);
+        await handleGetExamReportByRoom(response?.[0]?.EXAM_DT);
+        await handleGetSchoolList(response?.[0]?.EXAM_DT);
+        await handleGetShiftList(response?.[0]?.EXAM_DT);
       }
     } catch (error) {
       handleAuthErrors(error);
@@ -163,14 +177,15 @@ const ReportScreen = ({userAccess}) => {
       };
     const handleGetExamReport = async (date) => {
     try {
-    const authToken = await checkAuthToken();
+     const authToken = await checkAuthToken();
     const Parameter =  {
       operation: "custom",
       tblName: "tbl_report_master",
       data: "",
       conditionString:"",
       checkAvailability: "",
-      customQuery: `select JSON_ARRAYAGG(json_object('PK_Report_Id',p.PK_Report_Id,'EMPLID',EMPLID,'EXAM_DT',p.EXAM_DT,'ROOM_NBR',p.ROOM_NBR,'EXAM_START_TIME',p.EXAM_START_TIME,'STRM',p.STRM,'CATALOG_NBR',p.CATALOG_NBR,'PTP_SEQ_CHAR',p.PTP_SEQ_CHAR,'NAME_FORMAL',p.NAME_FORMAL,'ADM_APPL_NBR',p.ADM_APPL_NBR,'DESCR',p.DESCR,'DESCR2',p.DESCR2,'DESCR3',p.DESCR3,'Status',p.Status,'Attendece_Status',p.Attendece_Status,'EXAM_TYPE_CD',p.EXAM_TYPE_CD,'created_by',p.created_by,'updated_by',p.updated_by,'isActive',p.isActive,'copyData',( SELECT CAST( CONCAT('[', GROUP_CONCAT( JSON_OBJECT( 'PK_CopyId',q.PK_CopyId,'FK_ReportId',q.FK_ReportId,'EMPLID',q.EMPLID,'copyNumber',q.copyNumber,'alternateCopyNumber1',q.alternateCopyNumber1,'alternateCopyNumber2',q.alternateCopyNumber2,'alternateCopyNumber3',q.alternateCopyNumber3,'alternateCopyNumber4',q.alternateCopyNumber4,'alternateCopyNumber5',q.alternateCopyNumber5,'alternateCopyNumber6',q.alternateCopyNumber6,'isActive',q.isActive) ), ']') AS JSON ) FROM tbl_copy_master q WHERE q.FK_ReportId = p.PK_Report_Id ))) AS ReportMaster from tbl_report_master p where EXAM_DT = '${date}'`,
+      customQuery:`SELECT JSON_ARRAYAGG( JSON_OBJECT( 'PK_Report_Id', p.PK_Report_Id, 'EMPLID', p.EMPLID, 'EXAM_DT', p.EXAM_DT, 'ROOM_NBR', p.ROOM_NBR, 'EXAM_START_TIME', p.EXAM_START_TIME, 'STRM', p.STRM, 'CATALOG_NBR', p.CATALOG_NBR, 'PTP_SEQ_CHAR', p.PTP_SEQ_CHAR, 'NAME_FORMAL', p.NAME_FORMAL, 'ADM_APPL_NBR', p.ADM_APPL_NBR, 'DESCR', p.DESCR, 'DESCR2', p.DESCR2, 'DESCR3', p.DESCR3, 'Status', p.Status, 'Attendece_Status', p.Attendece_Status, 'EXAM_TYPE_CD', p.EXAM_TYPE_CD, 'created_by', p.created_by, 'updated_by', p.updated_by, 'isActive', p.isActive, 'copyData', cd.copy_data_json ) ) AS ReportMaster FROM tbl_report_master p LEFT JOIN ( SELECT FK_ReportId, CAST(CONCAT('[', GROUP_CONCAT(JSON_OBJECT( 'PK_CopyId', PK_CopyId, 'FK_ReportId', FK_ReportId, 'EMPLID', EMPLID, 'copyNumber', copyNumber, 'isActive', isActive )), ']') AS JSON) AS copy_data_json FROM tbl_copy_master GROUP BY FK_ReportId ) cd ON p.PK_Report_Id = cd.FK_ReportId WHERE p.EXAM_DT = '${date}'`,
+      // customQuery: `select JSON_ARRAYAGG(json_object('PK_Report_Id',p.PK_Report_Id,'EMPLID',EMPLID,'EXAM_DT',p.EXAM_DT,'ROOM_NBR',p.ROOM_NBR,'EXAM_START_TIME',p.EXAM_START_TIME,'STRM',p.STRM,'CATALOG_NBR',p.CATALOG_NBR,'PTP_SEQ_CHAR',p.PTP_SEQ_CHAR,'NAME_FORMAL',p.NAME_FORMAL,'ADM_APPL_NBR',p.ADM_APPL_NBR,'DESCR',p.DESCR,'DESCR2',p.DESCR2,'DESCR3',p.DESCR3,'Status',p.Status,'Attendece_Status',p.Attendece_Status,'EXAM_TYPE_CD',p.EXAM_TYPE_CD,'created_by',p.created_by,'updated_by',p.updated_by,'isActive',p.isActive,'copyData',( SELECT CAST( CONCAT('[', GROUP_CONCAT( JSON_OBJECT( 'PK_CopyId',q.PK_CopyId,'FK_ReportId',q.FK_ReportId,'EMPLID',q.EMPLID,'copyNumber',q.copyNumber,'alternateCopyNumber1',q.alternateCopyNumber1,'alternateCopyNumber2',q.alternateCopyNumber2,'alternateCopyNumber3',q.alternateCopyNumber3,'alternateCopyNumber4',q.alternateCopyNumber4,'alternateCopyNumber5',q.alternateCopyNumber5,'alternateCopyNumber6',q.alternateCopyNumber6,'isActive',q.isActive) ), ']') AS JSON ) FROM tbl_copy_master q WHERE q.FK_ReportId = p.PK_Report_Id ))) AS ReportMaster from tbl_report_master p where EXAM_DT = '${date}'`,
     };
     const response = await fetch(
       Parameter,
@@ -231,6 +246,7 @@ const ReportScreen = ({userAccess}) => {
         };
     
     const handleAuthErrors = (error) => {
+      setLoading(false);
     switch (error.message) {
     case "Invalid credentials":
     addToast("Invalid authentication credentials", "error");
@@ -278,15 +294,41 @@ const ReportScreen = ({userAccess}) => {
       return format(new Date(SelectedDate),( formate || 'yyyy-MM-dd'));
       // return `${year}-${month}-${day}`;
     };
-    const handleDateClick = (date) => {
+    // const handleDateClick = async(date) => {
+    //   setLoading(true);
+    //   setExamSelectedDate(date);
+    //   await handleGetExamReport(date);
+    //   await handleGetExamReportByCategory(date);
+    //   await handleGetExamReportByRoom(date);
+    //   await handleGetExamRoomList(date);
+    //   await handleGetSchoolList(date);
+    //   await handleGetShiftList(date);
+    // then(() => {
+    //   setLoading(false);
+    // }).catch(() => {
+    //   setLoading(false);
+    // });
+     
+    // }  
+    
+    const handleDateClick = async (date) => {
+      setLoading(true);
       setExamSelectedDate(date);
-      handleGetExamReport(date);
-      handleGetExamReportByCategory(date);
-      handleGetExamReportByRoom(date);
-      handleGetExamRoomList(date);
-      handleGetSchoolList(date);
-      handleGetShiftList(date);
-    }      
+    
+      try {
+        await handleGetExamReport(date);
+        await handleGetExamReportByCategory(date);
+        await handleGetExamReportByRoom(date);
+        await handleGetExamRoomList(date);
+        await handleGetSchoolList(date);
+        await handleGetShiftList(date);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
 
 
   const convertedTime = (StartTime) => {
@@ -1893,6 +1935,7 @@ const handleExportRowsAsPDFByRoom = (rows) => {
                       handleRefreshData={() => handleDateClick(examSelectedDate)}
                       handleExportRowsAsPDF={handleExportRowsAsPDF}
                       style={styles.tablebtn}
+                      loading={loading}
                     />
                   </React.Suspense>
                 );
@@ -1908,6 +1951,7 @@ const handleExportRowsAsPDFByRoom = (rows) => {
                       handleRefreshData={() => handleDateClick(examSelectedDate)}
                       handleExportRowsAsPDF={handleExportRowsAsPDFByCategory}
                       style={styles.tablebtn}
+                      loading={loading}
                     />
                   </React.Suspense>
                 );
@@ -1923,6 +1967,7 @@ const handleExportRowsAsPDFByRoom = (rows) => {
                         handleRefreshData={() => handleDateClick(examSelectedDate)}
                         handleExportRowsAsPDF={handleExportRowsAsPDFByRoom}                      
                         style={styles.tablebtn}
+                        loading={loading}
                       />
                     </React.Suspense>
                   );
@@ -1936,7 +1981,10 @@ const handleExportRowsAsPDFByRoom = (rows) => {
         
   
     return (
-      <View style={styles.container}>
+      // loading ? (
+      //   <ActivityIndicator size="large" color="#0000ff" />
+      // ) :
+      (<View style={styles.container}>
        <View style={styles.dropdownWrap}>
         <CustomDateTimePicker  date={startDate} handelChangeDate={setStartDate} inputStyle={styles.inputStyle} datePickerStyle={styles.datePickerStyle}   /> 
         <CustomDateTimePicker date={endDate} handelChangeDate={setEndDate} />   
@@ -1968,6 +2016,7 @@ const handleExportRowsAsPDFByRoom = (rows) => {
                   </Pressable>
                 );
               }}
+              refreshing={refreshing}
               horizontal
               keyExtractor={(item) => item.EXAM_DT}
             /> : <Text style={styles.nodatestext}>There is no data available for the dates between {startDate.toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-')} to {endDate.toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-')}</Text>}
@@ -1986,7 +2035,7 @@ const handleExportRowsAsPDFByRoom = (rows) => {
           </Pressable>
         </View>
         {renderTable()}
-        </View>
+        </View>)
     );
   };
   

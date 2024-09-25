@@ -3,7 +3,7 @@ import { MaterialReactTable } from 'material-react-table';
 import { View, Pressable, Text,  ScrollView} from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; 
 
-const WebTable = ({ columns, data,handleExportRows,handleExportData,handleRefreshData,style,handleExportRowsAsPDF }) => {
+const WebTable = ({ columns, data,handleExportRows,handleExportData,handleRefreshData,style,handleExportRowsAsPDF,loading }) => {
 
   return (
     <ScrollView  style={{ maxHeight: 450 }} horizontal>
@@ -80,6 +80,16 @@ const WebTable = ({ columns, data,handleExportRows,handleExportData,handleRefres
         </Pressable>
       </View>
     )}
+    state={{ isLoading: loading }}
+      muiCircularProgressProps={{
+        color: 'secondary',
+        thickness: 5,
+        size: 55,
+      }}
+      muiSkeletonProps={{
+        animation: 'pulse',
+        height: 28,
+      }}
     rowCount={data?.length || 0}
   />
   </ScrollView>

@@ -12,7 +12,10 @@ export default function CodeScanner({ onScannedData, onCancel, BarCodeTypes }) {
   const [isTorchOn, setIsTorchOn] = useState(false);
   const cameraRef = useRef(null);
   const [scannedCodes, setScannedCodes] = useState([]);
-  
+  // const [facing, setFacing] = useState('back');
+  const [facing, setFacing] = useState(Platform.OS === 'web' ? 'environment' : 'back');
+
+
   // useEffect(() => {
   //   if (Platform.OS === 'web') {
   //     requestWebCameraPermission();
@@ -65,6 +68,19 @@ export default function CodeScanner({ onScannedData, onCancel, BarCodeTypes }) {
     setScanned(false);
     setScannedCodes([]);
   }, []);
+  // function toggleCameraFacing() {
+  //   setFacing(current => (current === 'back' ? 'front' : 'back'));
+  // }
+
+function toggleCameraFacing() {
+  setFacing(current => 
+    Platform.OS === 'web'
+      ? (current === 'environment' ? 'user' : 'environment')
+      : (current === 'back' ? 'front' : 'back')
+  );
+}
+
+
 
   const renderPermissionView = useMemo(() => (
     <SafeAreaView style={styles.container}>
@@ -102,7 +118,8 @@ export default function CodeScanner({ onScannedData, onCancel, BarCodeTypes }) {
         enableTorch={isTorchOn}
         focusDepth={1}
         zoom={0.1}
-        facing='back'
+        facing={facing}
+        
       >
         <View style={styles.overlay}>
           <View style={[styles.frame, { width: frameSize, height: frameSize }]} />
@@ -126,6 +143,9 @@ export default function CodeScanner({ onScannedData, onCancel, BarCodeTypes }) {
         <Entypo name="cross" size={38} color="#fff" />
           {/* <Text style={styles.buttonText}>Cancel</Text> */}
         </Pressable>
+        <Pressable style={[styles.button, styles.cancelButton]} onPress={toggleCameraFacing}>
+        <Entypo name="swap" size={38} color="#fff" />
+          </Pressable>
       </View>
     </SafeAreaView>
   );
