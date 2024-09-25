@@ -261,10 +261,18 @@ const paginatedData = invigilatorList.slice((currentPage - 1) * pageSize, curren
     const zonedDate = formatInTimeZone(date, timeZone ,'h:mm a' ); // Convert the date to the local timezone
     return zonedDate;
   };
+  const resetTime = (date) => {
+    const newDate = new Date(date);
+    newDate.setHours(0, 0, 0, 0); // Set time to midnight
+    return newDate;
+  };
+  
+
 
   const handleEditInvigilator = async (selectedData) => {
-    const selectedDate = parseISO(selectedData.date);
-    const currentDate = new Date();
+    const selectedDate = resetTime(parseISO(selectedData.date));
+    const currentDate = resetTime(new Date());
+    console.log(selectedDate,currentDate)
     if (selectedDate<currentDate) {
       // Prevent editing if the date is less than the current date
       addToast("You cannot edit past invigilator duties.", "error");
