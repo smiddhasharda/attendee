@@ -425,7 +425,7 @@ const renderTable = () => {
               action={UserAccess?.update === 1  ? true : false }
               renderAction={({ row, table }) => (
                 <View sx={{ display: 'flex', flexWrap: 'nowrap', gap: '8px' }}>
-                <Pressable style={[{width:80}, {alignItems:"center"}]} onPress={() => handleEditInvigilator(row)}>
+                <Pressable style={[{width:80}, {alignItems:"center"}]} onPress={() => handleEditInvigilator(row.original)}>
                 <Text style={styles.listItemEditText}><Feather name="edit" size={16} color="green" /></Text>
                   </Pressable>
                 </View>
@@ -626,6 +626,7 @@ const resetTime = (date) => {
 const handleEditInvigilator = async (selectedData) => {
   const selectedDate = resetTime(parseISO(selectedData.date));
   const currentDate = resetTime(new Date());
+
   if (selectedDate<currentDate) {
     // Prevent editing if the date is less than the current date
     addToast("You cannot edit past invigilator duties.", "error");
