@@ -12,26 +12,14 @@ export default function CodeScanner({ onScannedData, onCancel, BarCodeTypes }) {
   const [isTorchOn, setIsTorchOn] = useState(false);
   const cameraRef = useRef(null);
   const [scannedCodes, setScannedCodes] = useState([]);
-  // const [facing, setFacing] = useState('back');
-  const [facing, setFacing] = useState(Platform.OS === 'web' ? 'environment' : 'back');
+  const [facing, setFacing] = useState('back');
 
+  function toggleCameraFacing() {
+    setFacing(current => 
+      current === 'front' ? 'back' : 'front'
+    );
+  }
 
-  // useEffect(() => {
-  //   if (Platform.OS === 'web') {
-  //     requestWebCameraPermission();
-  //   }
-  // }, []);
-  
-  // const requestWebCameraPermission = useCallback(async () => {
-  //   try {
-  //     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-  //     stream.getTracks().forEach(track => track.stop());
-  //     // const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-  //     // stream.getTracks().forEach(track => track.stop());
-  //   } catch (err) {
-  //     console.error("Error accessing camera:", err);
-  //   }
-  // }, []);
   const handleBarCodeScanned = useCallback(({ type, data }) => {
     if (scannedCodes.length < 3) {
       setScannedCodes(prev => [...prev, data]);
@@ -68,18 +56,6 @@ export default function CodeScanner({ onScannedData, onCancel, BarCodeTypes }) {
     setScanned(false);
     setScannedCodes([]);
   }, []);
-  // function toggleCameraFacing() {
-  //   setFacing(current => (current === 'back' ? 'front' : 'back'));
-  // }
-
-function toggleCameraFacing() {
-  setFacing(current => 
-    Platform.OS === 'web'
-      ? (current === 'environment' ? 'user' : 'environment')
-      : (current === 'back' ? 'front' : 'back')
-  );
-}
-
 
 
   const renderPermissionView = useMemo(() => (
