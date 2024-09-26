@@ -25,7 +25,7 @@ const StudentInfo = ({ navigation }) => {
   const [studentSign, setStudentSign] = useState('');
   const [courseDetails, setCourseDetails] = useState({});
   const [timeLeft, setTimeLeft] = useState('Attendance Not Started');
-  const { room_Nbr, catlog_Nbr, system_Id, seat_Nbr, exam_Dt, startTime, reportId, userAccess, current_Term,userData } = route.params;
+  const { room_Nbr, catlog_Nbr, system_Id, seat_Nbr, exam_Dt, startTime, reportId, userAccess, current_Term,userData,exam_type } = route.params;
   const UserAccess = userAccess?.module?.find((item) => item?.FK_ModuleId === 6);
   const [copiesData, setCopiesData] = useState([]);
   const [tempCopyNumber, setTempNumber] = useState("");
@@ -236,7 +236,7 @@ const StudentInfo = ({ navigation }) => {
               Status: status,
               SU_PAPER_ID: courseDetails.SU_PAPER_ID,
               DESCR100: courseDetails.DESCR100,
-              EXAM_TYPE_CD:courseDetails.EXAM_TYPE_CD,
+              EXAM_TYPE_CD:exam_type,
               created_by:`${userData?.name} (${userData?.username})`
             },
             conditionString: `EMPLID = '${studentDetails.EMPLID}' AND EXAM_DT = '${exam_Dt}' AND ROOM_NBR = '${room_Nbr}' AND EXAM_START_TIME = '${startTime}'`,
@@ -277,7 +277,7 @@ const StudentInfo = ({ navigation }) => {
  
             if (NewResponse) {
               addToast("Student details are updated successfully!", "success");
-              navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime, navigation: navigation,userData:userData, userAccess });
+              navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime,exam_type:exam_type, navigation: navigation,userData:userData, userAccess });
             }
           }
         }
@@ -546,7 +546,7 @@ const StudentInfo = ({ navigation }) => {
               Status: status,
               SU_PAPER_ID: courseDetails.SU_PAPER_ID,
               DESCR100: courseDetails.DESCR100,
-              EXAM_TYPE_CD:courseDetails.EXAM_TYPE_CD,
+              EXAM_TYPE_CD:exam_type,
               updated_by:`${userData?.name} (${userData?.username})`
             },
             conditionString: `PK_Report_Id = ${reportId}`,
@@ -601,11 +601,11 @@ const StudentInfo = ({ navigation }) => {
  
                 if (newResponse) {
                   addToast("Student details are updated successfully!", "success");
-                  navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime,userData:userData, navigation, userAccess });
+                  navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime,exam_type:exam_type,userData:userData, navigation, userAccess });
                 }
               } else {
                 addToast("Student details are updated successfully!", "success");
-                navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime,userData:userData, navigation, userAccess });
+                navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt, startTime: startTime,exam_type:exam_type,userData:userData, navigation, userAccess });
               }
             } else if (copiesData?.length > 0) {
               const studentCopyWithId = copiesData.map(item => {
@@ -635,12 +635,12 @@ const StudentInfo = ({ navigation }) => {
  
               if (newResponse) {
                 addToast("Student details are updated successfully!", "success");
-                navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt,userData:userData, startTime, navigation, userAccess });
+                navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt,userData:userData, startTime,exam_type, navigation, userAccess });
               }
             }
           } else {
             addToast("Student details are updated successfully!", "success");
-            navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt,userData:userData, startTime, navigation, userAccess });
+            navigation.navigate("RoomDetail", { room_Nbr: room_Nbr, exam_Dt: exam_Dt,userData:userData, startTime,exam_type, navigation, userAccess });
           }
         }
       }
@@ -747,7 +747,7 @@ const StudentInfo = ({ navigation }) => {
         data: "",
         conditionString: "",
         checkAvailability: "",
-        customQuery: `SELECT DISTINCT CATALOG_NBR, DESCR100,EXAM_TIME_CODE,EXAM_TYPE_CD,STRM FROM PS_S_PRD_EX_TME_VW WHERE CATALOG_NBR = '${catlog_Nbr}'`,
+        customQuery: `SELECT DISTINCT CATALOG_NBR, DESCR100,EXAM_TIME_CODE,EXAM_TYPE_CD,STRM FROM PS_S_PRD_EX_TME_VW WHERE CATALOG_NBR = '${catlog_Nbr}' AND STRM ='${current_Term}' AND EXAM_TYPE_CD ='${exam_type}'`,
         viewType: 'Campus_View'
       };
      
@@ -769,24 +769,45 @@ const StudentInfo = ({ navigation }) => {
       const authToken = await checkAuthToken();
       const Parameter = {
         operation: "custom",
-        tblName: "PS_S_PRD_CT_ATT_VW",
+        tblName: "PS_S_ADMSBJEXCPRC",
         data: "",
         conditionString: "",
         checkAvailability: "",
-        customQuery: `SELECT DISTINCT PS_S_PRD_CT_ATT_VW.PERCENTAGE,PS_S_PRD_TRS_AT_VW.PERCENTCHG FROM PS_S_PRD_CT_ATT_VW JOIN PS_S_PRD_TRS_AT_VW ON PS_S_PRD_TRS_AT_VW.EMPLID = PS_S_PRD_CT_ATT_VW.EMPLID WHERE PS_S_PRD_CT_ATT_VW.EMPLID = '${system_Id}' AND PS_S_PRD_CT_ATT_VW.CATALOG_NBR = '${catlog_Nbr}' AND PS_S_PRD_CT_ATT_VW.STRM = '${current_Term}'`,
-        viewType: 'Campus_View',
+        customQuery:`SELECT * from PS_S_ADMSBJEXCPRC  WHERE CATALOG_NBR='${catlog_Nbr}' AND STRM='${current_Term}' AND S_ADM_TMPL='${exam_type}'`,
+         viewType: 'Campus_View',
       };
       const response = await view(
         Parameter,
         authToken
       );
-      if (response) {
-        let AttendenceDetials = response?.[0] || ''
-        let AttendenceStatus = AttendenceDetials ? AttendenceDetials.PERCENTAGE >= AttendenceDetials.PERCENTCHG ? "Eligible" : "Debarred" : "Not Defined";
+      if (response?.length > 0) {
+        setAttendenceStatus("Eligible");
+      }
+      else{
+      const Parameter1 = {
+        operation: "custom",
+        tblName: "PS_S_PRD_CT_ATT_VW",
+        data: "",
+        conditionString: "",
+        checkAvailability: "",
+        // customQuery:`SELECT DISTINCT PS_S_PRD_CT_ATT_VW.PERCENTAGE, PS_S_PRD_CT_ATT_VW.S_NOC_STATUS, PS_S_PRD_CT_ATT_VW.EMPLID, PS_S_PRD_TRS_AT_VW.PERCENTCHG, PS_S_PRD_CLS_VW.CLASS_SECTION FROM PS_S_PRD_CT_ATT_VW JOIN PS_S_PRD_TRS_AT_VW ON PS_S_PRD_TRS_AT_VW.EMPLID = PS_S_PRD_CT_ATT_VW.EMPLID JOIN PS_S_PRD_CLS_VW ON PS_S_PRD_CLS_VW.EMPLID = PS_S_PRD_CT_ATT_VW.EMPLID AND PS_S_PRD_CLS_VW.CATALOG_NBR = PS_S_PRD_CT_ATT_VW.CATALOG_NBR AND PS_S_PRD_CLS_VW.STRM = PS_S_PRD_CT_ATT_VW.STRM WHERE PS_S_PRD_CT_ATT_VW.EMPLID = '${system_Id}' AND PS_S_PRD_CT_ATT_VW.CATALOG_NBR = '${catlog_Nbr}' AND PS_S_PRD_CT_ATT_VW.STRM = '${current_Term}' AND PS_S_PRD_TRS_AT_VW.S_ADM_TMPL = '${exam_type}' AND S_TRANS_DT_TM = ( SELECT MAX(S_TRANS_DT_TM) FROM PS_S_PRD_CT_ATT_VW WHERE PS_S_PRD_CT_ATT_VW.EMPLID = '${system_Id}' AND PS_S_PRD_CT_ATT_VW.CATALOG_NBR = '${catlog_Nbr}' AND PS_S_PRD_CT_ATT_VW.STRM = '${current_Term}' ) `,
+// Need to Udate This query in next buid
+        // WITH Latest_Trans AS ( SELECT EMPLID, CATALOG_NBR, STRM, MAX(S_TRANS_DT_TM) AS Latest_DT_TM FROM PS_S_PRD_CT_ATT_VW WHERE EMPLID = '${system_Id}' AND CATALOG_NBR = '${catlog_Nbr}' AND STRM = '${current_Term}' GROUP BY EMPLID, CATALOG_NBR, STRM ) SELECT DISTINCT PS_S_PRD_CT_ATT_VW.PERCENTAGE, PS_S_PRD_CT_ATT_VW.S_NOC_STATUS, PS_S_PRD_CT_ATT_VW.EMPLID, PS_S_PRD_TRS_AT_VW.PERCENTCHG, PS_S_PRD_CLS_VW.CLASS_SECTION FROM PS_S_PRD_CT_ATT_VW JOIN PS_S_PRD_TRS_AT_VW ON PS_S_PRD_TRS_AT_VW.EMPLID = PS_S_PRD_CT_ATT_VW.EMPLID AND PS_S_PRD_TRS_AT_VW.STRM = PS_S_PRD_CT_ATT_VW.STRM JOIN PS_S_PRD_CLS_VW ON PS_S_PRD_CLS_VW.EMPLID = PS_S_PRD_CT_ATT_VW.EMPLID AND PS_S_PRD_CLS_VW.CATALOG_NBR = PS_S_PRD_CT_ATT_VW.CATALOG_NBR AND PS_S_PRD_CLS_VW.STRM = PS_S_PRD_CT_ATT_VW.STRM JOIN Latest_Trans ON PS_S_PRD_CT_ATT_VW.EMPLID = Latest_Trans.EMPLID AND PS_S_PRD_CT_ATT_VW.CATALOG_NBR = Latest_Trans.CATALOG_NBR AND PS_S_PRD_CT_ATT_VW.STRM = Latest_Trans.STRM AND PS_S_PRD_CT_ATT_VW.S_TRANS_DT_TM = Latest_Trans.Latest_DT_TM WHERE PS_S_PRD_CT_ATT_VW.EMPLID = '${system_Id}' AND PS_S_PRD_CT_ATT_VW.CATALOG_NBR = '${catlog_Nbr}' AND PS_S_PRD_CT_ATT_VW.STRM = '${current_Term}' AND PS_S_PRD_TRS_AT_VW.S_ADM_TMPL = '${exam_type}' 
+
+        customQuery: `WITH Latest_Trans AS ( SELECT EMPLID, CATALOG_NBR, STRM, MAX(S_TRANS_DT_TM) AS Latest_DT_TM FROM PS_S_PRD_CT_ATT_VW WHERE EMPLID = '${system_Id}' AND CATALOG_NBR = '${catlog_Nbr}' AND STRM = '${current_Term}' GROUP BY EMPLID, CATALOG_NBR, STRM ) SELECT DISTINCT PS_S_PRD_CT_ATT_VW.PERCENTAGE, PS_S_PRD_CT_ATT_VW.S_NOC_STATUS, PS_S_PRD_CT_ATT_VW.EMPLID, PS_S_PRD_TRS_AT_VW.PERCENTCHG, PS_S_PRD_CLS_VW.CLASS_SECTION FROM PS_S_PRD_CT_ATT_VW JOIN PS_S_PRD_TRS_AT_VW ON PS_S_PRD_TRS_AT_VW.EMPLID = PS_S_PRD_CT_ATT_VW.EMPLID JOIN PS_S_PRD_CLS_VW ON PS_S_PRD_CLS_VW.EMPLID = PS_S_PRD_CT_ATT_VW.EMPLID AND PS_S_PRD_CLS_VW.CATALOG_NBR = PS_S_PRD_CT_ATT_VW.CATALOG_NBR AND PS_S_PRD_CLS_VW.STRM = PS_S_PRD_CT_ATT_VW.STRM JOIN Latest_Trans ON PS_S_PRD_CT_ATT_VW.EMPLID = Latest_Trans.EMPLID AND PS_S_PRD_CT_ATT_VW.CATALOG_NBR = Latest_Trans.CATALOG_NBR AND PS_S_PRD_CT_ATT_VW.STRM = Latest_Trans.STRM AND PS_S_PRD_CT_ATT_VW.S_TRANS_DT_TM = Latest_Trans.Latest_DT_TM WHERE PS_S_PRD_CT_ATT_VW.EMPLID = '${system_Id}' AND PS_S_PRD_CT_ATT_VW.CATALOG_NBR = '${catlog_Nbr}' AND PS_S_PRD_CT_ATT_VW.STRM = '${current_Term}' AND PS_S_PRD_TRS_AT_VW.S_ADM_TMPL = '${exam_type}' `,
+        viewType: 'Campus_View',
+      };
+      const response1 = await view(
+        Parameter1,
+        authToken
+      );
+      if(response1?.length > 0){
+        let AttendenceDetials = response1?.[0] || ''
+        let AttendenceStatus = AttendenceDetials ? (AttendenceDetials.CLASS_SECTION.startsWith('F') || AttendenceDetials.S_NOC_STATUS === 'NOC' || AttendenceDetials.PERCENTAGE >= AttendenceDetials.PERCENTCHG) ? "Eligible" : "Debarred" : "Not Defined";
         setAttendenceStatus(AttendenceStatus);
         setStatus(AttendenceStatus === "Debarred" ? "Absent" : "Present");
         setDisabledStatus(AttendenceStatus === "Debarred" ? "Absent" : "Present");
-        // setLoading(false);
+      }
       }
     } catch (error) {
       setLoading(false);
@@ -1174,7 +1195,7 @@ const StudentInfo = ({ navigation }) => {
               {/* <View style={{flexDirection:isMobile?"column":"row", }}> */}
               <View style={[styles.examinfoItem,{minWidth:isMobile?"100%":''}]}>
               <View style={{flexDirection:isMobile?"row":"row" ,}}>
-                <Text style={[styles.label,]}>Class Status:</Text>
+                <Text style={[styles.label,]}>Attendence Status:</Text>
                 <Text style={[styles.value, {textAlign:"center"}, getAttendenceStatuscolor()]}>
                   {attendenceStatus}
                 </Text>

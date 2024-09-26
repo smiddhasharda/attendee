@@ -6,7 +6,7 @@ const mysql = require("mysql2/promise");
 const nodemailer = require("nodemailer");
 const upload = require("./middlewares/multer.js");
 const handlebars = require('handlebars');
-const path = require('path');
+const path = require("path");
 const fs = require('fs');
 const oracledb = require("oracledb");
 const corsOptions = require("./config/corsOptions.js");
@@ -179,39 +179,108 @@ const transporter = nodemailer.createTransport({
     // );
 
 
-    try {
-      // Handle MySQL connection
-      const connection = await pool.getConnection();
-      console.log("Local Connected to MySQL database:", process.env.DB_DATABASE);
-      connection.release();
-    } catch (err) {
-      console.error("Error connecting to MySQL database:", err.message);
-    }
-    let viewCampusPool;
-    // let viewCampus2Pool;
-    let viewHRMSPool;
+    // try {
+    //   // Handle MySQL connection
+    //   const connection = await pool.getConnection();
+    //   console.log("Local Connected to MySQL database:", process.env.DB_DATABASE);
+    //   connection.release();
+    // } catch (err) {
+    //   console.error("Error connecting to MySQL database:", err.message);
+    // }
+    // let viewCampusPool;
+    // // let viewCampus2Pool;
+    // let viewHRMSPool;
     
-    try {
-      // Oracle Campus Connection
-      viewCampusPool = await oracledb.getConnection(viewCampusConfig);
-      console.log(
-        "Successfully Connected to Oracle database Campus View : ",
-        process.env.VIEW_DATABASE
-      );
-    } catch (err) {
-      console.error("Error connecting to Oracle Campus database:", err.message);
-    }
+    // try {
+    //   // Oracle Campus Connection
+    //   viewCampusPool = await oracledb.getConnection(viewCampusConfig);
+    //   console.log(
+    //     "Successfully Connected to Oracle database Campus View : ",
+    //     process.env.VIEW_DATABASE
+    //   );
+    // } catch (err) {
+    //   console.error("Error connecting to Oracle Campus database:", err.message);
+    // }
     
+    // try {
+    //   // Oracle HRMS Connection
+    //   viewHRMSPool = await oracledb.getConnection(viewHRMSConfig);
+    //   console.log(
+    //     "Successfully Connected to Oracle database HRMS View : ",
+    //     process.env.VIEW_DATABASE
+    //   );
+    // } catch (err) {
+    //   console.error("Error connecting to Oracle HRMS database:", err.message);
+    // }
+
+    // Initialize Oracle connections
+let viewCampusPool, viewHRMSPool;
+
+// MySQL Connection
+async function setupMySQLConnection() {
+  try {
+    const connection = await pool.getConnection();
+    console.log("Successfully connected to MySQL database:", process.env.DB_DATABASE);
+    connection.release();
+  } catch (err) {
+    console.error("Error connecting to MySQL database:", err.message);
+  }
+}
+
+// Oracle Campus Connection
+async function setupOracleCampusConnection() {
+  try {
+    viewCampusPool = await oracledb.getConnection(viewCampusConfig);
+    console.log("Successfully connected to Oracle database Campus View");
+  } catch (err) {
+    console.error("Error connecting to Oracle Campus database:", err.message);
+  }
+}
+
+// Oracle HRMS Connection
+async function setupOracleHRMSConnection() {
+  try {
+    viewHRMSPool = await oracledb.getConnection(viewHRMSConfig);
+    console.log("Successfully connected to Oracle database HRMS View");
+  } catch (err) {
+    console.error("Error connecting to Oracle HRMS database:", err.message);
+  }
+}
+
+// Keep MySQL and Oracle connections alive with periodic queries
+async function keepConnectionsAlive() {
+  setInterval(async () => {
     try {
-      // Oracle HRMS Connection
-      viewHRMSPool = await oracledb.getConnection(viewHRMSConfig);
-      console.log(
-        "Successfully Connected to Oracle database HRMS View : ",
-        process.env.VIEW_DATABASE
-      );
-    } catch (err) {
-      console.error("Error connecting to Oracle HRMS database:", err.message);
+      // Keep MySQL connection alive
+      const mysqlConnection = await pool.getConnection();
+      await mysqlConnection.query("SELECT 1");  // Dummy query
+      mysqlConnection.release();
+      console.log("MySQL connection is alive");
+
+      // Keep Oracle Campus connection alive
+      if (viewCampusPool) {
+        await viewCampusPool.execute("SELECT 1 FROM DUAL"); // Dummy query for Oracle
+        console.log("Oracle Campus connection is alive");
+      }
+
+      // Keep Oracle HRMS connection alive
+      if (viewHRMSPool) {
+        await viewHRMSPool.execute("SELECT 1 FROM DUAL"); // Dummy query for Oracle
+        console.log("Oracle HRMS connection is alive");
+      }
+    } catch (error) {
+      console.error("Error keeping connections alive:", error.message);
     }
+  }, 8 * 60 * 60 * 1000); // Run the keep-alive every 8 hours
+}
+
+// Initialize all connections
+(async () => {
+  await setupMySQLConnection();
+  await setupOracleCampusConnection();
+  await setupOracleHRMSConnection();
+  keepConnectionsAlive(); // Start the keep-alive process
+})();
 
     // try {
     //   // Oracle Campus 2nd Connection
@@ -261,7 +330,7 @@ const transporter = nodemailer.createTransport({
     }
 
     function sendOTP(otp, userData,view) {
-      const replacements = {
+       const replacements = {
         name: view ? userData?.DISPLAY_NAME :  userData?.name,
         OTP: otp
     };
@@ -276,10 +345,10 @@ const transporter = nodemailer.createTransport({
         from: process.env.MAIL_FROM,
         to: view ? userData?.EMAILID :  userData?.email_id,
         subject: "Your OTP to Login",
-        // text: `Your OTP is: ${otp}`,
+        //text: `Your OTP is: ${otp}`,
         html: htmlToSend,
       };
-      console.log("Mail Option", mailOptions);
+      //console.log("Mail Option", mailOptions);
       // Send email with OTP
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
@@ -292,96 +361,197 @@ const transporter = nodemailer.createTransport({
       });
     }
 
-    app.use( "/userImg", express.static(path.join(__dirname, "./resources/assets/ProfilePics")) );
-    app.use( "/invigilatorDoc", express.static(path.join(__dirname, "./resources/local-assets/BulkuploadDocs")) );
+    app.use('/node-api/resources', express.static(path.join(__dirname, 'resources')));
+    app.use( "/api/userImg", express.static(path.join(__dirname, "./resources/assets/ProfilePics")) );
+    app.use( "/api/invigilatorDoc", express.static(path.join(__dirname, "./resources/local-assets/BulkuploadDocs")) );
 
 
     // Email Verified
+    // app.post("/api/emailVerify", async (req, res) => {
+    //   try {
+    //     const encryptedQuery = req.body.data;
+    //     const decryptedQuery = JSON.parse(decrypt(encryptedQuery));
+    //     const { tblName, conditionString,viewTblName,viewConditionString } = decryptedQuery;
+    
+    //     // Query user data from the main table
+    //     const [rows] = await pool.query(`SELECT * FROM ?? WHERE ${conditionString}`, [tblName]);
+        
+    //     if (rows.length > 0) {
+    //       const userData = rows[0];
+    //       if(userData.isActive === 0){
+    //         res.status(500).json({ error: "Email Id Not Allowed" });
+    //       }
+    //       else{
+    //         const otp = Math.floor(100000 + Math.random() * 900000);
+    //         // Update the OTP for the user
+    //         const [updateRows] = await pool.query(
+    //           `UPDATE ?? SET otp = ? WHERE user_id = ?`,
+    //           [tblName, otp, userData.user_id]
+    //         );
+      
+    //         if (updateRows.affectedRows > 0) {
+    //           sendOTP(otp, userData);
+    //           res.status(200).json({ message: "Email Sent Successfully" });
+    //         } else {
+    //           res.status(500).json({ error: "Failed to send email" });
+    //         }
+    //       }    
+    //     } else {
+    //       // If user is not found, check the view table
+    //       const viewRows = await viewHRMSPool.execute( `SELECT * FROM ${viewTblName} WHERE ${viewConditionString}`,
+    //          {},
+    //           { outFormat: oracledb.OUT_FORMAT_OBJECT } )
+    //           .catch((error) => {
+    //             console.error(
+    //               "Error checking availability:",
+    //               error.message || error
+    //             );
+    //             throw error;
+    //           });
+    
+    //       if (viewRows.rows.length > 0 ) {
+    //         const viewUserData = viewRows.rows[0];
+    //         const otp = Math.floor(100000 + Math.random() * 900000);
+    
+    //         // Insert new user into main table
+    //         const [insertResult] = await pool.query(
+    //           `INSERT INTO ?? SET username = ?, name = ?, contact_number = ?, email_id = ?, isVerified = '1', otp = ?`,
+    //           [
+    //             tblName,
+    //             viewUserData.EMPLID,
+    //             viewUserData.DISPLAY_NAME,
+    //             viewUserData.PHONE,
+    //             viewUserData.EMAILID,
+    //             otp
+    //           ]
+    //         );
+    
+    //         if (insertResult.affectedRows > 0) {
+    //           const userId = insertResult.insertId;
+    
+    //           // Assign default role to the new user
+    //           const [insertRoleResult] = await pool.query(
+    //             `INSERT INTO tbl_user_role_permission SET FK_userId = ?, FK_RoleId = '2'`,
+    //             [userId]
+    //           );
+    
+    //           if (insertRoleResult.affectedRows > 0) {
+    //             sendOTP(otp, viewUserData,"view");
+    //             res.status(200).json({ message: "Email Sent Successfully" });
+    //           } else {
+    //             res.status(500).json({ error: "Failed to assign role to new user" });
+    //           }
+    
+    //         } else {
+    //           res.status(500).json({ error: "Failed to create new user" });
+    //         }
+    
+    //       } else {
+    //         res.status(401).json({ error: "Invalid Email Id" });
+    //       }
+    //     }
+    //   } catch (error) {
+    //     console.error("Email verification error:", error.message || error);
+    //     res.status(500).json({ error: "Internal server error" });
+    //   }
+    // });
     app.post("/api/emailVerify", async (req, res) => {
       try {
         const encryptedQuery = req.body.data;
         const decryptedQuery = JSON.parse(decrypt(encryptedQuery));
-        const { tblName, conditionString,viewTblName,viewConditionString } = decryptedQuery;
-    
+        const { tblName, conditionString, viewTblName, viewConditionString } =
+          decryptedQuery;
+
         // Query user data from the main table
-        const [rows] = await pool.query(`SELECT * FROM ?? WHERE ${conditionString}`, [tblName]);
-        
+        const [rows] = await pool.query(
+          `SELECT * FROM ?? WHERE ${conditionString}`,
+          [tblName]
+        );
+
         if (rows.length > 0) {
           const userData = rows[0];
-          if(userData.isActive === 0){
+          if (userData.isActive === 0) {
             res.status(500).json({ error: "Email Id Not Allowed" });
-          }
-          else{
+          } else {
             const otp = Math.floor(100000 + Math.random() * 900000);
             // Update the OTP for the user
             const [updateRows] = await pool.query(
               `UPDATE ?? SET otp = ? WHERE user_id = ?`,
               [tblName, otp, userData.user_id]
             );
-      
+
             if (updateRows.affectedRows > 0) {
               sendOTP(otp, userData);
               res.status(200).json({ message: "Email Sent Successfully" });
             } else {
               res.status(500).json({ error: "Failed to send email" });
             }
-          }    
+          }
         } else {
           // If user is not found, check the view table
-          const viewRows = await viewHRMSPool.execute( `SELECT * FROM ${viewTblName} WHERE ${viewConditionString}`,
-             {},
-              { outFormat: oracledb.OUT_FORMAT_OBJECT } )
-              .catch((error) => {
-                console.error(
-                  "Error checking availability:",
-                  error.message || error
-                );
-                throw error;
-              });
-    
-          if (viewRows.rows.length > 0 ) {
+          const viewRows = await viewHRMSPool
+            .execute(
+              `SELECT * FROM ${viewTblName} WHERE ${viewConditionString}`,
+              {},
+              { outFormat: oracledb.OUT_FORMAT_OBJECT }
+            )
+            .catch((error) => {
+              console.error(
+                "Error checking availability:",
+                error.message || error
+              );
+              throw error;
+            });
+
+          if (viewRows.rows.length > 0) {
             const viewUserData = viewRows.rows[0];
             const otp = Math.floor(100000 + Math.random() * 900000);
-    
-            // Insert new user into main table
-            const [insertResult] = await pool.query(
-              `INSERT INTO ?? SET username = ?, name = ?, contact_number = ?, email_id = ?, isVerified = '1', otp = ?`,
-              [
-                tblName,
-                viewUserData.EMPLID,
-                viewUserData.DISPLAY_NAME,
-                viewUserData.PHONE,
-                viewUserData.EMAILID,
-                otp
-              ]
+            const [CheckRow] = await pool.query(
+              `SELECT * FROM ?? WHERE email_id = ?`,
+              [tblName, viewUserData.EMAILID]
             );
-    
-            if (insertResult.affectedRows > 0) {
-              const userId = insertResult.insertId;
-    
-              // Assign default role to the new user
-              const [insertRoleResult] = await pool.query(
-                `INSERT INTO tbl_user_role_permission SET FK_userId = ?, FK_RoleId = '2'`,
-                [userId]
-              );
-    
-              if (insertRoleResult.affectedRows > 0) {
-                sendOTP(otp, viewUserData,"view");
-                res.status(200).json({ message: "Email Sent Successfully" });
-              } else {
-                res.status(500).json({ error: "Failed to assign role to new user" });
-              }
-    
+            if (CheckRow?.length > 0) {
+              res.status(500).json({ error: "Failed to create new user , already exist" });
             } else {
-              res.status(500).json({ error: "Failed to create new user" });
+              // Insert new user into main table
+              const [insertResult] = await pool.query(
+                `INSERT INTO ?? SET username = ?, name = ?, contact_number = ?, email_id = ?, isVerified = '1', otp = ?`,
+                [
+                  tblName,
+                  viewUserData.EMPLID,
+                  viewUserData.DISPLAY_NAME,
+                  viewUserData.PHONE,
+                  viewUserData.EMAILID,
+                  otp,
+                ]
+              );
+
+              if (insertResult.affectedRows > 0) {
+                const userId = insertResult.insertId;
+                // Assign default role to the new user
+                const [insertRoleResult] = await pool.query(
+                  `INSERT INTO tbl_user_role_permission SET FK_userId = ?, FK_RoleId = '2'`,
+                  [userId]
+                );
+
+                if (insertRoleResult.affectedRows > 0) {
+                  sendOTP(otp, viewUserData, "view");
+                  res.status(200).json({ message: "Email Sent Successfully" });
+                } else {
+                  res
+                    .status(500)
+                    .json({ error: "Failed to assign role to new user" });
+                }
+              } else {
+                res.status(500).json({ error: "Failed to create new user" });
+              }
             }
-    
           } else {
             res.status(401).json({ error: "Invalid Email Id" });
           }
         }
       } catch (error) {
-        console.error("Email verification error:", error.message || error);
+        console.error("Email verification error:", error);
         res.status(500).json({ error: "Internal server error" });
       }
     });
@@ -1461,7 +1631,7 @@ function parseShiftTime(timeString) {
         // if (viewType === "CAMPUS2_View") {
         //   viewSetup = viewCampus2Pool;
         // } else
-         if (viewType === "HRMS_View") {
+        if (viewType === "HRMS_View") {
           viewSetup = viewHRMSPool;
         } 
         // else if(viewType === "IDCARD_View"){
@@ -1474,7 +1644,7 @@ function parseShiftTime(timeString) {
         if (checkAvailability) {
           const checkRows = await viewSetup.execute(`SELECT * FROM ${tblName} WHERE ${conditionString}`)
             .catch((error) => {
-              console.error("Error checking availability:", error.message || error);
+              console.error("Error checking availability:", error);
               throw error;
             });
           if (checkRows && checkRows.rows.length > 0) {
@@ -1482,6 +1652,7 @@ function parseShiftTime(timeString) {
           }
         }
         let responseData;
+        //console.log("Custom Query", customQuery);
         switch (operation) {
           case "fetch":
             const selectRows = await viewSetup.execute(
@@ -1489,7 +1660,7 @@ function parseShiftTime(timeString) {
               {},
               { outFormat: oracledb.OUT_FORMAT_OBJECT }
             ).catch((error) => {
-              console.error("Error fetching data:", error.message || error);
+              console.error("Error fetching data:", error);
               throw error;
             });
 
@@ -1506,7 +1677,7 @@ function parseShiftTime(timeString) {
               {},
               { outFormat: oracledb.OUT_FORMAT_OBJECT }
             ).catch((error) => {
-              console.error("Error executing custom query:", error.message || error);
+              console.error("Error executing custom query:", error);
               throw error;
             });
             responseData = customRows?.rows;
@@ -1595,13 +1766,14 @@ function parseShiftTime(timeString) {
           }
         });
         // Encrypt the response data
+      //console.log("Photo Response", response.data.data.query.rows);
       const encryptedData = encrypt(JSON.stringify(response.data.data.query.rows));
       return res.status(200).json({
         message: "Fetch successful",
         receivedData: encryptedData,
       });
       } catch (error) {
-        console.error('Error occurred:', error.message);
+        console.error('Error occurred:', error);
         return res.status(500).json({ error: "Internal server error" });      }
     });
 
@@ -1610,7 +1782,7 @@ function parseShiftTime(timeString) {
       console.log(`Server is running on SERVER_PORT: ${PORT}`);
     });
   } catch (error) {
-    console.error("Database connection error:", error.message || error);
+    console.error("Database connection error:", error);
     process.exit(1); // Exit the process in case of a connection error
   }
 })();

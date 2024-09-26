@@ -740,6 +740,7 @@ const UserScreen = ({userAccess,userData}) => {
             <View style={styles.tableHeader}>
               <Text style={[styles.tableHeaderText,{width:120}, ]}>Employee Id</Text>
               <Text style={[styles.tableHeaderText,{width:200,textAlign:"center"}, ]}>Name</Text>
+              <Text style={[styles.tableHeaderText,{width:200,textAlign:"center"}, ]}>Email Id</Text>
               <Text style={[styles.tableHeaderText, {width:170,textAlign:"center"} ]}>Mob.No</Text>
               <Text style={[styles.tableHeaderText,{width:200,textAlign:"center"}  ]}>User Status</Text>
               <Text style={[styles.tableHeaderText,{width:90,textAlign:"center"}  ]}>Status</Text>
@@ -756,6 +757,7 @@ const UserScreen = ({userAccess,userData}) => {
             <View style={styles.listItem}>
               <Text style={[styles.listItemText,{width:120}]}>{item.username}</Text>
               <Text style={[styles.listItemText,{width:200,textAlign:"center"}]}>{item.name}</Text>
+              <Text style={[styles.listItemText,{width:200,textAlign:"center"}]}>{item.email_id}</Text>
               <Text style={[styles.listItemText, {width:170,textAlign:"center"}]}>{item.contact_number}</Text>
               <Text style={[styles.listItemText, {width:200,textAlign:"center"}]}>{item.status} User</Text>
                     <View style={[styles.listItemText, {display:"inline-block", alignItems:"center", textAlign:"center", width:90}]}>

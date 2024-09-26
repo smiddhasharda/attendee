@@ -48,8 +48,13 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
           data: '',
           conditionString: '',
           checkAvailability: '',
+
+          //Production Build Exam Query
           customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW WHERE EXAM_DT >= '${CurrentDate}' ORDER BY EXAM_DT ASC`,
+
+          //Local Exam Testing Query
           // customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW  ORDER BY EXAM_DT ASC`,
+          
           viewType:'Campus_View'
         };
       const response = await view(
@@ -72,16 +77,17 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
 
   const handleGetInvigilatorDutyDate = async () => {
     // let CurrentDate = new Date().toLocaleDateString('en-GB', { year: '2-digit', month: '2-digit', day: '2-digit' }).split('/').reverse().join('-');
-    const date = new Date();
-    const day = date.toLocaleDateString('en-GB', { day: '2-digit' });
-    const monthIndex = date.getMonth();
-    const year = date.toLocaleDateString('en-GB', { year: '2-digit' });
+    // const date = new Date();
+    // const day = date.toLocaleDateString('en-GB', { day: '2-digit' });
+    // const monthIndex = date.getMonth();
+    // const year = date.toLocaleDateString('en-GB', { year: '2-digit' });
 
-    // Array of month abbreviations
-    const monthAbbreviations = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-    const month = monthAbbreviations[monthIndex];
+    // // Array of month abbreviations
+    // const monthAbbreviations = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+    // const month = monthAbbreviations[monthIndex];
 
-    const CurrentDate = `${day}-${month}-${year}`;
+    // const CurrentDate = `${day}-${month}-${year}`;
+    let CurrentDate = new Date().toLocaleDateString('en-GB', { year: '2-digit', month: '2-digit', day: '2-digit' }).split('/').reverse().join('-');
     try {
       const authToken = await checkAuthToken();
       const Parameter =  {
@@ -102,7 +108,7 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
         const ExamDateArray = response.filter((item, index, self) => index === self.findIndex((t) => t.date === item.date)).map((item) => ({ EXAM_DT: item.date }));
         setExamDates(ExamDateArray);
         setExamSelectedDate(response?.[0]?.date);
-        const RoomArray = response.filter((item) => item.date === response?.data?.receivedData?.[0]?.date).map((item) => ({ room: item.room, shift: item.shift }));
+        const RoomArray = response.filter((item) => item.date === response?.[0]?.date).map((item) => ({ room: item.room, shift: item.shift }));
         handleGetRoomView(response?.[0]?.date, RoomArray);
       }
     } catch (error) {
@@ -155,7 +161,7 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
         roomShiftConditions = `AND (${roomShiftConditions})`;
       }
   
-      const customQuery = `SELECT DISTINCT PS_S_PRD_EX_RME_VW.EXAM_DT, PS_S_PRD_EX_RME_VW.ROOM_NBR, PS_S_PRD_EX_TME_VW.EXAM_START_TIME FROM PS_S_PRD_EX_RME_VW JOIN PS_S_PRD_EX_TME_VW ON PS_S_PRD_EX_RME_VW.EXAM_DT = PS_S_PRD_EX_TME_VW.EXAM_DT AND PS_S_PRD_EX_RME_VW.CATALOG_NBR = PS_S_PRD_EX_TME_VW.CATALOG_NBR WHERE PS_S_PRD_EX_RME_VW.EXAM_DT = '${formattedDate}' ${roomShiftConditions} ORDER BY PS_S_PRD_EX_TME_VW.EXAM_START_TIME,PS_S_PRD_EX_RME_VW.ROOM_NBR`;
+      const customQuery = `SELECT DISTINCT PS_S_PRD_EX_RME_VW.EXAM_DT, PS_S_PRD_EX_RME_VW.ROOM_NBR, PS_S_PRD_EX_TME_VW.EXAM_START_TIME,PS_S_PRD_EX_TME_VW.EXAM_TYPE_CD FROM PS_S_PRD_EX_RME_VW JOIN PS_S_PRD_EX_TME_VW ON PS_S_PRD_EX_RME_VW.EXAM_DT = PS_S_PRD_EX_TME_VW.EXAM_DT AND PS_S_PRD_EX_RME_VW.CATALOG_NBR = PS_S_PRD_EX_TME_VW.CATALOG_NBR WHERE PS_S_PRD_EX_RME_VW.EXAM_DT = '${formattedDate}' ${roomShiftConditions} ORDER BY PS_S_PRD_EX_TME_VW.EXAM_START_TIME,PS_S_PRD_EX_RME_VW.ROOM_NBR`;
   
       const Parameter = {
         operation: "custom",
@@ -299,7 +305,7 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
             renderItem={({ item, index }) => (
               <Pressable
                 key={index}
-                onPress={() => UserAccess?.create === 1 ? navigation.navigate("RoomDetail", { room_Nbr: item.ROOM_NBR, exam_Dt: item.EXAM_DT, startTime: item.EXAM_START_TIME,userData:userData, userAccess}) : null} >  
+                onPress={() => UserAccess?.create === 1 ? navigation.navigate("RoomDetail", { room_Nbr: item.ROOM_NBR, exam_Dt: item.EXAM_DT, startTime: item.EXAM_START_TIME,exam_type:item.EXAM_TYPE_CD,userData:userData, userAccess}) : null} >  
                 <View style={[styles.box, styles.boxTextWrap]}>
                   <Text style={styles.examName}>{item.ROOM_NBR}</Text>
                   <Text style={styles.examTime}>{convertedTime(item.EXAM_START_TIME)}</Text>
