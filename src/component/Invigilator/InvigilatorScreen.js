@@ -109,6 +109,7 @@ const InvigilatorScreen = ({userAccess,userData}) => {
       // return `${year}-${month}-${day}`;
     };
     const handleDateClick = async(date) => {
+      setLoading(true);
       setInvigilatorDutySelectedDate(date);
       await handleGetInigilatorDuty(date);
     }      
@@ -424,7 +425,7 @@ const renderTable = () => {
               action={UserAccess?.update === 1  ? true : false }
               renderAction={({ row, table }) => (
                 <View sx={{ display: 'flex', flexWrap: 'nowrap', gap: '8px' }}>
-                <Pressable style={[{width:80}, {alignItems:"center"}]} onPress={() => handleEditInvigilator(row)}>
+                <Pressable style={[{width:80}, {alignItems:"center"}]} onPress={() => handleEditInvigilator(row.original)}>
                 <Text style={styles.listItemEditText}><Feather name="edit" size={16} color="green" /></Text>
                   </Pressable>
                 </View>
@@ -520,15 +521,18 @@ const handleGetInigilatorDuty = async (selectedData) => {
       }));
       setFilterShiftList(ExamDates);
       setRefreshing(false);
+      setLoading(false);
     }
   } catch (error) {
     setRefreshing(false);
+    setLoading(false);
     handleAuthErrors(error);
   }
 };
 
 const handleGetInigilatorDutyDate = async () => {
   try {
+    setLoading(true);
     const authToken = await checkAuthToken();
     const Parameter = {
       operation: "custom",
@@ -554,6 +558,8 @@ const handleGetInigilatorDutyDate = async () => {
       setInvigilatorDutySelectedDate("");
       setInvigilatorList([]);
       setRefreshing(false);
+      setLoading(false);
+
     }
   } catch (error) {
     setRefreshing(false);
@@ -620,6 +626,7 @@ const resetTime = (date) => {
 const handleEditInvigilator = async (selectedData) => {
   const selectedDate = resetTime(parseISO(selectedData.date));
   const currentDate = resetTime(new Date());
+
   if (selectedDate<currentDate) {
     // Prevent editing if the date is less than the current date
     addToast("You cannot edit past invigilator duties.", "error");
@@ -689,7 +696,7 @@ const handleUpdateInvigilator = async () => {
   }
 };
 const handleAuthErrors = (error) => {
-  console.log(error);
+  setLoading(false);
   switch (error.message) {
   case "Invalid credentials":
   addToast("Invalid authentication credentials", "error");
@@ -719,6 +726,7 @@ const handleAuthErrors = (error) => {
     });
     setOpen(0);
     setSearchedEmployee('');
+    setLoading(true);
     await handleGetInigilatorDuty(invigilatorDutySelectedDate);
   };
   const handleDownload = () => {
@@ -979,7 +987,7 @@ useEffect(() => {
         <Text style={styles.searchtext}><AntDesign name="search1" size={20} color="white" /></Text>
         </Pressable>
       </View>
-      <View style={{flexDirection:"row", justifyContent:"space-between",alignItems:"center"}}>
+      {/* <View style={{flexDirection:"row", justifyContent:"space-between",alignItems:"center", backgroundColor:"#fff", marginBottom:20 ,borderRadius:10}}>
       <Text style={styles.header}>Invigilator Duties:</Text>      
       <View style={styles.addWrap}>
         {UserAccess?.create === 1 &&    
@@ -999,9 +1007,9 @@ useEffect(() => {
 )
         }
         </View>
-        </View>
+        </View> */}
             <View style={styles.datesWrap}>
-          <View style={styles.dates}>
+          <View style={[styles.dates ,{maxWidth:"90%"}]}>
             {invigilatorDateList?.length > 0 ?  
             <FlatList
               data={invigilatorDateList}
@@ -1028,6 +1036,24 @@ useEffect(() => {
               keyExtractor={(item) => item.date}
             /> : <Text style={styles.nodatestext}>There is no data available for the dates between {startDate.toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-')} to {endDate.toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}).toUpperCase().replace(/ /g, '-')}</Text>}
           </View>
+          <View style={[styles.addWrap,{maxWidth:"10%",}]}>
+        {UserAccess?.create === 1 &&    
+          ( <Text >         
+           <View style={{flexDirection:"row",justifyContent:"space-between",}} >
+           <Pressable  style={{marginRight:20}}  onPress={() => handleDownload()}>
+          <Text><FontAwesome5 title="Download Sample Data" name="download" size={20} color="purple" /></Text>
+        </Pressable>
+        <Pressable style={{marginRight:20}} onPress={() => setIsBulkuploadInvigilater(true)}>
+            <Text title="Upload Invigilator Data"><FontAwesome name="upload" size={23} color="purple" /></Text>
+          </Pressable>
+          <Pressable  onPress={() => handleAddButton()}>
+          <Text title="Add Invigilator Duty" style={styles.addbtntext}><FontAwesome6 name="add" size={20} color="purple" /></Text>
+        </Pressable>       
+        </View>
+   </Text>
+)
+        }
+        </View>
         </View>
 
         {renderTable()}
