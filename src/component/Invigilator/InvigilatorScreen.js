@@ -1,5 +1,5 @@
 import React, { useState, useEffect,useCallback,useMemo  } from 'react';
-import { View, Text, StyleSheet, ScrollView,FlatList,Pressable,TextInput,Linking,Platform } from 'react-native';
+import { View, Text, StyleSheet, ScrollView,FlatList,Pressable,TextInput,Linking,Platform,ActivityIndicator } from 'react-native';
 import { saveAs } from 'file-saver';
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -24,6 +24,7 @@ if (Platform.OS === 'web') {
 
 const InvigilatorScreen = ({userAccess,userData}) => {
   const [refreshing, setRefreshing] = useState(false);
+  const [searchLoader, setSerachLoader] = useState(false);
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 8 );
   const currentDate = new Date();
   const pastMonthDate = new Date();
@@ -698,6 +699,7 @@ const handleUpdateInvigilator = async () => {
 };
 const handleAuthErrors = (error) => {
   setLoading(false);
+  setSerachLoader(false);
   switch (error.message) {
   case "Invalid credentials":
   addToast("Invalid authentication credentials", "error");
@@ -737,6 +739,7 @@ const handleAuthErrors = (error) => {
 
   const handleGetEmployeeSearch = async () => {
     try {
+      setSerachLoader(true);
       const authToken = await checkAuthToken();
       const Parameter = {
         operation: "custom",
@@ -759,6 +762,7 @@ const handleAuthErrors = (error) => {
       else{
         addToast('Please Search Correct Employee Id','error');
       }
+      setSerachLoader(false);
     } catch (error) {
       handleAuthErrors(error);
     }
@@ -875,9 +879,12 @@ useEffect(() => {
             value={searchedEmployee}
             onChangeText={(text) => setSearchedEmployee(text) }
           />
+          {searchLoader ? <ActivityIndicator size="small" color="#0000ff" style={styles.searchIcon} /> :(
           <Pressable onPress={handleGetEmployeeSearch} style={styles.searchIcon}>
-            <Text ><FontAwesome name="search" size={23} color="purple" /></Text>
+          <Text ><FontAwesome name="search" size={23} color="purple" /></Text>
           </Pressable>
+          )}
+         
           <TextInput
             style={styles.input}
             placeholder="Employee Id"
