@@ -1,5 +1,5 @@
 import React, { useState, useEffect,useCallback,useMemo  } from 'react';
-import { View, Text, StyleSheet, ScrollView,FlatList,Pressable,TextInput,Linking,Platform } from 'react-native';
+import { View, Text, StyleSheet, ScrollView,FlatList,Pressable,TextInput,Linking,Platform,ActivityIndicator } from 'react-native';
 import { saveAs } from 'file-saver';
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -24,6 +24,7 @@ if (Platform.OS === 'web') {
 
 const InvigilatorScreen = ({userAccess,userData}) => {
   const [refreshing, setRefreshing] = useState(false);
+  const [searchLoader, setSerachLoader] = useState(false);
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 8 );
   const currentDate = new Date();
   const pastMonthDate = new Date();
@@ -302,12 +303,12 @@ const WebColumns = useMemo(() => [
  {
    accessorKey: 'employeeId',
    header: 'Employee Id',
-   size: 150,
+   size: 75,
  },
  {
    accessorKey: 'invigilatorName',
    header: 'Name',
-   size: 150,
+   size: 250,
  },
  {
    accessorKey: "date",
@@ -320,6 +321,7 @@ const WebColumns = useMemo(() => [
        : "-",
    filterFn: "lessThanOrEqualTo",
    sortingFn: "datetime",
+   size:75
  },
  {
    accessorKey: "shift",
@@ -332,11 +334,12 @@ const WebColumns = useMemo(() => [
        : "-",
    filterVariant:"multi-select",
    filterSelectOptions: filterShiftList,
+   size:75
  },
  {
    accessorKey: 'room',
    header: 'Room No.',
-   size: 150,
+   size: 175,
    filterVariant: "multi-select",
    filterSelectOptions: filterRoomList,
  },
@@ -356,11 +359,14 @@ const WebColumns = useMemo(() => [
          borderRadius: 22,
          color: "#fff",
          minWidth: 75,
-         maxWidth: "auto",
-         paddingVertical: 2,
-         paddingHorizontal: 7.5,
+         maxWidth: 100,
+        //  paddingVertical: 2,
+        //  paddingHorizontal: 7.5,
+        padding:5,
          textAlign: "center",
-         alignItems:"center"
+         alignItems:"center",
+          
+         
        }}
      >
        <Text style={{ color: "#fff" }}>
@@ -375,6 +381,7 @@ const WebColumns = useMemo(() => [
    accessorKey: "created_at",
    id: "created_at",
    header: "Created Date",
+   size: 75,
    accessorFn: (row) => row?.created_at || "-",
    Cell: ({ cell }) =>
      cell?.row?.original?.date
@@ -392,6 +399,7 @@ const WebColumns = useMemo(() => [
    accessorKey: "updated_at",
    id: "updated_at",
    header: "Updated Date",
+   size:75,
    accessorFn: (row) => row?.updated_at || "-",
    Cell: ({ cell }) =>
      cell?.row?.original?.date
@@ -420,7 +428,8 @@ const renderTable = () => {
               handleExportRows={handleExportRows}
               handleRefreshData={() => handleDateClick(invigilatorDutySelectedDate)}
               // handleExportRowsAsPDF={handleExportRowsAsPDF}
-              style={styles.tablebtn}
+              style={[styles.tablebtn]}
+             
               loading={loading}
               action={UserAccess?.update === 1  ? true : false }
               renderAction={({ row, table }) => (
@@ -566,20 +575,19 @@ const handleGetInigilatorDutyDate = async () => {
     handleAuthErrors(error);
   }
 };
-
 const handleAddInvigilator = async () => {
   try {
     if(!invigilatorData?.employeeId || !invigilatorData?.invigilatorName){
-    return addToast("Please set Invigilator","error");
+    return addToast("Please enter the details to add the Invigilator","error");
     }
     else if(!invigilatorData?.date ){
-      return addToast("Please select exam date","error");
+      return addToast("Please select the exam date","error");
       }
     else if(!invigilatorData?.room.replace(/\s+/g, '') === "" ){
-      return addToast("Please enter room detials","error");
+      return addToast("Please slect the room","error");
       }
     else if(!invigilatorData?.shift.replace(/\s+/g, '') === "" ){
-      return addToast("Please enter shift details","error");
+      return addToast("Please select the shift","error");
       }
     const authToken = await checkAuthToken();
     const Parameter = {
@@ -656,22 +664,24 @@ const handleAddButton = async() =>{
 const handleUpdateInvigilator = async () => {
   try {
     if(!invigilatorData?.employeeId || !invigilatorData?.invigilatorName){
-      return addToast("Please set Invigilator","error");
+      return addToast("Please enter the details to add the Invigilator","error");
       }
       else if(!invigilatorData?.date ){
-        return addToast("Please select exam date","error");
+        return addToast("Please select the exam date","error");
         }
       else if(!invigilatorData?.room.replace(/\s+/g, '') === "" ){
-        return addToast("Please enter room detials","error");
+        return addToast("Please select the room","error");
         }
       else if(!invigilatorData?.shift.replace(/\s+/g, '') === "" ){
-        return addToast("Please enter shift details","error");
+        return addToast("Please select the shift","error");
         }
     const authToken = await checkAuthToken();
     const Parameter ={
       operation: "update",
       tblName: "tbl_invigilator_duty",
       data: {
+        employeeId: invigilatorData.employeeId,
+        invigilatorName: invigilatorData.invigilatorName,
         date:parseExcelDate(invigilatorData.date),
         shift:invigilatorData.shift,
         room:invigilatorData.room,
@@ -697,6 +707,7 @@ const handleUpdateInvigilator = async () => {
 };
 const handleAuthErrors = (error) => {
   setLoading(false);
+  setSerachLoader(false);
   switch (error.message) {
   case "Invalid credentials":
   addToast("Invalid authentication credentials", "error");
@@ -727,7 +738,7 @@ const handleAuthErrors = (error) => {
     setOpen(0);
     setSearchedEmployee('');
     setLoading(true);
-    await handleGetInigilatorDuty(invigilatorDutySelectedDate);
+    await handleGetInigilatorDutyDate();
   };
   const handleDownload = () => {
     const url = global.SERVER_URL + "/invigilatorDoc/invigilator_bulkupload.xlsx";
@@ -736,6 +747,7 @@ const handleAuthErrors = (error) => {
 
   const handleGetEmployeeSearch = async () => {
     try {
+      setSerachLoader(true);
       const authToken = await checkAuthToken();
       const Parameter = {
         operation: "custom",
@@ -751,11 +763,14 @@ const handleAuthErrors = (error) => {
         Parameter,
         authToken
       );
-  
-      if (response) {
+      if (response?.length > 0) {
         let EmployeeData = response?.[0]
         setInvigilatorData({ ...invigilatorData, invigilatorName: EmployeeData?.DISPLAY_NAME,employeeId:EmployeeData?.EMPLID });
       }
+      else{
+        addToast('Please Search Correct Employee Id','error');
+      }
+      setSerachLoader(false);
     } catch (error) {
       handleAuthErrors(error);
     }
@@ -872,9 +887,12 @@ useEffect(() => {
             value={searchedEmployee}
             onChangeText={(text) => setSearchedEmployee(text) }
           />
+          {searchLoader ? <ActivityIndicator size="small" color="#0000ff" style={styles.searchIcon} /> :(
           <Pressable onPress={handleGetEmployeeSearch} style={styles.searchIcon}>
-            <Text ><FontAwesome name="search" size={23} color="purple" /></Text>
+          <Text ><FontAwesome name="search" size={23} color="purple" /></Text>
           </Pressable>
+          )}
+         
           <TextInput
             style={styles.input}
             placeholder="Employee Id"
@@ -904,8 +922,8 @@ useEffect(() => {
             style={[styles.dropdown, styles.dropdownExam]}
             dropDownStyle={{ backgroundColor: "#fafafa"}}
             dropDownMaxHeight={150}
-            dropDownDirection="TOP"
-            containerStyle={styles.rolePicker}
+            dropDownDirection="AUTO"
+            containerStyle={[styles.rolePicker,{zIndex:9999}]}
             listItemContainerStyle={{ height: 40}} 
             listItemLabelStyle={{ fontSize: 14 }}
           />
@@ -925,8 +943,8 @@ useEffect(() => {
             style={[styles.dropdown, styles.dropdownExam]}
             dropDownStyle={{ backgroundColor: "#fafafa"}}
             dropDownMaxHeight={150}
-            dropDownDirection="TOP"
-            containerStyle={styles.rolePicker}
+            dropDownDirection="AUTO"
+            containerStyle={[styles.rolePicker, {zIndex:8888}]}
             listItemContainerStyle={{ height: 40}} 
             listItemLabelStyle={{ fontSize: 14 }}
           />
@@ -946,8 +964,8 @@ useEffect(() => {
             style={[styles.dropdown, styles.dropdownExam]}
             dropDownStyle={{ backgroundColor: "#fafafa"}}
             dropDownMaxHeight={150}
-            dropDownDirection="TOP"
-            containerStyle={styles.rolePicker}
+            dropDownDirection="AUTO"
+            containerStyle={[styles.rolePicker, {zIndex:7777}]}
             listItemContainerStyle={{ height: 40}} 
             listItemLabelStyle={{ fontSize: 14 }}
           />
@@ -964,8 +982,8 @@ useEffect(() => {
             style={styles.dropdown}
             dropDownStyle={{ backgroundColor: "#fafafa"}}
             dropDownMaxHeight={150}
-            dropDownDirection="TOP"
-            containerStyle={styles.rolePicker}
+            dropDownDirection="AUTO"
+            containerStyle={[styles.rolePicker, {zIndex:6666}]}
             listItemContainerStyle={{ height: 40}} 
             listItemLabelStyle={{ fontSize: 14 }}
           />
@@ -1041,13 +1059,13 @@ useEffect(() => {
           ( <Text >         
            <View style={{flexDirection:"row",justifyContent:"space-between",}} >
            <Pressable  style={{marginRight:20}}  onPress={() => handleDownload()}>
-          <Text><FontAwesome5 title="Download Sample Data" name="download" size={20} color="purple" /></Text>
+          <Text><FontAwesome5 title="Download Sample Data" name="download" size={24} color="#fff" /></Text>
         </Pressable>
         <Pressable style={{marginRight:20}} onPress={() => setIsBulkuploadInvigilater(true)}>
-            <Text title="Upload Invigilator Data"><FontAwesome name="upload" size={23} color="purple" /></Text>
+            <Text title="Upload Invigilator Data"><FontAwesome name="upload" size={26} color="#fff" /></Text>
           </Pressable>
           <Pressable  onPress={() => handleAddButton()}>
-          <Text title="Add Invigilator Duty" style={styles.addbtntext}><FontAwesome6 name="add" size={20} color="purple" /></Text>
+          <Text title="Add Invigilator Duty" style={styles.addbtntext}><FontAwesome6 name="add" size={22} color="#fff" /></Text>
         </Pressable>       
         </View>
    </Text>
@@ -1201,8 +1219,15 @@ useEffect(() => {
       color: 'white',
     },
     addWrap:{
-     width:100,
-     marginBottom:10,
+     width:150,
+     marginBottom:0,
+     height:50,
+     borderRadius:22,
+     flexDirection:"row",
+     alignItems:"center",
+     justifyContent:"center",
+     backgroundColor:"rgb(17, 65, 102)"
+     
     },
     addbtntext:{
       color:"#fff",
