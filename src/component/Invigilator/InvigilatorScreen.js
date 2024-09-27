@@ -566,19 +566,18 @@ const handleGetInigilatorDutyDate = async () => {
     handleAuthErrors(error);
   }
 };
-
 const handleAddInvigilator = async () => {
   try {
     if(!invigilatorData?.employeeId || !invigilatorData?.invigilatorName){
-    return addToast("Please set Invigilator","error");
+    return addToast("Please set employee id first","error");
     }
     else if(!invigilatorData?.date ){
       return addToast("Please select exam date","error");
       }
-    else if(!invigilatorData?.room.replace(/\s+/g, '') === "" ){
+    else if(invigilatorData?.room.replace(/\s+/g, '') === "" ){
       return addToast("Please enter room detials","error");
       }
-    else if(!invigilatorData?.shift.replace(/\s+/g, '') === "" ){
+    else if(invigilatorData?.shift.replace(/\s+/g, '') === "" ){
       return addToast("Please enter shift details","error");
       }
     const authToken = await checkAuthToken();
@@ -656,15 +655,15 @@ const handleAddButton = async() =>{
 const handleUpdateInvigilator = async () => {
   try {
     if(!invigilatorData?.employeeId || !invigilatorData?.invigilatorName){
-      return addToast("Please set Invigilator","error");
+      return addToast("Please set employee id first","error");
       }
       else if(!invigilatorData?.date ){
         return addToast("Please select exam date","error");
         }
-      else if(!invigilatorData?.room.replace(/\s+/g, '') === "" ){
+      else if(invigilatorData?.room.replace(/\s+/g, '') === "" ){
         return addToast("Please enter room detials","error");
         }
-      else if(!invigilatorData?.shift.replace(/\s+/g, '') === "" ){
+      else if(invigilatorData?.shift.replace(/\s+/g, '') === "" ){
         return addToast("Please enter shift details","error");
         }
     const authToken = await checkAuthToken();
@@ -672,6 +671,8 @@ const handleUpdateInvigilator = async () => {
       operation: "update",
       tblName: "tbl_invigilator_duty",
       data: {
+        employeeId: invigilatorData.employeeId,
+        invigilatorName: invigilatorData.invigilatorName,
         date:parseExcelDate(invigilatorData.date),
         shift:invigilatorData.shift,
         room:invigilatorData.room,
@@ -727,7 +728,7 @@ const handleAuthErrors = (error) => {
     setOpen(0);
     setSearchedEmployee('');
     setLoading(true);
-    await handleGetInigilatorDuty(invigilatorDutySelectedDate);
+    await handleGetInigilatorDutyDate();
   };
   const handleDownload = () => {
     const url = global.SERVER_URL + "/invigilatorDoc/invigilator_bulkupload.xlsx";
@@ -751,10 +752,12 @@ const handleAuthErrors = (error) => {
         Parameter,
         authToken
       );
-  
-      if (response) {
+      if (response?.length > 0) {
         let EmployeeData = response?.[0]
         setInvigilatorData({ ...invigilatorData, invigilatorName: EmployeeData?.DISPLAY_NAME,employeeId:EmployeeData?.EMPLID });
+      }
+      else{
+        addToast('Please Search Correct Employee Id','error');
       }
     } catch (error) {
       handleAuthErrors(error);
