@@ -185,6 +185,13 @@ const ReportScreen = ({userAccess}) => {
       conditionString:"",
       checkAvailability: "",
       customQuery:`SELECT JSON_ARRAYAGG( JSON_OBJECT( 'PK_Report_Id', p.PK_Report_Id, 'EMPLID', p.EMPLID, 'EXAM_DT', p.EXAM_DT, 'ROOM_NBR', p.ROOM_NBR, 'EXAM_START_TIME', p.EXAM_START_TIME, 'STRM', p.STRM, 'CATALOG_NBR', p.CATALOG_NBR, 'PTP_SEQ_CHAR', p.PTP_SEQ_CHAR, 'NAME_FORMAL', p.NAME_FORMAL, 'ADM_APPL_NBR', p.ADM_APPL_NBR, 'DESCR', p.DESCR, 'DESCR2', p.DESCR2, 'DESCR3', p.DESCR3, 'Status', p.Status, 'Attendece_Status', p.Attendece_Status, 'EXAM_TYPE_CD', p.EXAM_TYPE_CD, 'created_by', p.created_by, 'updated_by', p.updated_by, 'isActive', p.isActive, 'copyData', cd.copy_data_json ) ) AS ReportMaster FROM tbl_report_master p LEFT JOIN ( SELECT FK_ReportId, CAST(CONCAT('[', GROUP_CONCAT(JSON_OBJECT( 'PK_CopyId', PK_CopyId, 'FK_ReportId', FK_ReportId, 'EMPLID', EMPLID, 'copyNumber', copyNumber, 'isActive', isActive )), ']') AS JSON) AS copy_data_json FROM tbl_copy_master GROUP BY FK_ReportId ) cd ON p.PK_Report_Id = cd.FK_ReportId WHERE p.EXAM_DT = '${date}'`,
+
+      //JSON QUERY SINGLE RESULTS
+      customQuery:`SELECT JSON_ARRAYAGG( JSON_OBJECT( 'PK_Report_Id', p.PK_Report_Id, 'EMPLID', p.EMPLID, 'EXAM_DT', p.EXAM_DT, 'ROOM_NBR', p.ROOM_NBR, 'EXAM_START_TIME', p.EXAM_START_TIME, 'STRM', p.STRM, 'CATALOG_NBR', p.CATALOG_NBR, 'PTP_SEQ_CHAR', p.PTP_SEQ_CHAR, 'NAME_FORMAL', p.NAME_FORMAL, 'ADM_APPL_NBR', p.ADM_APPL_NBR, 'DESCR', p.DESCR, 'DESCR2', p.DESCR2, 'DESCR3', p.DESCR3, 'Status', p.Status, 'Attendece_Status', p.Attendece_Status, 'EXAM_TYPE_CD', p.EXAM_TYPE_CD, 'created_by', p.created_by, 'updated_by', p.updated_by, 'isActive', p.isActive, 'copyData', cd.copy_data_json ) ) AS ReportMaster FROM tbl_report_master p LEFT JOIN ( SELECT FK_ReportId, CAST(CONCAT('[', GROUP_CONCAT(JSON_OBJECT( 'PK_CopyId', PK_CopyId, 'FK_ReportId', FK_ReportId, 'EMPLID', EMPLID, 'copyNumber', copyNumber, 'isActive', isActive )), ']') AS JSON) AS copy_data_json FROM tbl_copy_master GROUP BY FK_ReportId ) cd ON p.PK_Report_Id = cd.FK_ReportId WHERE p.EXAM_DT = '${date}'`,
+
+      //JOIN QUERY MULTIPLE RESULTS
+      //customQuery:`SELECT p.PK_Report_Id, p.EMPLID, p.EXAM_DT, p.ROOM_NBR, p.EXAM_START_TIME, p.STRM, p.CATALOG_NBR, p.PTP_SEQ_CHAR, p.NAME_FORMAL, p.ADM_APPL_NBR, p.DESCR, p.DESCR2, p.DESCR3, p.Status, p.Attendece_Status, p.EXAM_TYPE_CD, p.created_by, p.updated_by, p.isActive AS reportIsActive, cd.PK_CopyId, cd.FK_ReportId, cd.EMPLID AS copyEMPLID, cd.copyNumber, cd.isActive AS copyIsActive FROM tbl_report_master p LEFT JOIN tbl_copy_master cd ON p.PK_Report_Id = cd.FK_ReportId WHERE p.EXAM_DT = '${date}'`,
+
       // customQuery: `select JSON_ARRAYAGG(json_object('PK_Report_Id',p.PK_Report_Id,'EMPLID',EMPLID,'EXAM_DT',p.EXAM_DT,'ROOM_NBR',p.ROOM_NBR,'EXAM_START_TIME',p.EXAM_START_TIME,'STRM',p.STRM,'CATALOG_NBR',p.CATALOG_NBR,'PTP_SEQ_CHAR',p.PTP_SEQ_CHAR,'NAME_FORMAL',p.NAME_FORMAL,'ADM_APPL_NBR',p.ADM_APPL_NBR,'DESCR',p.DESCR,'DESCR2',p.DESCR2,'DESCR3',p.DESCR3,'Status',p.Status,'Attendece_Status',p.Attendece_Status,'EXAM_TYPE_CD',p.EXAM_TYPE_CD,'created_by',p.created_by,'updated_by',p.updated_by,'isActive',p.isActive,'copyData',( SELECT CAST( CONCAT('[', GROUP_CONCAT( JSON_OBJECT( 'PK_CopyId',q.PK_CopyId,'FK_ReportId',q.FK_ReportId,'EMPLID',q.EMPLID,'copyNumber',q.copyNumber,'alternateCopyNumber1',q.alternateCopyNumber1,'alternateCopyNumber2',q.alternateCopyNumber2,'alternateCopyNumber3',q.alternateCopyNumber3,'alternateCopyNumber4',q.alternateCopyNumber4,'alternateCopyNumber5',q.alternateCopyNumber5,'alternateCopyNumber6',q.alternateCopyNumber6,'isActive',q.isActive) ), ']') AS JSON ) FROM tbl_copy_master q WHERE q.FK_ReportId = p.PK_Report_Id ))) AS ReportMaster from tbl_report_master p where EXAM_DT = '${date}'`,
     };
     const response = await fetch(
@@ -192,6 +199,7 @@ const ReportScreen = ({userAccess}) => {
     authToken
     );
     if (response) {
+      console.log("Report Response", response);
       setTableData(response?.[0]?.ReportMaster || []);
     }
     } catch (error) {
