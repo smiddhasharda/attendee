@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 const WebTable = ({ columns, data,handleExportRows,handleExportData,handleRefreshData,style,handleExportRowsAsPDF,loading,action,renderAction }) => {
 
   return (
-    <ScrollView  style={{ maxHeight: 450 }} horizontal>
+    <ScrollView  style={{ maxHeight: "62vh" }} horizontal>
  <ScrollView>
     <MaterialReactTable
     columns={columns}
@@ -14,8 +14,13 @@ const WebTable = ({ columns, data,handleExportRows,handleExportData,handleRefres
     enableRowSelection
     enableRowActions={action || false}
     positionActionsColumn='last'
+    rowsPerPageOptions={[
+        { label: '20 rows', value: 50 },
+   
+      ]}
+      showRowsPerPage={true}
     renderTopToolbarCustomActions={({ table }) => (
-      <View style={{ flexDirection: 'row', gap: '1rem', padding: '0.5rem', flexWrap: 'wrap' }}>
+      <View style={{ flexDirection: 'row', gap: '1rem', padding: '0.5rem', flexWrap: 'wrap' , }}>
         
         {/* Refresh Data Button */}
         <Pressable onPress={handleRefreshData} style={style}>
