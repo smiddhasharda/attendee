@@ -351,12 +351,12 @@ const WebColumns = useMemo(() => [
      <View
        style={{
          backgroundColor:
-         cell?.row?.original?.duty_status === "primary"
+         cell?.row?.original?.duty_status === "Primary"
          ? 'rgb(12, 181, 81)'
          : cell?.row?.original?.duty_status === "secondary"
          ? 'rgb(253, 191, 72)'
          : 'rgb(64, 65, 66)',
-         borderRadius: 22,
+         borderRadius: 12,
          color: "#fff",
          minWidth: 75,
          maxWidth: 100,
@@ -364,9 +364,7 @@ const WebColumns = useMemo(() => [
         //  paddingHorizontal: 7.5,
         padding:5,
          textAlign: "center",
-         alignItems:"center",
-          
-         
+         alignItems:"center",       
        }}
      >
        <Text style={{ color: "#fff" }}>
