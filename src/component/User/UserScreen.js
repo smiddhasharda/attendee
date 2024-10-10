@@ -738,28 +738,28 @@ const UserScreen = ({userAccess,userData}) => {
           keyExtractor={(item) => item.user_id.toString()}
           ListHeaderComponent={() => (
             <View style={styles.tableHeader}>
-              <Text style={[styles.tableHeaderText,{width:120}, ]}>Employee Id</Text>
-              <Text style={[styles.tableHeaderText,{width:200,textAlign:"center"}, ]}>Name</Text>
-              <Text style={[styles.tableHeaderText,{width:200,textAlign:"center"}, ]}>Email Id</Text>
-              <Text style={[styles.tableHeaderText, {width:170,textAlign:"center"} ]}>Mob.No</Text>
-              <Text style={[styles.tableHeaderText,{width:200,textAlign:"center"}  ]}>User Status</Text>
+              <Text style={[styles.tableHeaderText,{width:100}, ]}>Employee Id</Text>
+              <Text style={[styles.tableHeaderText,{width:200,textAlign:"left"}, ]}>Name</Text>
+              <Text style={[styles.tableHeaderText,{width:220,textAlign:"left"}, ]}>Email Id</Text>
+              <Text style={[styles.tableHeaderText, {width:120,textAlign:"left"} ]}>Mob.No</Text>
+              <Text style={[styles.tableHeaderText,{width:120,textAlign:"center"}  ]}>User Status</Text>
               <Text style={[styles.tableHeaderText,{width:90,textAlign:"center"}  ]}>Status</Text>
               <Text style={[styles.tableHeaderText,{width:120,textAlign:"center"}  ]}>Attempt Status</Text>
-              <Text style={[styles.tableHeaderText,{width:120 ,textAlign:"center"}, ]}>Created Date</Text>
-              <Text style={[styles.tableHeaderText,{width:120 ,textAlign:"center"}, ]}>Updated Date</Text>
-              <Text style={[styles.tableHeaderText,{width:120,textAlign:"center"}, ]}>Created By</Text>
-              <Text style={[styles.tableHeaderText,{width:120,textAlign:"center"}, ]}>Updated By</Text>
+              <Text style={[styles.tableHeaderText,{width:120 ,textAlign:"left"}, ]}>Created Date</Text>
+              <Text style={[styles.tableHeaderText,{width:120 ,textAlign:"left"}, ]}>Updated Date</Text>
+              <Text style={[styles.tableHeaderText,{width:120,textAlign:"left"}, ]}>Created By</Text>
+              <Text style={[styles.tableHeaderText,{width:120,textAlign:"left"}, ]}>Updated By</Text>
               <Text style={[styles.tableHeaderText,{width:60, textAlign:"center"} ]}>Actions</Text>
             </View>
           )}
           renderItem={({ item }) => (
             refreshing ? <ShimmerEffect/> :
             <View style={styles.listItem}>
-              <Text style={[styles.listItemText,{width:120}]}>{item.username}</Text>
-              <Text style={[styles.listItemText,{width:200,textAlign:"center"}]}>{item.name}</Text>
-              <Text style={[styles.listItemText,{width:200,textAlign:"center"}]}>{item.email_id}</Text>
-              <Text style={[styles.listItemText, {width:170,textAlign:"center"}]}>{item.contact_number}</Text>
-              <Text style={[styles.listItemText, {width:200,textAlign:"center"}]}>{item.status} User</Text>
+              <Text style={[styles.listItemText,{width:100}]}>{item.username}</Text>
+              <Text style={[styles.listItemText,{width:200,textAlign:"left"}]}>{item.name}</Text>
+              <Text style={[styles.listItemText,{width:220,textAlign:"left" ,flexShrink: 1}]}>{item.email_id}</Text>
+              <Text style={[styles.listItemText, {width:120,textAlign:"left"}]}>{item.contact_number || '-'} </Text>
+              <Text style={[styles.listItemText, {width:120,textAlign:"center"}]}>{item.status} User</Text>
                     <View style={[styles.listItemText, {display:"inline-block", alignItems:"center", textAlign:"center", width:90}]}>
                       <Pressable style={{display:"inline-block" ,alignItems:"center"} } onPress={() =>UserAccess?.update === 1 ? handleUserStatus(item.user_id, item?.isActive) : ''}>
                     <Text style={[styles.listItemText,  item.isActive ? styles.actionbtn : styles.inactivebtn,]}>{item.isActive ? "Active" : "Inactive"}</Text>
@@ -770,17 +770,17 @@ const UserScreen = ({userAccess,userData}) => {
                     <Text style={[styles.listItemText,  item.firstLoginStatus === 3 ? styles.inactivebtn : styles.actionbtn,]}>{ `${3 - item.firstLoginStatus} Remains`}</Text>
                     </Pressable>     
                     </View>  
-                    <Text style={[styles.listItemText, { width: 120, display: "inline-block",textAlign:"center" }]} numberOfLines={1}>
-                      {item.createdDate ? new Date(item.createdDate.split('T')[0]).toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }) : 'N/A'}
+                    <Text style={[styles.listItemText, { width: 120, display: "inline-block",textAlign:"left" }]} numberOfLines={1}>
+                      {item.createdDate ? new Date(item.createdDate.split('T')[0]).toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }) : '-'}
                     </Text>
-                    <Text style={[styles.listItemText, { width: 120, display: "inline-block",textAlign:"center" }]} numberOfLines={1}>
-                    {item.updatedDate ? new Date(item.updatedDate.split('T')[0]).toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }) : 'N/A'}
+                    <Text style={[styles.listItemText, { width: 120, display: "inline-block",textAlign:"left" }]} numberOfLines={1}>
+                    {item.updatedDate ? new Date(item.updatedDate.split('T')[0]).toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }) : '-'}
                     </Text>   
-                    <Text style={[styles.listItemText, { width: 120, display: "inline-block",textAlign:"center" }]} numberOfLines={1}>
-                      {item.createdBy ? item.createdBy: 'N/A'}
+                    <Text style={[styles.listItemText, { width: 120, display: "inline-block",textAlign:"left" }]} numberOfLines={1}>
+                      {item.createdBy ? item.createdBy: '-'}
                     </Text>
-                    <Text style={[styles.listItemText, { width: 120, display: "inline-block",textAlign:"center" }]} numberOfLines={1}>
-                    {item.updatedBy ? item.updatedBy: 'N/A'}
+                    <Text style={[styles.listItemText, { width: 120, display: "inline-block",textAlign:"left" }]} numberOfLines={1}>
+                    {item.updatedBy ? item.updatedBy: '-'}
                     </Text>
               <View style={{width:60, display:"inline-block", alignItems:"center",textAlign:"center"}}>
               {UserAccess?.update === 1 ? 
