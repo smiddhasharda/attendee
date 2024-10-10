@@ -483,12 +483,12 @@ const RoleScreen = ({userAccess,userData}) => {
                     ListHeaderComponent={() => (
                       <View style={styles.tableHeader}>
                         <Text numberOfLines={1} style={[styles.tableHeaderTextRole,{width:isMobile?120:''},{ display: "inline-block", }]}>Role Name</Text>
-                        <Text style={[styles.tableHeaderTextRole, { display: "inline-block"},{width:isMobile?100:''},]}>Status</Text> 
-                        <Text style={[styles.tableHeaderTextRole, { display:"inline-block", textAlign:"center"},{width:isMobile?100:''}]} numberOfLines={1}>Created Date</Text>
-                    <Text style={[styles.tableHeaderTextRole, { display:"inline-block", textAlign:"center"},{width:isMobile?100:''}]} numberOfLines={1}>Updated Date</Text>
-                    <Text style={[styles.tableHeaderTextRole, { display:"inline-block", textAlign:"center"},{width:isMobile?100:''}]} numberOfLines={1}>Created By</Text>
-                    <Text style={[styles.tableHeaderTextRole, { display:"inline-block",textAlign:"center"},{width:isMobile?100:''}]} numberOfLines={1}>Updated By</Text>
-                        <Text style={[styles.tableHeaderTextRole, { display: "inline-block",textAlign:"center"},{width:isMobile?100:''}]}>Actions</Text>
+                        <Text style={[styles.tableHeaderTextRole, {display: "inline-block"},{width:isMobile?80:''},]}>Status</Text> 
+                        <Text style={[styles.tableHeaderTextRole, { display:"inline-block", textAlign:"left"},{width:isMobile?100:''}]} numberOfLines={1}>Created Date</Text>
+                    <Text style={[styles.tableHeaderTextRole, { display:"inline-block", textAlign:"left"},{width:isMobile?100:''}]} numberOfLines={1}>Updated Date</Text>
+                    <Text style={[styles.tableHeaderTextRole, { display:"inline-block", textAlign:"left"},{width:isMobile?100:''}]} numberOfLines={1}>Created By</Text>
+                    <Text style={[styles.tableHeaderTextRole, { display:"inline-block",textAlign:"left"},{width:isMobile?100:''}]} numberOfLines={1}>Updated By</Text>
+                        <Text style={[styles.tableHeaderTextRole, { display: "inline-block",textAlign:"left"},{width:isMobile?100:''}]}>Actions</Text>
                       </View>
                     )}
                     renderItem={({ item }) => (
@@ -499,7 +499,7 @@ const RoleScreen = ({userAccess,userData}) => {
                             {item.roleName}
                           </Text>
                         </View>
-                        <View style={[styles.listItemText, {display: "inline-block" ,},{width:isMobile?100:''} ]}>
+                        <View style={[styles.listItemText, {display: "inline-block" ,},{width:isMobile?80:'' ,} ]}>
                           <Pressable        
                           style={[{ display: "inline-block" ,}]}          
                             onPress={() => UserAccess?.update === 1 ? handleRoleStatus(item.PK_RoleId, item?.isActive) : ''} 
@@ -517,19 +517,19 @@ const RoleScreen = ({userAccess,userData}) => {
                             </Text>
                           </Pressable>
                         </View>
-                        <Text style={[styles.listItemText, { display: "inline-block", textAlign:"center" },{width:isMobile?100:''}]} numberOfLines={1}>
-                      {item.created_at ? new Date(item.created_at.split('T')[0]).toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }) : 'N/A'}
+                        <Text style={[styles.listItemText, { display: "inline-block", textAlign:"left" },{width:isMobile?100:''}]} numberOfLines={1}>
+                      {item.created_at ? new Date(item.created_at.split('T')[0]).toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }) : '-'}
                     </Text>
-                    <Text style={[styles.listItemText, {  display: "inline-block",textAlign:"center" },{width:isMobile?100:''}]} numberOfLines={1}>
-                    {item.updated_at ? new Date(item.updated_at.split('T')[0]).toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }) : 'N/A'}
+                    <Text style={[styles.listItemText, {  display: "inline-block",textAlign:"left" },{width:isMobile?100:''}]} numberOfLines={1}>
+                    {item.updated_at ? new Date(item.updated_at.split('T')[0]).toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }) : '-'}
                     </Text>
-                    <Text style={[styles.listItemText, { display: "inline-block" , textAlign:"center"},{width:isMobile?100:''}]} numberOfLines={1}>
-                      {item.created_by ? created_by:'N/A'}
+                    <Text style={[styles.listItemText, { display: "inline-block" , textAlign:"left"},{width:isMobile?100:''}]} numberOfLines={1}>
+                      {item.created_by ? created_by:'-'}
                     </Text>
-                    <Text style={[styles.listItemText, { display: "inline-block",textAlign:"center" },{width:isMobile?100:''}]} numberOfLines={1}>
-                      {item.updated_by ? updated_by:'N/A'}
+                    <Text style={[styles.listItemText, { display: "inline-block",textAlign:"left" },{width:isMobile?100:''}]} numberOfLines={1}>
+                      {item.updated_by ? updated_by:'-'}
                     </Text> 
-                        <View style={[styles.listItemText, { alignItems: "center", display: "inline-block",textAlign:"center"},{width:isMobile?120:''}]}>
+                        <View style={[styles.listItemText, { alignItems: "center", display: "inline-block",textAlign:"left"},{width:isMobile?120:''}]}>
                           {UserAccess?.update === 1 ?
                           (<Pressable style={[styles.listItemEditButton,{display:"inline-block" }]  } 
                           onPress={() => handleEditRole(item)}>
