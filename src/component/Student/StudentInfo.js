@@ -124,7 +124,7 @@ const StudentInfo = ({ navigation }) => {
           {/* <MaterialIcons name="done" size={24} color="green" style={styles.righticon}/> */}
         </View>
         {/* <> */}
-        {tempCopyNumber && (
+        {tempCopyNumber.trim(' ') && (
           <Pressable style={styles.doneWrap}
             onPress={() =>
               handleSaveCopy(copyType, tempCopyNumber, index, copyIndex)

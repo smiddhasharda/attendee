@@ -239,12 +239,11 @@ const paginatedData = moduleList.slice((currentPage - 1) * pageSize, currentPage
                       {item.updated_at ? new Date(item.updated_at.split('T')[0]).toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }) : 'N/A'}
                       </Text>
                       <Text style={[styles.listItemText, {width:120, display: "inline-block" , textAlign:"center"}]} numberOfLines={1}>
-                        {item.created_by ? created_by:'N/A'}
+                        {item.created_by ? created_by:'-'}
                       </Text>
                       <Text style={[styles.listItemText, {width:120, display: "inline-block",textAlign:"center" }]} numberOfLines={1}>
-                        {item.updated_by ? updated_by:'N/A'}
-                      </Text>
-                
+                        {item.updated_by ? updated_by:'-'}
+                      </Text>                
                       <View style={[styles.listItemText, {width:120, display:"inline-block", alignItems:"center" ,textAlign:"center"}]}>
                         {userAccessForModule?.update === 1 ? (
                           <Pressable style={[styles.listItemEditButton, {display:"inline-block"}]}  onPress={() => handleEditModule(item)}>
