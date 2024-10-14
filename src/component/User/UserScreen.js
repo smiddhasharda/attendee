@@ -761,8 +761,8 @@ const UserScreen = ({userAccess,userData}) => {
               <Text style={[styles.listItemText, {width:120,textAlign:"left"}]}>{item.contact_number || '-'} </Text>
               <Text style={[styles.listItemText, {width:120,textAlign:"center"}]}>{item.status} User</Text>
                     <View style={[styles.listItemText, {display:"inline-block", alignItems:"center", textAlign:"center", width:90}]}>
-                      <Pressable style={{display:"inline-block" ,alignItems:"center"} } onPress={() =>UserAccess?.update === 1 ? handleUserStatus(item.user_id, item?.isActive) : ''}>
-                    <Text style={[styles.listItemText,  item.isActive ? styles.actionbtn : styles.inactivebtn,]}>{item.isActive ? "Active" : "Inactive"}</Text>
+                      <Pressable style={{alignItems:"center"} } onPress={() =>UserAccess?.update === 1 ? handleUserStatus(item.user_id, item?.isActive) : ''}>
+                    <Text style={[styles.listItemText,  item.isActive ? styles.actionbtn : styles.inactivebtn, {minWidth:75}]}>{item.isActive ? "Active" : "Inactive"}</Text>
                     </Pressable>     
                     </View>  
                     <View style={[styles.listItemText, {display:"inline-block", alignItems:"center", textAlign:"center", width:120}]}>
