@@ -2,9 +2,12 @@ import React, { useEffect, useState, useCallback, useContext } from "react";
 import { View, ActivityIndicator, StyleSheet, StatusBar, RefreshControl, SafeAreaView, ScrollView ,Image, Pressable,Text,
   Dimensions} from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+// import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Provider as PaperProvider } from 'react-native-paper';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createDrawerNavigator } from "@react-navigation/drawer"; // Import Drawer Navigator
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"; 
 import { Provider } from "react-redux";
 // import store from "./src/redux/store";
 import { ToastProvider } from "./src/globalComponent/ToastContainer/ToastContext";
@@ -12,15 +15,20 @@ import { RoleProvider } from "./src/component/Roles/RoleContext";
 // import { RefreshProvider, RefreshContext } from "./src/globalComponent/Refresh/RefreshContext";
 import LoginScreen from "./src/component/Login/LoginScreen";
 import DrawerNavigator from "./src/globalComponent/DrawerNavigatior/DrawerNavigatior";
+import BottomTabComponent from "./src/globalComponent/Bottomtabs/BottomTabNavigator";
 import StudentInfo from "./src/component/Student/StudentInfo";
 import RoomDetail from "./src/component/Room/RoomDetail";
 import TopHeader from "./src/globalComponent/Header/TopHeader";
 import ToastContainer from './src/globalComponent/ToastContainer/ToastContainer'; 
-// import Privacy from "./src/component/LandingScreeens/Privacy";
+
+import Privacy from "./src/component/LandingScreeens/Privacy";
 // import Home from "./src/component/LandingScreeens/Home";
 // import Shimmer from "./src/component/ShimmerLoader/Shimmer"
  
 const Stack = createNativeStackNavigator();
+
+const Drawer = createDrawerNavigator();
+const BottomTab = createBottomTabNavigator();
 global.SERVER_URL = "http://3.111.185.105:3502/api";
 
 const AppContent = () => {
@@ -75,6 +83,8 @@ const AppContent = () => {
       <ActivityIndicator size="large" color="#0000ff" />
     </View>
   );
+
+
   const renderRouting = () => (
     // <Provider store={store}>
       <PaperProvider>
@@ -120,6 +130,7 @@ const AppContent = () => {
                   component={LoginScreen}
                   options={{ headerShown: false }}
                 />
+
                    {/* <Stack.Screen
                   name="Privacy"
                   component={Privacy}
@@ -127,11 +138,16 @@ const AppContent = () => {
                     title: `Privacy Policy`,
                   })}
                 /> */}
-                <Stack.Screen
+                {/* <Stack.Screen
                   name="PostLogin"
                   component={DrawerNavigator}
                   options={{ headerShown: false }}
-                />
+                /> */}
+                <Stack.Screen
+                name="PostLogin"
+                component={isMobile ? BottomTabComponent : DrawerNavigator}
+                options={{ headerShown: false }}
+              />
                 <Stack.Screen
                   name="StudentInfo"
                   component={StudentInfo}
