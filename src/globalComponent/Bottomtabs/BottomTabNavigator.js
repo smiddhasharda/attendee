@@ -9,21 +9,21 @@ import Privacy from "../../component/LandingScreeens/Privacy";
 import LoginScreen from "../../component/Login/LoginScreen";
 import UserScreen from '../../component/User/UserScreen';
 import RoleScreen from '../../component/Roles/RoleScreen';
-import ManagePasswordScreen from '../../component/Password/ManagePasswordScreen';
-
+  import ManagePasswordScreen from '../../component/Password/ManagePasswordScreen';
+ import MyProfile from '../../component/Profile/MyProfile';
 const BottomTab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 // Create a Stack Navigator for RoleScreen, ManagePasswordScreen, etc.
-const RoleStackNavigator = () => {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen name="RoleScreen" component={RoleScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="ManagePasswordScreen" component={ManagePasswordScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="UserScreen" component={UserScreen} options={{ headerShown: false }} />
-    </Stack.Navigator>
-  );
-};
+// const RoleStackNavigator = () => {
+//   return (
+//     <Stack.Navigator>
+//       <Stack.Screen name="RoleScreen" component={RoleScreen} options={{ headerShown: false }} />
+//       <Stack.Screen name="ManagePasswordScreen" component={ManagePasswordScreen} options={{ headerShown: false }} />
+//       <Stack.Screen name="UserScreen" component={UserScreen} options={{ headerShown: false }} />
+//     </Stack.Navigator>
+//   );
+// };
 
 const BottomTabNavigator = ({ navigation }) => {
   const [isMenuVisible, setMenuVisible] = useState(false);
@@ -50,16 +50,26 @@ const BottomTabNavigator = ({ navigation }) => {
             if (route.name === 'Dashboard') {
               iconName = focused ? 'home' : 'home-outline';
             } else if (route.name === 'Exam') {
-              iconName = focused ? 'book' : 'book';
+              iconName = focused ? 'book' : 'book-outline';
 
-            } else if (route.name === 'Privacy') {
-              iconName = 'log-out-outline';
+            } else if (route.name === 'UserScreen') {
+              iconName = focused ? 'person' : 'person-outline';
+            }
+            else if (route.name === 'MyProfile') {
+              iconName = focused ? 'person-circle' : 'person-circle-outline';
             }
 
             return <Ionicons name={iconName} size={22} color={color} />;
           },
           tabBarActiveTintColor: 'tomato',
           tabBarInactiveTintColor: '#fff',
+              headerStyle: {
+              backgroundColor: 'rgb(17, 65, 102)', 
+              headerTintColor: '#fff', // Set the color for header text
+              headerTitleStyle: {
+              fontWeight: 'bold',
+            },
+            },
           tabBarStyle: {
             backgroundColor: 'rgb(17, 65, 102)',
             padding: 5,
@@ -74,11 +84,25 @@ const BottomTabNavigator = ({ navigation }) => {
       >
         <BottomTab.Screen name="Dashboard" component={DashboardScreen} />
         <BottomTab.Screen name="Exam" component={ExamScreen} />
-        {/* <BottomTab.Screen name="UserScreen" component={UserScreen} /> */}
-        <BottomTab.Screen name="RoleStack" component={RoleStackNavigator} options={{ title: 'Roles' }} />
+        <BottomTab.Screen name="RoleScreen" component={UserScreen} options={{
+            tabBarLabel: () => null, 
+            tabBarButton: () => null, // Hide the button entirely
+          }}/>  
+        <BottomTab.Screen name="UserScreen" component={UserScreen} options={{
+            tabBarLabel: () => null, 
+            tabBarButton: () => null, // Hide the button entirely
+          }} />
+            <BottomTab.Screen name="ManagePasswordScreen" component={ManagePasswordScreen} options={{
+            tabBarLabel: () => null, 
+            tabBarButton: () => null, // Hide the button entirely
+          }} />
+        {/* <BottomTab.Screen name="RoleStack" component={RoleStackNavigator}   options={{
+            tabBarLabel: () => null, 
+            tabBarButton: () => null, // Hide the button entirely
+          }}/> */}
         <BottomTab.Screen
-          name="Privacy"
-          component={Privacy}
+          name="MyProfile"
+          component={MyProfile}
           options={{
             tabBarButton: (props) => (
               <TouchableOpacity {...props} onPress={toggleMenu} />
@@ -100,8 +124,8 @@ const BottomTabNavigator = ({ navigation }) => {
               style={styles.menuItem}
               onPress={() => {
                 toggleMenu();
-                // navigation.navigate('UserScreen');
-                navigation.navigate('RoleStack' ,{screen :'UserScreen'})
+                navigation.navigate('UserScreen');
+                // navigation.navigate('RoleStack' ,{screen :'UserScreen'})
               }}
             >
               User Role
@@ -110,8 +134,8 @@ const BottomTabNavigator = ({ navigation }) => {
               style={styles.menuItem}
               onPress={() => {
                 toggleMenu();
-                // navigation.navigate('RoleScreen');
-                navigation.navigate('RoleStack', { screen: 'RoleScreen' }); 
+                navigation.navigate('RoleScreen');
+                // navigation.navigate('RoleStack', { screen: 'RoleScreen' }); 
                 
               }}
             >
@@ -121,8 +145,8 @@ const BottomTabNavigator = ({ navigation }) => {
               style={styles.menuItem}
               onPress={() => {
                 toggleMenu();
-                // navigation.navigate('ManagePasswordScreen');
-                navigation.navigate('RoleStack', { screen: 'ManagePasswordScreen' }); 
+                navigation.navigate('ManagePasswordScreen');
+                // navigation.navigate('RoleStack', { screen: 'ManagePasswordScreen' }); 
               }}
             >
               Change Password

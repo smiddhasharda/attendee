@@ -201,7 +201,7 @@ const ManagePasswordScreen = ({
             <View
               style={[styles.inputWrap, isMobile ? styles.inputmobWrap : null]}
             >
-              <View style={{ width: isMobile ? "100%" : "48%" }}>
+              <View style={{ width: isMobile ? "100%" : "48%" ,marginTop:12 }}>
                 <Text style={styles.label}>New Password</Text>
                 <TextInput
                   placeholder="Enter New  Password"
@@ -233,7 +233,7 @@ const ManagePasswordScreen = ({
                   onPress={() => setshowNewPassword(!showNewPassword)}
                 />
               </View>
-              <View style={{ width: isMobile ? "100%" : "48%" }}>
+              <View style={{ width: isMobile ? "100%" : "48%"  ,marginTop:12}}>
                 <Text style={styles.label}>Confirm Password</Text>
                 <TextInput
                   placeholder="Enter your confirm Password"
