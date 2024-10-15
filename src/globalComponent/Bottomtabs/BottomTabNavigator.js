@@ -1,18 +1,32 @@
- import { View, Text, Modal, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Modal, TouchableOpacity, StyleSheet } from 'react-native';
 import React, { useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Ionicons } from '@expo/vector-icons';
 import DashboardScreen from "../../component/Dashboard/DashboardScreen";
 import ExamScreen from "../../component/Exam/ExamScreen";
 import Privacy from "../../component/LandingScreeens/Privacy";
-import LoginScreen from "../../component/Login/LoginScreen"
+import LoginScreen from "../../component/Login/LoginScreen";
 import UserScreen from '../../component/User/UserScreen';
 import RoleScreen from '../../component/Roles/RoleScreen';
+import ManagePasswordScreen from '../../component/Password/ManagePasswordScreen';
 
 const BottomTab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
 
-const BottomTabNavigator = ({navigation}) => {
-  const [isMenuVisible, setMenuVisible] = useState(false); 
+// Create a Stack Navigator for RoleScreen, ManagePasswordScreen, etc.
+const RoleStackNavigator = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="RoleScreen" component={RoleScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="ManagePasswordScreen" component={ManagePasswordScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="UserScreen" component={UserScreen} options={{ headerShown: false }} />
+    </Stack.Navigator>
+  );
+};
+
+const BottomTabNavigator = ({ navigation }) => {
+  const [isMenuVisible, setMenuVisible] = useState(false);
 
   const toggleMenu = () => {
     setMenuVisible(!isMenuVisible);
@@ -37,35 +51,34 @@ const BottomTabNavigator = ({navigation}) => {
               iconName = focused ? 'home' : 'home-outline';
             } else if (route.name === 'Exam') {
               iconName = focused ? 'book' : 'book';
+
             } else if (route.name === 'Privacy') {
-              iconName = 'log-out-outline'; 
+              iconName = 'log-out-outline';
             }
-            else if (route.name === 'LoginScreen') {
-              iconName = 'settings'; 
-            }
-            // Return the Ionicons component
-            return <Ionicons name={iconName} size={18} color={color} />;
+
+            return <Ionicons name={iconName} size={22} color={color} />;
           },
           tabBarActiveTintColor: 'tomato',
           tabBarInactiveTintColor: '#fff',
-                tabBarStyle: {
-                backgroundColor: 'rgb(17, 65, 102)', 
-                padding: 5,
-                height: 64, 
-                },
-                tabBarLabelStyle: {
-                  marginTop: 8, 
-                  fontSize: 14, 
-                },
+          tabBarStyle: {
+            backgroundColor: 'rgb(17, 65, 102)',
+            padding: 5,
+            height: 64,
+          },
+          tabBarLabelStyle: {
+            marginTop: 4,
+            fontSize: 14,
+            
+          },
         })}
       >
         <BottomTab.Screen name="Dashboard" component={DashboardScreen} />
-        <BottomTab.Screen name="Exam" component={ExamScreen} /> 
-        {/* <BottomTab.Screen name="UserScreen" component={UserScreen} /> 
-        <BottomTab.Screen name="RoleScreen" component={RoleScreen} />  */}
+        <BottomTab.Screen name="Exam" component={ExamScreen} />
+        {/* <BottomTab.Screen name="UserScreen" component={UserScreen} /> */}
+        <BottomTab.Screen name="RoleStack" component={RoleStackNavigator} options={{ title: 'Roles' }} />
         <BottomTab.Screen
           name="Privacy"
-          component={Privacy} 
+          component={Privacy}
           options={{
             tabBarButton: (props) => (
               <TouchableOpacity {...props} onPress={toggleMenu} />
@@ -87,7 +100,8 @@ const BottomTabNavigator = ({navigation}) => {
               style={styles.menuItem}
               onPress={() => {
                 toggleMenu();
-                navigation.navigate('UserScreen'); 
+                // navigation.navigate('UserScreen');
+                navigation.navigate('RoleStack' ,{screen :'UserScreen'})
               }}
             >
               User Role
@@ -96,7 +110,9 @@ const BottomTabNavigator = ({navigation}) => {
               style={styles.menuItem}
               onPress={() => {
                 toggleMenu();
-                navigation.navigate('RoleScreen'); 
+                // navigation.navigate('RoleScreen');
+                navigation.navigate('RoleStack', { screen: 'RoleScreen' }); 
+                
               }}
             >
               Manage User
@@ -105,7 +121,8 @@ const BottomTabNavigator = ({navigation}) => {
               style={styles.menuItem}
               onPress={() => {
                 toggleMenu();
-                navigation.navigate('ChangePassword');
+                // navigation.navigate('ManagePasswordScreen');
+                navigation.navigate('RoleStack', { screen: 'ManagePasswordScreen' }); 
               }}
             >
               Change Password
@@ -116,16 +133,14 @@ const BottomTabNavigator = ({navigation}) => {
           </View>
         </View>
       </Modal>
-      {/* Role  */}
     </>
   );
 };
 
-
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', 
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
   },
