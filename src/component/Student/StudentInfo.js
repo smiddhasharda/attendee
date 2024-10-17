@@ -222,7 +222,7 @@ const StudentInfo = ({ navigation }) => {
             data: {
               EMPLID: studentDetails.EMPLID,
               NAME_FORMAL: studentDetails.NAME_FORMAL,
-              STRM: courseDetails.STRM,
+              STRM: current_Term,
               ADM_APPL_NBR: studentDetails.CAMPUS_ID,
               DESCR: studentDetails.DESCR,
               DESCR2: studentDetails.DESCR2,
@@ -234,7 +234,7 @@ const StudentInfo = ({ navigation }) => {
               PTP_SEQ_CHAR: seat_Nbr,
               Attendece_Status: attendenceStatus,
               Status: status,
-              SU_PAPER_ID: courseDetails.SU_PAPER_ID,
+              // SU_PAPER_ID: courseDetails.SU_PAPER_ID,
               DESCR100: courseDetails.DESCR100,
               EXAM_TYPE_CD:exam_type,
               created_by:`${userData?.name} (${userData?.username})`
@@ -532,7 +532,7 @@ const StudentInfo = ({ navigation }) => {
             data: {
               EMPLID: studentDetails.EMPLID,
               NAME_FORMAL: studentDetails.NAME_FORMAL,
-              STRM: courseDetails.STRM,
+              STRM: current_Term,
               ADM_APPL_NBR: studentDetails.CAMPUS_ID,
               DESCR: studentDetails.DESCR,
               DESCR2: studentDetails.DESCR2,
@@ -544,7 +544,7 @@ const StudentInfo = ({ navigation }) => {
               PTP_SEQ_CHAR: seat_Nbr,
               Attendece_Status: attendenceStatus,
               Status: status,
-              SU_PAPER_ID: courseDetails.SU_PAPER_ID,
+              // SU_PAPER_ID: courseDetails.SU_PAPER_ID,
               DESCR100: courseDetails.DESCR100,
               EXAM_TYPE_CD:exam_type,
               updated_by:`${userData?.name} (${userData?.username})`
