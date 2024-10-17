@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TextInput, StyleSheet ,ScrollView, Image, Dimensions, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; 
 import { useNavigation } from '@react-navigation/native'; 
+import ExamPieChart from '../../globalComponent/Chart/ExamPieChart'
 const DashboardScreen = () => {
 const { navigate } = useNavigation(); 
   // const handleReportPress = () => {
@@ -15,43 +16,8 @@ const { navigate } = useNavigation();
 
     <View style={styles.container}>
       <Text style={styles.heading}>Welcome to Attendance Portal</Text>      
-       {/* <Pressable onPress={handleReportPress}>
-       <Text>Home</Text>   
-       </Pressable>
-       <Pressable onPress={handleExamPress}>
-         <Text>Privacy</Text>
-       </Pressable>  */}
-          {/* <TextInput
-            style={styles.searchBox}
-            placeholder="Search..."          
-          />           */}
-            {/* <View style={styles.subtext}>
-              <Text  style={styles.taskheading}>Navigation</Text>
-            </View> */}
-            {/* <ScrollView vertical>        
-            <View style={[styles.boxcontainer,]}>            
-                <View style={[styles.box, styles.activebox]} >
-                <Ionicons style={styles.icons} name="book" size={24} color="#fff"   />
-                <View  style={[styles.boxtext,]}>
-                  <Text style={styles.activeboxtext} onPress={handleExamPress}>Exam</Text>
-                </View>
-              </View>
-              <View style={styles.box}>
-              <Ionicons  style={styles.icons} name="book" size={24} color="rgb(71 75 78)" />
-              <View  style={styles.boxtext}>
-                  <Text onPress={handleReportPress}>Report</Text>
-                  </View>
-              </View>
-              <View style={styles.box}>
-              <Ionicons   style={styles.icons} name="book" onPress={()=> navigate('TopHeader')} size={24} color="rgb(71 75 78)" />
-                   <View  style={styles.boxtext}>
-                  <Text>Setting</Text>
-                  </View>
-              </View>  
-               
-            </View>
-            </ScrollView> */}
-           
+            {/* Render the ExamPieChart */}
+            <ExamPieChart />
               <Image  resizeMode="contain"   style={styles.homeBG} source={require("../../local-assets/home-img.png")} />
             
     </View> 
@@ -74,7 +40,7 @@ const styles = StyleSheet.create({
     height: 280, // Adjust this to the desired height
     // resizeMode: 'contain', // or 'contain' depending on your requirement
     position: "relative",
-    top: 40,
+    // top: 40,
     right: 15,
     justifyContent: "center",
     alignItems: "center"
