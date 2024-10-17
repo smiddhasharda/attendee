@@ -105,12 +105,12 @@ const RoleScreen = ({userAccess,userData}) => {
               authToken
             );
   
-            addToast("Role is created successfully!", "success");
+            addToast("User role is created successfully!", "success");
             await handleClose();
             handleGetRoleList();
           }
           else {
-            addToast("Role is created successfully!", "success");
+            addToast("User role is created successfully!", "success");
             await handleClose();
             handleGetRoleList();
           }
@@ -174,7 +174,7 @@ const RoleScreen = ({userAccess,userData}) => {
             authToken
           );
 
-          addToast("Role is updated successfully!", "success");
+          addToast("User role is updated successfully!", "success");
           await handleClose();
           handleGetRoleList();
         }
@@ -291,7 +291,7 @@ const RoleScreen = ({userAccess,userData}) => {
         addToast("Invalid authentication credentials", "error");
         break;
       case "Data already exists":
-        addToast("Role name already exists!", "error");
+        addToast("User role already exists!", "error");
         break;
       case "No response received from the server":
         addToast("No response received from the server", "error");
