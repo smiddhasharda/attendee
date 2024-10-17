@@ -65,11 +65,13 @@ const BottomTabNavigator = ({ navigation }) => {
           tabBarInactiveTintColor: '#fff',
               headerStyle: {
               backgroundColor: 'rgb(17, 65, 102)', 
-              headerTintColor: '#fff', // Set the color for header text
+              headerTintColor: '#fff', 
               headerTitleStyle: {
               fontWeight: 'bold',
             },
             },
+            headerTintColor: 'white', 
+
           tabBarStyle: {
             backgroundColor: 'rgb(17, 65, 102)',
             padding: 5,
