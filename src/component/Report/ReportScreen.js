@@ -254,7 +254,7 @@ const ReportScreen = ({userAccess}) => {
     addToast("Invalid authentication credentials", "error");
     break;
     case "Data already exists":
-    addToast("Module with the same name already exists", "error");
+    addToast("Module name already exists", "error");
     break;
     case "No response received from the server":
     addToast("No response received from the server", "error");

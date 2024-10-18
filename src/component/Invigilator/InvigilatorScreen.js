@@ -576,16 +576,16 @@ const handleGetInigilatorDutyDate = async () => {
 const handleAddInvigilator = async () => {
   try {
     if(!invigilatorData?.employeeId || !invigilatorData?.invigilatorName){
-    return addToast("Please enter the details to add the Invigilator","error");
+    return addToast("Please enter the details to add the invigilator duty","error");
     }
     else if(!invigilatorData?.date ){
       return addToast("Please select the exam date","error");
       }
     else if(!invigilatorData?.room.replace(/\s+/g, '') === "" ){
-      return addToast("Please slect the room","error");
+      return addToast("Please select the room","error");
       }
     else if(!invigilatorData?.shift.replace(/\s+/g, '') === "" ){
-      return addToast("Please select the shift","error");
+      return addToast("Please select the shift time","error");
       }
     const authToken = await checkAuthToken();
     const Parameter = {
@@ -635,7 +635,7 @@ const handleEditInvigilator = async (selectedData) => {
 
   if (selectedDate<currentDate) {
     // Prevent editing if the date is less than the current date
-    addToast("You cannot edit past invigilator duties.", "error");
+    addToast("You cannot edit the details of passed invigilator duty.", "error");
     return;
   }
 
@@ -662,7 +662,7 @@ const handleAddButton = async() =>{
 const handleUpdateInvigilator = async () => {
   try {
     if(!invigilatorData?.employeeId || !invigilatorData?.invigilatorName){
-      return addToast("Please enter the details to add the Invigilator","error");
+      return addToast("Please enter the details to add the invigilator duty","error");
       }
       else if(!invigilatorData?.date ){
         return addToast("Please select the exam date","error");
@@ -671,7 +671,7 @@ const handleUpdateInvigilator = async () => {
         return addToast("Please select the room","error");
         }
       else if(!invigilatorData?.shift.replace(/\s+/g, '') === "" ){
-        return addToast("Please select the shift","error");
+        return addToast("Please select the shift time","error");
         }
     const authToken = await checkAuthToken();
     const Parameter ={
@@ -711,7 +711,7 @@ const handleAuthErrors = (error) => {
   addToast("Invalid authentication credentials", "error");
   break;
   case "Data already exists":
-  addToast("Module with the same name already exists", "error");
+  addToast("Module name already exists", "error");
   break;
   case "No response received from the server":
   addToast("No response received from the server", "error");

@@ -176,10 +176,10 @@ const StudentInfo = ({ navigation }) => {
     try {
       const CopyEmptyValues = copiesData?.length > 0 ? copiesData.some(data => data.mainCopy === "" || data.alternateCopies.includes("")) : true;
       if (CopyEmptyValues && status !== "Absent") {
-        addToast("Enter the copy details!", "error");
+        addToast("Please enter the copy details!", "error");
       }
       else if(status === "Absent" && copiesData?.length > 0) {
-        addToast("Please remove the copy details for mark Absent!", "error");
+        addToast("Please remove the copy details to mark student as Absent!", "error");
       }
       else {
         // Check for duplicate mainCopy values
@@ -195,7 +195,7 @@ const StudentInfo = ({ navigation }) => {
         }
        
         if (duplicateFound) {
-          addToast("Duplicate copy numbers are not allowed!", "error");
+          addToast("Duplicate copy number is not allowed!", "error");
           return;
         }
  
@@ -490,7 +490,7 @@ const StudentInfo = ({ navigation }) => {
       if (copyEmptyValues && status !== "Absent") {
         addToast("Please enter the copy details!", "error");
       } else if (status === "Absent" && copiesData?.length > 0) {
-        addToast("Please remove the copy details to mark Absent!", "error");
+        addToast("Please remove the copy details to mark student as Absent!", "error");
       } else {
         const uniqueMainCopies = new Set();
         let duplicateFound = false;
@@ -504,7 +504,7 @@ const StudentInfo = ({ navigation }) => {
         }
  
         if (duplicateFound) {
-          addToast("Duplicate copy numbers are not allowed!", "error");
+          addToast("Duplicate copy number is not allowed!", "error");
           return;
         }
  
