@@ -1,25 +1,62 @@
-import React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native'; // If using React Navigation
 
 const Profile = () => {
+  const navigation = useNavigation();
+  const [userDetails, setUserDetails] = useState({
+    name: '',
+    email: '',
+    employeeId: '',
+    username: '',
+    phone: '',
+    address: ''
+  });
+
+  // Simulate fetching user details
+  useEffect(() => {
+    fetchUserDetails();
+  }, []);
+
+  const fetchUserDetails = async () => {
+    // Simulate an API call to get user data
+    const fetchedData = {
+      name: 'Megha Yadav',
+      email: 'medha@gmail.com',
+      employeeId: '8309033',
+      username: 'meghay',
+      phone: '8709823339',
+      address: '123 Main St, City, Country'
+    };
+    setUserDetails(fetchedData);
+  };
+
   const handleEdit = () => {
-    // Logic for editing the profile
-    console.log('Edit Profile');
+    // Navigate to the edit profile screen or open a modal
+    navigation.navigate('EditProfile', { userDetails });
+  };
+
+  const handleLogout = () => {
+    // Implement logout logic (clearing user session, tokens, etc.)
+    Alert.alert('Logout', 'Are you sure you want to log out?', [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Logout', onPress: () => {
+        console.log('Logging out...');
+        // Clear session and navigate to login screen
+        navigation.replace('Login');
+      }}
+    ]);
   };
 
   return (
     <View style={styles.container}>
-      {/* <View style={styles.header}>
-        <Text style={styles.headerText}>My Profile</Text>
-      </View> */}
-
       <View style={styles.profileInfo}>
         <Image
-          source= {require("../../local-assets/profile.jpg")} 
+          source={require("../../local-assets/profile.jpg")}
           style={styles.profileImage}
         />
-        <Text style={styles.name}>John Doe</Text>
-        <Text style={styles.email}>john.doe@example.com</Text>
+        <Text style={styles.name}>{userDetails.name}</Text>
+        <Text style={styles.email}>{userDetails.email}</Text>
         <TouchableOpacity style={styles.editButton} onPress={handleEdit}>
           <Text style={styles.editButtonText}>Edit Profile</Text>
         </TouchableOpacity>
@@ -29,28 +66,28 @@ const Profile = () => {
         <Text style={styles.sectionTitle}>Personal Information</Text>
         <View style={styles.detailRow}>
           <Text style={styles.detailLabel}>Employee Id</Text>
-          <Text style={styles.detailValue}>8309033</Text>
+          <Text style={styles.detailValue}>{userDetails.employeeId}</Text>
         </View>
         <View style={styles.detailRow}>
           <Text style={styles.detailLabel}>Username:</Text>
-          <Text style={styles.detailValue}>johndoe</Text>
+          <Text style={styles.detailValue}>{userDetails.username}</Text>
         </View>
         <View style={styles.detailRow}>
           <Text style={styles.detailLabel}>Email:</Text>
-          <Text style={styles.detailValue}>johndoe@gmail.com</Text>
+          <Text style={styles.detailValue}>{userDetails.email}</Text>
         </View>
         <View style={styles.detailRow}>
           <Text style={styles.detailLabel}>Phone:</Text>
-          <Text style={styles.detailValue}>8709823339</Text>
+          <Text style={styles.detailValue}>{userDetails.phone}</Text>
         </View>
         <View style={styles.detailRow}>
           <Text style={styles.detailLabel}>Address:</Text>
-          <Text style={styles.detailValue}>123 Main St, City, Country</Text>
+          <Text style={styles.detailValue}>{userDetails.address}</Text>
         </View>
       </View>
 
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.logoutButton}>
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Text style={styles.logoutButtonText}>Logout</Text>
         </TouchableOpacity>
       </View>
@@ -63,18 +100,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f7f9fc',
     padding: 20,
-  },
-  header: {
-    backgroundColor: '#4a90e2',
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 20,
-  },
-  headerText: {
-    color: '#fff',
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
   },
   profileInfo: {
     alignItems: 'center',

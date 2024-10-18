@@ -53,15 +53,16 @@ const BottomTabNavigator = ({ navigation }) => {
   const handleMenuPress = (value) => {
     setOpen(false); 
     console.log(value); // Log the value to see what is being passed
- 
+  
     if (value === 'logout') {
       handleLogout();
-    } else if (value === 'Profile') {
-      navigation.navigate('Profile');  
+    } else if (value === 'profile') {  
+      navigation.navigate('Profile');
     } else if (value === 'settings') {
-      navigation.navigate('Settings');  
+      navigation.navigate('Settings');
     }
   }
+  
   return (
     <>
       <BottomTab.Navigator
@@ -148,10 +149,13 @@ const BottomTabNavigator = ({ navigation }) => {
       >
         <BottomTab.Screen name="Dashboard" component={DashboardScreen} />
         <BottomTab.Screen name="Exam" component={ExamScreen} />
-        {/* <BottomTab.Screen name="Profile" component={Profile} /> */}
+        <BottomTab.Screen name="Profile" component={Profile}   options={{
+            tabBarLabel: () => null, 
+            tabBarButton: () => null, 
+          }} />
         <BottomTab.Screen name="RoleScreen" component={UserScreen} options={{
             tabBarLabel: () => null, 
-            tabBarButton: () => null, // Hide the button entirely
+            tabBarButton: () => null, 
           }}/>  
         <BottomTab.Screen name="UserScreen" component={UserScreen} options={{
             tabBarLabel: () => null, 
@@ -240,6 +244,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 15,
     elevation: 5,
+    top:283,
+    left:88,
   },
   menuItem: {
     paddingVertical: 10,
