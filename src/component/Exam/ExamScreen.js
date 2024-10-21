@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useCallback,useContext } from 'react';
-import { View, Text, FlatList, StyleSheet, Pressable, ActivityIndicator, Dimensions,Platform } from 'react-native';
+import { View, Text,TextInput, FlatList, StyleSheet, Pressable, ActivityIndicator, Dimensions,Platform } from 'react-native';
 import { view, fetch } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { parse, format,parseISO } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
+import { Entypo } from '@expo/vector-icons'
+
 
 const { width, height } = Dimensions.get('window');
 
@@ -18,6 +20,9 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
   const [invigilatorData, setInvigilatorData] = useState();
   const [loading, setLoading] = useState(false);
   const { addToast } = useToast();
+
+  const [searchText, setSearchText] = useState('');
+  const [tempRoomDetails, setTempRoomDetails] = useState([]);
 
   const checkAuthToken = useCallback(async () => {
     const authToken = atob(await AsyncStorage.getItem(btoa("authToken")));
@@ -50,10 +55,12 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
           checkAvailability: '',
 
           //Production Build Exam Query
+
           //customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW WHERE EXAM_DT >= '${CurrentDate}' ORDER BY EXAM_DT ASC`,
 
           //Local Exam Testing Query
            customQuery: `SELECT DISTINCT EXAM_DT FROM PS_S_PRD_EX_TME_VW  ORDER BY EXAM_DT ASC`,
+
           
           viewType:'Campus_View'
         };
@@ -179,6 +186,7 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
       );
   
       if (response) {
+        setTempRoomDetails(response);
         setRoomDetails(response);
       }
       setLoading(false);
@@ -206,12 +214,13 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
     }
   };
 
-  const handleDateClick = (date) => {
+  const handleDateClick = async(date) => {
     setLoading(true);
     setExamSelectedDate(date);
-    const RoomArray = invigilatorData?.filter((item) => item.date === date) ?.map((item) => ({ room: item.room, shift: item.shift }));
-    handleGetRoomView(date, (userAccess?.label !== "Admin" && UserAccess?.special !== 1) && RoomArray);
+    const RoomArray = await invigilatorData?.filter((item) => item.date === date) ?.map((item) => ({ room: item.room, shift: item.shift }));
+    await handleGetRoomView(date, (userAccess?.label !== "Admin" && UserAccess?.special !== 1) && RoomArray);
   };
+
 
   const convertedTime = (startTime) => {
     const date = parseISO(startTime); // Parse the input ISO date string
@@ -245,16 +254,29 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
     // return parsedDate;
     return format(parsedDate, 'dd$MMM,yy$EEE')  };
   
-    const onRefresh = useCallback((date) => {
+    const onRefresh = async (date) => {
       setRefreshing(true);
-      handleDateClick(date);
-    }, []);
+      await handleDateClick(date);
+    };
 
-    const onPageRefresh = useCallback(() => {
+    const onPageRefresh = async() => {
       setPageRefreshing(true);
-      fetchRoomDetails();
-    }, []);
+      await fetchRoomDetails();
+    };
     
+// Search API
+const handleSearchData = async(roomSearchText) => {
+  setSearchText(roomSearchText);
+  const searchTextLower = roomSearchText.toLowerCase();
+  let FilteredRoomData = roomDetails?.filter((item) => item?.ROOM_NBR.toLowerCase().includes(searchTextLower) );
+  setTempRoomDetails(FilteredRoomData);
+}
+
+const clearSearchText = () => {
+  setSearchText('');
+  setTempRoomDetails(roomDetails);
+};
+
   useEffect(() => {
     fetchRoomDetails(examSelectedDate);
   }, [UserAccess]);
@@ -293,15 +315,33 @@ const ExamScreen = ({ navigation, userAccess, userData }) => {
             </View>
             </View>
       </View>
+      
+      {/* Search Room System */}
+      <View style={styles.searchWrap}>
+           <TextInput
+            style={styles.searchBox}
+            placeholder="Search By Room Number..."
+            onChangeText={handleSearchData}
+            value={searchText}
+            onIconPress={clearSearchText}
+          />
+
+          {searchText.length > 0 && (
+            <Pressable onPress={clearSearchText} style={styles.crossIcon} >
+              <Entypo name="circle-with-cross" size={20} alignItems="center" />
+            </Pressable>
+          )}
+          
+          </View>
  
       <View style={styles.roomNumber}>
       {loading ? (
         <ActivityIndicator size="large" color="#0000ff" />
       ) : (
-        roomDetails.length > 0 ? (
+        tempRoomDetails.length > 0 ? (
           <FlatList 
             style={styles.roomsListWrap}
-            data={roomDetails}
+            data={tempRoomDetails}
             renderItem={({ item, index }) => (
               <Pressable
                 key={index}
@@ -449,6 +489,26 @@ const styles = StyleSheet.create({
     padding: 12,  // Adjust this based on your requirements
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  searchWrap:{
+    padding: 10,
+    width:"100%",
+    position: "relative"
+    // width:'auto',
+  },
+  searchBox: {
+    height: 40,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    padding:10,
+    marginBottom: 8,
+    marginTop: 10
+  },  
+  crossIcon:{
+    position: "absolute",
+    right: 20,
+    top: 28
   },
 });
 
