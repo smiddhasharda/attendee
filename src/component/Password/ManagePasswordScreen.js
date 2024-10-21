@@ -143,7 +143,7 @@ const ManagePasswordScreen = ({
             authToken
           );
 
-          addToast("Password changed successfully!", "success");
+          addToast("Password is changed successfully!", "success");
           setPassword({
             oldPassword: "",
             newPassword: "",
@@ -168,7 +168,7 @@ const ManagePasswordScreen = ({
         addToast("Invalid authentication credentials", "error");
         break;
       case "Data already exists":
-        addToast("Module with the same name already exists", "error");
+        addToast("Module name already exists", "error");
         break;
       case "No response received from the server":
         addToast("No response received from the server", "error");
@@ -212,7 +212,7 @@ const ManagePasswordScreen = ({
             <View
               style={[styles.inputWrap, isMobile ? styles.inputmobWrap : null]}
             >
-              <View style={{ width: isMobile ? "100%" : "48%" }}>
+              <View style={{ width: isMobile ? "100%" : "48%" ,marginTop:12 }}>
                 <Text style={styles.label}>New Password</Text>
                 <TextInput
                   placeholder="Enter New  Password"
@@ -244,7 +244,7 @@ const ManagePasswordScreen = ({
                   onPress={() => setshowNewPassword(!showNewPassword)}
                 />
               </View>
-              <View style={{ width: isMobile ? "100%" : "48%" }}>
+              <View style={{ width: isMobile ? "100%" : "48%"  ,marginTop:12}}>
                 <Text style={styles.label}>Confirm Password</Text>
                 <TextInput
                   placeholder="Enter your confirm Password"

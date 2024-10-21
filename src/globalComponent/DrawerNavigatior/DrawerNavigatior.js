@@ -101,7 +101,7 @@ const CustomDrawerContent = ({ ...props }) => {
       if (response) {
         await AsyncStorage.removeItem("userData");
         await handleGetUserData();
-        addToast("User profile updated successfully!", "success");
+        addToast("User profile is updated successfully!", "success");
       }
     } catch (error) {
       console.log(error);
@@ -116,7 +116,7 @@ const CustomDrawerContent = ({ ...props }) => {
         addToast("Invalid authentication credentials!", "error");
         break;
       case "Data already exists":
-        addToast("Module already exists!", "error");
+        addToast("Module name already exists!", "error");
         break;
       case "No response received from the server":
         addToast("No response received from the server", "error");
