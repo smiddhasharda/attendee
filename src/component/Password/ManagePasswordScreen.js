@@ -75,6 +75,14 @@ const ManagePasswordScreen = ({
     return authToken;
   }, [addToast]);
 
+  const hashPassword = async (password) => {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password);
+    const hash = await crypto.subtle.digest('SHA-256', data);
+    // Convert the hash to a hex string
+    return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+  };
+
   const handlresetPassword = async () => {
     try {
       const newPasswordError = validatePassword(password.newPassword);
@@ -111,7 +119,7 @@ const ManagePasswordScreen = ({
           operation: "fetch",
           tblName: "tbl_user_master",
           data: "",
-          conditionString: `password = '${password.oldPassword}' AND user_id = ${userData.user_id}`,
+          conditionString: `password = '${await hashPassword(password.oldPassword)}' AND user_id = ${userData.user_id}`,
           checkAvailability: "",
           customQuery: "",
         };
@@ -124,7 +132,7 @@ const ManagePasswordScreen = ({
           const Parameter1 = {
             operation: "update",
             tblName: "tbl_user_master",
-            data: { password: password.newPassword,updatedBy:`${userData?.name} (${userData?.username})`},
+            data: { password: await hashPassword(password.newPassword),updatedBy:`${userData?.name} (${userData?.username})`},
             conditionString: `user_id = ${userData.user_id}`,
             checkAvailability: "",
             customQuery: "",
@@ -144,6 +152,9 @@ const ManagePasswordScreen = ({
             isNewPassError: "",
             isConfPassError: "",
           });
+        }
+        else{
+          addToast("old password is incorrect!", "error");
         }
       }
     } catch (error) {

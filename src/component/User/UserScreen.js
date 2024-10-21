@@ -9,7 +9,7 @@ import useStateWithCallback from "../../helpers/useStateWithCallback";
 import Tooltip from "../../globalComponent/ToolTip/Tooltip";
 import CheckBox from "expo-checkbox";
 import { ScrollView } from "react-native-gesture-handler";
-import { Ionicons,AntDesign,Feather} from "@expo/vector-icons";
+import { Ionicons,AntDesign,Feather,Entypo} from "@expo/vector-icons";
 import Pagination from "../../globalComponent/Pagination/PaginationComponent";
 import ShimmerEffect from "../../globalComponent/Refresh/ShimmerEffect";
 
@@ -36,6 +36,10 @@ const UserScreen = ({userAccess,userData}) => {
   const [isEmplyIdTooltipVisible, setEmplyIdTooltipVisible] = useStateWithCallback(false);
   const [isContactNumberTooltipVisible, setContactNumberTooltipVisible] = useStateWithCallback(false);
   const [isPasswordTooltipVisible, setPasswordTooltipVisible] = useStateWithCallback(false);
+
+  const [searchText, setSearchText] = useState('');
+  const [tempUserList, setTempuserList] = useState([]);
+
     //---------------------------------------------------- dimension based view--------------------------------------------//
     const { width, height } = Dimensions.get('window');
     const isMobile = width < 768; 
@@ -48,7 +52,7 @@ const UserScreen = ({userAccess,userData}) => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const pageSize = 25;
-  const paginatedData = userList.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  const paginatedData = tempUserList.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   // const duplicatePageSize = 10;
   const handlePageChange = (page) => {
@@ -66,6 +70,14 @@ const UserScreen = ({userAccess,userData}) => {
     return authToken;
   }, [addToast]);
 
+  const hashPassword = async (password) => {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password);
+    const hash = await crypto.subtle.digest('SHA-256', data);
+    // Convert the hash to a hex string
+    return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+  };
+
   const handleAddUser = async () => {
     try {
       const authToken = await checkAuthToken();
@@ -80,7 +92,7 @@ const UserScreen = ({userAccess,userData}) => {
         data: {
           username: userDetails.emailId,
           name: userDetails.name,           
-          password: userDetails.password,
+          password: await hashPassword(userDetails.password),
           contact_number: userDetails.contactNumber,
           email_id: userDetails.emailId,
           username:userDetails.username,
@@ -151,7 +163,7 @@ const UserScreen = ({userAccess,userData}) => {
         tblName: "tbl_user_master",
         data: {
           name: userDetails.name,           
-          password: userDetails.password,
+          password: await hashPassword(userDetails.password),
           contact_number: userDetails.contactNumber,
           email_id: userDetails.emailId,
           username:userDetails.username,
@@ -230,6 +242,7 @@ const UserScreen = ({userAccess,userData}) => {
 
       if (response) {
         setUserList(response?.[0]?.UserMaster);
+        setTempuserList(response?.[0]?.UserMaster);
         setRefreshing(false);
       }
     } catch (error) {
@@ -683,7 +696,23 @@ const UserScreen = ({userAccess,userData}) => {
         </View>
     )
   }
+
+  // Search API
+
+  const handleSearchData = async(userSearchText) => {
+    setSearchText(userSearchText);
+    const searchTextLower = userSearchText.toLowerCase();
+    let FilteredUserData = userList?.filter((item) => 
+      item?.username.toLowerCase().includes(searchTextLower) ||  item?.name.toLowerCase().includes(searchTextLower) || item?.email_id.toLowerCase().includes(searchTextLower) || item?.contact_number.toLowerCase().includes(searchTextLower)
+    );
+    setTempuserList(FilteredUserData);
+  }
   
+  const clearSearchText = () => {
+    setSearchText('');
+    setTempuserList(userList);
+  };
+
   useEffect(() => {
     handleGetUserList();
     handleGetRoleList();
@@ -730,6 +759,23 @@ const UserScreen = ({userAccess,userData}) => {
                       <Ionicons name="add-circle-outline" size={28} color="black" style={styles.icons} />
                     </Text>
                   </Pressable>) }
+          </View>
+            {/* Search Room System */}
+      <View style={styles.searchWrap}>
+           <TextInput
+            style={styles.searchBox}
+            placeholder="Search By Name, Employee Id, Contact Number, Email Id..."
+            onChangeText={handleSearchData}
+            value={searchText}
+            onIconPress={clearSearchText}
+          />
+
+          {searchText.length > 0 && (
+            <Pressable onPress={clearSearchText} style={styles.crossIcon} >
+              <Entypo name="circle-with-cross" size={20} alignItems="center" />
+            </Pressable>
+          )}
+          
           </View>
           <ScrollView horizontal>
           <View style={{maxHeight: tableHeight, minWidth: isMobile ? tableWidth :tableWidth }}>
@@ -797,7 +843,7 @@ const UserScreen = ({userAccess,userData}) => {
          </View>
          </ScrollView>         
          <Pagination
-          totalItems={userList?.length}
+          totalItems={tempUserList?.length}
           pageSize={pageSize}
           currentPage={currentPage}
           onPageChange={handlePageChange}
@@ -1019,6 +1065,26 @@ inactivebtn:{
     padding:5, 
     color:"#fff",
     textAlign:"center",
+},
+searchWrap:{
+  padding: 10,
+  width:"100%",
+  position: "relative"
+  // width:'auto',
+},
+searchBox: {
+  height: 40,
+  borderWidth: 1,
+  borderColor: '#ccc',
+  borderRadius: 8,
+  padding:10,
+  marginBottom: 8,
+  marginTop: 10
+},  
+crossIcon:{
+  position: "absolute",
+  right: 20,
+  top: 28
 },
 });
 
