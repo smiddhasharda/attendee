@@ -134,11 +134,13 @@ const BottomTabNavigator = ({ navigation }) => {
         items={items}
         setItems={setItems}
         onSelectItem={(item) => handleMenuPress(item.value)}
-        containerStyle={{ width: 155 ,  borderColor: 'red' , borderWidth:0, borderBottomWidth:0  ,}}
-        style={{  marginTop: 10, borderWidth:0,  backgroundColor:"rgb(219 219 219)",    }}
+        containerStyle={{ width: 155 ,  borderColor: 'red' , borderWidth:0, borderBottomWidth:0  , marginTop:10 , position:"relative", left:8}}
+        style={{  marginTop: 20, borderWidth:0,  backgroundColor:"rgb(219 219 219)",   display:"none"  }}
         // dropDownStyle={{ backgroundColor: 'green' ,   }}
         dropDownContainerStyle={{  borderWidth:0 ,backgroundColor:"rgb(219 219 219)" , } }  // Dropdown items container style
         textStyle={{ fontSize: 16 }}
+        placeholder="" // Set placeholder to null
+        // showTickIcon={false} // Hide the tick icon
       />
     )}
     </View>
@@ -244,8 +246,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 15,
     elevation: 5,
-    top:283,
-    left:88,
+    top:298,
+    left:104,
   },
   menuItem: {
     paddingVertical: 10,
