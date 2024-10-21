@@ -740,12 +740,12 @@ async function keepConnectionsAlive() {
               );
     
               if (updateResult.affectedRows > 0) {
-                res.status(401).json({ error: `Invalid credentials, you have ${3 - Attempt} attempts left.` });
+                res.status(401).json({ error: `Invalid credentials, Only ${3 - Attempt} attempts left.` });
               } else {
                 res.status(401).json({ error: "Failed to update login attempt count." });
               }
             } else {
-              res.status(401).json({ error: "Invalid credentials, you have zero attempts left. Please contact admin to unlock your account." });
+              res.status(401).json({ error: "Your account is locked. Please contact the admin to unlock your account." });
             }
           } else {
             res.status(401).json({ error: "Invalid credentials" });
