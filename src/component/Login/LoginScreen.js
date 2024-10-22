@@ -21,6 +21,18 @@ const LoginScreen = ({ navigation }) => {
   const [isOTPInputDisabled, setOTPInputDiasbled] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
 
+  const resetState = () => {
+    setEmailTooltipVisible(false);
+    setPasswordTooltipVisible(false);
+    setOTPTooltipVisible(false);
+    setOTPInputDiasbled(true);
+    setShowPassword(false);
+    setLoginData({
+      email: '',
+      OTP: '',
+      password: ''
+    });
+  };
   const handleInputChange = (field, value) => {
     if (field === 'OTP') {
       if (/^\d*$/.test(value) && value.length <= 6) {
@@ -75,6 +87,13 @@ const LoginScreen = ({ navigation }) => {
       handleEmailVerifyError(error);
     }
   };
+  const hashPassword = async (password) => {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password);
+    const hash = await crypto.subtle.digest('SHA-256', data);
+    // Convert the hash to a hex string
+    return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+  };
 
   const loginAdmin = async () => {
     if (!emailValidator(loginData.email)) {
@@ -83,7 +102,7 @@ const LoginScreen = ({ navigation }) => {
       setPasswordTooltipVisible(true);
     } else {
       try {
-        const result = await login('tbl_user_master', `email_id = '${loginData.email.replace(/\s+/g, '').trim()}' AND Password = '${loginData.password.replace(/\s+/g, '').trim()}' AND isActive = 1 AND firstLoginStatus <= 3`,`email_id = '${loginData.email.replace(/\s+/g, '').trim()}' AND isActive = 1 `);;
+        const result = await login('tbl_user_master', `email_id = '${loginData.email.replace(/\s+/g, '').trim()}' AND Password = '${await hashPassword(loginData.password.replace(/\s+/g, '').trim())}' AND isActive = 1 AND firstLoginStatus <= 3`,`email_id = '${loginData.email.replace(/\s+/g, '').trim()}' AND isActive = 1 `);;
         if (result.length > 0) {
           const userRoleArray = atob(await AsyncStorage.getItem(btoa('userRolePermission'))) || [];
           const userRolePermission = JSON.parse(userRoleArray) || [];
@@ -131,7 +150,7 @@ const LoginScreen = ({ navigation }) => {
           <View style={styles.userTypeSelection}>
             <Pressable
               style={[styles.userTypeButton, activeUserType === 'Faculty' && styles.activeUserTypeButton]}
-              onPress={() => setActiveUserType('Faculty')}
+              onPress={() => {setActiveUserType('Faculty'),resetState()}}
             >
               <Text style={[styles.userTypeText, activeUserType === 'Faculty' && styles.activeUserTypeText]}>
                 Faculty
@@ -139,7 +158,7 @@ const LoginScreen = ({ navigation }) => {
             </Pressable>
             <Pressable
               style={[styles.userTypeButton, activeUserType === 'Admin' && styles.activeUserTypeButton]}
-              onPress={() => setActiveUserType('Admin')}
+              onPress={() => {setActiveUserType('Admin'),resetState()}}
             >
               <Text style={[styles.userTypeText, activeUserType === 'Admin' && styles.activeUserTypeText]}>
                 Admin
