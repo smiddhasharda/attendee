@@ -745,7 +745,7 @@ async function keepConnectionsAlive() {
                 res.status(401).json({ error: "Failed to update login attempt count." });
               }
             } else {
-              res.status(401).json({ error: "Your account is locked. Please contact the admin to unlock your account." });
+              res.status(401).json({ error: "Your account has been locked. Contact the admin to unlock your account." });
             }
           } else {
             res.status(401).json({ error: "Invalid credentials" });
