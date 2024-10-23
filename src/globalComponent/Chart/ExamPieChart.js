@@ -7,10 +7,10 @@ const screenWidth = Dimensions.get('window').width;
 
 // Sample data with scores
 const data = [
-  { name: 'Math', score: 215, color: '#f00' },
-  { name: 'English', score: 280, color: '#0f0' },
+  { name: 'Math', score: 215, color: '#ccc' },
+  { name: 'English', score: 280, color: 'green' },
   { name: 'Science', score: 527, color: '#00f' },
-  { name: 'History', score: 853, color: '#ff0' },
+  { name: 'History', score: 853, color: 'red' },
 ];
 
 // Calculate the total score for percentage calculations

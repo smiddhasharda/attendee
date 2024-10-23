@@ -1750,7 +1750,7 @@ const styles = StyleSheet.create({
   infoItem: {
     flex: 1,
     flexDirection: "row",
-    maxWidth:250,
+    maxWidth:isMobile ? 250:"100%",
     justifyContent: "flex-start",
     marginBottom: 10,
     alignItems: "flex-start"
