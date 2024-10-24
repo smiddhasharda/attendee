@@ -246,7 +246,7 @@ const formattedShiftTimePrefix = formatShiftTimePrefix(startTime);
         {isScanning ? (<CodeScanner onScannedData={ handleScannedData} onCancel={handleCancel} BarCodeTypes={['qr']} />) : 
        ( <View>
           <View style={styles.topdetails}>
-           <View style={styles.searchWrap}>
+           <View style={[styles.searchWrap  ,{minWidth : isMobile ? '' :320}]}>
            <TextInput
             style={styles.searchBox}
             placeholder="Search By Name, System Id Or Seat Number..."
@@ -480,8 +480,11 @@ const styles = StyleSheet.create({
     searchWrap:{
       padding: 10,
       width:"100%",
-      position: "relative"
-      // width:'auto',
+      position: "relative",
+      // minWidth:isMobile ? '' :320,
+   
+      alignItems:"flex-end"
+      // width:'auto', 
     },
     magIcon:{
       borderRadius:5,
