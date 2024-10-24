@@ -9,6 +9,7 @@ import { Entypo } from '@expo/vector-icons'
 
 
 const { width, height } = Dimensions.get('window');
+const isMobile = width < 768; 
 
 const ExamScreen = ({ navigation, userAccess, userData }) => {
   const UserAccess = userAccess?.module?.find((item) => item?.FK_ModuleId === 5);
@@ -493,7 +494,10 @@ const styles = StyleSheet.create({
   searchWrap:{
     padding: 10,
     width:"100%",
-    position: "relative"
+    position: "relative",
+    minWidth: isMobile ? '':220,
+    display:"flex",
+    alignItems:"flex-end"
     // width:'auto',
   },
   searchBox: {

@@ -32,7 +32,7 @@ const DashboardScreen = () => {
 
       {/* Dropdown Menu */}
   
-      <DropDownPicker
+      {/* <DropDownPicker
         open={open}
         value={value}
         items={items}
@@ -41,7 +41,7 @@ const DashboardScreen = () => {
         setItems={setItems}
         placeholder="Select an option"
         style={styles.dropdown} // Add custom styles
-      />
+      /> */}
 
       {/* Render the ExamPieChart */}
       {/* {showExamdata ? (
