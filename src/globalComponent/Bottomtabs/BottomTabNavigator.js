@@ -1,4 +1,4 @@
-import { View, Text, Modal, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Modal, TouchableOpacity, StyleSheet ,TouchableWithoutFeedback} from 'react-native';
 import React, { useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
@@ -68,6 +68,13 @@ const BottomTabNavigator = ({ navigation }) => {
       setSubmenuOpen(!submenuOpen);  // Toggle submenu visibility
     }
   }
+  const closeDropdown = () => {
+    if (open) {
+      setOpen(false);
+    }
+    // Dismiss keyboard if open
+    // Keyboard.dismiss();
+  };
   return (
     <>
       <BottomTab.Navigator
@@ -115,49 +122,50 @@ const BottomTabNavigator = ({ navigation }) => {
                   style={{ marginLeft: 5 }}
                 />
               </TouchableOpacity>
-
+              <TouchableWithoutFeedback  onPress={closeDropdown}>
               <View style={{ position: 'absolute', top: 40, right: 0, zIndex: 1000 }}>
               {open && (
-          <DropDownPicker
-            open={open}
-            setOpen={setOpen}
-            items={items}
-            setItems={setItems}
-            onSelectItem={(item) => handleMenuPress(item.value)}
-            containerStyle={{ width: 155 ,  borderColor: 'red' , borderWidth:0, borderBottomWidth:0  , marginTop:10 , position:"relative", left:8}}
-            style={{  marginTop: 20, borderWidth:0,  backgroundColor:"rgb(219 219 219)",   display:"none"  }}
-            // dropDownStyle={{ backgroundColor: 'green' ,   }}
-            dropDownContainerStyle={{  borderWidth:0 ,  padding: 10, backgroundColor:"rgb(219 219 219)" , } }  // Dropdown items container style
-            textStyle={{ fontSize: 16 }}
-            placeholder="" // Set placeholder to null
-            renderListItem={(props) => {
-              const { item, isSelected } = props;
+                <DropDownPicker
+                  open={open}
+                  setOpen={setOpen}
+                  items={items}
+                  setItems={setItems}       
+                  onSelectItem={(item) => handleMenuPress(item.value)}
+                  containerStyle={{ width: 155 ,  borderColor: 'red' , borderWidth:0, borderBottomWidth:0  , marginTop:10 , position:"relative", left:8}}
+                  style={{  marginTop: 20, borderWidth:0,  backgroundColor:"rgb(219 219 219)",   display:"none"  }}
+                  // dropDownStyle={{ backgroundColor: 'green' ,   }}
+                  dropDownContainerStyle={{  borderWidth:0 ,  padding: 10, backgroundColor:"rgb(219 219 219)" , } }  // Dropdown items container style
+                  textStyle={{ fontSize: 16 }}
+                  placeholder="" // Set placeholder to null
+                  renderListItem={(props) => {
+                    const { item, isSelected } = props;
 
-              if (item.subItems) {
-                return (
-                  <View>
-                    <TouchableOpacity onPress={() => handleMenuPress(item.value)}>
-                      <Text style={{ fontSize: 16, paddingVertical: 10, color: isSelected ? 'tomato' : 'black' }}>{item.label}</Text>
-                    </TouchableOpacity>
-                    {submenuOpen && item.value === 'settings' && item.subItems.map((subItem) => (
-                      <TouchableOpacity key={subItem.value} onPress={() => handleMenuPress(subItem.value)} > 
-                        <Text style={{ paddingLeft: 30, paddingVertical: 5, fontSize: 14, color: 'grey'  }}>{subItem.label} </Text>
+                    if (item.subItems) {
+                      return (
+                        <View>
+                          <TouchableOpacity onPress={() => handleMenuPress(item.value)}>
+                            <Text style={{ fontSize: 16, paddingVertical: 10, color: isSelected ? 'tomato' : 'black' }}>{item.label}</Text>
+                          </TouchableOpacity>
+                          {submenuOpen && item.value === 'settings' && item.subItems.map((subItem) => (
+                            <TouchableOpacity key={subItem.value} onPress={() => handleMenuPress(subItem.value)} > 
+                              <Text style={{ paddingLeft: 30, paddingVertical: 5, fontSize: 14, color: 'grey'  }}>{subItem.label} </Text>
+                            </TouchableOpacity>
+                          ))}
+                        </View>
+                      );
+                    }
+
+                    return (
+                      <TouchableOpacity onPress={() => handleMenuPress(item.value)}>
+                        <Text style={{ fontSize: 16, paddingVertical: 10, color: isSelected ? 'tomato' : 'black' }}>{item.label}</Text>
                       </TouchableOpacity>
-                    ))}
-                  </View>
-                );
-              }
-
-              return (
-                <TouchableOpacity onPress={() => handleMenuPress(item.value)}>
-                  <Text style={{ fontSize: 16, paddingVertical: 10, color: isSelected ? 'tomato' : 'black' }}>{item.label}</Text>
-                </TouchableOpacity>
-              );
-            }}
+                    );
+                  }}
           />
 )}
 
               </View>
+              </TouchableWithoutFeedback>
             </View>
           ),
         })}
@@ -180,40 +188,45 @@ const BottomTabNavigator = ({ navigation }) => {
         visible={isMenuVisible}
         onRequestClose={() => setMenuVisible(false)}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.menu}>
-            <Text
-              style={styles.menuItem}
-              onPress={() => {
-                toggleMenu();
-                navigation.navigate('UserScreen');
-              }}
-            >
-              Manage Role
-            </Text>
-            <Text
-              style={styles.menuItem}
-              onPress={() => {
-                toggleMenu();
-                navigation.navigate('RoleScreen');
-              }}
-            >
-              Manage User
-            </Text>
-            <Text
-              style={styles.menuItem}
-              onPress={() => {
-                toggleMenu();
-                navigation.navigate('ManagePasswordScreen');
-              }}
-            >
-              Change Password
-            </Text>
-            <TouchableOpacity onPress={toggleMenu}>
-              <Text style={styles.closeMenu}>Close</Text>
-            </TouchableOpacity>
+        {/* This will catch clicks outside the menu */}
+        <TouchableWithoutFeedback onPress={() => setMenuVisible(false)}>
+          <View style={styles.modalOverlay}>
+            <TouchableWithoutFeedback>
+              <View style={styles.menu}>
+                <Text
+                  style={styles.menuItem}
+                  onPress={() => {
+                    toggleMenu();
+                    navigation.navigate('UserScreen');
+                  }}
+                >
+                  Manage Role
+                </Text>
+                <Text
+                  style={styles.menuItem}
+                  onPress={() => {
+                    toggleMenu();
+                    navigation.navigate('RoleScreen');
+                  }}
+                >
+                  Manage User
+                </Text>
+                <Text
+                  style={styles.menuItem}
+                  onPress={() => {
+                    toggleMenu();
+                    navigation.navigate('ManagePasswordScreen');
+                  }}
+                >
+                  Change Password
+                </Text>
+                <TouchableOpacity onPress={toggleMenu}>
+                  <Text style={styles.closeMenu}>Close</Text>
+                </TouchableOpacity>
+              </View>
+            </TouchableWithoutFeedback>
           </View>
-        </View>
+        </TouchableWithoutFeedback>
       </Modal>
     </>
   );
@@ -227,22 +240,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   menu: {
-    width: 200,
+    width: 150,
     backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 15,
+    padding: 8,
     elevation: 5,
-    top: 298,
-    left: 104,
+    top: 327,
+    left: 132,
+    alignItems:"flex-start"
+    
   },
   menuItem: {
-    paddingVertical: 10,
     textAlign: 'center',
+    paddingTop:0,
+    paddingBottom:12
   },
   closeMenu: {
     color: 'red',
     textAlign: 'center',
-    paddingVertical: 10,
+    // paddingVertical: 10,
+ 
   },
 });
 

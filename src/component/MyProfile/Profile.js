@@ -50,47 +50,46 @@ const Profile = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.profileInfo}>
-        <Image
-          source={require("../../local-assets/profile.jpg")}
-          style={styles.profileImage}
-        />
-        <Text style={styles.name}>{userDetails.name}</Text>
-        <Text style={styles.email}>{userDetails.email}</Text>
-        <TouchableOpacity style={styles.editButton} onPress={handleEdit}>
-          <Text style={styles.editButtonText}>Edit Profile</Text>
-        </TouchableOpacity>
-      </View>
+        <View style={styles.profileInfo}>
+          <Image
+            source={require("../../local-assets/profile.jpg")}
+            style={styles.profileImage}
+          />
+          <Text style={styles.name}>{userDetails.name}</Text>
+          <Text style={styles.email}>{userDetails.email}</Text>
+              <TouchableOpacity style={styles.editButton} onPress={handleEdit}>
+                <Text style={styles.editButtonText}>Edit Profile</Text>
+              </TouchableOpacity>
+        </View>
 
-      <View style={styles.detailsContainer}>
+          <View style={styles.detailsContainer}>
         <Text style={styles.sectionTitle}>Personal Information</Text>
-        <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>Employee Id</Text>
-          <Text style={styles.detailValue}>{userDetails.employeeId}</Text>
-        </View>
-        <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>Username:</Text>
-          <Text style={styles.detailValue}>{userDetails.username}</Text>
-        </View>
-        <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>Email:</Text>
-          <Text style={styles.detailValue}>{userDetails.email}</Text>
-        </View>
-        <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>Phone:</Text>
-          <Text style={styles.detailValue}>{userDetails.phone}</Text>
-        </View>
-        <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>Address:</Text>
-          <Text style={styles.detailValue}>{userDetails.address}</Text>
-        </View>
-      </View>
-
-      <View style={styles.footer}>
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Text style={styles.logoutButtonText}>Logout</Text>
-        </TouchableOpacity>
-      </View>
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Employee Id</Text>
+              <Text style={styles.detailValue}>{userDetails.employeeId}</Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Username:</Text>
+              <Text style={styles.detailValue}>{userDetails.username}</Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Email:</Text>
+              <Text style={styles.detailValue}>{userDetails.email}</Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Phone:</Text>
+              <Text style={styles.detailValue}>{userDetails.phone}</Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Address:</Text>
+              <Text style={styles.detailValue}>{userDetails.address}</Text>
+            </View>
+          </View>
+          <View style={styles.footer}>
+            <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+              <Text style={styles.logoutButtonText}>Logout</Text>
+            </TouchableOpacity>
+          </View>
     </View>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, ScrollView, Image, Dimensions, Pressable } from 'react-native';
+import { View, Text, TextInput, StyleSheet, ScrollView, Image, Dimensions, Pressable,TouchableWithoutFeedback } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; 
 import { useNavigation } from '@react-navigation/native'; 
 import ExamPieChart from '../../globalComponent/Chart/ExamPieChart';
@@ -17,12 +17,21 @@ const DashboardScreen = () => {
     { label: 'Option 2', value: 'option2' },
     { label: 'Option 3', value: 'option3' },
   ]);
-
+  const closeDropdown = () => {
+    if (open) {
+      setOpen(false);
+    }
+    // Dismiss keyboard if open
+    // Keyboard.dismiss();
+  };
   return (
+    <TouchableWithoutFeedback onPress={closeDropdown}>
+    
     <View style={styles.container}>
       <Text style={styles.heading}>Welcome to Attendance Portal</Text>
 
       {/* Dropdown Menu */}
+  
       <DropDownPicker
         open={open}
         value={value}
@@ -35,16 +44,18 @@ const DashboardScreen = () => {
       />
 
       {/* Render the ExamPieChart */}
-      {showExamdata ? (
+      {/* {showExamdata ? (
         <ExamPieChart />
-      ) : (
+      ) : ( */}
         <Image
           resizeMode="contain"
           style={styles.homeBG}
           source={require("../../local-assets/home-img.png")}
         />
-      )}
+      {/* )} */}
     </View> 
+    </TouchableWithoutFeedback>
+    
   );
 };
 
