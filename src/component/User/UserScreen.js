@@ -12,6 +12,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import { Ionicons,AntDesign,Feather,Entypo} from "@expo/vector-icons";
 import Pagination from "../../globalComponent/Pagination/PaginationComponent";
 import ShimmerEffect from "../../globalComponent/Refresh/ShimmerEffect";
+import CryptoJS from 'crypto-js';
 
 const UserScreen = ({userAccess,userData}) => { 
   const UserAccess = userAccess?.module?.find( (item) => item?.FK_ModuleId === 4 );
@@ -71,11 +72,8 @@ const UserScreen = ({userAccess,userData}) => {
   }, [addToast]);
 
   const hashPassword = async (password) => {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(password);
-    const hash = await crypto.subtle.digest('SHA-256', data);
-    // Convert the hash to a hex string
-    return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+    const hash = CryptoJS.SHA256(password).toString();
+    return hash;
   };
 
   const handleAddUser = async () => {

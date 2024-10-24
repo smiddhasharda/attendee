@@ -6,6 +6,7 @@ import emailValidator from "../../helpers/emailValidator";
 import Tooltip from "../../globalComponent/ToolTip/Tooltip";
 import { login, emailVerify } from '../../AuthService/AuthService';
 import styles from "./LoginScreen.style";
+import CryptoJS from 'crypto-js';
 
 const LoginScreen = ({ navigation }) => {
   const { addToast } = useToast();
@@ -88,11 +89,8 @@ const LoginScreen = ({ navigation }) => {
     }
   };
   const hashPassword = async (password) => {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(password);
-    const hash = await crypto.subtle.digest('SHA-256', data);
-    // Convert the hash to a hex string
-    return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+    const hash = CryptoJS.SHA256(password).toString();
+    return hash;
   };
 
   const loginAdmin = async () => {
