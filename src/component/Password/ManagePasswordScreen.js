@@ -13,6 +13,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { fetch, update } from "../../AuthService/AuthService";
 import { useToast } from "../../globalComponent/ToastContainer/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import CryptoJS from 'crypto-js';
 
 const { width, height } = Dimensions.get("window");
 const isMobile = width < 768;
@@ -76,11 +77,8 @@ const ManagePasswordScreen = ({
   }, [addToast]);
 
   const hashPassword = async (password) => {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(password);
-    const hash = await crypto.subtle.digest('SHA-256', data);
-    // Convert the hash to a hex string
-    return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+    const hash = CryptoJS.SHA256(password).toString();
+    return hash;
   };
 
   const handlresetPassword = async () => {
