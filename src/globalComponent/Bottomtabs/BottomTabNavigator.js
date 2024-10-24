@@ -68,6 +68,13 @@ const BottomTabNavigator = ({ navigation }) => {
       setSubmenuOpen(!submenuOpen);  // Toggle submenu visibility
     }
   }
+  const closeDropdown = () => {
+    if (open) {
+      setOpen(false);
+    }
+    // Dismiss keyboard if open
+    // Keyboard.dismiss();
+  };
   return (
     <>
       <BottomTab.Navigator
@@ -115,45 +122,45 @@ const BottomTabNavigator = ({ navigation }) => {
                   style={{ marginLeft: 5 }}
                 />
               </TouchableOpacity>
-              <TouchableWithoutFeedback onPress={() => setOpen(false)}>
+              <TouchableWithoutFeedback  onPress={closeDropdown}>
               <View style={{ position: 'absolute', top: 40, right: 0, zIndex: 1000 }}>
               {open && (
-          <DropDownPicker
-            open={open}
-            setOpen={setOpen}
-            items={items}
-            setItems={setItems}       
-            onSelectItem={(item) => handleMenuPress(item.value)}
-            containerStyle={{ width: 155 ,  borderColor: 'red' , borderWidth:0, borderBottomWidth:0  , marginTop:10 , position:"relative", left:8}}
-            style={{  marginTop: 20, borderWidth:0,  backgroundColor:"rgb(219 219 219)",   display:"none"  }}
-            // dropDownStyle={{ backgroundColor: 'green' ,   }}
-            dropDownContainerStyle={{  borderWidth:0 ,  padding: 10, backgroundColor:"rgb(219 219 219)" , } }  // Dropdown items container style
-            textStyle={{ fontSize: 16 }}
-            placeholder="" // Set placeholder to null
-            renderListItem={(props) => {
-              const { item, isSelected } = props;
+                <DropDownPicker
+                  open={open}
+                  setOpen={setOpen}
+                  items={items}
+                  setItems={setItems}       
+                  onSelectItem={(item) => handleMenuPress(item.value)}
+                  containerStyle={{ width: 155 ,  borderColor: 'red' , borderWidth:0, borderBottomWidth:0  , marginTop:10 , position:"relative", left:8}}
+                  style={{  marginTop: 20, borderWidth:0,  backgroundColor:"rgb(219 219 219)",   display:"none"  }}
+                  // dropDownStyle={{ backgroundColor: 'green' ,   }}
+                  dropDownContainerStyle={{  borderWidth:0 ,  padding: 10, backgroundColor:"rgb(219 219 219)" , } }  // Dropdown items container style
+                  textStyle={{ fontSize: 16 }}
+                  placeholder="" // Set placeholder to null
+                  renderListItem={(props) => {
+                    const { item, isSelected } = props;
 
-              if (item.subItems) {
-                return (
-                  <View>
-                    <TouchableOpacity onPress={() => handleMenuPress(item.value)}>
-                      <Text style={{ fontSize: 16, paddingVertical: 10, color: isSelected ? 'tomato' : 'black' }}>{item.label}</Text>
-                    </TouchableOpacity>
-                    {submenuOpen && item.value === 'settings' && item.subItems.map((subItem) => (
-                      <TouchableOpacity key={subItem.value} onPress={() => handleMenuPress(subItem.value)} > 
-                        <Text style={{ paddingLeft: 30, paddingVertical: 5, fontSize: 14, color: 'grey'  }}>{subItem.label} </Text>
+                    if (item.subItems) {
+                      return (
+                        <View>
+                          <TouchableOpacity onPress={() => handleMenuPress(item.value)}>
+                            <Text style={{ fontSize: 16, paddingVertical: 10, color: isSelected ? 'tomato' : 'black' }}>{item.label}</Text>
+                          </TouchableOpacity>
+                          {submenuOpen && item.value === 'settings' && item.subItems.map((subItem) => (
+                            <TouchableOpacity key={subItem.value} onPress={() => handleMenuPress(subItem.value)} > 
+                              <Text style={{ paddingLeft: 30, paddingVertical: 5, fontSize: 14, color: 'grey'  }}>{subItem.label} </Text>
+                            </TouchableOpacity>
+                          ))}
+                        </View>
+                      );
+                    }
+
+                    return (
+                      <TouchableOpacity onPress={() => handleMenuPress(item.value)}>
+                        <Text style={{ fontSize: 16, paddingVertical: 10, color: isSelected ? 'tomato' : 'black' }}>{item.label}</Text>
                       </TouchableOpacity>
-                    ))}
-                  </View>
-                );
-              }
-
-              return (
-                <TouchableOpacity onPress={() => handleMenuPress(item.value)}>
-                  <Text style={{ fontSize: 16, paddingVertical: 10, color: isSelected ? 'tomato' : 'black' }}>{item.label}</Text>
-                </TouchableOpacity>
-              );
-            }}
+                    );
+                  }}
           />
 )}
 
